@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 15:55 — `26b3fe9`
+feat: Notion-like cover picker - 24 colors + 20 gradients + 12 textures + Unsplash search (no key needed) + Supprimer
+
 ## 03/05/2026 13:57 — `bc95baa`
 feat: cover picker tabs - Galerie/Importer/URL/Aleatoire (upload, paste URL, Picsum)
 

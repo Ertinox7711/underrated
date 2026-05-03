@@ -1,8 +1,8 @@
 {
-  "commit": "bc95baa",
-  "message": "feat: cover picker tabs - Galerie/Importer/URL/Aleatoire (upload, paste URL, Picsum)",
-  "commitDate": "2026-05-03T13:57:09+02:00",
-  "buildDate": "2026-05-03T11:57:23Z",
-  "buildDateFR": "03/05/2026 13:57",
+  "commit": "26b3fe9",
+  "message": "feat: Notion-like cover picker - 24 colors + 20 gradients + 12 textures + Unsplash search (no key needed) + Supprimer",
+  "commitDate": "2026-05-03T15:55:15+02:00",
+  "buildDate": "2026-05-03T13:55:25Z",
+  "buildDateFR": "03/05/2026 15:55",
   "branch": "main"
 }
