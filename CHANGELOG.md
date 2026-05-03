@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 22:59 — `af8a398`
+fix: cover picker Unsplash tab uses Openverse API (no key, replaces deprecated source.unsplash.com)
+
 ## 03/05/2026 22:55 — `d9bc356`
 feat: visual DnD indicators - line above/below = sibling, glow inside = nest
 
