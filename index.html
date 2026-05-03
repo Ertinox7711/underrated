@@ -1996,17 +1996,24 @@ function showCoverPicker(coverEl) {
         <input id="cv-uns-q" placeholder="Rechercher une image..." style="width:100%;padding:10px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;margin-bottom:10px">
         <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">${presets.map(p=>`<button class="uns-preset" data-q="${p}" style="padding:4px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:14px;color:var(--text-2);font-size:11px;cursor:pointer">${p}</button>`).join('')}</div>
         <div id="cv-uns-results" class="cover-grid" style="grid-template-columns:repeat(3,1fr);gap:6px;min-height:120px"></div>
-        <div style="font-size:11px;color:var(--text-3);margin-top:8px;text-align:center">Images via Unsplash (libre de droit)</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:8px;text-align:center">Images via Openverse (CC libre de droit)</div>
       </div>`;
-      const search = (q) => {
+      const search = async (q) => {
         const grid = document.getElementById('cv-uns-results');
-        const seeds = [1,2,3,4,5,6,7,8,9];
-        grid.innerHTML = seeds.map(s => `<img class="uns-img" data-url="https://source.unsplash.com/featured/1600x400/?${encodeURIComponent(q)}&sig=${s}" src="https://source.unsplash.com/featured/300x150/?${encodeURIComponent(q)}&sig=${s}" style="width:100%;height:80px;object-fit:cover;border-radius:6px;cursor:pointer;background:var(--bg-3)">`).join('');
-        grid.querySelectorAll('.uns-img').forEach(im => im.onclick = () => {
-          applyCover(coverEl, `url("${im.dataset.url}") center/cover`);
-          picker.classList.remove('show');
-          toast('Image Unsplash appliquée', 'success');
-        });
+        grid.innerHTML = '<div style="grid-column:1/-1;color:var(--text-3);font-size:12px;text-align:center;padding:12px">Recherche...</div>';
+        try {
+          const r = await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&page_size=12&license_type=commercial,modification`);
+          const j = await r.json();
+          if (!j.results?.length) { grid.innerHTML = '<div style="grid-column:1/-1;color:var(--text-3);font-size:12px;text-align:center;padding:12px">Aucun résultat</div>'; return; }
+          grid.innerHTML = j.results.map(im => `<img class="uns-img" data-url="${escapeHtml(im.url)}" src="${escapeHtml(im.thumbnail||im.url)}" loading="lazy" style="width:100%;height:80px;object-fit:cover;border-radius:6px;cursor:pointer;background:var(--bg-3)">`).join('');
+          grid.querySelectorAll('.uns-img').forEach(el => el.onclick = () => {
+            applyCover(coverEl, `url("${el.dataset.url}") center/cover`);
+            picker.classList.remove('show');
+            toast('Image appliquée', 'success');
+          });
+        } catch(e) {
+          grid.innerHTML = '<div style="grid-column:1/-1;color:var(--danger);font-size:12px;text-align:center;padding:12px">Erreur API</div>';
+        }
       };
       const inp = document.getElementById('cv-uns-q');
       inp.addEventListener('keydown', e => { if (e.key === 'Enter' && inp.value.trim()) search(inp.value.trim()); });
