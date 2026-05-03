@@ -1075,6 +1075,7 @@ body.focus-mode .editor-content{max-width:820px}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad:false, theme:'dark', securityLevel:'loose' });
@@ -4519,6 +4520,567 @@ window.U = {
     APIs, getKeys, setKeys
   });
   console.log('[Underrated] Extensions v2.0 loaded');
+})();
+
+/* ============================================================
+   EXTENSIONS v3.0 — Multi-workspace + Invites + Team + Profile
+   ============================================================ */
+(function(){
+  // ---- Workspace data model ----
+  if (!state.workspaces) state.workspaces = [];
+  if (!state.currentWorkspaceId) state.currentWorkspaceId = null;
+  if (!state.profile) state.profile = null;
+
+  const WS_LS_KEY = 'underrated-workspaces';
+  const WS_CUR_KEY = 'underrated-current-ws';
+  const PROFILE_LS_KEY = 'underrated-profile';
+
+  function loadWorkspacesLocal(){
+    try {
+      const raw = localStorage.getItem(WS_LS_KEY);
+      if (raw) state.workspaces = JSON.parse(raw) || [];
+      const cur = localStorage.getItem(WS_CUR_KEY);
+      if (cur) state.currentWorkspaceId = cur;
+      const pr = localStorage.getItem(PROFILE_LS_KEY);
+      if (pr) state.profile = JSON.parse(pr);
+    } catch(e){ console.error('loadWorkspacesLocal', e); }
+  }
+  function saveWorkspacesLocal(){
+    try {
+      localStorage.setItem(WS_LS_KEY, JSON.stringify(state.workspaces||[]));
+      if (state.currentWorkspaceId) localStorage.setItem(WS_CUR_KEY, state.currentWorkspaceId);
+      if (state.profile) localStorage.setItem(PROFILE_LS_KEY, JSON.stringify(state.profile));
+    } catch(e){ console.error('saveWorkspacesLocal', e); }
+  }
+
+  function wsid(){ return 'ws_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
+  function currentWorkspace(){ return (state.workspaces||[]).find(w => w.id===state.currentWorkspaceId) || (state.workspaces||[])[0]; }
+  function isOwner(ws){ return ws && state.user && ws.ownerId===state.user.id; }
+
+  async function ensureDefaultWorkspace(){
+    if (!state.user) return;
+    if (!state.workspaces || state.workspaces.length===0) {
+      const ws = {
+        id: wsid(),
+        name: 'Personnel',
+        icon: '🏠',
+        ownerId: state.user.id,
+        members: [{ uid: state.user.id, email: state.user.email, role: 'owner' }],
+        createdAt: Date.now()
+      };
+      state.workspaces = [ws];
+      state.currentWorkspaceId = ws.id;
+      // Tag existing pages and folders with this workspace
+      (state.pages||[]).forEach(p => { if (!p.workspaceId) p.workspaceId = ws.id; });
+      (state.folders||[]).forEach(f => { if (!f.workspaceId) f.workspaceId = ws.id; });
+      saveWorkspacesLocal();
+      Storage.save();
+      // Push to firestore
+      try {
+        await setDoc(doc(db, 'workspaces', ws.id), {
+          id: ws.id, name: ws.name, icon: ws.icon, ownerId: ws.ownerId,
+          members: ws.members, createdAt: ws.createdAt
+        });
+      } catch(e){ console.error('ws create cloud', e); }
+    }
+    if (!state.currentWorkspaceId) state.currentWorkspaceId = state.workspaces[0].id;
+    // Ensure all untagged pages/folders inherit current
+    (state.pages||[]).forEach(p => { if (!p.workspaceId) p.workspaceId = state.currentWorkspaceId; });
+    (state.folders||[]).forEach(f => { if (!f.workspaceId) f.workspaceId = state.currentWorkspaceId; });
+  }
+
+  async function pushWorkspaceMeta(ws){
+    if (!ws) return;
+    try {
+      await setDoc(doc(db, 'workspaces', ws.id), {
+        id: ws.id, name: ws.name, icon: ws.icon, ownerId: ws.ownerId,
+        members: ws.members||[], createdAt: ws.createdAt||Date.now()
+      });
+    } catch(e){ console.error('pushWorkspaceMeta', e); }
+  }
+
+  async function loadWorkspacesCloud(){
+    if (!state.user) return;
+    // Best-effort: try to load workspace metas referenced by IDs we know about
+    const ids = (state.workspaces||[]).map(w => w.id);
+    for (const id of ids) {
+      try {
+        const snap = await getDoc(doc(db, 'workspaces', id));
+        if (snap.exists()) {
+          const d = snap.data();
+          const idx = state.workspaces.findIndex(w => w.id===id);
+          if (idx>=0) {
+            state.workspaces[idx] = {
+              ...state.workspaces[idx],
+              name: d.name||state.workspaces[idx].name,
+              icon: d.icon||state.workspaces[idx].icon,
+              ownerId: d.ownerId,
+              members: d.members||[]
+            };
+          }
+        }
+      } catch(e){ /* ignore */ }
+    }
+    saveWorkspacesLocal();
+  }
+
+  // ---- Filter pages/folders by current workspace ----
+  // Patch buildPageTree, renderPages search results, renderFolderTree filters
+  if (typeof buildPageTree === 'function') {
+    const _origBPT = buildPageTree;
+    buildPageTree = function(){
+      const byParent = {};
+      (state.pages||[]).forEach(p => {
+        if (p.deleted) return;
+        if (state.currentWorkspaceId && p.workspaceId && p.workspaceId !== state.currentWorkspaceId) return;
+        const k = p.parentId || 'root';
+        (byParent[k] = byParent[k] || []).push(p);
+      });
+      return byParent;
+    };
+  }
+
+  // ---- Tag new pages and folders with workspaceId ----
+  const _origCreatePage = createPage;
+  createPage = function(title, icon, parentId){
+    const id = _origCreatePage(title, icon, parentId);
+    const p = (state.pages||[]).find(x => x.id===id);
+    if (p && state.currentWorkspaceId) { p.workspaceId = state.currentWorkspaceId; Storage.save(); }
+    return id;
+  };
+
+  // ---- Wrap createFolder via window.U ----
+  if (window.U && typeof window.U.createFolder === 'function') {
+    const _origCF = window.U.createFolder;
+    window.U.createFolder = function(name, parentFolderId){
+      const fid = _origCF(name, parentFolderId);
+      const f = (state.folders||[]).find(x => x.id===fid);
+      if (f && state.currentWorkspaceId) { f.workspaceId = state.currentWorkspaceId; Storage.save(); }
+      return fid;
+    };
+  }
+
+  // ---- UI: workspace switcher and profile button ----
+  function ensureWorkspaceUI(){
+    const header = document.querySelector('.sidebar-header');
+    if (!header) return;
+    let bar = document.getElementById('ws-switcher');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'ws-switcher';
+      bar.className = 'ws-switcher';
+      bar.style.cssText = 'display:flex;align-items:center;gap:6px;padding:8px 10px;margin:0 8px 8px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;color:var(--text);transition:var(--transition);user-select:none';
+      bar.onmouseenter = () => bar.style.background = 'var(--bg-hover)';
+      bar.onmouseleave = () => bar.style.background = 'var(--bg-3)';
+      bar.onclick = (e) => { e.stopPropagation(); toggleWsDropdown(bar); };
+      // insert before header (above .sidebar-header)
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) sidebar.insertBefore(bar, header);
+    }
+    const ws = currentWorkspace();
+    bar.innerHTML = `<span style="font-size:16px">${ws?ws.icon||'📁':'📁'}</span>
+      <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600">${escapeHtml(ws?ws.name:'Espace')}</span>
+      <span style="color:var(--text-3);font-size:10px">▾</span>`;
+
+    // Make avatar clickable to open profile
+    const av = document.getElementById('user-avatar');
+    if (av && !av.dataset.profileHook) {
+      av.dataset.profileHook = '1';
+      av.style.cursor = 'pointer';
+      av.title = 'Profil';
+      av.onclick = (e) => { e.stopPropagation(); openProfileModal(); };
+    }
+  }
+
+  function toggleWsDropdown(anchor){
+    let dd = document.getElementById('ws-dropdown');
+    if (dd) { dd.remove(); return; }
+    dd = document.createElement('div');
+    dd.id = 'ws-dropdown';
+    dd.className = 'ctx-menu show';
+    dd.style.cssText = 'position:fixed;display:block;z-index:1300;min-width:240px';
+    const list = (state.workspaces||[]).map(w => `
+      <div class="ctx-item" data-ws="${w.id}" style="display:flex;align-items:center;gap:8px;padding:8px 12px">
+        <span style="font-size:16px">${w.icon||'📁'}</span>
+        <span style="flex:1">${escapeHtml(w.name)}</span>
+        ${w.id===state.currentWorkspaceId?'<span style="color:var(--accent)">✓</span>':''}
+      </div>`).join('');
+    dd.innerHTML = list + `
+      <div style="border-top:1px solid var(--border);margin:4px 0"></div>
+      <div class="ctx-item" data-ws-act="new" style="padding:8px 12px"><span class="ctx-icon">➕</span><span>Nouvel espace</span></div>
+      <div class="ctx-item" data-ws-act="invite" style="padding:8px 12px"><span class="ctx-icon">👥</span><span>Inviter dans cet espace</span></div>
+      <div class="ctx-item" data-ws-act="team" style="padding:8px 12px"><span class="ctx-icon">⚙️</span><span>Gérer l'équipe</span></div>
+    `;
+    document.body.appendChild(dd);
+    const r = anchor.getBoundingClientRect();
+    dd.style.left = r.left + 'px';
+    dd.style.top = (r.bottom + 4) + 'px';
+    dd.style.width = (r.width) + 'px';
+    dd.querySelectorAll('[data-ws]').forEach(el => el.onclick = () => {
+      switchWorkspace(el.dataset.ws);
+      dd.remove();
+    });
+    dd.querySelector('[data-ws-act="new"]').onclick = () => { dd.remove(); promptNewWorkspace(); };
+    dd.querySelector('[data-ws-act="invite"]').onclick = () => { dd.remove(); openInviteModal(); };
+    dd.querySelector('[data-ws-act="team"]').onclick = () => { dd.remove(); openTeamModal(); };
+    setTimeout(() => {
+      document.addEventListener('click', function close(ev){
+        if (!ev.target.closest('#ws-dropdown') && ev.target!==anchor && !anchor.contains(ev.target)) {
+          dd.remove();
+          document.removeEventListener('click', close);
+        }
+      });
+    }, 0);
+  }
+
+  function switchWorkspace(id){
+    if (!state.workspaces.find(w => w.id===id)) return;
+    state.currentWorkspaceId = id;
+    saveWorkspacesLocal();
+    ensureWorkspaceUI();
+    if (typeof renderPages === 'function') renderPages();
+    // Open first page of this workspace if any, else clear
+    const firstPage = (state.pages||[]).find(p => !p.deleted && p.workspaceId===id);
+    if (firstPage) openPage(firstPage.id);
+    toast('Espace : '+(currentWorkspace().name||''));
+  }
+
+  async function promptNewWorkspace(){
+    const name = prompt('Nom du nouvel espace :','Nouveau projet');
+    if (!name) return;
+    const icon = prompt('Emoji icône :','🚀') || '📁';
+    const ws = {
+      id: wsid(), name, icon,
+      ownerId: state.user.id,
+      members: [{ uid: state.user.id, email: state.user.email, role:'owner' }],
+      createdAt: Date.now()
+    };
+    state.workspaces.push(ws);
+    state.currentWorkspaceId = ws.id;
+    saveWorkspacesLocal();
+    await pushWorkspaceMeta(ws);
+    ensureWorkspaceUI();
+    if (typeof renderPages === 'function') renderPages();
+    toast('Espace créé : '+name);
+  }
+
+  // ---- Invite link modal ----
+  function buildInviteUrl(wsId){
+    const u = window.location.origin + window.location.pathname + '?invite=' + encodeURIComponent(wsId) + '&from=' + encodeURIComponent(state.user.id);
+    return u;
+  }
+
+  function openInviteModal(){
+    const ws = currentWorkspace();
+    if (!ws) return;
+    const url = buildInviteUrl(ws.id);
+    const html = `
+      <div class="modal-head"><div class="modal-title">👥 Inviter dans « ${escapeHtml(ws.name)} »</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:10px">Partage ce lien — toute personne avec un compte pourra rejoindre cet espace.</div>
+      <div class="prop-row">
+        <input class="prop-input" id="inv-link" readonly value="${escapeHtml(url)}" style="font-family:monospace;font-size:12px">
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
+        <button class="btn" id="inv-copy" style="flex:1;min-width:140px">📋 Copier le lien</button>
+        <button class="btn-ghost" id="inv-mail" style="flex:1;min-width:140px;padding:10px;border:1px solid var(--border);border-radius:8px">✉️ Partager par email</button>
+      </div>
+      <div style="margin:14px 0;text-align:center">
+        <canvas id="inv-qr" style="background:#fff;border-radius:10px;padding:10px;max-width:200px"></canvas>
+      </div>
+      <div style="font-size:11px;color:var(--text-3);text-align:center">Lien expire dans : <strong>Jamais</strong></div>
+    `;
+    showModal(html, '480px');
+    const inp = document.getElementById('inv-link');
+    inp.onclick = () => inp.select();
+    document.getElementById('inv-copy').onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+        toast('Lien copié','success');
+      } catch(e){ inp.select(); document.execCommand('copy'); toast('Lien copié','success'); }
+    };
+    document.getElementById('inv-mail').onclick = () => {
+      const subject = encodeURIComponent(`Rejoins moi sur Underrated — ${ws.name}`);
+      const body = encodeURIComponent(`Salut !\n\nJe t'invite à rejoindre mon espace « ${ws.name} » sur Underrated.\n\nClique pour rejoindre : ${url}\n\nÀ bientôt !`);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    };
+    // Render QR
+    setTimeout(() => {
+      try {
+        const canvas = document.getElementById('inv-qr');
+        if (window.QRCode && canvas) {
+          window.QRCode.toCanvas(canvas, url, { width: 200, margin: 1 }, function(err){
+            if (err) console.error(err);
+          });
+        }
+      } catch(e){ console.error('qr', e); }
+    }, 50);
+  }
+
+  // ---- Handle ?invite=WSID&from=UID on app load ----
+  async function handleInviteParam(){
+    const params = new URLSearchParams(window.location.search);
+    const inviteId = params.get('invite');
+    const fromUid = params.get('from');
+    if (!inviteId || !state.user) return;
+    // Already a member?
+    const existing = (state.workspaces||[]).find(w => w.id===inviteId);
+    if (existing) {
+      // already in — just switch
+      switchWorkspace(inviteId);
+      // clean URL
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+    // Fetch workspace meta
+    let wsMeta = null;
+    try {
+      const snap = await getDoc(doc(db, 'workspaces', inviteId));
+      if (snap.exists()) wsMeta = snap.data();
+    } catch(e){ console.error('invite fetch', e); }
+    if (!wsMeta) {
+      toast('Invitation invalide ou expirée','error');
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+    // Try to find inviter email
+    let fromEmail = fromUid || '?';
+    if (wsMeta.members) {
+      const m = (wsMeta.members||[]).find(x => x.uid===fromUid);
+      if (m) fromEmail = m.email;
+    }
+    const html = `
+      <div class="modal-head"><div class="modal-title">🎉 Invitation</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+      <div style="text-align:center;padding:14px 0">
+        <div style="font-size:48px;margin-bottom:10px">${wsMeta.icon||'📁'}</div>
+        <div style="font-size:16px;margin-bottom:8px">Tu as été invité à rejoindre</div>
+        <div style="font-size:22px;font-weight:700;margin-bottom:6px">${escapeHtml(wsMeta.name||'Espace')}</div>
+        <div style="font-size:13px;color:var(--text-2)">par <strong>${escapeHtml(fromEmail)}</strong></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-ghost" id="inv-decline" style="flex:1;padding:12px;border:1px solid var(--border);border-radius:8px">Refuser</button>
+        <button class="btn" id="inv-accept" style="flex:1;padding:12px">Rejoindre</button>
+      </div>
+    `;
+    showModal(html, '420px');
+    document.getElementById('inv-decline').onclick = () => {
+      closeModal();
+      window.history.replaceState({}, '', window.location.pathname);
+    };
+    document.getElementById('inv-accept').onclick = async () => {
+      // Add me to members
+      const members = wsMeta.members||[];
+      if (!members.find(m => m.uid===state.user.id)) {
+        members.push({ uid: state.user.id, email: state.user.email, role:'member' });
+      }
+      try {
+        await setDoc(doc(db, 'workspaces', inviteId), { ...wsMeta, members }, { merge:true });
+      } catch(e){ console.error('accept invite', e); toast('Erreur, réessaie','error'); }
+      // Add locally
+      const ws = {
+        id: inviteId,
+        name: wsMeta.name||'Espace',
+        icon: wsMeta.icon||'📁',
+        ownerId: wsMeta.ownerId,
+        members: members,
+        createdAt: wsMeta.createdAt||Date.now()
+      };
+      if (!state.workspaces.find(w => w.id===inviteId)) state.workspaces.push(ws);
+      state.currentWorkspaceId = inviteId;
+      saveWorkspacesLocal();
+      ensureWorkspaceUI();
+      if (typeof renderPages === 'function') renderPages();
+      closeModal();
+      window.history.replaceState({}, '', window.location.pathname);
+      toast('Bienvenue dans « '+ws.name+' »','success');
+    };
+  }
+
+  // ---- Team management modal ----
+  function openTeamModal(){
+    const ws = currentWorkspace();
+    if (!ws) return;
+    const owner = isOwner(ws);
+    function render(){
+      const members = ws.members||[];
+      const html = `
+        <div class="modal-head"><div class="modal-title">👥 Équipe — ${escapeHtml(ws.name)}</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+        <div style="font-size:13px;color:var(--text-2);margin-bottom:12px">${members.length} membre${members.length>1?'s':''}</div>
+        <div class="prop-row">
+          <div class="prop-label">INVITER PAR EMAIL</div>
+          <div style="display:flex;gap:6px">
+            <input class="prop-input" id="team-mail" placeholder="email@exemple.com" style="flex:1">
+            <button class="btn" id="team-invite-btn" style="padding:8px 14px">Envoyer le lien</button>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px">Le lien d'invitation sera copié dans ton presse-papiers — tu pourras le coller dans l'email.</div>
+        </div>
+        <div style="margin-top:18px">
+          <div class="prop-label" style="margin-bottom:8px">MEMBRES</div>
+          <div id="team-list">
+            ${members.map(m => `
+              <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;margin-bottom:6px">
+                <div class="avatar" style="width:32px;height:32px;font-size:12px;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent);border-radius:50%;font-weight:600">${escapeHtml((m.email||'?').substring(0,2).toUpperCase())}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-weight:500;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(m.email||'?')}</div>
+                  <div style="font-size:11px;color:var(--text-3)">${m.role==='owner'?'Propriétaire':'Membre'}</div>
+                </div>
+                ${owner && m.role!=='owner' ? `<button class="btn-ghost" data-rm="${m.uid}" style="padding:6px 10px;color:var(--danger);border:1px solid var(--border);border-radius:6px;font-size:12px">Retirer</button>` : ''}
+              </div>`).join('')}
+          </div>
+        </div>
+      `;
+      showModal(html, '520px');
+      document.getElementById('team-invite-btn').onclick = async () => {
+        const em = (document.getElementById('team-mail').value||'').trim();
+        if (!em || !em.includes('@')) return toast('Email invalide','error');
+        const url = buildInviteUrl(ws.id);
+        try { await navigator.clipboard.writeText(url); } catch(e){}
+        const subject = encodeURIComponent(`Rejoins « ${ws.name} » sur Underrated`);
+        const body = encodeURIComponent(`Salut !\n\nJe t'invite à rejoindre mon espace « ${ws.name} ».\n\nLien : ${url}\n\nÀ bientôt !`);
+        window.location.href = `mailto:${encodeURIComponent(em)}?subject=${subject}&body=${body}`;
+        toast('Lien copié — email préparé','success');
+      };
+      document.querySelectorAll('[data-rm]').forEach(b => b.onclick = async () => {
+        if (!confirm('Retirer ce membre ?')) return;
+        ws.members = (ws.members||[]).filter(m => m.uid !== b.dataset.rm);
+        saveWorkspacesLocal();
+        await pushWorkspaceMeta(ws);
+        render();
+        toast('Membre retiré');
+      });
+    }
+    render();
+  }
+
+  // ---- Profile modal ----
+  function getProfile(){
+    if (!state.profile) {
+      state.profile = {
+        avatar: '👤',
+        displayName: (state.user&&state.user.email||'').split('@')[0],
+        email: state.user&&state.user.email||'',
+        createdAt: Date.now()
+      };
+      saveWorkspacesLocal();
+    }
+    return state.profile;
+  }
+
+  async function saveProfile(){
+    saveWorkspacesLocal();
+    if (!state.user) return;
+    try {
+      await setDoc(doc(db, 'users', state.user.id, 'profile', 'main'), state.profile, { merge:true });
+    } catch(e){ console.error('saveProfile', e); }
+  }
+
+  function openProfileModal(){
+    const p = getProfile();
+    const totalPages = (state.pages||[]).filter(x => !x.deleted).length;
+    const wsCount = (state.workspaces||[]).length;
+    const memberSince = new Date(p.createdAt||Date.now()).toLocaleDateString('fr-FR',{year:'numeric',month:'long',day:'numeric'});
+    const html = `
+      <div class="modal-head"><div class="modal-title">👤 Profil</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+      <div style="text-align:center;margin-bottom:18px">
+        <div id="prof-avatar" style="width:80px;height:80px;font-size:42px;background:var(--accent-soft);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;cursor:pointer;border:2px solid var(--accent)" title="Cliquer pour changer">${escapeHtml(p.avatar||'👤')}</div>
+        <div style="font-size:11px;color:var(--text-3)">Cliquer sur l'avatar pour le changer</div>
+      </div>
+      <div class="prop-row">
+        <div class="prop-label">NOM AFFICHÉ</div>
+        <input class="prop-input" id="prof-name" value="${escapeHtml(p.displayName||'')}">
+      </div>
+      <div class="prop-row">
+        <div class="prop-label">EMAIL</div>
+        <input class="prop-input" readonly value="${escapeHtml(p.email||(state.user&&state.user.email)||'')}" style="opacity:.7;cursor:not-allowed">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:14px 0">
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:18px;font-weight:700">${wsCount}</div>
+          <div style="font-size:11px;color:var(--text-3)">Espace${wsCount>1?'s':''}</div>
+        </div>
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:18px;font-weight:700">${totalPages}</div>
+          <div style="font-size:11px;color:var(--text-3)">Page${totalPages>1?'s':''}</div>
+        </div>
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:11px;font-weight:600;line-height:1.3">${memberSince}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:2px">Membre depuis</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-ghost" id="prof-logout" style="flex:1;padding:10px;border:1px solid var(--danger);color:var(--danger);border-radius:8px">Se déconnecter</button>
+        <button class="btn-ghost" disabled title="Contacte l'admin" style="flex:1;padding:10px;border:1px solid var(--border);color:var(--text-3);border-radius:8px;opacity:.5;cursor:not-allowed">Supprimer mon compte</button>
+      </div>
+    `;
+    showModal(html, '480px');
+    const avEl = document.getElementById('prof-avatar');
+    avEl.onclick = () => {
+      const e = prompt('Emoji avatar :', p.avatar||'👤');
+      if (e) { state.profile.avatar = e; saveProfile(); avEl.textContent = e; ensureWorkspaceUI(); refreshSidebarAvatar(); }
+    };
+    const nm = document.getElementById('prof-name');
+    nm.onchange = () => { state.profile.displayName = nm.value.trim(); saveProfile(); refreshSidebarAvatar(); };
+    nm.onblur = nm.onchange;
+    document.getElementById('prof-logout').onclick = () => {
+      closeModal();
+      const lb = document.getElementById('logout-btn');
+      if (lb) lb.click();
+    };
+  }
+
+  function refreshSidebarAvatar(){
+    const p = state.profile;
+    if (!p) return;
+    const av = document.getElementById('user-avatar');
+    if (av) {
+      // If avatar is an emoji (single grapheme), show it; else show initials
+      av.textContent = p.avatar && p.avatar.length<=4 ? p.avatar : (p.displayName||'?').substring(0,2).toUpperCase();
+    }
+    const un = document.getElementById('user-name');
+    if (un && p.displayName) un.textContent = p.displayName;
+  }
+
+  // ---- Boot ----
+  let _wsBooted = false;
+  async function bootWs(){
+    if (_wsBooted) return;
+    _wsBooted = true;
+    loadWorkspacesLocal();
+    await ensureDefaultWorkspace();
+    await loadWorkspacesCloud();
+    getProfile();
+    ensureWorkspaceUI();
+    refreshSidebarAvatar();
+    if (typeof renderPages === 'function') renderPages();
+    // Handle invite param
+    setTimeout(() => { handleInviteParam(); }, 600);
+  }
+
+  // Wait for app to be visible AND user to be logged in
+  const wsBootInterval = setInterval(() => {
+    if (state.user && document.getElementById('app') && document.getElementById('app').classList.contains('show')) {
+      clearInterval(wsBootInterval);
+      try { bootWs(); } catch(e){ console.error('boot ws', e); }
+    }
+  }, 600);
+
+  // Mobile responsive CSS
+  const css = document.createElement('style');
+  css.textContent = `
+    @media (max-width:640px){
+      .ws-switcher{font-size:12px;padding:6px 8px}
+      #ws-dropdown{min-width:200px !important}
+    }
+    .ws-switcher:hover{border-color:var(--accent) !important}
+  `;
+  document.head.appendChild(css);
+
+  // Expose
+  Object.assign(window.U, {
+    openInviteModal, openTeamModal, openProfileModal,
+    promptNewWorkspace, switchWorkspace,
+    currentWorkspace
+  });
+  console.log('[Underrated] Workspaces v3.0 loaded');
 })();
 </script>
 </body>
