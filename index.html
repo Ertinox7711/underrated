@@ -3955,14 +3955,72 @@ document.getElementById('modal-overlay').onclick = (e) => { if (e.target.id==='m
 document.getElementById('login-btn').onclick = login;
 document.getElementById('signup-btn').onclick = signup;
 const demoBtn = document.getElementById('demo-btn');
-if (demoBtn) demoBtn.onclick = async () => {
-  document.getElementById('email').value = 'demo@underrated.app';
-  document.getElementById('password').value = 'demo1234';
-  try { await signInWithEmailAndPassword(auth, 'demo@underrated.app', 'demo1234'); }
-  catch(e) {
-    try { await createUserWithEmailAndPassword(auth, 'demo@underrated.app', 'demo1234'); }
-    catch(e2) { showLoginError(e2.message); }
+if (demoBtn) demoBtn.onclick = () => {
+  // Local demo — no Firebase, seeded content from design
+  state.user = { email: 'demo@underrated.app', id: 'demo-local' };
+  state.profile = { avatar:'', displayName:'demo', email:'demo@underrated.app', createdAt:Date.now() };
+  const wsId = 'ws_demo';
+  state.workspaces = [{ id: wsId, name:'Personnel', icon:'', ownerId:'demo-local', members:[{uid:'demo-local',email:'demo@underrated.app',role:'owner'}], createdAt:Date.now() }];
+  state.currentWorkspaceId = wsId;
+  state.folders = [];
+  const p1 = 'demo-strategie', p2 = 'demo-roadmap', p3 = 'demo-meeting';
+  const grad = (typeof COVER_GRADIENTS !== 'undefined') ? COVER_GRADIENTS : ['linear-gradient(135deg,#fb923c,#ef4444,#a855f7)','','','linear-gradient(135deg,#3b82f6,#06b6d4)','','linear-gradient(135deg,#10b981,#3b82f6)'];
+  state.pages = [
+    {id:p1, title:'Stratégie de marque 2026', icon:'✦', parentId:null, workspaceId:wsId, cover:grad[0]||'', createdAt:Date.now()-86400000*4},
+    {id:p2, title:'Roadmap produit · Q2', icon:'◆', parentId:null, workspaceId:wsId, cover:grad[2]||grad[0]||'', createdAt:Date.now()-86400000*2},
+    {id:p3, title:'Notes — Comité de direction', icon:'❖', parentId:null, workspaceId:wsId, cover:grad[5]||grad[0]||'', createdAt:Date.now()-3600000},
+  ];
+  state.blocks = {
+    [p1]: [
+      {id:'b1', type:'h1', content:'Une nouvelle ère pour Underrated'},
+      {id:'b2', type:'p', content:"Notre vision pour les douze prochains mois s'articule autour de trois piliers : <strong>excellence du produit</strong>, <strong>profondeur éditoriale</strong> et <strong>communauté de pairs</strong>."},
+      {id:'b3', type:'h2', content:'Les trois piliers'},
+      {id:'b4', type:'bullet', content:'Produit — un éditeur premium, rapide, sans friction'},
+      {id:'b5', type:'bullet', content:'Contenu — récits longs, recherchés, signés'},
+      {id:'b6', type:'bullet', content:"Communauté — un cercle restreint d'auteurs invités"},
+      {id:'b7', type:'quote', content:"Nous ne vendons pas un outil. Nous offrons un atelier."},
+      {id:'b8', type:'h2', content:'Objectifs trimestriels'},
+      {id:'b9', type:'todo', content:"Refonte de la page d'accueil", done:true},
+      {id:'b10', type:'todo', content:'Lancement de la collection automne'},
+      {id:'b11', type:'todo', content:"Programme d'auteurs invités · 12 personnes"},
+      {id:'b12', type:'callout', emoji:'✦', content:'<strong>Note interne</strong> — ce document est partagé avec le comité éditorial uniquement.'},
+    ],
+    [p2]: [
+      {id:'b1', type:'h1', content:'Roadmap produit · Q2 2026'},
+      {id:'b2', type:'p', content:'Trois grands chantiers, livrables séquencés.'},
+      {id:'b3', type:'h3', content:'Avril'},
+      {id:'b4', type:'numbered', content:"Refonte de l'éditeur de blocs"},
+      {id:'b5', type:'numbered', content:'Système de commentaires en fil'},
+      {id:'b6', type:'h3', content:'Mai'},
+      {id:'b7', type:'numbered', content:'Vue graphique des liens entre pages'},
+      {id:'b8', type:'numbered', content:'Mode présentation'},
+      {id:'b9', type:'h3', content:'Juin'},
+      {id:'b10', type:'numbered', content:'Templates premium'},
+      {id:'b11', type:'numbered', content:'Export PDF haute qualité'},
+    ],
+    [p3]: [
+      {id:'b1', type:'h1', content:'Notes — Comité de direction'},
+      {id:'b2', type:'p', content:'<strong>Date</strong> · '+new Date().toLocaleDateString('fr-FR')+'  ·  <strong>Présents</strong> · 6'},
+      {id:'b3', type:'h2', content:'Décisions'},
+      {id:'b4', type:'bullet', content:'Validation du budget marketing Q2'},
+      {id:'b5', type:'bullet', content:"Lancement du programme d'auteurs en mai"},
+      {id:'b6', type:'h2', content:'Actions'},
+      {id:'b7', type:'todo', content:'Préparer le brief créatif (Sophie)'},
+      {id:'b8', type:'todo', content:'Sélectionner les premiers auteurs (Marc)'},
+    ],
+  };
+  state.currentPageId = p1;
+  state.recent = [p1, p3, p2];
+  state.favorites = [p1, p2, p3];
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  if (typeof showApp === 'function') {
+    try { showApp(); } catch(e){}
   }
+  if (typeof renderPages === 'function') renderPages();
+  if (typeof openPage === 'function') openPage(p1);
+  if (window.U?.refreshSidebarAvatar) window.U.refreshSidebarAvatar();
+  if (typeof refreshIcons === 'function') refreshIcons();
 };
 document.getElementById('logout-btn').onclick = logout;
 document.getElementById('add-page-btn').onclick = () => createPage();
