@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 22:50 — `c81b918`
+feat: drag pages/folders into folders + drop on root to unparent
+
 ## 03/05/2026 22:46 — `e1d26dc`
 fix: remove Drive card from page mode picker (already in sidebar nav)
 

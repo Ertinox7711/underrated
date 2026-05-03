@@ -1,8 +1,8 @@
 {
-  "commit": "e1d26dc",
-  "message": "fix: remove Drive card from page mode picker (already in sidebar nav)",
-  "commitDate": "2026-05-03T22:46:16+02:00",
-  "buildDate": "2026-05-03T20:46:29Z",
-  "buildDateFR": "03/05/2026 22:46",
+  "commit": "c81b918",
+  "message": "feat: drag pages/folders into folders + drop on root to unparent",
+  "commitDate": "2026-05-03T22:50:48+02:00",
+  "buildDate": "2026-05-03T20:50:56Z",
+  "buildDateFR": "03/05/2026 22:50",
   "branch": "main"
 }
