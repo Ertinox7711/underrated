@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 13:57 — `bc95baa`
+feat: cover picker tabs - Galerie/Importer/URL/Aleatoire (upload, paste URL, Picsum)
+
 ## 03/05/2026 08:42 — `b4af590`
 fix: buildCmdK extension reassigns module-level var (extras now show in palette)
 
