@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 22:38 — `c67f338`
+fix: strict workspace filter on pages + folders (no leak across workspaces)
+
 ## 03/05/2026 22:29 — `8944924`
 data: add import-script.js for content ingestion
 
