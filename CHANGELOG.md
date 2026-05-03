@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 01:14 — `4d5a3c2`
+design: pixel-exact CSS port from standalone-source.html
+
 ## 04/05/2026 01:04 — `a26e341`
 design: full Glass port - login hero, lux topbar, system emojis stripped
 
