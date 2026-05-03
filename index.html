@@ -3894,6 +3894,11 @@ window.U = {
   softDeletePage: softDelete
 };
 
+// Expose state/Storage/renderPages on window for import scripts and debugging
+window.state = state;
+window.Storage = Storage;
+window.renderPages = renderPages;
+
 /* ============================================================
    EXTENSIONS v2.0 — folders, settings, free APIs, cover tabs
    ============================================================ */
