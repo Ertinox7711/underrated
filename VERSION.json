@@ -1,8 +1,8 @@
 {
-  "commit": "pending",
+  "commit": "ed33497",
   "message": "feat: folder system + 6 free APIs + settings panel + bug fixes",
-  "commitDate": "2026-05-03T09:00:00+02:00",
-  "buildDate": "2026-05-03T07:00:00Z",
-  "buildDateFR": "03/05/2026 09:00",
+  "commitDate": "2026-05-03T08:14:57+02:00",
+  "buildDate": "2026-05-03T06:15:10Z",
+  "buildDateFR": "03/05/2026 08:15",
   "branch": "main"
 }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 08:15 — `ed33497`
+feat: folder system + 6 free APIs + settings panel + bug fixes
+
 ## 03/05/2026 08:03 — `709b5fd`
 feat: template preview modal+hover popover, right-click context menus on pages and blocks
 
