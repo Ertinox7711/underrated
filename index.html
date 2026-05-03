@@ -6211,11 +6211,13 @@ window.renderPages = renderPages;
         <button class="pmp-card" data-pmp="form"><div class="pmp-icon"><i data-lucide="clipboard-list" style="width:24px;height:24px"></i></div><div class="pmp-name">Formulaire</div><div class="pmp-desc">Google Forms</div></button>
         <button class="pmp-card" data-pmp="cal"><div class="pmp-icon"><i data-lucide="calendar-days" style="width:24px;height:24px"></i></div><div class="pmp-name">Calendrier</div><div class="pmp-desc">Events</div></button>
         <button class="pmp-card" data-pmp="drive"><div class="pmp-icon"><i data-lucide="folder-open" style="width:24px;height:24px"></i></div><div class="pmp-name">Drive</div><div class="pmp-desc">Tous les fichiers</div></button>
+        <button class="pmp-card" data-pmp="folder"><div class="pmp-icon"><i data-lucide="folder-plus" style="width:24px;height:24px"></i></div><div class="pmp-name">Dossier</div><div class="pmp-desc">Organiser tes pages</div></button>
       </div>`;
     showModal(html,'480px');
     document.querySelectorAll('[data-pmp]').forEach(b => b.onclick = () => {
       const t = b.dataset.pmp; closeModal();
       if (t==='drive'){ openDrive(); return; }
+      if (t==='folder'){ const n = prompt('Nom du dossier :','Nouveau dossier'); if (n && window.U.createFolder) window.U.createFolder(n, null); return; }
       const titles = {page:'Nouvelle page',doc:'Nouveau document',slides:'Nouvelle présentation',sheet:'Nouveau tableur',form:'Nouveau formulaire',cal:'Nouveau calendrier'};
       const icons = {page:'📄',doc:'📝',slides:'🎬',sheet:'📊',form:'📋',cal:'📅'};
       const id = createPage(titles[t], icons[t], parentId||null);
