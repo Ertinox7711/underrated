@@ -3821,7 +3821,9 @@ window.U = {
 
   // ---- Folder tree UI in sidebar (above page-list) ----
   function ensureFolderUI(){
-    const section = document.querySelector('.sidebar-section:last-of-type'); // pages section
+    // Find the section that contains #page-list (Pages section)
+    const list = document.getElementById('page-list');
+    const section = list ? list.closest('.sidebar-section') : null;
     if (!section) return;
     let tree = document.getElementById('folder-tree');
     if (!tree) {
@@ -3976,13 +3978,14 @@ window.U = {
     const html = `
       <div class="modal-head"><div class="modal-title">⚙️ Paramètres</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
       <div class="tpl-modal-tabs" id="settings-tabs">
-        <button class="tpl-tab active" data-tab="keys">Clés API</button>
-        <button class="tpl-tab" data-tab="appearance">Apparence</button>
+        <button class="tpl-tab active" data-tab="appearance">Apparence</button>
         <button class="tpl-tab" data-tab="account">Compte</button>
+        <button class="tpl-tab" data-tab="keys">Avancé (optionnel)</button>
       </div>
       <div id="settings-body">
-        <div data-tab-body="keys">
-          <div style="font-size:13px;color:var(--text-2);margin-bottom:14px">Toutes les clés sont stockées localement (localStorage).</div>
+        <div data-tab-body="keys" style="display:none">
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:8px">✅ <strong>Tout fonctionne sans clés.</strong> Cette section est optionnelle — elle débloque juste des features étendues (search Unsplash, AI réelle, GIFs).</div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:14px">Stockage local uniquement (localStorage).</div>
           <div class="prop-row">
             <div class="prop-label">UNSPLASH ACCESS KEY ${tag(k.unsplash)}</div>
             <input class="prop-input" id="key-unsplash" placeholder="ton Unsplash access key" value="${escapeHtml(k.unsplash||'')}">
@@ -4000,7 +4003,7 @@ window.U = {
           </div>
           <button class="btn" id="save-keys" style="margin-top:8px">Enregistrer</button>
         </div>
-        <div data-tab-body="appearance" style="display:none">
+        <div data-tab-body="appearance">
           <div class="prop-row">
             <div class="prop-label">THÈME</div>
             <div style="display:flex;gap:8px">
