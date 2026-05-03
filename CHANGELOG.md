@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 07:57 — `6138ac2`
+fix: move FAB above version badge to avoid overlap
+
 ## 03/05/2026 07:52 — `0deb423`
 fix: page icon properly overlaps cover banner like Notion
 
