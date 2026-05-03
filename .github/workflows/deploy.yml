@@ -1,0 +1,87 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate VERSION.json
+        run: |
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          COMMIT_DATE=$(git log -1 --pretty=%cI)
+          BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          BUILD_DATE_FR=$(TZ='Europe/Paris' date +"%d/%m/%Y %H:%M")
+          cat > VERSION.json <<EOF
+          {
+            "commit": "$COMMIT_SHA",
+            "message": "$COMMIT_MSG",
+            "commitDate": "$COMMIT_DATE",
+            "buildDate": "$BUILD_DATE",
+            "buildDateFR": "$BUILD_DATE_FR",
+            "branch": "main"
+          }
+          EOF
+          cat VERSION.json
+
+      - name: Append to CHANGELOG.md
+        run: |
+          BUILD_DATE_FR=$(TZ='Europe/Paris' date +"%d/%m/%Y %H:%M")
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          if [ ! -f CHANGELOG.md ]; then
+            echo "# Changelog" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+          fi
+          # Prepend new entry below the title
+          TMP=$(mktemp)
+          head -2 CHANGELOG.md > "$TMP"
+          echo "## $BUILD_DATE_FR — \`$COMMIT_SHA\`" >> "$TMP"
+          echo "$COMMIT_MSG" >> "$TMP"
+          echo "" >> "$TMP"
+          tail -n +3 CHANGELOG.md >> "$TMP"
+          mv "$TMP" CHANGELOG.md
+
+      - name: Commit VERSION + CHANGELOG back
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add VERSION.json CHANGELOG.md
+          git diff --staged --quiet || git commit -m "chore: update VERSION + CHANGELOG [skip ci]"
+          git push || true
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
