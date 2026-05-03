@@ -4687,9 +4687,11 @@ window.U = {
       if (sidebar) sidebar.insertBefore(bar, header);
     }
     const ws = currentWorkspace();
-    bar.innerHTML = `<span style="font-size:16px">${ws?ws.icon||'📁':'📁'}</span>
+    const wsIcon = ws && ws.icon && ws.icon !== '📁' ? `<span style="font-size:16px">${ws.icon}</span>` : svgIcon('folder', 16);
+    bar.innerHTML = `${wsIcon}
       <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600">${escapeHtml(ws?ws.name:'Espace')}</span>
-      <span style="color:var(--text-3);font-size:10px">▾</span>`;
+      ${svgIcon('chevron-down', 14)}`;
+    refreshIcons();
 
     // Make avatar clickable to open profile
     const av = document.getElementById('user-avatar');
@@ -4708,12 +4710,15 @@ window.U = {
     dd.id = 'ws-dropdown';
     dd.className = 'ctx-menu show';
     dd.style.cssText = 'position:fixed;display:block;z-index:1300;min-width:240px';
-    const list = (state.workspaces||[]).map(w => `
-      <div class="ctx-item" data-ws="${w.id}" style="display:flex;align-items:center;gap:8px;padding:8px 12px">
-        <span style="font-size:16px">${w.icon||'📁'}</span>
+    const list = (state.workspaces||[]).map(w => {
+      const ic = w.icon && w.icon !== '📁' ? `<span style="font-size:16px">${w.icon}</span>` : svgIcon('folder', 16);
+      const check = w.id===state.currentWorkspaceId ? svgIcon('check', 14) : '';
+      return `<div class="ctx-item" data-ws="${w.id}" style="display:flex;align-items:center;gap:8px;padding:8px 12px">
+        ${ic}
         <span style="flex:1">${escapeHtml(w.name)}</span>
-        ${w.id===state.currentWorkspaceId?'<span style="color:var(--accent)">✓</span>':''}
-      </div>`).join('');
+        <span style="color:var(--accent)">${check}</span>
+      </div>`;
+    }).join('');
     dd.innerHTML = list + `
       <div style="border-top:1px solid var(--border);margin:4px 0"></div>
       <div class="ctx-item" data-ws-act="new" style="padding:8px 12px"><span class="ctx-icon">${svgIcon('plus')}</span><span>Nouvel espace</span></div>
@@ -4790,13 +4795,13 @@ window.U = {
         <input class="prop-input" id="inv-link" readonly value="${escapeHtml(url)}" style="font-family:monospace;font-size:12px">
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
-        <button class="btn" id="inv-copy" style="flex:1;min-width:140px">📋 Copier le lien</button>
-        <button class="btn-ghost" id="inv-mail" style="flex:1;min-width:140px;padding:10px;border:1px solid var(--border);border-radius:8px">✉️ Partager par email</button>
+        <button class="btn" id="inv-copy" style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px">${svgIcon('clipboard-copy',16)} Copier le lien</button>
+        <button class="btn-ghost" id="inv-mail" style="flex:1;min-width:140px;padding:10px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;gap:6px">${svgIcon('mail',16)} Partager par email</button>
       </div>
       <div style="margin:14px 0;text-align:center">
-        <canvas id="inv-qr" style="background:#fff;border-radius:10px;padding:10px;max-width:200px"></canvas>
+        <img id="inv-qr" alt="QR code" style="background:#fff;border-radius:10px;padding:10px;max-width:200px;width:200px;height:200px;object-fit:contain">
       </div>
-      <div style="font-size:11px;color:var(--text-3);text-align:center">Lien expire dans : <strong>Jamais</strong></div>
+      <div style="font-size:11px;color:var(--text-3);text-align:center">Lien public · Toute personne avec ce lien peut rejoindre l'espace</div>
     `;
     showModal(html, '480px');
     const inp = document.getElementById('inv-link');
@@ -4812,15 +4817,17 @@ window.U = {
       const body = encodeURIComponent(`Salut !\n\nJe t'invite à rejoindre mon espace « ${ws.name} » sur Underrated.\n\nClique pour rejoindre : ${url}\n\nÀ bientôt !`);
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
     };
-    // Render QR
+    // Render QR via toDataURL → img (more reliable)
     setTimeout(() => {
       try {
-        const canvas = document.getElementById('inv-qr');
-        if (window.QRCode && canvas) {
-          window.QRCode.toCanvas(canvas, url, { width: 200, margin: 1 }, function(err){
-            if (err) console.error(err);
+        const img = document.getElementById('inv-qr');
+        if (window.QRCode && img) {
+          window.QRCode.toDataURL(url, { width: 200, margin: 1, color: { dark:'#0a0a0a', light:'#ffffff' } }, function(err, dataUrl){
+            if (err) { console.error('qr err', err); img.alt='QR error'; return; }
+            img.src = dataUrl;
           });
         }
+        refreshIcons();
       } catch(e){ console.error('qr', e); }
     }, 50);
   }
@@ -4990,8 +4997,8 @@ window.U = {
     const html = `
       <div class="modal-head"><div class="modal-title">${svgIcon('user',18)} Profil</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
       <div style="text-align:center;margin-bottom:18px">
-        <div id="prof-avatar" style="width:80px;height:80px;font-size:42px;background:var(--accent-soft);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;cursor:pointer;border:2px solid var(--accent)" title="Cliquer pour changer">${escapeHtml(p.avatar||'👤')}</div>
-        <div style="font-size:11px;color:var(--text-3)">Cliquer sur l'avatar pour le changer</div>
+        <div id="prof-avatar" style="width:80px;height:80px;font-size:42px;background:var(--accent-soft);color:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;cursor:pointer;border:2px solid var(--accent)" title="Cliquer pour changer">${p.avatar && p.avatar !== '👤' ? escapeHtml(p.avatar) : svgIcon('user', 42)}</div>
+        <div style="font-size:11px;color:var(--text-3)">Cliquer pour changer (emoji)</div>
       </div>
       <div class="prop-row">
         <div class="prop-label">NOM AFFICHÉ</div>
@@ -5041,8 +5048,12 @@ window.U = {
     if (!p) return;
     const av = document.getElementById('user-avatar');
     if (av) {
-      // If avatar is an emoji (single grapheme), show it; else show initials
-      av.textContent = p.avatar && p.avatar.length<=4 ? p.avatar : (p.displayName||'?').substring(0,2).toUpperCase();
+      // Show user-set emoji, else initials (no default emoji)
+      if (p.avatar && p.avatar !== '👤' && p.avatar.length<=4) {
+        av.textContent = p.avatar;
+      } else {
+        av.textContent = (p.displayName || (state.user && state.user.email) || '?').substring(0,2).toUpperCase();
+      }
     }
     const un = document.getElementById('user-name');
     if (un && p.displayName) un.textContent = p.displayName;
