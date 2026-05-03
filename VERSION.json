@@ -1,8 +1,8 @@
 {
-  "commit": "2bc2c32",
-  "message": "fix: folder UI selector - use page-list closest section instead of broken :last-of-type",
-  "commitDate": "2026-05-03T08:21:59+02:00",
-  "buildDate": "2026-05-03T06:22:08Z",
-  "buildDateFR": "03/05/2026 08:22",
+  "commit": "fdac463",
+  "message": "fix: remove blocking confirm() on softDelete + folder delete (restorable from trash)",
+  "commitDate": "2026-05-03T08:30:11+02:00",
+  "buildDate": "2026-05-03T06:30:20Z",
+  "buildDateFR": "03/05/2026 08:30",
   "branch": "main"
 }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 08:30 — `fdac463`
+fix: remove blocking confirm() on softDelete + folder delete (restorable from trash)
+
 ## 03/05/2026 08:22 — `2bc2c32`
 fix: folder UI selector - use page-list closest section instead of broken :last-of-type
 
