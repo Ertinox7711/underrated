@@ -1393,6 +1393,7 @@ function toggleExpanded(id, e) {
 function buildPageTree() {
   const byParent = {};
   state.pages.forEach(p => {
+    if (p.deleted) return;
     const k = p.parentId || 'root';
     (byParent[k] = byParent[k] || []).push(p);
   });
@@ -1406,6 +1407,7 @@ function renderPages() {
     // flat search across pages and content
     const results = [];
     state.pages.forEach(p => {
+      if (p.deleted) return;
       const inTitle = p.title.toLowerCase().includes(search);
       const blocks = state.blocks[p.id] || [];
       const inBody = blocks.some(b => (b.content||'').toLowerCase().includes(search));
