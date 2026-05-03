@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 16:04 — `1eccdf3`
+feat: workspaces + invite link + team mgmt + profile + folder confirmed
+
 ## 03/05/2026 15:55 — `26b3fe9`
 feat: Notion-like cover picker - 24 colors + 20 gradients + 12 textures + Unsplash search (no key needed) + Supprimer
 
