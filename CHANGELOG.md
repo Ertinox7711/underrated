@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 08:00 — `7fd13ed`
+feat: detect OS, show Ctrl+ on Windows instead of mac symbol
+
 ## 03/05/2026 07:57 — `6138ac2`
 fix: move FAB above version badge to avoid overlap
 
