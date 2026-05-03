@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 08:40 — `0bca77e`
+fix: remove duplicate Templates sidebar button + use MOD constant in seed content
+
 ## 03/05/2026 08:36 — `7dce985`
 fix: buildPageTree + search filter out deleted pages (so trash actually hides them)
 
