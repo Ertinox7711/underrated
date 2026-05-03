@@ -6273,24 +6273,8 @@ window.U = {
 })();
 
 // ============ LUCIDE ICON REFRESH HOOKS ============
-document.addEventListener('DOMContentLoaded', refreshIcons);
-window.addEventListener('load', () => { refreshIcons(); setTimeout(refreshIcons, 200); setTimeout(refreshIcons, 800); });
-// MutationObserver: refresh icons whenever new [data-lucide] nodes appear
-(function(){
-  const obs = new MutationObserver((muts) => {
-    let needs = false;
-    for (const m of muts) {
-      for (const n of m.addedNodes) {
-        if (n.nodeType !== 1) continue;
-        if (n.matches?.('[data-lucide]') || n.querySelector?.('[data-lucide]')) { needs = true; break; }
-      }
-      if (needs) break;
-    }
-    if (needs) refreshIcons();
-  });
-  const start = () => obs.observe(document.body, { childList:true, subtree:true });
-  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
-})();
+// Simple: hydrate once on load, then again after auth state settles. Specific renders also call refreshIcons.
+window.addEventListener('load', () => { refreshIcons(); setTimeout(refreshIcons, 500); });
 </script>
 </body>
 </html>
