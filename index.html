@@ -1992,6 +1992,17 @@ const MOD = IS_MAC ? '⌘' : 'Ctrl+';
 function svgIcon(name, size=16) { return `<i data-lucide="${name}" style="width:${size}px;height:${size}px"></i>`; }
 function refreshIcons() { try { if (window.lucide) window.lucide.createIcons(); } catch(e){} }
 // Inline SVG helper (matches design Glass) — used where Lucide refresh isn't reliable (page-meta, breadcrumb, default icons)
+// Detect any pictograph/emoji
+window.__isEmoji = function(s){ if (!s) return false; try { return /\p{Extended_Pictographic}/u.test(s); } catch(e) { return /[\u{1F300}-\u{1FAFF}\u{1F000}-\u{1F2FF}\u{2600}-\u{27BF}]/u.test(s); } };
+// Smart render of stored icons: if user-set value is emoji, fall back to SVG; else keep (text/symbol/inline svg)
+window.__renderIcon = function(stored, type, sz){
+  sz = sz || 16;
+  type = type || 'page';
+  if (!stored) return window.__svg(type, sz);
+  if (typeof stored === 'string' && stored.startsWith('<svg')) return stored;
+  if (window.__isEmoji(stored)) return window.__svg(type, sz);
+  return stored;
+};
 window.__svg = function(name, sz){
   sz = sz || 16;
   const map = {
@@ -2315,7 +2326,7 @@ function renderPages() {
     list.innerHTML = results.map(({p,hit}) => `
       <div class="page-item ${p.id===state.currentPageId?'active':''}" data-id="${p.id}">
         <span style="width:18px"></span>
-        <span class="page-icon">${p.icon||window.__svg('page')}</span>
+        <span class="page-icon">${window.__renderIcon(p.icon, 'page')}</span>
         <span class="page-name">${escapeHtml(p.title||'Sans titre')}${hit==='body'?' <span style="color:var(--text-3);font-size:11px">(contenu)</span>':''}</span>
       </div>
     `).join('') || '<div style="padding:12px;color:var(--text-3);font-size:13px;text-align:center">Aucun résultat</div>';
@@ -2335,7 +2346,7 @@ function renderTree(tree, parent) {
     return `
       <div class="page-item ${p.id===state.currentPageId?'active':''}" data-id="${p.id}" draggable="true">
         <span class="page-toggle ${children.length?'':'empty'} ${expanded?'expanded':''}" data-toggle="${p.id}">▶</span>
-        <span class="page-icon">${p.icon||window.__svg('page')}</span>
+        <span class="page-icon">${window.__renderIcon(p.icon, 'page')}</span>
         <span class="page-name">${escapeHtml(p.title||'Sans titre')}</span>
         <div class="page-actions">
           <button data-add="${p.id}" title="Sous-page">
@@ -2473,7 +2484,7 @@ function renderEditor() {
       </div>
     </div>
     <div class="editor-content">
-      <div class="page-icon-big" id="page-icon-big">${page.icon||'📄'}</div>
+      <div class="page-icon-big" id="page-icon-big">${window.__renderIcon(page.icon, 'page', 60)}</div>
       <textarea class="page-title" id="page-title" rows="1" placeholder="Sans titre">${escapeHtml(page.title||'')}</textarea>
       <div class="page-meta">
         <span>${window.__svg('cal')} ${new Date(page.createdAt||Date.now()).toLocaleDateString('fr-FR')}</span>
@@ -2499,7 +2510,7 @@ function renderBreadcrumb(page) {
     chain.unshift(cur);
     cur = cur.parentId ? state.pages.find(p => p.id===cur.parentId) : null;
   }
-  return chain.map((p,i) => `<span class="breadcrumb-icon">${p.icon||window.__svg('page')}</span><span style="cursor:pointer" data-bc="${p.id}">${escapeHtml(p.title||'Sans titre')}</span>${i<chain.length-1?' <span style="color:var(--text-3)">/</span> ':''}`).join('');
+  return chain.map((p,i) => `<span class="breadcrumb-icon">${window.__renderIcon(p.icon, 'page')}</span><span style="cursor:pointer" data-bc="${p.id}">${escapeHtml(p.title||'Sans titre')}</span>${i<chain.length-1?' <span style="color:var(--text-3)">/</span> ':''}`).join('');
 }
 
 function renderBlock(block) {
@@ -3393,7 +3404,7 @@ function showMentionMenu(target) {
   menu.style.top = (r.bottom + window.scrollY + 4) + 'px';
   menu.style.left = (r.left + window.scrollX) + 'px';
   if (!mentionResults.length) { hideMentionMenu(); return; }
-  menu.innerHTML = mentionResults.map((p,i) => `<div class="mention-item ${i===0?'active':''}" data-mid="${p.id}" data-i="${i}"><span>${p.icon||window.__svg('page')}</span><span>${escapeHtml(p.title)}</span></div>`).join('');
+  menu.innerHTML = mentionResults.map((p,i) => `<div class="mention-item ${i===0?'active':''}" data-mid="${p.id}" data-i="${i}"><span>${window.__renderIcon(p.icon, 'page')}</span><span>${escapeHtml(p.title)}</span></div>`).join('');
   menu.classList.add('show');
   menu.querySelectorAll('.mention-item').forEach(it => {
     it.onclick = () => applyMention(it.dataset.mid);
@@ -3435,7 +3446,7 @@ function renderBacklinks() {
   const el = document.getElementById('backlinks');
   if (!el) return;
   if (!links.length) { el.innerHTML = ''; return; }
-  el.innerHTML = `<div class="backlinks"><h3>↩ Liens entrants (${links.length})</h3>${links.map(p => `<div class="backlink-item" data-bl="${p.id}"><span>${p.icon||window.__svg('page')}</span><span>${escapeHtml(p.title)}</span></div>`).join('')}</div>`;
+  el.innerHTML = `<div class="backlinks"><h3>↩ Liens entrants (${links.length})</h3>${links.map(p => `<div class="backlink-item" data-bl="${p.id}"><span>${window.__renderIcon(p.icon, 'page')}</span><span>${escapeHtml(p.title)}</span></div>`).join('')}</div>`;
   el.querySelectorAll('[data-bl]').forEach(b => b.onclick = () => openPage(b.dataset.bl));
 }
 
@@ -3456,7 +3467,7 @@ function buildCmdK(q) {
   // Pages
   state.pages.forEach(p => {
     if (!ql || p.title.toLowerCase().includes(ql)) {
-      items.push({ cat:'Pages', icon:p.icon||'📄', name:p.title, action:()=>{ closeCmdK(); openPage(p.id); } });
+      items.push({ cat:'Pages', icon:window.__renderIcon(p.icon, 'page', 14), name:p.title, action:()=>{ closeCmdK(); openPage(p.id); } });
     }
   });
   // Quick actions
@@ -4229,7 +4240,7 @@ function renderFavorites() {
   const favs = favIds.map(id => state.pages.find(p => p.id===id && !p.deleted)).filter(Boolean);
   if (!favs.length) { sec.style.display = 'none'; return; }
   sec.style.display = '';
-  list.innerHTML = favs.map(p => `<div class="page-item" data-favid="${p.id}"><span class="page-icon">${p.icon||window.__svg('page')}</span><span class="page-name">${escapeHtml(p.title||'Sans titre')}</span></div>`).join('');
+  list.innerHTML = favs.map(p => `<div class="page-item" data-favid="${p.id}"><span class="page-icon">${window.__renderIcon(p.icon, 'page')}</span><span class="page-name">${escapeHtml(p.title||'Sans titre')}</span></div>`).join('');
   list.querySelectorAll('[data-favid]').forEach(el => el.onclick = () => openPage(el.dataset.favid));
 }
 // ============ RECENT PAGES ============
@@ -4246,7 +4257,7 @@ function renderRecent() {
   const rec = (state.recent||[]).map(id => state.pages.find(p => p.id===id && !p.deleted)).filter(Boolean);
   if (!rec.length) { sec.style.display = 'none'; return; }
   sec.style.display = '';
-  list.innerHTML = rec.map(p => `<div class="page-item" data-recid="${p.id}"><span class="page-icon">${p.icon||window.__svg('page')}</span><span class="page-name">${escapeHtml(p.title||'Sans titre')}</span></div>`).join('');
+  list.innerHTML = rec.map(p => `<div class="page-item" data-recid="${p.id}"><span class="page-icon">${window.__renderIcon(p.icon, 'page')}</span><span class="page-name">${escapeHtml(p.title||'Sans titre')}</span></div>`).join('');
   list.querySelectorAll('[data-recid]').forEach(el => el.onclick = () => openPage(el.dataset.recid));
 }
 
@@ -4272,7 +4283,7 @@ function showTrash() {
     <div style="max-height:60vh;overflow-y:auto">
       ${trashed.length ? trashed.map(p => `
         <div style="display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid var(--border)">
-          <span style="font-size:18px">${p.icon||window.__svg('page')}</span>
+          <span style="font-size:18px">${window.__renderIcon(p.icon, 'page')}</span>
           <span style="flex:1">${escapeHtml(p.title||'Sans titre')}</span>
           <span style="font-size:11px;color:var(--text-3)">${new Date(p.deletedAt||0).toLocaleDateString('fr-FR')}</span>
           <button data-restore="${p.id}" style="background:var(--bg-3);padding:5px 10px;border-radius:5px;font-size:12px">Restaurer</button>
@@ -5050,14 +5061,14 @@ window.renderPages = renderPages;
       const hasChildren = subs.length || pgs.length;
       let html = `<div class="folder-item" data-fid="${folder.id}" style="display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:14px;margin-left:${depth*10}px;user-select:none">
         <span class="folder-toggle" data-ftog="${folder.id}" style="display:inline-flex;width:16px;font-size:10px;color:var(--text-3)">${hasChildren?(expanded?'▼':'▶'):' '}</span>
-        <span style="font-size:14px">📁</span>
+        ${window.__svg('folder', 14)}
         <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(folder.name)}</span>
       </div>`;
       if (expanded) {
         subs.forEach(sub => { html += renderNode(sub, depth+1); });
         pgs.forEach(p => {
           html += `<div class="page-item" data-id="${p.id}" data-page-id="${p.id}" style="margin-left:${(depth+1)*10+8}px">
-            <span class="page-icon">${p.icon||window.__svg('page')}</span>
+            <span class="page-icon">${window.__renderIcon(p.icon, 'page')}</span>
             <span class="page-name">${escapeHtml(p.title||'Sans titre')}</span>
           </div>`;
         });
@@ -5790,7 +5801,7 @@ window.renderPages = renderPages;
       if (sidebar) sidebar.insertBefore(bar, header);
     }
     const ws = currentWorkspace();
-    const wsIcon = ws && ws.icon && ws.icon !== '📁' ? `<span style="font-size:16px">${ws.icon}</span>` : svgIcon('folder', 16);
+    const wsIcon = ws ? (window.__isEmoji(ws.icon) || !ws.icon ? svgIcon('folder', 16) : `<span style="font-size:16px">${ws.icon}</span>`) : svgIcon('folder', 16);
     bar.innerHTML = `${wsIcon}
       <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600">${escapeHtml(ws?ws.name:'Espace')}</span>
       ${svgIcon('chevron-down', 14)}`;
@@ -5814,7 +5825,7 @@ window.renderPages = renderPages;
     dd.className = 'ctx-menu show';
     dd.style.cssText = 'position:fixed;display:block;z-index:1300;min-width:240px';
     const list = (state.workspaces||[]).map(w => {
-      const ic = w.icon && w.icon !== '📁' ? `<span style="font-size:16px">${w.icon}</span>` : svgIcon('folder', 16);
+      const ic = window.__isEmoji(w.icon) || !w.icon ? svgIcon('folder', 16) : `<span style="font-size:16px">${w.icon}</span>`;
       const check = w.id===state.currentWorkspaceId ? svgIcon('check', 14) : '';
       return `<div class="ctx-item" data-ws="${w.id}" style="display:flex;align-items:center;gap:8px;padding:8px 12px">
         ${ic}
