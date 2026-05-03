@@ -318,6 +318,8 @@ code.inline{background:var(--bg-3);border:1px solid var(--border);padding:1px 5p
 }
 .quick-item:hover{background:var(--bg-hover);color:var(--text)}
 .quick-item svg{width:15px;height:15px;flex-shrink:0}
+.quick-item [data-lucide]{width:15px;height:15px;flex-shrink:0}
+#app.drag-over::after{content:'📥 Lâcher pour uploader';position:fixed;inset:20px;border:3px dashed var(--accent);border-radius:16px;background:rgba(251,146,60,.15);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--accent);font-weight:700;z-index:9999;pointer-events:none;backdrop-filter:blur(4px)}
 .quick-item .kbd{margin-left:auto;font-size:10px;color:var(--text-3);background:var(--bg-3);padding:1px 6px;border-radius:4px}
 
 .sidebar-section{padding:10px 8px;flex:1;overflow-y:auto;min-height:100px}
@@ -931,6 +933,10 @@ body.focus-mode .editor-content{max-width:820px}
         <div class="quick-item" id="qi-pomo">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <span>Pomodoro</span>
+        </div>
+        <div class="quick-item" id="qi-drive">
+          <i data-lucide="folder-open"></i>
+          <span>Drive</span>
         </div>
         <div class="quick-item" id="qi-shortcuts">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -3069,6 +3075,41 @@ document.getElementById('cmdk-overlay').onclick = (e) => { if (e.target.id==='cm
 document.getElementById('qi-daily').onclick = dailyNote;
 document.getElementById('qi-graph').onclick = showGraph;
 document.getElementById('qi-templates').onclick = showTemplates;
+const qiDrive = document.getElementById('qi-drive');
+if (qiDrive) qiDrive.onclick = () => { if (window.U.openDrive) window.U.openDrive(); };
+
+// Global drag-drop: any file dropped anywhere on app uploads to current page (or Drive if no page open)
+(function setupGlobalDrop(){
+  const app = document.getElementById('app');
+  if (!app) return;
+  let depth = 0;
+  app.addEventListener('dragenter', e => { if (e.dataTransfer?.types?.includes('Files')) { e.preventDefault(); depth++; app.classList.add('drag-over'); } });
+  app.addEventListener('dragover', e => { if (e.dataTransfer?.types?.includes('Files')) e.preventDefault(); });
+  app.addEventListener('dragleave', e => { depth--; if (depth<=0) { depth=0; app.classList.remove('drag-over'); } });
+  app.addEventListener('drop', e => {
+    if (!e.dataTransfer?.files?.length) return;
+    e.preventDefault(); depth = 0; app.classList.remove('drag-over');
+    [...e.dataTransfer.files].forEach(f => {
+      if (f.size > 5*1024*1024) return toast('Trop gros: '+f.name, 'error');
+      const r = new FileReader();
+      r.onload = () => {
+        const pid = state.currentPageId;
+        if (pid && pid !== '__drive__' && state.blocks[pid]) {
+          state.blocks[pid].push({ id:'b_'+Date.now()+Math.random().toString(36).slice(2,5), type:'file', fileName:f.name, fileSize:f.size, fileData:r.result });
+          Storage.save(); renderEditor(); toast('Fichier ajouté');
+        } else {
+          let drivePage = state.pages.find(p => p.title==='📂 Mes fichiers');
+          if (!drivePage) { const id = createPage('📂 Mes fichiers','📂',null); drivePage = state.pages.find(p=>p.id===id); }
+          state.blocks[drivePage.id] = state.blocks[drivePage.id]||[];
+          state.blocks[drivePage.id].push({ id:'b_'+Date.now()+Math.random().toString(36).slice(2,5), type:'file', fileName:f.name, fileSize:f.size, fileData:r.result });
+          Storage.save();
+          if (window.U.openDrive) window.U.openDrive();
+        }
+      };
+      r.readAsDataURL(f);
+    });
+  });
+})();
 document.getElementById('qi-pomo').onclick = togglePomo;
 document.getElementById('qi-shortcuts').onclick = showShortcuts;
 document.getElementById('export-btn').onclick = exportMarkdown;
