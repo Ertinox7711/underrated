@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 01:04 — `a26e341`
+design: full Glass port - login hero, lux topbar, system emojis stripped
+
 ## 04/05/2026 00:47 — `636aa9c`
 design: Glass theme - CSS tokens + component polish (layout preserved)
 
