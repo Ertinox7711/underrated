@@ -350,6 +350,12 @@ code.inline{background:var(--bg-3);border:1px solid var(--border);padding:1px 5p
 .page-item.active{background:var(--accent-soft);color:var(--accent)}
 .page-item.dragging{opacity:.4}
 .page-item.drag-over{box-shadow:inset 0 -2px 0 var(--accent)}
+.dnd-into{background:rgba(251,146,60,.18) !important;outline:2px solid var(--accent);outline-offset:-2px;border-radius:6px}
+.dnd-before{box-shadow:inset 0 2px 0 0 var(--accent),0 -2px 0 0 var(--accent) !important;position:relative}
+.dnd-before::before{content:'';position:absolute;left:0;right:0;top:-2px;height:3px;background:var(--accent);border-radius:2px;z-index:10}
+.dnd-after{position:relative}
+.dnd-after::after{content:'';position:absolute;left:0;right:0;bottom:-2px;height:3px;background:var(--accent);border-radius:2px;z-index:10}
+.dragging{opacity:.4}
 .page-toggle{
   width:18px;height:18px;display:flex;align-items:center;justify-content:center;
   color:var(--text-3);font-size:9px;border-radius:3px;flex-shrink:0;
@@ -1471,23 +1477,40 @@ function bindPageItems() {
       openPage(el.dataset.id);
     };
     el.ondragstart = (e) => { e.dataTransfer.setData('page', el.dataset.id); el.classList.add('dragging'); };
-    el.ondragend = () => el.classList.remove('dragging');
-    el.ondragover = (e) => { e.preventDefault(); el.classList.add('drag-over'); };
-    el.ondragleave = () => el.classList.remove('drag-over');
+    el.ondragend = () => { el.classList.remove('dragging'); document.querySelectorAll('.dnd-into,.dnd-before,.dnd-after').forEach(x=>x.classList.remove('dnd-into','dnd-before','dnd-after')); };
+    el.ondragover = (e) => {
+      e.preventDefault();
+      document.querySelectorAll('.dnd-into,.dnd-before,.dnd-after').forEach(x=>x.classList.remove('dnd-into','dnd-before','dnd-after'));
+      const r = el.getBoundingClientRect();
+      const y = e.clientY - r.top, h = r.height;
+      const pos = y < h*0.25 ? 'before' : y > h*0.75 ? 'after' : 'into';
+      el.classList.add(pos === 'before' ? 'dnd-before' : pos === 'after' ? 'dnd-after' : 'dnd-into');
+    };
+    el.ondragleave = () => el.classList.remove('dnd-into','dnd-before','dnd-after');
     el.ondrop = (e) => {
-      e.preventDefault(); el.classList.remove('drag-over');
+      e.preventDefault();
+      const r = el.getBoundingClientRect();
+      const y = e.clientY - r.top, h = r.height;
+      const pos = y < h*0.25 ? 'before' : y > h*0.75 ? 'after' : 'into';
+      document.querySelectorAll('.dnd-into,.dnd-before,.dnd-after').forEach(x=>x.classList.remove('dnd-into','dnd-before','dnd-after'));
       const draggedId = e.dataTransfer.getData('page');
       if (!draggedId || draggedId === el.dataset.id) return;
-      // prevent making page a child of own descendant
       const dragPage = state.pages.find(p => p.id === draggedId);
-      let cur = el.dataset.id, safe = true, hops=0;
-      while (cur && hops++ < 50) {
-        if (cur === draggedId) { safe=false; break; }
-        cur = state.pages.find(p => p.id === cur)?.parentId;
+      if (!dragPage) return;
+      if (pos === 'into') {
+        // nest under
+        let cur = el.dataset.id, safe = true, hops=0;
+        while (cur && hops++ < 50) { if (cur === draggedId) { safe=false; break; } cur = state.pages.find(p => p.id === cur)?.parentId; }
+        if (!safe) return toast('Cycle interdit', 'error');
+        dragPage.parentId = el.dataset.id;
+        dragPage.folderId = state.pages.find(p => p.id === el.dataset.id)?.folderId || null;
+        state.expanded[el.dataset.id] = true;
+      } else {
+        // sibling
+        const target = state.pages.find(p => p.id === el.dataset.id);
+        dragPage.parentId = target?.parentId || null;
+        dragPage.folderId = target?.folderId || null;
       }
-      if (!safe) return toast('Cycle interdit', 'error');
-      dragPage.parentId = el.dataset.id;
-      state.expanded[el.dataset.id] = true;
       Storage.save(); renderPages();
     };
   });
@@ -4108,28 +4131,51 @@ window.renderPages = renderPages;
       el.ondragstart = (e) => { e.dataTransfer.setData('page', el.dataset.id); el.classList.add('dragging'); };
       el.ondragend = () => el.classList.remove('dragging');
     });
+    // Helper: get drop position (top/middle/bottom) based on mouse Y
+    function _dropPos(e, el){
+      const r = el.getBoundingClientRect();
+      const y = e.clientY - r.top;
+      const h = r.height;
+      if (y < h * 0.25) return 'before';
+      if (y > h * 0.75) return 'after';
+      return 'into';
+    }
+    function _clearDnd(){ document.querySelectorAll('.dnd-into,.dnd-before,.dnd-after').forEach(x => x.classList.remove('dnd-into','dnd-before','dnd-after')); }
+
     // Folder drag-and-drop: accept page drops, accept folder nesting
     tree.querySelectorAll('.folder-item').forEach(el => {
       el.draggable = true;
       el.ondragstart = (e) => { e.dataTransfer.setData('folder', el.dataset.fid); el.classList.add('dragging'); e.stopPropagation(); };
-      el.ondragend = () => el.classList.remove('dragging');
-      el.ondragover = (e) => { e.preventDefault(); el.classList.add('drag-over'); };
-      el.ondragleave = () => el.classList.remove('drag-over');
+      el.ondragend = () => { el.classList.remove('dragging'); _clearDnd(); };
+      el.ondragover = (e) => {
+        e.preventDefault(); e.stopPropagation();
+        _clearDnd();
+        const pos = _dropPos(e, el);
+        el.classList.add(pos === 'before' ? 'dnd-before' : pos === 'after' ? 'dnd-after' : 'dnd-into');
+      };
+      el.ondragleave = () => { el.classList.remove('dnd-into','dnd-before','dnd-after'); };
       el.ondrop = (e) => {
-        e.preventDefault(); e.stopPropagation(); el.classList.remove('drag-over');
+        e.preventDefault(); e.stopPropagation();
+        const pos = _dropPos(e, el);
+        _clearDnd();
         const targetFid = el.dataset.fid;
         const draggedPage = e.dataTransfer.getData('page');
         const draggedFolder = e.dataTransfer.getData('folder');
         if (draggedPage) {
           const p = state.pages.find(x => x.id === draggedPage);
-          if (p) { p.folderId = targetFid; p.parentId = null; Storage.save(); renderPages(); toast('Page déplacée'); }
+          if (!p) return;
+          if (pos === 'into') { p.folderId = targetFid; p.parentId = null; }
+          else { p.folderId = state.folders.find(f => f.id === targetFid)?.parentFolderId || null; p.parentId = null; }
+          Storage.save(); renderPages(); toast(pos==='into'?'Page dans le dossier':'Page sortie du dossier');
         } else if (draggedFolder && draggedFolder !== targetFid) {
-          // prevent cycle
           let cur = targetFid, safe = true, hops = 0;
           while (cur && hops++ < 50) { if (cur === draggedFolder) { safe = false; break; } cur = state.folders.find(f => f.id === cur)?.parentFolderId; }
           if (!safe) return toast('Cycle interdit', 'error');
           const f = state.folders.find(x => x.id === draggedFolder);
-          if (f) { f.parentFolderId = targetFid; Storage.save(); renderFolderTree(); toast('Dossier déplacé'); }
+          if (!f) return;
+          if (pos === 'into') { f.parentFolderId = targetFid; }
+          else { f.parentFolderId = state.folders.find(x => x.id === targetFid)?.parentFolderId || null; }
+          Storage.save(); renderFolderTree(); toast('Dossier déplacé');
         }
       };
     });
