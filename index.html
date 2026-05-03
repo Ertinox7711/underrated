@@ -3941,9 +3941,16 @@ window.renderPages = renderPages;
 
   function fid(){ return 'f_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
   function getFolder(id){ return (state.folders||[]).find(f => f.id===id); }
-  function rootFolders(){ return (state.folders||[]).filter(f => !f.parentFolderId); }
-  function childFolders(pid){ return (state.folders||[]).filter(f => f.parentFolderId===pid); }
-  function pagesInFolder(fid){ return state.pages.filter(p => !p.deleted && p.folderId===fid); }
+  function _wsMatch(item){
+    const wsId = state.currentWorkspaceId;
+    if (!wsId) return true;
+    const fallback = (state.workspaces||[])[0]?.id;
+    const itemWs = item.workspaceId || fallback;
+    return itemWs === wsId;
+  }
+  function rootFolders(){ return (state.folders||[]).filter(f => !f.parentFolderId && _wsMatch(f)); }
+  function childFolders(pid){ return (state.folders||[]).filter(f => f.parentFolderId===pid && _wsMatch(f)); }
+  function pagesInFolder(fid){ return state.pages.filter(p => !p.deleted && p.folderId===fid && _wsMatch(p)); }
 
   function createFolder(name, parentFolderId){
     const f = { id: fid(), name: name||'Nouveau dossier', parentFolderId: parentFolderId||null, expanded: true };
@@ -4685,9 +4692,13 @@ window.renderPages = renderPages;
     const _origBPT = buildPageTree;
     buildPageTree = function(){
       const byParent = {};
+      const wsId = state.currentWorkspaceId;
+      const fallbackWs = (state.workspaces||[])[0]?.id;
       (state.pages||[]).forEach(p => {
         if (p.deleted) return;
-        if (state.currentWorkspaceId && p.workspaceId && p.workspaceId !== state.currentWorkspaceId) return;
+        // Strict filter: page workspace must match current. Untagged pages are auto-assigned to first workspace.
+        const pageWs = p.workspaceId || fallbackWs;
+        if (wsId && pageWs !== wsId) return;
         const k = p.parentId || 'root';
         (byParent[k] = byParent[k] || []).push(p);
       });
