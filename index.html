@@ -4103,7 +4103,51 @@ window.renderPages = renderPages;
     // Page click in folder → open page
     tree.querySelectorAll('.page-item').forEach(el => {
       el.onclick = () => openPage(el.dataset.id);
+      // Make pages inside folders draggable (already draggable in main page-list, but here they're re-rendered)
+      el.draggable = true;
+      el.ondragstart = (e) => { e.dataTransfer.setData('page', el.dataset.id); el.classList.add('dragging'); };
+      el.ondragend = () => el.classList.remove('dragging');
     });
+    // Folder drag-and-drop: accept page drops, accept folder nesting
+    tree.querySelectorAll('.folder-item').forEach(el => {
+      el.draggable = true;
+      el.ondragstart = (e) => { e.dataTransfer.setData('folder', el.dataset.fid); el.classList.add('dragging'); e.stopPropagation(); };
+      el.ondragend = () => el.classList.remove('dragging');
+      el.ondragover = (e) => { e.preventDefault(); el.classList.add('drag-over'); };
+      el.ondragleave = () => el.classList.remove('drag-over');
+      el.ondrop = (e) => {
+        e.preventDefault(); e.stopPropagation(); el.classList.remove('drag-over');
+        const targetFid = el.dataset.fid;
+        const draggedPage = e.dataTransfer.getData('page');
+        const draggedFolder = e.dataTransfer.getData('folder');
+        if (draggedPage) {
+          const p = state.pages.find(x => x.id === draggedPage);
+          if (p) { p.folderId = targetFid; p.parentId = null; Storage.save(); renderPages(); toast('Page déplacée'); }
+        } else if (draggedFolder && draggedFolder !== targetFid) {
+          // prevent cycle
+          let cur = targetFid, safe = true, hops = 0;
+          while (cur && hops++ < 50) { if (cur === draggedFolder) { safe = false; break; } cur = state.folders.find(f => f.id === cur)?.parentFolderId; }
+          if (!safe) return toast('Cycle interdit', 'error');
+          const f = state.folders.find(x => x.id === draggedFolder);
+          if (f) { f.parentFolderId = targetFid; Storage.save(); renderFolderTree(); toast('Dossier déplacé'); }
+        }
+      };
+    });
+    // Drop on root tree (outside any folder) → move page out of folder
+    tree.ondragover = (e) => { if (e.target === tree) e.preventDefault(); };
+    tree.ondrop = (e) => {
+      if (e.target !== tree) return;
+      e.preventDefault();
+      const draggedPage = e.dataTransfer.getData('page');
+      const draggedFolder = e.dataTransfer.getData('folder');
+      if (draggedPage) {
+        const p = state.pages.find(x => x.id === draggedPage);
+        if (p && p.folderId) { p.folderId = null; Storage.save(); renderPages(); toast('Page sortie du dossier'); }
+      } else if (draggedFolder) {
+        const f = state.folders.find(x => x.id === draggedFolder);
+        if (f && f.parentFolderId) { f.parentFolderId = null; Storage.save(); renderFolderTree(); toast('Dossier déplacé à la racine'); }
+      }
+    };
     // Hide page-list pages that are in folders
     document.querySelectorAll('#page-list .page-item').forEach(it => {
       const id = it.dataset.id;
