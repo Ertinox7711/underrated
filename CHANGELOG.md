@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 16:40 — `31569c2`
+fix: QR code via toDataURL, replace 📁 + 👤 default with SVG, clarify invite link is public
+
 ## 03/05/2026 16:33 — `40a0f3d`
 fix: remove MutationObserver loop that froze renderer on login
 
