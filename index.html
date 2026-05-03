@@ -1493,19 +1493,46 @@ function showEmpty() {
 }
 
 // ============ EDITOR ============
+const COVER_COLORS = [
+  '#ef4444','#f59e0b','#facc15','#84cc16','#10b981','#06b6d4','#3b82f6','#8b5cf6',
+  '#ec4899','#f43f5e','#fb923c','#fde68a','#a3e635','#34d399','#22d3ee','#60a5fa',
+  '#a78bfa','#f472b6','#0a0a0a','#262626','#525252','#a3a3a3','#f5f5f5','#fef3c7',
+];
 const COVER_GRADIENTS = [
   'linear-gradient(135deg,#fb923c 0%,#ef4444 50%,#a855f7 100%)',
   'linear-gradient(135deg,#3b82f6 0%,#06b6d4 100%)',
   'linear-gradient(135deg,#8b5cf6 0%,#ec4899 100%)',
   'linear-gradient(135deg,#10b981 0%,#06b6d4 50%,#3b82f6 100%)',
   'linear-gradient(135deg,#f59e0b 0%,#ef4444 100%)',
+  'linear-gradient(135deg,#fde68a 0%,#fb923c 50%,#dc2626 100%)',
+  'linear-gradient(45deg,#0f172a 0%,#1e3a8a 50%,#0c4a6e 100%)',
+  'linear-gradient(180deg,#0a0a0a 0%,#7c3aed 50%,#fb923c 100%)',
+  'linear-gradient(135deg,#667eea 0%,#764ba2 100%)',
+  'linear-gradient(135deg,#f093fb 0%,#f5576c 100%)',
+  'linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)',
+  'linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)',
+  'linear-gradient(135deg,#fa709a 0%,#fee140 100%)',
+  'linear-gradient(135deg,#30cfd0 0%,#330867 100%)',
+  'linear-gradient(135deg,#a8edea 0%,#fed6e3 100%)',
+  'linear-gradient(135deg,#ff9a9e 0%,#fecfef 100%)',
   'conic-gradient(from 180deg at 50% 50%,#fb923c,#ef4444,#a855f7,#3b82f6,#fb923c)',
+  'conic-gradient(from 90deg at 50% 50%,#10b981,#3b82f6,#8b5cf6,#10b981)',
   'radial-gradient(circle at 30% 20%,#a855f7 0%,#1e1b4b 60%)',
   'radial-gradient(circle at 70% 70%,#fb923c 0%,#7c2d12 50%,#0a0a0a 100%)',
-  'linear-gradient(45deg,#0f172a 0%,#1e3a8a 50%,#0c4a6e 100%)',
-  'linear-gradient(135deg,#fde68a 0%,#fb923c 50%,#dc2626 100%)',
-  'conic-gradient(from 90deg at 50% 50%,#10b981,#3b82f6,#8b5cf6,#10b981)',
-  'linear-gradient(180deg,#0a0a0a 0%,#7c3aed 50%,#fb923c 100%)',
+];
+const COVER_TEXTURES = [
+  'https://picsum.photos/seed/abstract1/1600/300',
+  'https://picsum.photos/seed/abstract2/1600/300',
+  'https://picsum.photos/seed/nature1/1600/300',
+  'https://picsum.photos/seed/nature2/1600/300',
+  'https://picsum.photos/seed/city1/1600/300',
+  'https://picsum.photos/seed/city2/1600/300',
+  'https://picsum.photos/seed/space1/1600/300',
+  'https://picsum.photos/seed/space2/1600/300',
+  'https://picsum.photos/seed/forest/1600/300',
+  'https://picsum.photos/seed/ocean/1600/300',
+  'https://picsum.photos/seed/desert/1600/300',
+  'https://picsum.photos/seed/mountain/1600/300',
 ];
 
 function renderEditor() {
@@ -1861,64 +1888,106 @@ function setupCover() {
 function applyCover(coverEl, value) {
   const p = currentPage(); if (!p) return;
   p.cover = value;
-  coverEl.style.background = value;
-  coverEl.style.backgroundSize = 'cover';
-  coverEl.style.backgroundPosition = 'center';
+  if (typeof value === 'string' && (value.startsWith('http') || value.startsWith('data:') || value.startsWith('url('))) {
+    coverEl.style.background = value.startsWith('url(') ? value : `url("${value}") center/cover`;
+  } else {
+    coverEl.style.background = value;
+  }
   Storage.save();
+}
+
+function clearCover(coverEl) {
+  const p = currentPage(); if (!p) return;
+  p.cover = COVER_GRADIENTS[0];
+  coverEl.style.background = COVER_GRADIENTS[0];
+  Storage.save();
+  toast('Cover réinitialisé');
 }
 
 let _coverTab = 'grad';
 function showCoverPicker(coverEl) {
   const picker = document.getElementById('cover-picker');
   const tabs = [
-    { id:'grad', label:'🎨 Galerie' },
-    { id:'upload', label:'📤 Importer' },
-    { id:'url', label:'🔗 URL' },
-    { id:'random', label:'🎲 Aléatoire' },
+    { id:'grad', label:'Galerie' },
+    { id:'upload', label:'📤 Charger' },
+    { id:'url', label:'🔗 Lien' },
+    { id:'unsplash', label:'📸 Unsplash' },
   ];
   const renderBody = () => {
     const body = document.getElementById('cv-body');
     if (_coverTab === 'grad') {
-      body.innerHTML = `<div class="cover-grid">${COVER_GRADIENTS.map((g,i)=>`<div class="cover-swatch" data-cg="${i}" style="background:${g}"></div>`).join('')}</div>`;
-      body.querySelectorAll('[data-cg]').forEach(s => s.onclick = () => { applyCover(coverEl, COVER_GRADIENTS[+s.dataset.cg]); picker.classList.remove('show'); });
+      body.innerHTML = `
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);margin:4px 0 6px;font-weight:600">Couleurs</div>
+        <div class="cover-grid" style="grid-template-columns:repeat(8,1fr);gap:6px">${COVER_COLORS.map((c,i)=>`<div class="cover-swatch" data-color="${i}" style="background:${c};height:32px;border-radius:6px;cursor:pointer"></div>`).join('')}</div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);margin:14px 0 6px;font-weight:600">Dégradés</div>
+        <div class="cover-grid" style="grid-template-columns:repeat(4,1fr);gap:6px">${COVER_GRADIENTS.map((g,i)=>`<div class="cover-swatch" data-grad="${i}" style="background:${g};height:50px;border-radius:6px;cursor:pointer"></div>`).join('')}</div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);margin:14px 0 6px;font-weight:600">Textures</div>
+        <div class="cover-grid" style="grid-template-columns:repeat(4,1fr);gap:6px">${COVER_TEXTURES.map((t,i)=>`<img class="cover-swatch" data-tex="${i}" src="${t.replace('1600/300','200/100')}" style="height:50px;width:100%;object-fit:cover;border-radius:6px;cursor:pointer">`).join('')}</div>`;
+      body.querySelectorAll('[data-color]').forEach(s => s.onclick = () => { applyCover(coverEl, COVER_COLORS[+s.dataset.color]); picker.classList.remove('show'); });
+      body.querySelectorAll('[data-grad]').forEach(s => s.onclick = () => { applyCover(coverEl, COVER_GRADIENTS[+s.dataset.grad]); picker.classList.remove('show'); });
+      body.querySelectorAll('[data-tex]').forEach(s => s.onclick = () => { applyCover(coverEl, `url("${COVER_TEXTURES[+s.dataset.tex]}") center/cover`); picker.classList.remove('show'); toast('Texture appliquée'); });
     } else if (_coverTab === 'upload') {
-      body.innerHTML = `<div style="text-align:center;padding:18px 8px"><label style="display:inline-block;padding:10px 20px;background:var(--accent);color:#000;border-radius:8px;cursor:pointer;font-weight:600">📤 Choisir un fichier<input type="file" id="cv-file" accept="image/*" style="display:none"></label><div style="font-size:11px;color:var(--text-3);margin-top:8px">Max 2MB · stocké local (base64)</div></div>`;
-      document.getElementById('cv-file').onchange = (e) => {
-        const f = e.target.files[0]; if (!f) return;
+      body.innerHTML = `<div style="text-align:center;padding:30px 10px;border:2px dashed var(--border);border-radius:10px;margin:6px 0"><label style="display:inline-block;padding:10px 24px;background:var(--accent);color:#000;border-radius:8px;cursor:pointer;font-weight:600">📤 Choisir un fichier<input type="file" id="cv-file" accept="image/*" style="display:none"></label><div style="font-size:12px;color:var(--text-3);margin-top:10px">Glisse-dépose ou clique · Max 2 Mo</div></div>`;
+      const inp = document.getElementById('cv-file');
+      const handle = (f) => {
+        if (!f) return;
         if (f.size > 2*1024*1024) return toast('Fichier trop gros (max 2MB)', 'error');
         const rd = new FileReader();
-        rd.onload = () => { applyCover(coverEl, `url("${rd.result}")`); picker.classList.remove('show'); toast('Image importée', 'success'); };
+        rd.onload = () => { applyCover(coverEl, `url("${rd.result}") center/cover`); picker.classList.remove('show'); toast('Image importée', 'success'); };
         rd.readAsDataURL(f);
       };
+      inp.onchange = (e) => handle(e.target.files[0]);
+      const drop = body.querySelector('div');
+      drop.ondragover = (e) => { e.preventDefault(); drop.style.borderColor = 'var(--accent)'; };
+      drop.ondragleave = () => { drop.style.borderColor = 'var(--border)'; };
+      drop.ondrop = (e) => { e.preventDefault(); drop.style.borderColor = 'var(--border)'; handle(e.dataTransfer.files[0]); };
     } else if (_coverTab === 'url') {
-      body.innerHTML = `<div style="padding:8px"><input id="cv-url" placeholder="https://exemple.com/image.jpg" style="width:100%;padding:10px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px"><button id="cv-url-go" class="btn" style="margin-top:8px;width:100%;padding:10px">Appliquer</button><div style="font-size:11px;color:var(--text-3);margin-top:6px">Astuce : tape le nom d'une image sur Pexels/Pixabay et copie l'URL directe.</div></div>`;
+      body.innerHTML = `<div style="padding:10px 4px"><input id="cv-url" placeholder="https://exemple.com/image.jpg" style="width:100%;padding:10px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;margin-bottom:8px"><button id="cv-url-go" class="btn" style="width:100%;padding:10px">Appliquer</button><div style="font-size:11px;color:var(--text-3);margin-top:8px">Astuce : utilise une image libre de droit (Pexels, Pixabay, Wikimedia, Unsplash).</div></div>`;
       document.getElementById('cv-url-go').onclick = () => {
         const u = document.getElementById('cv-url').value.trim();
         if (!u) return;
-        applyCover(coverEl, `url("${u}")`);
+        applyCover(coverEl, `url("${u}") center/cover`);
         picker.classList.remove('show');
-        toast('Cover URL appliquée', 'success');
+        toast('Cover appliquée', 'success');
       };
-    } else if (_coverTab === 'random') {
-      const seeds = Array.from({length:12}, (_,i) => Date.now() + i);
-      body.innerHTML = `<div class="cover-grid">${seeds.map(s => `<img class="cover-swatch" data-pic="${s}" src="https://picsum.photos/200/80?random=${s}" style="object-fit:cover;height:50px">`).join('')}</div><div style="font-size:11px;color:var(--text-3);margin-top:8px;text-align:center">via Lorem Picsum (libre de droit)</div>`;
-      body.querySelectorAll('[data-pic]').forEach(im => im.onclick = () => {
-        applyCover(coverEl, `url("https://picsum.photos/1600/300?random=${im.dataset.pic}")`);
-        picker.classList.remove('show');
-        toast('Cover aléatoire', 'success');
-      });
+      document.getElementById('cv-url').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('cv-url-go').click(); });
+    } else if (_coverTab === 'unsplash') {
+      const presets = ['nature','space','city','ocean','mountain','forest','desert','minimal','technology','pattern','sunset','aurora'];
+      body.innerHTML = `<div style="padding:6px 0">
+        <input id="cv-uns-q" placeholder="Rechercher une image..." style="width:100%;padding:10px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;margin-bottom:10px">
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">${presets.map(p=>`<button class="uns-preset" data-q="${p}" style="padding:4px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:14px;color:var(--text-2);font-size:11px;cursor:pointer">${p}</button>`).join('')}</div>
+        <div id="cv-uns-results" class="cover-grid" style="grid-template-columns:repeat(3,1fr);gap:6px;min-height:120px"></div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:8px;text-align:center">Images via Unsplash (libre de droit)</div>
+      </div>`;
+      const search = (q) => {
+        const grid = document.getElementById('cv-uns-results');
+        const seeds = [1,2,3,4,5,6,7,8,9];
+        grid.innerHTML = seeds.map(s => `<img class="uns-img" data-url="https://source.unsplash.com/featured/1600x400/?${encodeURIComponent(q)}&sig=${s}" src="https://source.unsplash.com/featured/300x150/?${encodeURIComponent(q)}&sig=${s}" style="width:100%;height:80px;object-fit:cover;border-radius:6px;cursor:pointer;background:var(--bg-3)">`).join('');
+        grid.querySelectorAll('.uns-img').forEach(im => im.onclick = () => {
+          applyCover(coverEl, `url("${im.dataset.url}") center/cover`);
+          picker.classList.remove('show');
+          toast('Image Unsplash appliquée', 'success');
+        });
+      };
+      const inp = document.getElementById('cv-uns-q');
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter' && inp.value.trim()) search(inp.value.trim()); });
+      body.querySelectorAll('.uns-preset').forEach(b => b.onclick = () => { inp.value = b.dataset.q; search(b.dataset.q); });
+      search('abstract');
     }
   };
   picker.innerHTML = `
-    <div style="display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:10px;padding-bottom:6px;flex-wrap:wrap">
-      ${tabs.map(t => `<button class="cv-tab" data-cvtab="${t.id}" style="padding:6px 10px;background:${t.id===_coverTab?'var(--bg-hover)':'transparent'};border:none;color:${t.id===_coverTab?'var(--accent)':'var(--text-2)'};border-radius:5px;cursor:pointer;font-size:12px;font-weight:500">${t.label}</button>`).join('')}
+    <div style="display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border);margin-bottom:10px;padding-bottom:0">
+      <div style="display:flex;gap:0;flex:1;flex-wrap:wrap">
+        ${tabs.map(t => `<button class="cv-tab" data-cvtab="${t.id}" style="padding:8px 12px;background:transparent;border:none;border-bottom:2px solid ${t.id===_coverTab?'var(--accent)':'transparent'};color:${t.id===_coverTab?'var(--text)':'var(--text-2)'};cursor:pointer;font-size:13px;font-weight:${t.id===_coverTab?'600':'400'}">${t.label}</button>`).join('')}
+      </div>
+      <button class="cv-remove" style="padding:8px 12px;background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:12px;font-weight:500">Supprimer</button>
     </div>
-    <div id="cv-body"></div>`;
-  picker.style.width = '360px';
+    <div id="cv-body" style="max-height:380px;overflow-y:auto;padding:0 4px"></div>`;
+  picker.style.width = '480px';
   const r = coverEl.getBoundingClientRect();
-  let left = r.left + r.width/2 - 180;
+  let left = r.left + r.width/2 - 240;
   if (left < 10) left = 10;
-  if (left + 360 > window.innerWidth - 10) left = window.innerWidth - 370;
+  if (left + 480 > window.innerWidth - 10) left = window.innerWidth - 490;
   picker.style.left = left + 'px';
   picker.style.transform = 'none';
   picker.style.top = (r.bottom + window.scrollY - 8) + 'px';
@@ -1927,6 +1996,7 @@ function showCoverPicker(coverEl) {
     _coverTab = b.dataset.cvtab;
     showCoverPicker(coverEl);
   });
+  picker.querySelector('.cv-remove').onclick = () => { clearCover(coverEl); picker.classList.remove('show'); };
   renderBody();
   setTimeout(() => {
     document.addEventListener('click', function close(e) {
@@ -1937,6 +2007,7 @@ function showCoverPicker(coverEl) {
     });
   }, 0);
 }
+window.showCoverPicker = showCoverPicker;
 
 // ============ EMOJI PICKER ============
 const EMOJIS = '😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 🔥 ⚡ ✨ 🌟 💫 ⭐ 🚀 💡 📝 📄 📋 📌 📎 🔗 🎯 🎨 🎬 🎮 🎲 🎵 📷 📹 💻 ⌨️ 🖥️ 📱 📞 📧 📦 🛒 💼 📅 ⏰ 🔔 🔒 🔑 🛠️ ⚙️ 🔧 🪄 🌈 ☀️ 🌙 ⛅ 🌧️ ❄️ 🍕 🍔 🍟 🍣 🍰 ☕ 🍺 🍷 🍎 🍌 🥑 🌮 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 💯 ✅ ❌ ⚠️ ❓ ❗ 🎉 🎊 🏆 🏅 ⚽ 🏀 🎲 🐱 🐶 🦊 🐻 🐼 🦁 🐯'.split(' ');
