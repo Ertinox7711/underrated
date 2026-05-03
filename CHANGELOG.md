@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 16:42 — `8be5b7a`
+fix: QR code via api.qrserver.com (no JS lib needed, always works)
+
 ## 03/05/2026 16:40 — `31569c2`
 fix: QR code via toDataURL, replace 📁 + 👤 default with SVG, clarify invite link is public
 
