@@ -2982,6 +2982,554 @@ document.addEventListener('touchend', e => {
   lastTap = now;
 }, { passive: false });
 
+// ============ NEW: KaTeX / Mermaid / TOC / Buttons / File / Audio / Synced setup ============
+function setupNewBlocks() {
+  document.querySelectorAll('[data-mathin]').forEach(inp => {
+    const id = inp.dataset.mathin;
+    const renderMath = () => {
+      const el = document.getElementById('math-r-'+id);
+      if (!el || !window.katex) return;
+      try { window.katex.render(inp.value || '', el, { throwOnError:false, displayMode:true }); }
+      catch(e) { el.textContent = '⚠️ '+e.message; }
+    };
+    renderMath();
+    inp.oninput = () => { const b = getBlock(id); if (b) { b.content = inp.value; Storage.save(); renderMath(); } };
+  });
+  document.querySelectorAll('[data-merin]').forEach(inp => {
+    const id = inp.dataset.merin;
+    const renderMer = async () => {
+      const el = document.getElementById('mer-'+id);
+      if (!el || !window.__mermaid) return;
+      try {
+        const { svg } = await window.__mermaid.render('mer-svg-'+id+'-'+Date.now(), inp.value);
+        el.innerHTML = svg;
+      } catch(e) { el.innerHTML = '<span style="color:var(--danger);font-size:12px">⚠️ '+escapeHtml(String(e.message||e))+'</span>'; }
+    };
+    setTimeout(renderMer, 50);
+    inp.oninput = () => { const b = getBlock(id); if (b) { b.content = inp.value; Storage.save(); renderMer(); } };
+  });
+  document.querySelectorAll('[data-tocid]').forEach(a => a.onclick = (e) => {
+    e.preventDefault();
+    const el = document.querySelector(`[data-id="${a.dataset.tocid}"]`);
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+  document.querySelectorAll('[data-btnaction]').forEach(btn => btn.onclick = () => {
+    const id = btn.dataset.btnaction; const b = getBlock(id); if (!b) return;
+    const action = b.action || 'task';
+    if (action === 'task') {
+      const blocks = state.blocks[state.currentPageId];
+      blocks.push({ id:nbid(), type:'todo', content:'Nouvelle tâche' });
+      Storage.save(); renderEditor();
+    } else if (action === 'dup') {
+      const cur = currentPage();
+      if (cur) { const newId = createPage(cur.title+' (copie)', cur.icon); state.blocks[newId] = (state.blocks[cur.id]||[]).map(x=>({...x,id:nbid()})); Storage.save(); }
+    } else if (action === 'goto' && state.pages[0]) { openPage(state.pages[0].id); }
+  });
+  document.querySelectorAll('[data-btntype]').forEach(s => s.onchange = () => { const b = getBlock(s.dataset.btntype); if (b) { b.action = s.value; Storage.save(); } });
+  document.querySelectorAll('[data-fileid]').forEach(el => el.onclick = (e) => {
+    if (e.target.dataset.filedl) return;
+    const id = el.dataset.fileid;
+    const inp = document.createElement('input'); inp.type='file';
+    inp.onchange = () => {
+      const f = inp.files[0]; if (!f) return;
+      if (f.size > 5*1024*1024) return toast('Fichier > 5MB');
+      const r = new FileReader();
+      r.onload = () => { const b = getBlock(id); if (b) { b.fileData = r.result; b.fileName = f.name; b.fileSize = f.size; Storage.save(); renderEditor(); } };
+      r.readAsDataURL(f);
+    };
+    inp.click();
+  });
+  document.querySelectorAll('[data-filedl]').forEach(b => b.onclick = (e) => {
+    e.stopPropagation();
+    const blk = getBlock(b.dataset.filedl); if (!blk?.fileData) return;
+    const a = document.createElement('a'); a.href = blk.fileData; a.download = blk.fileName||'file'; a.click();
+  });
+  document.querySelectorAll('[data-audiorec]').forEach(btn => btn.onclick = async () => {
+    const id = btn.dataset.audiorec; const b = getBlock(id); if (!b) return;
+    if (b.recording && b._mr) { b._mr.stop(); return; }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+      const mr = new MediaRecorder(stream); const chunks = [];
+      mr.ondataavailable = (e) => chunks.push(e.data);
+      mr.onstop = () => {
+        const blob = new Blob(chunks, { type:'audio/webm' });
+        const r = new FileReader();
+        r.onload = () => { b.audioData = r.result; b.recording = false; b._mr = null; Storage.save(); renderEditor(); };
+        r.readAsDataURL(blob);
+        stream.getTracks().forEach(t => t.stop());
+      };
+      mr.start(); b._mr = mr; b.recording = true; btn.textContent = '⏹️ Stop';
+    } catch(e) { toast('Micro refusé'); }
+  });
+  document.querySelectorAll('[data-syncin]').forEach(inp => inp.onchange = () => {
+    const b = getBlock(inp.dataset.syncin); if (b) { b.syncedFrom = inp.value.trim(); Storage.save(); renderEditor(); }
+  });
+}
+
+// ============ FAVORITES (page-level) UI in sidebar ============
+function renderFavorites() {
+  const sec = document.getElementById('favorites-section');
+  const list = document.getElementById('fav-list');
+  if (!sec || !list) return;
+  const favIds = state.favorites || [];
+  const favs = favIds.map(id => state.pages.find(p => p.id===id && !p.deleted)).filter(Boolean);
+  if (!favs.length) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  list.innerHTML = favs.map(p => `<div class="page-item" data-favid="${p.id}"><span class="page-icon">${p.icon||'📄'}</span><span class="page-name">${escapeHtml(p.title||'Sans titre')}</span></div>`).join('');
+  list.querySelectorAll('[data-favid]').forEach(el => el.onclick = () => openPage(el.dataset.favid));
+}
+// ============ RECENT PAGES ============
+function pushRecent(id) {
+  state.recent = (state.recent || []).filter(x => x !== id);
+  state.recent.unshift(id);
+  state.recent = state.recent.slice(0, 5);
+  renderRecent();
+}
+function renderRecent() {
+  const sec = document.getElementById('recent-section');
+  const list = document.getElementById('recent-list');
+  if (!sec || !list) return;
+  const rec = (state.recent||[]).map(id => state.pages.find(p => p.id===id && !p.deleted)).filter(Boolean);
+  if (!rec.length) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  list.innerHTML = rec.map(p => `<div class="page-item" data-recid="${p.id}"><span class="page-icon">${p.icon||'📄'}</span><span class="page-name">${escapeHtml(p.title||'Sans titre')}</span></div>`).join('');
+  list.querySelectorAll('[data-recid]').forEach(el => el.onclick = () => openPage(el.dataset.recid));
+}
+
+// ============ TRASH ============
+function softDelete(id) {
+  if (!confirm('Mettre dans la corbeille ?')) return;
+  const p = state.pages.find(x=>x.id===id); if (!p) return;
+  p.deleted = true; p.deletedAt = Date.now();
+  Storage.save(); renderPages();
+  if (state.currentPageId === id) {
+    const next = state.pages.find(x => !x.deleted);
+    state.currentPageId = next?.id || null;
+    if (next) openPage(next.id); else showEmpty();
+  }
+  toast('🗑️ Dans la corbeille');
+}
+function showTrash() {
+  const cutoff = Date.now() - 30*24*60*60*1000;
+  state.pages = state.pages.filter(p => !p.deleted || (p.deletedAt||0) > cutoff);
+  Storage.save();
+  const trashed = state.pages.filter(p => p.deleted);
+  const html = `
+    <div class="modal-head"><div class="modal-title">🗑️ Corbeille (${trashed.length})</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+    <div style="max-height:60vh;overflow-y:auto">
+      ${trashed.length ? trashed.map(p => `
+        <div style="display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid var(--border)">
+          <span style="font-size:18px">${p.icon||'📄'}</span>
+          <span style="flex:1">${escapeHtml(p.title||'Sans titre')}</span>
+          <span style="font-size:11px;color:var(--text-3)">${new Date(p.deletedAt||0).toLocaleDateString('fr-FR')}</span>
+          <button data-restore="${p.id}" style="background:var(--bg-3);padding:5px 10px;border-radius:5px;font-size:12px">Restaurer</button>
+          <button data-purge="${p.id}" style="background:var(--danger);color:#fff;padding:5px 10px;border-radius:5px;font-size:12px">Supprimer</button>
+        </div>`).join('') : '<div style="padding:20px;text-align:center;color:var(--text-3)">Corbeille vide</div>'}
+    </div>`;
+  showModal(html, '600px');
+  document.querySelectorAll('[data-restore]').forEach(b => b.onclick = () => {
+    const p = state.pages.find(x=>x.id===b.dataset.restore);
+    if (p) { p.deleted = false; delete p.deletedAt; Storage.save(); closeModal(); renderPages(); toast('Restauré'); }
+  });
+  document.querySelectorAll('[data-purge]').forEach(b => b.onclick = () => {
+    if (!confirm('Supprimer définitivement ?')) return;
+    state.pages = state.pages.filter(x => x.id !== b.dataset.purge);
+    delete state.blocks[b.dataset.purge];
+    Storage.save(); closeModal(); renderPages(); toast('Supprimé');
+  });
+}
+
+// ============ PAGE HISTORY (snapshots) ============
+function snapshotPage(id) {
+  const p = state.pages.find(x=>x.id===id); if (!p) return;
+  const key = 'underrated-history-'+id;
+  let hist = [];
+  try { hist = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e){}
+  // Skip if we just snapshotted within 30s
+  if (hist[0] && Date.now() - hist[0].at < 30000) return;
+  hist.unshift({ at: Date.now(), title: p.title, blocks: JSON.parse(JSON.stringify(state.blocks[id]||[])) });
+  hist = hist.slice(0, 10);
+  try { localStorage.setItem(key, JSON.stringify(hist)); } catch(e){}
+}
+function showHistory() {
+  const id = state.currentPageId; if (!id) return;
+  let hist = [];
+  try { hist = JSON.parse(localStorage.getItem('underrated-history-'+id) || '[]'); } catch(e){}
+  const html = `
+    <div class="modal-head"><div class="modal-title">📜 Historique</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+    ${hist.length ? hist.map((h,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid var(--border)">
+        <span style="flex:1">${new Date(h.at).toLocaleString('fr-FR')}</span>
+        <span style="color:var(--text-3);font-size:12px">${(h.blocks||[]).length} blocs</span>
+        <button data-restoreh="${i}" style="background:var(--accent);color:#000;padding:5px 12px;border-radius:5px;font-size:12px;font-weight:600">Restaurer</button>
+      </div>`).join('') : '<div style="padding:20px;text-align:center;color:var(--text-3)">Pas d\'historique</div>'}`;
+  showModal(html, '600px');
+  document.querySelectorAll('[data-restoreh]').forEach(b => b.onclick = () => {
+    const h = hist[+b.dataset.restoreh]; if (!h) return;
+    state.blocks[id] = h.blocks;
+    const p = state.pages.find(x=>x.id===id); if (p) p.title = h.title;
+    Storage.save(); closeModal(); renderEditor(); toast('Version restaurée');
+  });
+}
+
+// ============ PROPERTIES PANEL ============
+function toggleProps() {
+  const panel = document.getElementById('props-panel');
+  panel.classList.toggle('show');
+  if (panel.classList.contains('show')) renderProps();
+}
+function renderProps() {
+  const p = currentPage(); if (!p) return;
+  const panel = document.getElementById('props-content');
+  panel.innerHTML = `
+    <div class="prop-row"><div class="prop-label">Status</div>
+      <select class="prop-input" id="prop-status">
+        ${['—','À faire','En cours','Terminé','Bloqué'].map(s=>`<option ${(p.status||'—')===s?'selected':''}>${s}</option>`).join('')}
+      </select></div>
+    <div class="prop-row"><div class="prop-label">Tags</div>
+      <input class="prop-input" id="prop-tags" value="${escapeHtml((p.tags||[]).join(', '))}" placeholder="tag1, tag2"></div>
+    <div class="prop-row"><div class="prop-label">Échéance</div>
+      <input class="prop-input" type="date" id="prop-due" value="${p.due||''}"></div>
+    <div class="prop-row"><div class="prop-label">Priorité</div>
+      <select class="prop-input" id="prop-prio">
+        ${['—','Basse','Moyenne','Haute','Urgente'].map(s=>`<option ${(p.priority||'—')===s?'selected':''}>${s}</option>`).join('')}
+      </select></div>
+    <div class="prop-row"><div class="prop-label">Actions</div>
+      <button class="prop-input" style="cursor:pointer" onclick="window.U.showHistory()">📜 Historique</button>
+      <button class="prop-input" style="cursor:pointer;margin-top:6px" onclick="window.U.sharePage()">🔗 Partager</button>
+      <button class="prop-input" style="cursor:pointer;margin-top:6px" onclick="window.U.printPage()">🖨️ Imprimer</button>
+      <button class="prop-input" style="cursor:pointer;margin-top:6px" onclick="window.U.showTrash()">🗑️ Corbeille</button>
+    </div>`;
+  document.getElementById('prop-status').onchange = (e) => { p.status = e.target.value; Storage.save(); };
+  document.getElementById('prop-tags').oninput = (e) => { p.tags = e.target.value.split(',').map(x=>x.trim()).filter(Boolean); Storage.save(); };
+  document.getElementById('prop-due').onchange = (e) => { p.due = e.target.value; Storage.save(); };
+  document.getElementById('prop-prio').onchange = (e) => { p.priority = e.target.value; Storage.save(); };
+}
+
+// ============ SHARE / PRINT ============
+function sharePage() {
+  const p = currentPage(); if (!p) return;
+  const url = location.origin + location.pathname + '?p=' + p.id;
+  navigator.clipboard.writeText(url).then(()=>toast('🔗 Lien copié'));
+}
+function checkShareLink() {
+  const params = new URLSearchParams(location.search);
+  const pid = params.get('p');
+  if (!pid) return;
+  setTimeout(() => { if (state.pages.find(x => x.id === pid)) openPage(pid); }, 1200);
+}
+function printPage() { window.print(); }
+
+// ============ COMMENTS ============
+let activeCommentBlock = null;
+function openComments(blockId) {
+  activeCommentBlock = blockId;
+  document.getElementById('cmt-drawer').classList.add('show');
+  renderComments();
+}
+function closeComments() {
+  document.getElementById('cmt-drawer').classList.remove('show');
+  activeCommentBlock = null;
+}
+function renderComments() {
+  const list = document.getElementById('cmt-list');
+  const b = getBlock(activeCommentBlock);
+  const cmts = (b?.comments) || [];
+  list.innerHTML = cmts.length ? cmts.map(c => `
+    <div class="cmt-item">
+      <div class="cmt-meta">${escapeHtml(c.user)} · ${new Date(c.at).toLocaleString('fr-FR',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'})}</div>
+      <div>${escapeHtml(c.text)}</div>
+    </div>`).join('') : '<div style="color:var(--text-3);font-size:13px;text-align:center;padding:20px">Aucun commentaire</div>';
+}
+function addComment() {
+  const inp = document.getElementById('cmt-input');
+  const txt = inp.value.trim(); if (!txt) return;
+  const b = getBlock(activeCommentBlock); if (!b) return;
+  b.comments = b.comments || [];
+  b.comments.push({ user: state.user?.email?.split('@')[0]||'Moi', text: txt, at: Date.now() });
+  inp.value = ''; Storage.save(); renderComments();
+}
+
+// ============ FORMAT TOOLBAR ============
+const HL_COLORS = ['yellow','pink','green','blue'];
+const TX_COLORS = ['red','orange','yellow','green','blue','purple','pink'];
+function setupFormatToolbar() {
+  const tb = document.getElementById('format-toolbar');
+  if (!tb) return;
+  tb.innerHTML = `
+    <div class="tb-btn" data-fmt="bold" title="Gras"><b>B</b></div>
+    <div class="tb-btn" data-fmt="italic" title="Italic"><i>I</i></div>
+    <div class="tb-btn" data-fmt="underline" title="Souligné"><u>U</u></div>
+    <div class="tb-btn" data-fmt="strikeThrough" title="Barré"><s>S</s></div>
+    <div class="tb-btn" data-fmt="inline-code" title="Code">&lt;/&gt;</div>
+    <div class="tb-sep"></div>
+    ${TX_COLORS.map(c => `<div class="tb-btn tx-${c}" data-fmt="color" data-val="${c}" title="Texte ${c}">A</div>`).join('')}
+    <div class="tb-sep"></div>
+    ${HL_COLORS.map(c => `<div class="tb-color" data-fmt="hl" data-val="${c}" title="Surligner"><mark class="hl-${c}" style="display:block;width:100%;height:100%;border-radius:3px">&nbsp;</mark></div>`).join('')}
+    <div class="tb-sep"></div>
+    <div class="tb-btn" data-fmt="clear" title="Effacer">×</div>`;
+  tb.querySelectorAll('[data-fmt]').forEach(b => b.onmousedown = (e) => { e.preventDefault(); applyFormat(b.dataset.fmt, b.dataset.val); });
+  document.addEventListener('selectionchange', () => {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) { tb.classList.remove('show'); return; }
+    const range = sel.getRangeAt(0);
+    if (!range.startContainer.parentElement?.closest?.('.block-content')) { tb.classList.remove('show'); return; }
+    const r = range.getBoundingClientRect();
+    if (r.width < 1) { tb.classList.remove('show'); return; }
+    tb.style.left = Math.max(8, r.left + r.width/2 - 220) + 'px';
+    tb.style.top = (r.top - 44 + window.scrollY < 60 ? r.bottom + 6 : r.top - 44) + 'px';
+    tb.classList.add('show');
+  });
+}
+function applyFormat(cmd, val) {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  if (['bold','italic','underline','strikeThrough'].includes(cmd)) document.execCommand(cmd);
+  else if (cmd === 'inline-code') {
+    const range = sel.getRangeAt(0);
+    const code = document.createElement('code'); code.className = 'inline'; code.textContent = range.toString();
+    range.deleteContents(); range.insertNode(code);
+  } else if (cmd === 'color') {
+    const range = sel.getRangeAt(0);
+    const span = document.createElement('span'); span.className = 'tx-'+val; span.textContent = range.toString();
+    range.deleteContents(); range.insertNode(span);
+  } else if (cmd === 'hl') {
+    const range = sel.getRangeAt(0);
+    const mark = document.createElement('mark'); mark.className = 'hl-'+val; mark.textContent = range.toString();
+    range.deleteContents(); range.insertNode(mark);
+  } else if (cmd === 'clear') document.execCommand('removeFormat');
+  const blk = sel.anchorNode?.parentElement?.closest?.('.block');
+  if (blk) {
+    const b = getBlock(blk.dataset.id);
+    const content = blk.querySelector('.block-content');
+    if (b && content) { b.content = content.innerHTML; Storage.save(); }
+  }
+}
+
+// ============ BULK SELECT ============
+let selectedBlocks = new Set();
+function setupBulkSelect() {
+  document.querySelectorAll('.block').forEach(blk => {
+    blk.addEventListener('click', (e) => {
+      if (e.shiftKey) {
+        e.preventDefault();
+        const id = blk.dataset.id;
+        if (selectedBlocks.has(id)) { selectedBlocks.delete(id); blk.classList.remove('selected'); }
+        else { selectedBlocks.add(id); blk.classList.add('selected'); }
+        updateBulkBar();
+      } else if (selectedBlocks.size && !e.target.closest('.bulk-bar')) {
+        selectedBlocks.clear();
+        document.querySelectorAll('.block.selected').forEach(b=>b.classList.remove('selected'));
+        updateBulkBar();
+      }
+    });
+  });
+}
+function updateBulkBar() {
+  const bar = document.getElementById('bulk-bar');
+  if (!selectedBlocks.size) { bar.classList.remove('show'); return; }
+  bar.innerHTML = `
+    <span style="padding:0 10px;font-size:13px">${selectedBlocks.size} sélectionnés</span>
+    <button data-bulk="del">🗑️ Supprimer</button>
+    <button data-bulk="todo">☑ → Todo</button>
+    <button data-bulk="bullet">• → Liste</button>
+    <button data-bulk="cancel">Annuler</button>`;
+  bar.classList.add('show');
+  bar.querySelectorAll('[data-bulk]').forEach(b => b.onclick = () => {
+    const blocks = state.blocks[state.currentPageId];
+    const action = b.dataset.bulk;
+    if (action === 'del') state.blocks[state.currentPageId] = blocks.filter(x => !selectedBlocks.has(x.id));
+    else if (action === 'todo' || action === 'bullet') blocks.forEach(x => { if (selectedBlocks.has(x.id)) x.type = action; });
+    selectedBlocks.clear();
+    Storage.save(); renderEditor(); updateBulkBar();
+  });
+}
+
+// ============ EMBED DETECTION (Figma/Maps/X/CodePen/Loom) ============
+window.__embedOnPaste = function(e, block, content) {
+  const text = (e.clipboardData||window.clipboardData).getData('text');
+  if (!text || content.textContent !== '') return false;
+  const t = text.trim();
+  const patterns = [/figma\.com\/(file|design)\//, /google\.com\/maps/, /(twitter|x)\.com\/\w+\/status/, /codepen\.io\/\S+\/pen\//, /loom\.com\/share\//];
+  for (const re of patterns) {
+    if (re.test(t)) {
+      e.preventDefault();
+      const b = getBlock(block.dataset.id);
+      if (b) { b.type = 'embed'; b.url = t; Storage.save(); renderEditor(); }
+      return true;
+    }
+  }
+  return false;
+};
+
+// ============ IMPROVED EMOJI PICKER (categories + recent + search) ============
+const EMOJI_CATS = {
+  'Smileys':'😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😋 😎 🤩 🥳 🤔 😴 😢 😭 😡 🤯',
+  'Animaux':'🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐯 🦁 🐮 🐷 🐸 🐵 🐔 🐧 🐦 🦄 🐝 🦋 🐢 🐬 🐳',
+  'Bouffe':'🍕 🍔 🍟 🌭 🍿 🥓 🥚 🍳 🧇 🥞 🧀 🍗 🥩 🍣 🍰 🎂 🍪 🍩 ☕ 🍺 🍷',
+  'Voyage':'✈️ 🚗 🚕 🚙 🚌 🏎️ 🚓 🚑 🚒 🚐 🛻 🚚 🚲 🏠 🏢 🏰 ⛺ 🌋 🏖️ 🗿',
+  'Activités':'⚽ 🏀 🏈 ⚾ 🎾 🏐 🎱 🏓 🥊 🎮 🎲 🎯 🎳 🎰 🎨 🎭 🎬 🎤 🎧 🎵',
+  'Objets':'💻 ⌨️ 🖥️ 📱 📞 🔋 💡 🔦 📔 📕 📖 📚 📝 ✏️ 🔧 🔨 🛠️ 📌 📎',
+  'Symboles':'❤️ 🧡 💛 💚 💙 💜 🖤 🤍 💯 ✅ ❌ ⚠️ ❓ ❗ 🔥 ⚡ ✨ 🌟 💫 ⭐ 🚀 💡 🎉 🏆',
+};
+let recentEmojis = [];
+try { recentEmojis = JSON.parse(localStorage.getItem('underrated-recent-emojis')||'[]'); } catch(e){}
+const _origShowEmojiPicker = showEmojiPicker;
+showEmojiPicker = function(target, cb) {
+  const picker = document.getElementById('emoji-picker');
+  let activeCat = recentEmojis.length ? 'Récent' : 'Smileys';
+  const renderE = () => {
+    const list = activeCat === 'Récent' ? recentEmojis : (EMOJI_CATS[activeCat]||'').split(' ').filter(Boolean);
+    picker.innerHTML = `
+      <div class="emoji-cats">
+        ${recentEmojis.length?`<button class="emoji-cat-btn ${activeCat==='Récent'?'active':''}" data-cat="Récent" title="Récent">🕒</button>`:''}
+        ${Object.keys(EMOJI_CATS).map(c=>`<button class="emoji-cat-btn ${activeCat===c?'active':''}" data-cat="${c}" title="${c}">${(EMOJI_CATS[c]||'').split(' ')[0]}</button>`).join('')}
+      </div>
+      <input class="emoji-search" id="emoji-search" placeholder="Rechercher emoji...">
+      <div class="emoji-grid" id="emoji-grid">
+        ${list.map(e => `<button data-e="${e}">${e}</button>`).join('')}
+      </div>`;
+    picker.querySelectorAll('button[data-e]').forEach(b => b.onclick = () => {
+      cb(b.dataset.e);
+      recentEmojis = [b.dataset.e, ...recentEmojis.filter(x=>x!==b.dataset.e)].slice(0,16);
+      try { localStorage.setItem('underrated-recent-emojis', JSON.stringify(recentEmojis)); } catch(e){}
+      picker.classList.remove('show');
+    });
+    picker.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { activeCat = b.dataset.cat; renderE(); });
+    const search = document.getElementById('emoji-search');
+    if (search) search.oninput = (e) => {
+      const q = e.target.value.toLowerCase();
+      if (q) {
+        const all = Object.values(EMOJI_CATS).join(' ').split(' ').filter(Boolean);
+        document.getElementById('emoji-grid').innerHTML = all.filter(em => em.includes(q)).slice(0,80).map(e=>`<button data-e="${e}">${e}</button>`).join('');
+        document.querySelectorAll('#emoji-grid button[data-e]').forEach(b => b.onclick = () => { cb(b.dataset.e); picker.classList.remove('show'); });
+      } else { renderE(); }
+    };
+  };
+  renderE();
+  const r = target.getBoundingClientRect();
+  picker.style.left = Math.min(r.left, window.innerWidth-320) + 'px';
+  picker.style.top = (r.bottom + window.scrollY + 6) + 'px';
+  picker.classList.add('show');
+  setTimeout(() => {
+    document.addEventListener('click', function close(ev) {
+      if (!ev.target.closest('.emoji-picker') && ev.target !== target) {
+        picker.classList.remove('show');
+        document.removeEventListener('click', close);
+      }
+    });
+  }, 0);
+};
+
+// ============ HOOKS into core ============
+const _origRenderEditor = renderEditor;
+renderEditor = function(){
+  _origRenderEditor();
+  setupNewBlocks();
+  setupBulkSelect();
+  const blocks = state.blocks[state.currentPageId] || [];
+  blocks.forEach(b => {
+    if (b.type === 'todo' && b.indent) {
+      const el = document.querySelector(`[data-id="${b.id}"]`);
+      if (el) el.style.marginLeft = (b.indent * 24) + 'px';
+    }
+  });
+  if (state.currentPageId) snapshotPage(state.currentPageId);
+};
+
+const _origOpenPage = openPage;
+openPage = function(id) {
+  _origOpenPage(id);
+  pushRecent(id);
+  selectedBlocks.clear();
+  const bb = document.getElementById('bulk-bar'); if (bb) bb.classList.remove('show');
+};
+
+const _origRenderPages = renderPages;
+renderPages = function(){
+  _origRenderPages();
+  renderFavorites();
+  renderRecent();
+  document.querySelectorAll('.page-item').forEach(it => {
+    const id = it.dataset.id;
+    if (id) {
+      const p = state.pages.find(x => x.id === id);
+      if (p?.deleted) it.style.display = 'none';
+      const isFav = (state.favorites||[]).includes(id);
+      if (p && !p.deleted && !it.querySelector('.fav-star')) {
+        const star = document.createElement('span');
+        star.className = 'fav-star ' + (isFav?'active':'');
+        star.textContent = '⭐';
+        star.dataset.favtoggle = id;
+        const actions = it.querySelector('.page-actions');
+        if (actions) actions.parentNode.insertBefore(star, actions);
+        else it.appendChild(star);
+      }
+    }
+  });
+  document.querySelectorAll('[data-favtoggle]').forEach(s => s.onclick = (e) => {
+    e.stopPropagation();
+    toggleFavorite(s.dataset.favtoggle);
+  });
+};
+
+deletePage = softDelete;
+
+const _superOnPaste = onPaste;
+onPaste = function(e, block, content) {
+  if (window.__embedOnPaste(e, block, content)) return;
+  return _superOnPaste(e, block, content);
+};
+
+const _origHandleBlockKey = handleBlockKey;
+handleBlockKey = function(e, block, content) {
+  if (e.key === 'Tab') {
+    const b = getBlock(block.dataset.id);
+    if (b && b.type === 'todo') {
+      e.preventDefault();
+      b.indent = Math.min((b.indent||0) + (e.shiftKey?-1:1), 4);
+      if (b.indent < 0) b.indent = 0;
+      Storage.save(); renderEditor();
+      setTimeout(() => focusBlock(b.id), 10);
+      return;
+    }
+  }
+  const isMac = navigator.platform.toLowerCase().includes('mac');
+  const meta = isMac ? e.metaKey : e.ctrlKey;
+  if (meta && e.key === '/') { e.preventDefault(); showSlashMenu(content); return; }
+  return _origHandleBlockKey(e, block, content);
+};
+
+const _origBuildCmdK = buildCmdK;
+buildCmdK = function(q) {
+  const items = _origBuildCmdK(q);
+  const ql = q.toLowerCase();
+  const extras = [
+    { name:'Corbeille', icon:'🗑️', action:()=>{closeCmdK();showTrash();} },
+    { name:'Historique de la page', icon:'📜', action:()=>{closeCmdK();showHistory();} },
+    { name:'Propriétés (panel)', icon:'⚙️', action:()=>{closeCmdK();toggleProps();} },
+    { name:'Partager la page', icon:'🔗', action:()=>{closeCmdK();sharePage();} },
+    { name:'Imprimer', icon:'🖨️', action:()=>{closeCmdK();printPage();} },
+  ];
+  extras.forEach(a => { if (!ql || a.name.toLowerCase().includes(ql)) items.push({ cat:'Actions', ...a }); });
+  return items;
+};
+
+setTimeout(() => {
+  const tb = document.getElementById('sidebar-tpl-btn');
+  if (tb) tb.onclick = showTemplates;
+  setupFormatToolbar();
+  const cmtSend = document.getElementById('cmt-send');
+  if (cmtSend) cmtSend.onclick = addComment;
+  const cmtInp = document.getElementById('cmt-input');
+  if (cmtInp) cmtInp.addEventListener('keydown', e => { if (e.key==='Enter') addComment(); });
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-cmt]');
+    if (btn) { e.preventDefault(); openComments(btn.dataset.cmt); }
+  });
+  checkShareLink();
+}, 600);
+
 // ============ VERSION ============
 async function loadVersion() {
   try {
@@ -3070,7 +3618,9 @@ document.addEventListener('contextmenu', (e) => {
       { _idx: i++, icon:'🔗', name:'Copier lien', action: () => copyPageLink(pid) },
       { _idx: i++, icon:'⬇️', name:'Exporter Markdown', action: () => { state.currentPageId=pid; exportMarkdown(); } },
       { sep: true },
-      { _idx: i++, icon:'🗑️', name:'Supprimer', danger:true, kbd:'Del', action: () => { if (confirm(`Supprimer "${page.title||'Sans titre'}" ?`)) deletePage(pid); } },
+      { _idx: i++, icon:'📁', name:'Déplacer vers...', action: () => window.U.movePagePrompt && window.U.movePagePrompt(pid) },
+      { sep: true },
+      { _idx: i++, icon:'🗑️', name:'Supprimer', danger:true, kbd:'Del', action: () => { if (window.U.softDeletePage) window.U.softDeletePage(pid); else deletePage(pid); } },
     ];
     showCtxMenu(e.clientX, e.clientY, items);
     return;
@@ -3163,8 +3713,686 @@ window.U = {
   showTemplatePreview, togglePomo, toggleFocus, exportMarkdown, showShortcuts,
   showChangelog, closeModal, openCmdK, setTheme, setAccent,
   duplicatePage, renamePage, toggleFavorite, copyPageLink,
-  duplicateBlock, moveBlock, deleteBlock
+  duplicateBlock, moveBlock, deleteBlock,
+  showTrash, showHistory, toggleProps, sharePage, printPage,
+  closeComments, openComments,
+  softDeletePage: softDelete
 };
+
+/* ============================================================
+   EXTENSIONS v2.0 — folders, settings, free APIs, cover tabs
+   ============================================================ */
+(function(){
+  // ---- Settings / API keys (localStorage) ----
+  const KEYS_STORE = 'underrated-keys';
+  function getKeys(){ try { return JSON.parse(localStorage.getItem(KEYS_STORE)||'{}'); } catch(e){ return {}; } }
+  function setKeys(k){ localStorage.setItem(KEYS_STORE, JSON.stringify(k)); }
+  function hasKey(name){ return !!(getKeys()[name]||'').trim(); }
+
+  // ---- Folder data model (in state.folders) ----
+  if (!state.folders) state.folders = [];
+  const _origLoad = Storage.load.bind(Storage);
+  Storage.load = function(){
+    _origLoad();
+    try {
+      const data = localStorage.getItem('underrated-data');
+      if (data) {
+        const p = JSON.parse(data);
+        state.folders = p.folders || [];
+      }
+    } catch(e){}
+    if (!state.folders) state.folders = [];
+  };
+  // Re-patch save to include folders
+  const _origSave = Storage.save.bind(Storage);
+  Storage.save = function(){
+    clearTimeout(state.saveDebounce);
+    state.saveDebounce = setTimeout(() => {
+      try {
+        localStorage.setItem('underrated-data', JSON.stringify({
+          pages: state.pages, blocks: state.blocks, expanded: state.expanded, folders: state.folders||[]
+        }));
+        if (typeof cloudSave === 'function') cloudSave();
+      } catch(e){ console.error(e); }
+    }, 400);
+  };
+  // Re-load now that load is patched
+  try { Storage.load(); } catch(e){}
+
+  function fid(){ return 'f_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
+  function getFolder(id){ return (state.folders||[]).find(f => f.id===id); }
+  function rootFolders(){ return (state.folders||[]).filter(f => !f.parentFolderId); }
+  function childFolders(pid){ return (state.folders||[]).filter(f => f.parentFolderId===pid); }
+  function pagesInFolder(fid){ return state.pages.filter(p => !p.deleted && p.folderId===fid); }
+
+  function createFolder(name, parentFolderId){
+    const f = { id: fid(), name: name||'Nouveau dossier', parentFolderId: parentFolderId||null, expanded: true };
+    state.folders.push(f);
+    Storage.save();
+    if (typeof renderPages==='function') renderPages();
+    renderFolderTree();
+    return f.id;
+  }
+  function renameFolder(id){
+    const f = getFolder(id); if (!f) return;
+    const n = prompt('Nom du dossier :', f.name);
+    if (n!==null) { f.name = n; Storage.save(); renderFolderTree(); }
+  }
+  function deleteFolder(id){
+    const f = getFolder(id); if (!f) return;
+    if (!confirm(`Supprimer le dossier "${f.name}" ? Son contenu sera déplacé au niveau parent.`)) return;
+    const newParent = f.parentFolderId||null;
+    state.folders.forEach(c => { if (c.parentFolderId===id) c.parentFolderId=newParent; });
+    state.pages.forEach(p => { if (p.folderId===id) p.folderId=newParent; });
+    state.folders = state.folders.filter(x => x.id!==id);
+    Storage.save();
+    if (typeof renderPages==='function') renderPages();
+    renderFolderTree();
+    toast('Dossier supprimé');
+  }
+  function toggleFolderExpand(id){
+    const f = getFolder(id); if (!f) return;
+    f.expanded = !f.expanded;
+    Storage.save();
+    renderFolderTree();
+  }
+  function movePageToFolder(pid, folderId){
+    const p = state.pages.find(x => x.id===pid); if (!p) return;
+    p.folderId = folderId||null;
+    Storage.save();
+    if (typeof renderPages==='function') renderPages();
+    renderFolderTree();
+    toast('Déplacé');
+  }
+  function movePagePrompt(pid){
+    const opts = [{id:null,name:'📂 Racine'}, ...(state.folders||[]).map(f => ({id:f.id, name:'📁 '+f.name}))];
+    const html = `
+      <div class="modal-head"><div class="modal-title">📁 Déplacer vers</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+      <div style="max-height:50vh;overflow-y:auto">
+        ${opts.map(o => `<div class="ctx-item" data-mv="${o.id===null?'':o.id}" style="padding:10px 14px">${escapeHtml(o.name)}</div>`).join('')}
+      </div>`;
+    showModal(html, '420px');
+    document.querySelectorAll('[data-mv]').forEach(el => el.onclick = () => {
+      movePageToFolder(pid, el.dataset.mv||null);
+      closeModal();
+    });
+  }
+
+  // ---- Folder tree UI in sidebar (above page-list) ----
+  function ensureFolderUI(){
+    const section = document.querySelector('.sidebar-section:last-of-type'); // pages section
+    if (!section) return;
+    let tree = document.getElementById('folder-tree');
+    if (!tree) {
+      tree = document.createElement('div');
+      tree.id = 'folder-tree';
+      tree.style.cssText = 'padding:0 4px 4px';
+      const list = section.querySelector('#page-list');
+      if (list) section.insertBefore(tree, list);
+    }
+    // Replace + button with dropdown
+    const addBtn = document.getElementById('add-page-btn');
+    if (addBtn && !addBtn.dataset.hooked) {
+      addBtn.dataset.hooked = '1';
+      addBtn.onclick = (e) => {
+        e.stopPropagation();
+        showAddDropdown(addBtn);
+      };
+    }
+  }
+  function showAddDropdown(anchor){
+    let dd = document.getElementById('add-dropdown');
+    if (dd) { dd.remove(); return; }
+    dd = document.createElement('div');
+    dd.id = 'add-dropdown';
+    dd.className = 'ctx-menu show';
+    dd.style.cssText = 'position:fixed;display:block;z-index:1300';
+    dd.innerHTML = `
+      <div class="ctx-item" data-act="page"><span class="ctx-icon">📄</span><span>Nouvelle page</span></div>
+      <div class="ctx-item" data-act="folder"><span class="ctx-icon">📁</span><span>Nouveau dossier</span></div>
+    `;
+    document.body.appendChild(dd);
+    const r = anchor.getBoundingClientRect();
+    dd.style.left = r.left + 'px';
+    dd.style.top = (r.bottom + 4) + 'px';
+    dd.querySelector('[data-act="page"]').onclick = () => { dd.remove(); createPage(); };
+    dd.querySelector('[data-act="folder"]').onclick = () => {
+      dd.remove();
+      const n = prompt('Nom du dossier :','Nouveau dossier');
+      if (n) createFolder(n, null);
+    };
+    setTimeout(() => {
+      document.addEventListener('click', function close(ev){
+        if (!ev.target.closest('#add-dropdown') && ev.target!==anchor) {
+          dd.remove();
+          document.removeEventListener('click', close);
+        }
+      });
+    }, 0);
+  }
+
+  function renderFolderTree(){
+    ensureFolderUI();
+    const tree = document.getElementById('folder-tree');
+    if (!tree) return;
+    function renderNode(folder, depth){
+      const expanded = folder.expanded !== false;
+      const subs = childFolders(folder.id);
+      const pgs = pagesInFolder(folder.id);
+      const hasChildren = subs.length || pgs.length;
+      let html = `<div class="folder-item" data-fid="${folder.id}" style="display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:14px;margin-left:${depth*10}px;user-select:none">
+        <span class="folder-toggle" data-ftog="${folder.id}" style="display:inline-flex;width:16px;font-size:10px;color:var(--text-3)">${hasChildren?(expanded?'▼':'▶'):' '}</span>
+        <span style="font-size:14px">📁</span>
+        <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(folder.name)}</span>
+      </div>`;
+      if (expanded) {
+        subs.forEach(sub => { html += renderNode(sub, depth+1); });
+        pgs.forEach(p => {
+          html += `<div class="page-item" data-id="${p.id}" data-page-id="${p.id}" style="margin-left:${(depth+1)*10+8}px">
+            <span class="page-icon">${p.icon||'📄'}</span>
+            <span class="page-name">${escapeHtml(p.title||'Sans titre')}</span>
+          </div>`;
+        });
+      }
+      return html;
+    }
+    const roots = rootFolders();
+    if (!roots.length) { tree.innerHTML = ''; return; }
+    tree.innerHTML = roots.map(f => renderNode(f, 0)).join('');
+    // Toggle expand
+    tree.querySelectorAll('[data-ftog]').forEach(el => el.onclick = (e) => {
+      e.stopPropagation();
+      toggleFolderExpand(el.dataset.ftog);
+    });
+    // Click folder name → toggle expand
+    tree.querySelectorAll('.folder-item').forEach(el => {
+      el.onclick = (ev) => {
+        if (ev.target.closest('[data-ftog]')) return;
+        toggleFolderExpand(el.dataset.fid);
+      };
+    });
+    // Page click in folder → open page
+    tree.querySelectorAll('.page-item').forEach(el => {
+      el.onclick = () => openPage(el.dataset.id);
+    });
+    // Hide page-list pages that are in folders
+    document.querySelectorAll('#page-list .page-item').forEach(it => {
+      const id = it.dataset.id;
+      const p = state.pages.find(x => x.id===id);
+      if (p && p.folderId) it.style.display = 'none';
+    });
+  }
+
+  // Hook renderPages to also render folder tree
+  if (typeof renderPages === 'function') {
+    const _origRP2 = renderPages;
+    renderPages = function(){
+      _origRP2();
+      try { renderFolderTree(); } catch(e){ console.error('folder render', e); }
+    };
+  }
+
+  // Right-click on folder items
+  document.addEventListener('contextmenu', (e) => {
+    const fEl = e.target.closest('.folder-item');
+    if (!fEl) return;
+    const fId = fEl.dataset.fid;
+    const f = getFolder(fId); if (!f) return;
+    e.preventDefault();
+    e.stopPropagation();
+    let i=0; const items = [
+      { _idx:i++, icon:'📄', name:'Nouvelle page ici', action: () => {
+          const id = createPage('Sans titre','📄');
+          const p = state.pages.find(x=>x.id===id) || state.pages[0];
+          if (p) { p.folderId = fId; Storage.save(); renderPages(); }
+        }},
+      { _idx:i++, icon:'📁', name:'Nouveau sous-dossier', action: () => {
+          const n = prompt('Nom :','Nouveau dossier'); if (n) createFolder(n, fId);
+        }},
+      { _idx:i++, icon:'✏️', name:'Renommer', action: () => renameFolder(fId) },
+      { sep:true },
+      { _idx:i++, icon:'🗑️', name:'Supprimer dossier', danger:true, action: () => deleteFolder(fId) },
+    ];
+    if (typeof showCtxMenu === 'function') showCtxMenu(e.clientX, e.clientY, items);
+  }, true);
+
+  // ---- Settings panel (gear icon + modal) ----
+  function ensureSettingsButton(){
+    const header = document.querySelector('.sidebar-header');
+    if (!header || document.getElementById('settings-btn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'settings-btn';
+    btn.className = 'icon-btn';
+    btn.title = 'Paramètres';
+    btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+    btn.onclick = openSettings;
+    header.appendChild(btn);
+  }
+
+  function openSettings(){
+    const k = getKeys();
+    const tag = (v) => v ? '<span style="color:#10b981;font-weight:600">✓</span>' : '<span style="color:var(--text-3)">non défini</span>';
+    const html = `
+      <div class="modal-head"><div class="modal-title">⚙️ Paramètres</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+      <div class="tpl-modal-tabs" id="settings-tabs">
+        <button class="tpl-tab active" data-tab="keys">Clés API</button>
+        <button class="tpl-tab" data-tab="appearance">Apparence</button>
+        <button class="tpl-tab" data-tab="account">Compte</button>
+      </div>
+      <div id="settings-body">
+        <div data-tab-body="keys">
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:14px">Toutes les clés sont stockées localement (localStorage).</div>
+          <div class="prop-row">
+            <div class="prop-label">UNSPLASH ACCESS KEY ${tag(k.unsplash)}</div>
+            <input class="prop-input" id="key-unsplash" placeholder="ton Unsplash access key" value="${escapeHtml(k.unsplash||'')}">
+            <div style="font-size:11px;color:var(--text-3);margin-top:4px"><a href="https://unsplash.com/developers" target="_blank" style="color:var(--accent)">Obtenir une clé gratuite ici →</a></div>
+          </div>
+          <div class="prop-row">
+            <div class="prop-label">GROQ API KEY ${tag(k.groq)}</div>
+            <input class="prop-input" id="key-groq" placeholder="gsk_..." value="${escapeHtml(k.groq||'')}">
+            <div style="font-size:11px;color:var(--text-3);margin-top:4px"><a href="https://console.groq.com" target="_blank" style="color:var(--accent)">Obtenir une clé gratuite ici →</a></div>
+          </div>
+          <div class="prop-row">
+            <div class="prop-label">GIPHY API KEY ${tag(k.giphy)}</div>
+            <input class="prop-input" id="key-giphy" placeholder="ta GIPHY api key" value="${escapeHtml(k.giphy||'')}">
+            <div style="font-size:11px;color:var(--text-3);margin-top:4px"><a href="https://developers.giphy.com" target="_blank" style="color:var(--accent)">Obtenir une clé gratuite ici →</a></div>
+          </div>
+          <button class="btn" id="save-keys" style="margin-top:8px">Enregistrer</button>
+        </div>
+        <div data-tab-body="appearance" style="display:none">
+          <div class="prop-row">
+            <div class="prop-label">THÈME</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn-ghost" onclick="window.U.setTheme('dark')" style="flex:1;padding:8px">Sombre</button>
+              <button class="btn-ghost" onclick="window.U.setTheme('light')" style="flex:1;padding:8px">Clair</button>
+            </div>
+          </div>
+          <div class="prop-row">
+            <div class="prop-label">COULEUR D'ACCENT</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              ${['orange','blue','purple','green','pink','mono'].map(a => `<button class="btn-ghost" onclick="window.U.setAccent('${a}')" style="padding:8px 12px">${a}</button>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div data-tab-body="account" style="display:none">
+          <div style="font-size:13px;color:var(--text-2)">Connecté en tant que <strong>${escapeHtml((state.user&&state.user.email)||'invité')}</strong></div>
+          <div style="margin-top:14px"><button class="btn-ghost" onclick="document.getElementById('logout-btn').click()" style="padding:10px 16px">Se déconnecter</button></div>
+        </div>
+      </div>`;
+    showModal(html, '560px');
+    document.querySelectorAll('#settings-tabs .tpl-tab').forEach(b => b.onclick = () => {
+      document.querySelectorAll('#settings-tabs .tpl-tab').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      document.querySelectorAll('[data-tab-body]').forEach(d => d.style.display = d.dataset.tabBody===b.dataset.tab?'':'none');
+    });
+    const sk = document.getElementById('save-keys');
+    if (sk) sk.onclick = () => {
+      setKeys({
+        unsplash: document.getElementById('key-unsplash').value.trim(),
+        groq: document.getElementById('key-groq').value.trim(),
+        giphy: document.getElementById('key-giphy').value.trim()
+      });
+      toast('Clés enregistrées','success');
+      closeModal();
+    };
+  }
+
+  // ---- Cover picker enhancements (tabs) ----
+  if (typeof showCoverPicker === 'function') {
+    window.showCoverPicker = function(coverEl){
+      const picker = document.getElementById('cover-picker');
+      const k = getKeys();
+      picker.innerHTML = `
+        <div class="tpl-modal-tabs" style="margin-bottom:8px">
+          <button class="tpl-tab active" data-cv="grad">Galerie</button>
+          <button class="tpl-tab" data-cv="upload">Importer</button>
+          <button class="tpl-tab" data-cv="url">URL</button>
+          <button class="tpl-tab" data-cv="random">Aléatoire</button>
+          <button class="tpl-tab" data-cv="unsplash">Unsplash</button>
+        </div>
+        <div data-cv-body="grad" class="cover-grid">${(window.COVER_GRADIENTS||[]).map((g,i)=>`<div class="cover-swatch" data-cg="${i}" style="background:${g};width:60px;height:36px;border-radius:6px;cursor:pointer;display:inline-block;margin:3px"></div>`).join('')}</div>
+        <div data-cv-body="upload" style="display:none;padding:8px"><input type="file" id="cv-file" accept="image/*"><div style="font-size:11px;color:var(--text-3);margin-top:6px">Max 2 Mo</div></div>
+        <div data-cv-body="url" style="display:none;padding:8px"><input class="prop-input" id="cv-url" placeholder="https://..."><button class="btn" id="cv-url-go" style="margin-top:8px;padding:8px">Appliquer</button></div>
+        <div data-cv-body="random" style="display:none"><div class="cover-grid">${[1,2,3,4,5,6,7,8,9,10,11,12].map(n => `<img data-pic="${n}" src="https://picsum.photos/200/80?random=${n}" style="width:60px;height:36px;object-fit:cover;border-radius:6px;cursor:pointer;margin:3px">`).join('')}</div></div>
+        <div data-cv-body="unsplash" style="display:none;padding:8px">
+          ${k.unsplash ? `<input class="prop-input" id="cv-uns-q" placeholder="Recherche..."><div id="cv-uns-results" style="display:flex;flex-wrap:wrap;margin-top:8px;max-height:240px;overflow-y:auto"></div>` : '<div style="color:var(--text-2);font-size:13px">Ajoute ta clé Unsplash dans ⚙️ Paramètres</div>'}
+        </div>`;
+      const r = coverEl.getBoundingClientRect();
+      picker.style.left = (r.left + r.width/2) + 'px';
+      picker.style.top = (r.bottom + window.scrollY - 8) + 'px';
+      picker.style.maxWidth = '420px';
+      picker.classList.add('show');
+
+      function applyCover(val){
+        const p = currentPage(); if (!p) return;
+        p.cover = val;
+        coverEl.style.background = val.startsWith('http')||val.startsWith('data:') ? `url(${val}) center/cover` : val;
+        Storage.save();
+        picker.classList.remove('show');
+      }
+      picker.querySelectorAll('.tpl-tab').forEach(tb => tb.onclick = () => {
+        picker.querySelectorAll('.tpl-tab').forEach(x => x.classList.remove('active'));
+        tb.classList.add('active');
+        picker.querySelectorAll('[data-cv-body]').forEach(d => d.style.display = d.dataset.cvBody===tb.dataset.cv?'':'none');
+      });
+      picker.querySelectorAll('[data-cg]').forEach(s => s.onclick = () => applyCover((window.COVER_GRADIENTS||[])[+s.dataset.cg]));
+      const cvFile = document.getElementById('cv-file');
+      if (cvFile) cvFile.onchange = (e) => {
+        const f = e.target.files[0]; if (!f) return;
+        if (f.size > 2*1024*1024) return toast('Trop gros (max 2Mo)','error');
+        const rd = new FileReader();
+        rd.onload = () => applyCover(`url(${rd.result}) center/cover`);
+        rd.readAsDataURL(f);
+      };
+      const cvGo = document.getElementById('cv-url-go');
+      if (cvGo) cvGo.onclick = () => {
+        const u = document.getElementById('cv-url').value.trim();
+        if (u) applyCover(`url(${u}) center/cover`);
+      };
+      picker.querySelectorAll('[data-pic]').forEach(im => im.onclick = () => applyCover(`url(https://picsum.photos/1600/300?random=${im.dataset.pic}) center/cover`));
+      const unsQ = document.getElementById('cv-uns-q');
+      if (unsQ) {
+        let t;
+        unsQ.oninput = (e) => {
+          clearTimeout(t);
+          const q = e.target.value.trim();
+          if (!q) return;
+          t = setTimeout(async () => {
+            try {
+              const r = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=12&client_id=${getKeys().unsplash}`);
+              const j = await r.json();
+              const grid = document.getElementById('cv-uns-results');
+              grid.innerHTML = (j.results||[]).map(p => `<img data-uurl="${p.urls.regular}" src="${p.urls.thumb}" style="width:90px;height:60px;object-fit:cover;border-radius:6px;cursor:pointer;margin:3px">`).join('');
+              grid.querySelectorAll('[data-uurl]').forEach(im => im.onclick = () => applyCover(`url(${im.dataset.uurl}) center/cover`));
+            } catch(e) { toast('Erreur Unsplash','error'); }
+          }, 350);
+        };
+      }
+      setTimeout(() => {
+        document.addEventListener('click', function close(e){
+          if (!e.target.closest('.cover-picker') && !e.target.closest('.cover-actions')) {
+            picker.classList.remove('show');
+            document.removeEventListener('click', close);
+          }
+        });
+      }, 0);
+    };
+  }
+
+  // ---- Free APIs ----
+  const APIs = {
+    async meteo(lat, lon){
+      const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code`);
+      return r.json();
+    },
+    weatherEmoji(code){
+      if (code===0) return '☀️ Ensoleillé';
+      if (code<=3) return '⛅ Nuageux';
+      if (code<=48) return '🌫️ Brouillard';
+      if (code<=67) return '🌧️ Pluie';
+      if (code<=77) return '❄️ Neige';
+      if (code<=82) return '🌧️ Averses';
+      if (code<=99) return '⛈️ Orage';
+      return '🌤️';
+    },
+    async quote(){
+      try { const r = await fetch('https://api.quotable.io/random'); return r.json(); }
+      catch(e){ return { content:'La meilleure façon de prédire l\'avenir est de le créer.', author:'Peter Drucker' }; }
+    },
+    async books(title){
+      const r = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(title)}&limit=5`);
+      const j = await r.json();
+      return (j.docs||[]).map(d => ({
+        title: d.title, author: (d.author_name||[])[0]||'?', year: d.first_publish_year||'',
+        cover: d.cover_i ? `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg` : ''
+      }));
+    },
+    async crypto(){
+      const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd');
+      return r.json();
+    },
+    async meal(){
+      const r = await fetch('https://www.themealdb.com/api/json/v1/1/random.php');
+      const j = await r.json();
+      return (j.meals||[])[0];
+    },
+    async country(name){
+      const r = await fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(name)}`);
+      return r.json();
+    }
+  };
+
+  // ---- Slash command handlers for /book /crypto /recipe /country /gif /ai ----
+  // We hook into showSlashMenu by extending the SLASH_OPTIONS via DOM-level interception:
+  // Easiest: extend the existing array if exposed; otherwise add a parallel slash interpreter.
+  // The existing SLASH_OPTIONS is module-scoped — but applySlash → changeBlockType. We add a new
+  // path: after the existing slash menu shows, add extra items below it. Simpler: provide a
+  // standalone command palette extension and a button in main header.
+
+  function handleSlashCommand(cmd){
+    cmd = (cmd||'').toLowerCase().trim();
+    if (cmd === 'book') return slashBook();
+    if (cmd === 'crypto') return slashCrypto();
+    if (cmd === 'recipe') return slashRecipe();
+    if (cmd === 'country') return slashCountry();
+    if (cmd === 'gif') return slashGif();
+    if (cmd === 'time') return slashTime();
+    return false;
+  }
+
+  function insertCalloutBlock(content, emoji){
+    const blocks = state.blocks[state.currentPageId];
+    if (!blocks) return;
+    blocks.push({ id: nbid(), type:'callout', emoji: emoji||'📌', content });
+    Storage.save();
+    if (typeof renderEditor==='function') renderEditor();
+  }
+  function insertImageBlock(url, caption){
+    const blocks = state.blocks[state.currentPageId]; if (!blocks) return;
+    blocks.push({ id: nbid(), type:'image', url, content: caption||'' });
+    Storage.save();
+    if (typeof renderEditor==='function') renderEditor();
+  }
+
+  async function slashBook(){
+    const q = prompt('Titre du livre :'); if (!q) return;
+    try {
+      const books = await APIs.books(q);
+      if (!books.length) return toast('Aucun livre trouvé');
+      const html = `<div class="modal-head"><div class="modal-title">📚 Résultats</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+        <div style="max-height:60vh;overflow-y:auto">
+          ${books.map((b,i) => `<div class="ctx-item" data-bk="${i}" style="padding:10px;display:flex;gap:10px;align-items:center">
+            ${b.cover?`<img src="${b.cover}" style="width:48px;height:64px;object-fit:cover;border-radius:4px">`:'<div style="width:48px;height:64px;background:var(--bg-3);border-radius:4px;display:flex;align-items:center;justify-content:center">📕</div>'}
+            <div><div style="font-weight:600">${escapeHtml(b.title)}</div><div style="font-size:12px;color:var(--text-2)">${escapeHtml(b.author)} · ${b.year||''}</div></div>
+          </div>`).join('')}
+        </div>`;
+      showModal(html, '560px');
+      document.querySelectorAll('[data-bk]').forEach(el => el.onclick = () => {
+        const b = books[+el.dataset.bk];
+        const txt = `📚 <strong>${b.title}</strong> — ${b.author} (${b.year||'?'})`;
+        insertCalloutBlock(txt, '📚');
+        if (b.cover) insertImageBlock(b.cover, b.title);
+        closeModal();
+      });
+    } catch(e){ toast('Erreur API','error'); }
+  }
+  async function slashCrypto(){
+    try {
+      const j = await APIs.crypto();
+      const txt = `💰 BTC $${j.bitcoin.usd.toLocaleString()} · ETH $${j.ethereum.usd.toLocaleString()} · SOL $${j.solana.usd.toLocaleString()}`;
+      insertCalloutBlock(txt, '💰');
+      toast('Prix crypto ajoutés');
+    } catch(e){ toast('Erreur CoinGecko','error'); }
+  }
+  async function slashRecipe(){
+    try {
+      const m = await APIs.meal(); if (!m) return;
+      const ings = []; for (let i=1;i<=20;i++){ const ing=m['strIngredient'+i]; const me=m['strMeasure'+i]; if (ing&&ing.trim()) ings.push(`${me||''} ${ing}`.trim()); }
+      insertImageBlock(m.strMealThumb, m.strMeal);
+      insertCalloutBlock(`🍽️ <strong>${m.strMeal}</strong> (${m.strArea||''})<br>${ings.slice(0,8).map(escapeHtml).join(' · ')}`, '🍽️');
+      toast('Recette ajoutée');
+    } catch(e){ toast('Erreur TheMealDB','error'); }
+  }
+  async function slashCountry(){
+    const q = prompt('Nom du pays :'); if (!q) return;
+    try {
+      const arr = await APIs.country(q);
+      if (!arr || !arr.length || arr.status===404) return toast('Pays introuvable');
+      const c = arr[0];
+      const txt = `${c.flag||''} <strong>${c.name.common}</strong> · ${(c.capital||[])[0]||'?'} · ${(c.population||0).toLocaleString()} hab. · ${(c.region||'')}`;
+      insertCalloutBlock(txt, '🌍');
+    } catch(e){ toast('Erreur REST Countries','error'); }
+  }
+  async function slashGif(){
+    const k = getKeys();
+    if (!k.giphy) return toast('Ajoute ta clé GIPHY dans ⚙️','error');
+    const q = prompt('Recherche GIF :'); if (!q) return;
+    try {
+      const r = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${k.giphy}&q=${encodeURIComponent(q)}&limit=12`);
+      const j = await r.json();
+      const html = `<div class="modal-head"><div class="modal-title">GIFs : ${escapeHtml(q)}</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:60vh;overflow-y:auto">
+          ${(j.data||[]).map((g,i) => `<img data-gif="${i}" src="${g.images.fixed_height_small.url}" style="width:100%;cursor:pointer;border-radius:6px">`).join('')}
+        </div>`;
+      showModal(html, '600px');
+      document.querySelectorAll('[data-gif]').forEach(im => im.onclick = () => {
+        insertImageBlock(j.data[+im.dataset.gif].images.original.url, '');
+        closeModal();
+      });
+    } catch(e){ toast('Erreur GIPHY','error'); }
+  }
+  async function slashTime(){
+    const tz = prompt('Fuseau (ex: Europe/Paris) :','Europe/Paris'); if (!tz) return;
+    try {
+      const r = await fetch(`https://worldtimeapi.org/api/timezone/${tz}`);
+      const j = await r.json();
+      insertCalloutBlock(`🕐 <strong>${tz}</strong> · ${new Date(j.datetime).toLocaleString('fr-FR')}`, '🕐');
+    } catch(e){ toast('Erreur WorldTimeAPI','error'); }
+  }
+
+  // Add to command palette via buildCmdK extension
+  if (typeof buildCmdK === 'function') {
+    const _origBuild = buildCmdK;
+    window.buildCmdK = function(q){
+      const items = _origBuild(q);
+      const ql = (q||'').toLowerCase();
+      const extras = [
+        { cat:'Commandes', icon:'📚', name:'Insérer livre (Open Library)', action: () => { closeCmdK(); slashBook(); }},
+        { cat:'Commandes', icon:'💰', name:'Insérer prix crypto', action: () => { closeCmdK(); slashCrypto(); }},
+        { cat:'Commandes', icon:'🍽️', name:'Insérer recette aléatoire', action: () => { closeCmdK(); slashRecipe(); }},
+        { cat:'Commandes', icon:'🌍', name:'Insérer pays', action: () => { closeCmdK(); slashCountry(); }},
+        { cat:'Commandes', icon:'🎬', name:'Insérer GIF', action: () => { closeCmdK(); slashGif(); }},
+        { cat:'Commandes', icon:'🕐', name:'Insérer heure (fuseau)', action: () => { closeCmdK(); slashTime(); }},
+        { cat:'Commandes', icon:'⚙️', name:'Paramètres / Clés API', action: () => { closeCmdK(); openSettings(); }},
+        { cat:'Commandes', icon:'📁', name:'Nouveau dossier', action: () => { closeCmdK(); const n = prompt('Nom :'); if (n) createFolder(n,null); }},
+      ];
+      extras.forEach(a => { if (!ql || a.name.toLowerCase().includes(ql)) items.push(a); });
+      return items;
+    };
+  }
+
+  // ---- Daily Note enrichment: weather + quote ----
+  if (typeof dailyNote === 'function') {
+    const _origDaily = dailyNote;
+    window.dailyNote = async function(){
+      _origDaily();
+      const cur = currentPage();
+      if (!cur || !cur.dailyKey) return;
+      const blocks = state.blocks[cur.id];
+      if (!blocks || blocks.__enriched) return;
+      try {
+        let lat=48.8566, lon=2.3522, city='Paris';
+        if (navigator.geolocation) {
+          await new Promise(res => {
+            navigator.geolocation.getCurrentPosition(
+              p => { lat=p.coords.latitude; lon=p.coords.longitude; city='Ici'; res(); },
+              () => res(),
+              { timeout:3000 }
+            );
+          });
+        }
+        const m = await APIs.meteo(lat, lon);
+        if (m && m.current) {
+          const w = APIs.weatherEmoji(m.current.weather_code);
+          blocks.unshift({ id:nbid(), type:'callout', emoji:'🌤️', content:`${city} · ${Math.round(m.current.temperature_2m)}°C · ${w}` });
+        }
+        const q = await APIs.quote();
+        if (q && q.content) blocks.splice(1, 0, { id:nbid(), type:'quote', content:`${q.content} — ${q.author||''}` });
+        blocks.__enriched = true;
+        Storage.save();
+        if (typeof renderEditor==='function') renderEditor();
+      } catch(e){ console.warn('daily enrich', e); }
+    };
+  }
+
+  // ---- /ai with Groq if key set ----
+  // Hook into changeBlockType: when type='ai', if groq key set, render input UI
+  // Simpler: post-process renderEditor to enhance ai blocks.
+  function enhanceAiBlocks(){
+    const k = getKeys();
+    document.querySelectorAll('.block[data-type="ai"]').forEach(el => {
+      if (el.dataset.aiHooked) return;
+      el.dataset.aiHooked = '1';
+      if (!k.groq) return;
+      const id = el.dataset.id;
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'display:flex;gap:6px;margin-top:6px';
+      wrap.innerHTML = `<input class="prop-input" placeholder="Demande à l'IA..." style="flex:1"><button class="btn" style="padding:6px 12px">→</button>`;
+      el.appendChild(wrap);
+      const inp = wrap.querySelector('input');
+      const btn = wrap.querySelector('button');
+      btn.onclick = async () => {
+        const q = inp.value.trim(); if (!q) return;
+        btn.textContent = '...'; btn.disabled = true;
+        try {
+          const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method:'POST',
+            headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+k.groq },
+            body: JSON.stringify({ model:'llama-3.3-70b-versatile', messages:[{role:'user',content:q}] })
+          });
+          const j = await r.json();
+          const ans = j.choices?.[0]?.message?.content || '(pas de réponse)';
+          const b = getBlock(id);
+          if (b) { b.content = ans; Storage.save(); renderEditor(); }
+        } catch(e){ toast('Erreur Groq','error'); }
+        btn.textContent='→'; btn.disabled=false;
+      };
+    });
+  }
+  if (typeof renderEditor === 'function') {
+    const _origRE = renderEditor;
+    window.renderEditor = function(){
+      _origRE();
+      try { enhanceAiBlocks(); } catch(e){}
+    };
+  }
+
+  // ---- Boot ----
+  function boot(){
+    ensureSettingsButton();
+    ensureFolderUI();
+    renderFolderTree();
+  }
+  // Wait for app to be visible
+  const bootInterval = setInterval(() => {
+    if (document.getElementById('app') && document.getElementById('app').classList.contains('show')) {
+      clearInterval(bootInterval);
+      try { boot(); } catch(e){ console.error('boot ext', e); }
+    }
+  }, 500);
+  // Also try once DOM ready
+  if (document.readyState !== 'loading') setTimeout(() => { try { boot(); } catch(e){} }, 800);
+  else document.addEventListener('DOMContentLoaded', () => setTimeout(boot, 800));
+
+  // Expose
+  Object.assign(window.U, {
+    openSettings, createFolder, renameFolder, deleteFolder,
+    movePageToFolder, movePagePrompt,
+    slashBook, slashCrypto, slashRecipe, slashCountry, slashGif, slashTime,
+    APIs, getKeys, setKeys
+  });
+  console.log('[Underrated] Extensions v2.0 loaded');
+})();
 </script>
 </body>
 </html>
