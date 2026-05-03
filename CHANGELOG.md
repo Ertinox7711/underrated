@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 01:51 — `27e39a0`
+design: match Glass — replace static emoji UI with inline SVG icons
+
 ## 04/05/2026 01:44 — `6324875`
 feat: demo button seeds 3 pages from design (Stratégie/Roadmap/Notes) — exact match
 

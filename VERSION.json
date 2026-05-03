@@ -1,8 +1,8 @@
 {
-  "commit": "6324875",
-  "message": "feat: demo button seeds 3 pages from design (Stratégie/Roadmap/Notes) — exact match",
-  "commitDate": "2026-05-04T01:44:05+02:00",
-  "buildDate": "2026-05-03T23:44:12Z",
-  "buildDateFR": "04/05/2026 01:44",
+  "commit": "27e39a0",
+  "message": "design: match Glass — replace static emoji UI with inline SVG icons",
+  "commitDate": "2026-05-04T01:51:43+02:00",
+  "buildDate": "2026-05-03T23:51:50Z",
+  "buildDateFR": "04/05/2026 01:51",
   "branch": "main"
 }
