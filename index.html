@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" rel="stylesheet">
 <style>
 :root{
   --accent:#fb923c;
@@ -70,6 +71,121 @@ input,textarea{font-family:inherit;background:none;border:none;color:inherit;out
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 ::-webkit-scrollbar-thumb:hover{background:var(--text-3)}
 ::selection{background:var(--accent-soft);color:var(--text)}
+
+/* NEW FEATURE STYLES */
+.tpl-modal-tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:14px;flex-wrap:wrap}
+.tpl-tab{padding:8px 14px;background:none;border:none;color:var(--text-2);font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:var(--transition)}
+.tpl-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;max-height:60vh;overflow-y:auto}
+.tpl-card{background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:0;text-align:left;cursor:pointer;transition:var(--transition);overflow:hidden}
+.tpl-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.tpl-thumb{height:80px;display:flex;align-items:center;justify-content:center;font-size:32px}
+.tpl-info{padding:10px 12px}
+.tpl-name{font-weight:600;font-size:13px}
+.tpl-desc{font-size:11px;color:var(--text-3);margin-top:2px}
+
+.sidebar-tpl-btn{display:flex;align-items:center;gap:10px;padding:8px 12px;margin:0 8px 4px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text-2);transition:var(--transition);background:var(--accent-soft);border:1px solid transparent}
+.sidebar-tpl-btn:hover{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+
+.fav-star{cursor:pointer;opacity:.4;transition:var(--transition);font-size:13px;margin-left:auto;padding-right:4px}
+.fav-star:hover,.fav-star.active{opacity:1;color:#fbbf24}
+.page-item .fav-star{margin-left:0}
+
+.props-panel{position:fixed;right:0;top:54px;bottom:0;width:300px;background:var(--bg-2);border-left:1px solid var(--border);transform:translateX(100%);transition:transform var(--transition-slow);z-index:40;overflow-y:auto;padding:18px}
+.props-panel.show{transform:translateX(0)}
+.prop-row{margin-bottom:14px}
+.prop-label{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.prop-input{width:100%;background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px}
+
+.ctx-menu{position:fixed;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);z-index:200;min-width:180px;padding:4px;display:none}
+.ctx-menu.show{display:block}
+.ctx-item{padding:7px 12px;font-size:13px;cursor:pointer;border-radius:5px;display:flex;align-items:center;gap:10px}
+.ctx-item:hover{background:var(--bg-hover)}
+.ctx-item.danger{color:var(--danger)}
+.ctx-sep{height:1px;background:var(--border);margin:4px 0}
+
+.cmt-drawer{position:fixed;right:0;top:54px;bottom:0;width:320px;background:var(--bg-2);border-left:1px solid var(--border);transform:translateX(100%);transition:transform var(--transition-slow);z-index:45;display:flex;flex-direction:column}
+.cmt-drawer.show{transform:translateX(0)}
+.cmt-head{padding:14px;border-bottom:1px solid var(--border);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.cmt-list{flex:1;overflow-y:auto;padding:12px}
+.cmt-item{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;font-size:13px}
+.cmt-meta{font-size:11px;color:var(--text-3);margin-bottom:4px}
+.cmt-input-wrap{padding:12px;border-top:1px solid var(--border);display:flex;gap:6px}
+.cmt-input-wrap input{flex:1;background:var(--bg-3);border:1px solid var(--border);padding:8px 10px;border-radius:6px;font-size:13px;color:var(--text)}
+.cmt-input-wrap button{background:var(--accent);color:#000;font-weight:600;padding:8px 14px;border-radius:6px;font-size:13px}
+
+.toolbar{position:fixed;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);z-index:200;padding:4px;display:none;gap:2px;align-items:center}
+.toolbar.show{display:flex}
+.tb-btn{padding:5px 8px;border-radius:4px;font-size:13px;cursor:pointer;color:var(--text-2);min-width:28px;text-align:center}
+.tb-btn:hover{background:var(--bg-hover);color:var(--text)}
+.tb-color{width:18px;height:18px;border-radius:4px;cursor:pointer;border:1px solid var(--border)}
+.tb-sep{width:1px;height:18px;background:var(--border);margin:0 3px}
+
+mark.hl-yellow{background:rgba(250,204,21,.35);color:inherit;padding:1px 2px;border-radius:2px}
+mark.hl-pink{background:rgba(244,114,182,.35);color:inherit;padding:1px 2px;border-radius:2px}
+mark.hl-green{background:rgba(74,222,128,.3);color:inherit;padding:1px 2px;border-radius:2px}
+mark.hl-blue{background:rgba(96,165,250,.3);color:inherit;padding:1px 2px;border-radius:2px}
+.tx-red{color:#f87171}.tx-orange{color:#fb923c}.tx-yellow{color:#facc15}.tx-green{color:#4ade80}.tx-blue{color:#60a5fa}.tx-purple{color:#a78bfa}.tx-pink{color:#f472b6}
+code.inline{background:var(--bg-3);border:1px solid var(--border);padding:1px 5px;border-radius:4px;font-family:'SF Mono',Menlo,monospace;font-size:.88em;color:var(--accent)}
+
+.toc-block{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin:6px 0}
+.toc-h{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.toc-link{display:block;padding:3px 0;color:var(--text-2);font-size:14px;cursor:pointer;text-decoration:none}
+.toc-link:hover{color:var(--accent)}
+.toc-link.lvl2{padding-left:14px;font-size:13px}
+.toc-link.lvl3{padding-left:28px;font-size:12px}
+
+.btn-block{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#000;font-weight:600;padding:10px 16px;border-radius:8px;border:none;cursor:pointer;font-size:14px}
+.btn-block:hover{transform:translateY(-1px);box-shadow:0 6px 14px var(--accent-soft)}
+
+.math-block{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:14px;margin:6px 0;overflow-x:auto;text-align:center}
+.math-edit{font-family:'SF Mono',Menlo,monospace;font-size:13px;background:transparent;color:var(--text-2);padding:6px 0 0;width:100%;outline:none;border:none;border-top:1px dashed var(--border);margin-top:8px}
+.mermaid-block{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:14px;margin:6px 0;text-align:center}
+
+.synced-marker{display:inline-block;background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-right:6px}
+
+.embed-block{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:6px 0}
+.embed-block iframe{display:block;width:100%;border:0;min-height:300px}
+
+.file-block{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;margin:6px 0}
+.file-block:hover{border-color:var(--accent)}
+.file-icon{font-size:28px}
+.file-info{flex:1}
+.file-name{font-weight:500;font-size:14px}
+.file-size{color:var(--text-3);font-size:12px}
+
+.audio-block{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:12px;margin:6px 0;display:flex;align-items:center;gap:10px}
+.audio-block audio{flex:1}
+.audio-rec{background:var(--danger);color:#fff;padding:8px 14px;border-radius:6px;font-size:13px;cursor:pointer;border:none}
+
+.view-switcher{display:inline-flex;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;padding:2px;margin-bottom:8px}
+.view-switcher button{padding:5px 10px;font-size:12px;border-radius:4px;color:var(--text-2)}
+.view-switcher button.active{background:var(--bg-2);color:var(--text)}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.gallery-card{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer}
+
+.bulk-bar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;padding:8px;box-shadow:var(--shadow);z-index:90;display:none;gap:6px;align-items:center}
+.bulk-bar.show{display:flex}
+.bulk-bar button{padding:6px 12px;background:var(--bg-3);border-radius:6px;font-size:12px;color:var(--text)}
+.bulk-bar button:hover{background:var(--bg-hover)}
+.block.selected{background:var(--accent-soft);border-radius:6px;outline:2px solid var(--accent);outline-offset:-2px}
+
+.sub-todo{margin-left:24px}
+
+.emoji-cats{display:flex;gap:4px;border-bottom:1px solid var(--border);padding:0 4px 6px;margin-bottom:6px;overflow-x:auto}
+.emoji-cat-btn{background:none;border:none;font-size:18px;padding:4px 6px;border-radius:4px;cursor:pointer;opacity:.6}
+.emoji-cat-btn.active{opacity:1;background:var(--bg-hover)}
+
+.ws-switcher{display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 8px;border-radius:6px;font-size:12px;color:var(--text-2)}
+.ws-switcher:hover{background:var(--bg-hover)}
+
+@media print {
+  .sidebar,.main-header,.fab,.pomodoro,#sidebar-overlay,.editor-cover .cover-actions,.block-handle,.block-comment-btn,.props-panel,.cmt-drawer,#cmdk-overlay,#modal-overlay{display:none !important}
+  body,#app,.app-shell,.main,.editor{background:#fff !important;color:#000 !important;height:auto !important;overflow:visible !important}
+  .editor-content{max-width:100% !important}
+  *{color:#000 !important}
+}
 
 /* LOGIN */
 #login-screen{
@@ -658,7 +774,7 @@ body.focus-mode .editor-content{max-width:820px}
 
 /* FAB */
 .fab{
-  position:fixed;bottom:20px;left:20px;
+  position:fixed;bottom:90px;left:20px;
   width:48px;height:48px;border-radius:50%;
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
   color:#000;display:flex;align-items:center;justify-content:center;
@@ -811,6 +927,20 @@ body.focus-mode .editor-content{max-width:820px}
         </div>
       </div>
 
+      <div class="sidebar-tpl-btn" id="sidebar-tpl-btn">
+        <span style="font-size:14px">📋</span><span>Templates</span>
+      </div>
+
+      <div class="sidebar-section" id="favorites-section" style="display:none">
+        <div class="section-title"><span>⭐ Favoris</span></div>
+        <div id="fav-list"></div>
+      </div>
+
+      <div class="sidebar-section" id="recent-section" style="display:none">
+        <div class="section-title"><span>🕒 Récent</span></div>
+        <div id="recent-list"></div>
+      </div>
+
       <div class="sidebar-section">
         <div class="section-title">
           <span>Pages</span>
@@ -871,6 +1001,31 @@ body.focus-mode .editor-content{max-width:820px}
 <div class="emoji-picker" id="emoji-picker"></div>
 <div class="cover-picker" id="cover-picker"></div>
 <div class="toast" id="toast"></div>
+<div class="ctx-menu" id="ctx-menu"></div>
+<div class="toolbar" id="format-toolbar"></div>
+<div class="bulk-bar" id="bulk-bar"></div>
+
+<!-- PROPERTIES PANEL -->
+<div class="props-panel" id="props-panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="font-weight:600">Propriétés</div>
+    <button onclick="window.U.toggleProps()" style="color:var(--text-3)">×</button>
+  </div>
+  <div id="props-content"></div>
+</div>
+
+<!-- COMMENT DRAWER -->
+<div class="cmt-drawer" id="cmt-drawer">
+  <div class="cmt-head">
+    <span>💬 Commentaires</span>
+    <button onclick="window.U.closeComments()" style="color:var(--text-3)">×</button>
+  </div>
+  <div class="cmt-list" id="cmt-list"></div>
+  <div class="cmt-input-wrap">
+    <input id="cmt-input" placeholder="Écrire un commentaire..." />
+    <button id="cmt-send">Envoyer</button>
+  </div>
+</div>
 
 <!-- COMMAND PALETTE -->
 <div class="cmdk-overlay" id="cmdk-overlay">
@@ -915,6 +1070,12 @@ body.focus-mode .editor-content{max-width:820px}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad:false, theme:'dark', securityLevel:'loose' });
+  window.__mermaid = mermaid;
+</script>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -1488,6 +1649,104 @@ function renderBlock(block) {
     </div>`;
   }
 
+  if (block.type==='math') {
+    return `<div class="block" data-id="${block.id}" data-type="math">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="math-block" data-mathid="${block.id}">
+        <div class="math-render" id="math-r-${block.id}"></div>
+        <input class="math-edit" data-mathin="${block.id}" placeholder="\\\\sum_{i=1}^n i = \\\\frac{n(n+1)}{2}" value="${escapeHtml(block.content||'')}">
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
+  if (block.type==='mermaid') {
+    return `<div class="block" data-id="${block.id}" data-type="mermaid">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="mermaid-block" data-mermid="${block.id}">
+        <div class="mermaid-render" id="mer-${block.id}"></div>
+        <input class="math-edit" data-merin="${block.id}" placeholder="graph TD; A-->B; B-->C" value="${escapeHtml(block.content||'graph TD; A-->B; B-->C')}">
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
+  if (block.type==='toc') {
+    const blocks = state.blocks[state.currentPageId] || [];
+    const heads = blocks.filter(b => b.type==='h1'||b.type==='h2'||b.type==='h3');
+    return `<div class="block" data-id="${block.id}" data-type="toc">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="toc-block">
+        <div class="toc-h">📑 Sommaire</div>
+        ${heads.length ? heads.map(h => `<a class="toc-link lvl${h.type[1]}" data-tocid="${h.id}">${escapeHtml(h.content||'(vide)')}</a>`).join('') : '<div style="color:var(--text-3);font-size:13px">Aucun titre dans cette page</div>'}
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
+  if (block.type==='button') {
+    return `<div class="block" data-id="${block.id}" data-type="button">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div style="flex:1">
+        <button class="btn-block" data-btnaction="${block.id}">${escapeHtml(block.label||'+ Nouvelle tâche')}</button>
+        <select data-btntype="${block.id}" style="margin-left:8px;background:var(--bg-3);color:var(--text);border:1px solid var(--border);padding:6px;border-radius:6px;font-size:12px">
+          <option value="task" ${(block.action||'task')==='task'?'selected':''}>Créer tâche</option>
+          <option value="dup" ${block.action==='dup'?'selected':''}>Dupliquer page</option>
+          <option value="goto" ${block.action==='goto'?'selected':''}>Aller à page</option>
+        </select>
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
+  if (block.type==='file') {
+    return `<div class="block" data-id="${block.id}" data-type="file">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="file-block" data-fileid="${block.id}">
+        <div class="file-icon">📎</div>
+        <div class="file-info">
+          <div class="file-name">${escapeHtml(block.fileName||'Cliquer pour uploader')}</div>
+          <div class="file-size">${block.fileSize?Math.round(block.fileSize/1024)+' KB':''}</div>
+        </div>
+        ${block.fileData?`<button data-filedl="${block.id}" style="background:var(--accent);color:#000;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600">Télécharger</button>`:''}
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
+  if (block.type==='audio') {
+    return `<div class="block" data-id="${block.id}" data-type="audio">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="audio-block">
+        ${block.audioData?`<audio controls src="${block.audioData}"></audio>`:'<span style="color:var(--text-3);font-size:13px">🎙️ Pas d\'enregistrement</span>'}
+        <button class="audio-rec" data-audiorec="${block.id}">${block.recording?'⏹️ Stop':'🔴 Rec'}</button>
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
+  if (block.type==='synced') {
+    let mirrorContent = '';
+    let mirrorType = 'p';
+    if (block.syncedFrom) {
+      for (const pid in state.blocks) {
+        const src = state.blocks[pid].find(b => b.id === block.syncedFrom);
+        if (src) { mirrorContent = src.content || ''; mirrorType = src.type; break; }
+      }
+    }
+    return `<div class="block" data-id="${block.id}" data-type="synced">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div style="flex:1;border-left:2px solid var(--accent);padding:6px 12px;background:var(--accent-soft);border-radius:6px">
+        <span class="synced-marker">🔁 SYNC</span>
+        ${block.syncedFrom ? `<span>${escapeHtml(mirrorContent||'(vide)')}</span>` : `<input data-syncin="${block.id}" placeholder="ID du bloc à synchroniser" style="background:transparent;border:1px dashed var(--border);padding:4px 8px;border-radius:4px;color:var(--text);width:300px" value="${escapeHtml(block.syncedFrom||'')}">`}
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
+  if (block.type==='embed') {
+    return `<div class="block" data-id="${block.id}" data-type="embed">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="embed-block">
+        ${block.embedHtml || `<iframe src="${escapeHtml(block.url||'')}" allowfullscreen></iframe>`}
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
+
   // default block
   const checkbox = block.type==='todo' ? '<div class="block-checkbox"></div>' : '';
   const numAttr = block.type==='numbered' ? `data-num="${block._num||1}"` : '';
@@ -1986,6 +2245,13 @@ const SLASH_OPTIONS = [
     { type:'kanban', icon:'▦', name:'Kanban', desc:'Tableau Kanban' },
     { type:'divider', icon:'—', name:'Séparateur', desc:'Ligne horizontale' },
     { type:'ai', icon:'✨', name:'IA', desc:'Demande IA (placeholder)' },
+    { type:'math', icon:'∑', name:'Équation', desc:'Formule LaTeX (KaTeX)' },
+    { type:'mermaid', icon:'📊', name:'Diagramme', desc:'Mermaid chart' },
+    { type:'toc', icon:'☰', name:'Sommaire', desc:'Table des matières auto' },
+    { type:'button', icon:'🔘', name:'Bouton', desc:'Action: nouvelle tâche' },
+    { type:'file', icon:'📎', name:'Fichier', desc:'Upload (base64)' },
+    { type:'audio', icon:'🎙️', name:'Audio', desc:'Enregistrement audio' },
+    { type:'synced', icon:'🔁', name:'Bloc synchronisé', desc:'Mirror d\'un bloc' },
   ]},
 ];
 
@@ -2188,56 +2454,186 @@ function dailyNote() {
 }
 
 // ============ TEMPLATES ============
+const today = () => new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
 const TEMPLATES = {
-  'Daily Note': { icon:'📅', blocks:[
-    {type:'h2',content:'Objectifs du jour'},{type:'todo',content:''},{type:'todo',content:''},
-    {type:'h2',content:'Journal'},{type:'p',content:''},
-    {type:'h2',content:'Reconnaissances'},{type:'bullet',content:''},
+  // PERSONAL
+  'Daily Journal': { cat:'Personnel', icon:'📓', grad:'linear-gradient(135deg,#fb923c,#ef4444)', desc:'Journal quotidien', blocks:()=>[
+    {type:'h1',content:'📓 '+today()},
+    {type:'h2',content:'🙏 Gratitude (3)'},{type:'bullet',content:''},{type:'bullet',content:''},{type:'bullet',content:''},
+    {type:'h2',content:'✨ Highlights'},{type:'p',content:''},
+    {type:'h2',content:'☑️ Todos'},{type:'todo',content:''},{type:'todo',content:''},
+    {type:'h2',content:'😊 Mood'},{type:'callout',content:'😀 Excellent · 🙂 Bien · 😐 Neutre · 😞 Bof · 😢 Mauvais',emoji:'🌡️'},
   ]},
-  'Meeting Notes': { icon:'🤝', blocks:[
-    {type:'callout',content:'Date · Participants · Objectif',emoji:'📌'},
+  'Weekly Planner': { cat:'Personnel', icon:'📆', grad:'linear-gradient(135deg,#3b82f6,#06b6d4)', desc:'Planning hebdo', blocks:()=>[
+    {type:'h1',content:'📆 Semaine'},
+    ...['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'].flatMap(d=>[{type:'h3',content:d},{type:'todo',content:''},{type:'todo',content:''}])
+  ]},
+  'Habit Tracker': { cat:'Personnel', icon:'✅', grad:'linear-gradient(135deg,#10b981,#06b6d4)', desc:'Suivi habitudes', blocks:()=>[
+    {type:'h1',content:'✅ Tracker d\'habitudes'},
+    {type:'table',rows:[['Habitude','L','M','M','J','V','S','D'],['💧 Eau 2L','','','','','','',''],['🏃 Sport','','','','','','',''],['📖 Lecture','','','','','','',''],['🧘 Méditation','','','','','','','']]},
+  ]},
+  'Reading List': { cat:'Personnel', icon:'📚', grad:'linear-gradient(135deg,#a78bfa,#ec4899)', desc:'Livres à lire', blocks:()=>[
+    {type:'h1',content:'📚 Liste de lecture'},
+    {type:'table',rows:[['Titre','Auteur','Statut','Note','Notes'],['','','À lire','',''],['','','En cours','',''],['','','Terminé','','']]},
+  ]},
+  'Goals (OKRs)': { cat:'Personnel', icon:'🎯', grad:'linear-gradient(135deg,#f59e0b,#ef4444)', desc:'Objectifs trimestriels', blocks:()=>[
+    {type:'h1',content:'🎯 OKRs Q'+(Math.floor(new Date().getMonth()/3)+1)},
+    {type:'h2',content:'Objectif principal'},{type:'callout',content:'',emoji:'🚀'},
+    {type:'h2',content:'Key Result 1'},{type:'p',content:'Progress: 0%'},
+    {type:'h2',content:'Key Result 2'},{type:'p',content:'Progress: 0%'},
+    {type:'h2',content:'Key Result 3'},{type:'p',content:'Progress: 0%'},
+  ]},
+  'Workout Log': { cat:'Personnel', icon:'💪', grad:'linear-gradient(135deg,#ef4444,#7c2d12)', desc:'Suivi entraînement', blocks:()=>[
+    {type:'h1',content:'💪 Séance · '+today()},
+    {type:'table',rows:[['Exercice','Séries','Reps','Poids'],['Squat','','',''],['Bench','','',''],['Deadlift','','','']]},
+    {type:'h2',content:'Notes'},{type:'p',content:''},
+  ]},
+  'Recipes': { cat:'Personnel', icon:'🍳', grad:'linear-gradient(135deg,#fde68a,#dc2626)', desc:'Recette de cuisine', blocks:()=>[
+    {type:'h1',content:'🍳 Nom de la recette'},
+    {type:'callout',content:'⏱️ Prep: 15min · 🍽️ 4 portions',emoji:'📋'},
+    {type:'h2',content:'Ingrédients'},{type:'bullet',content:''},{type:'bullet',content:''},{type:'bullet',content:''},
+    {type:'h2',content:'Étapes'},{type:'numbered',content:''},{type:'numbered',content:''},{type:'numbered',content:''},
+  ]},
+  'Travel Plan': { cat:'Personnel', icon:'✈️', grad:'linear-gradient(135deg,#06b6d4,#3b82f6)', desc:'Plan de voyage', blocks:()=>[
+    {type:'h1',content:'✈️ Destination'},
+    {type:'callout',content:'Dates · Vol · Hôtel',emoji:'🗓️'},
+    {type:'h2',content:'Itinéraire'},
+    {type:'h3',content:'Jour 1'},{type:'bullet',content:''},
+    {type:'h3',content:'Jour 2'},{type:'bullet',content:''},
+    {type:'h2',content:'Budget'},{type:'p',content:''},
+    {type:'h2',content:'Packing list'},{type:'todo',content:''},{type:'todo',content:''},
+  ]},
+  'Budget Tracker': { cat:'Personnel', icon:'💰', grad:'linear-gradient(135deg,#10b981,#059669)', desc:'Budget mensuel', blocks:()=>[
+    {type:'h1',content:'💰 Budget'},
+    {type:'h2',content:'Revenus'},{type:'p',content:''},
+    {type:'h2',content:'Dépenses'},
+    {type:'table',rows:[['Catégorie','Prévu','Réel','Écart'],['Loyer','','',''],['Courses','','',''],['Loisirs','','','']]},
+  ]},
+  // WORK
+  'Meeting Notes': { cat:'Pro', icon:'🤝', grad:'linear-gradient(135deg,#8b5cf6,#ec4899)', desc:'Notes de réunion', blocks:()=>[
+    {type:'h1',content:'🤝 Réunion · '+today()},
+    {type:'callout',content:'Participants · Objectif',emoji:'👥'},
     {type:'h2',content:'Ordre du jour'},{type:'numbered',content:''},
     {type:'h2',content:'Décisions'},{type:'bullet',content:''},
     {type:'h2',content:'Actions'},{type:'todo',content:''},{type:'todo',content:''},
+    {type:'h2',content:'Prochaine étape'},{type:'p',content:''},
   ]},
-  'Project Plan': { icon:'🚀', blocks:[
-    {type:'h1',content:'Nom du projet'},
-    {type:'callout',content:'Objectif principal en une phrase',emoji:'🎯'},
-    {type:'h2',content:'Vision'},{type:'p',content:''},
+  'Project Plan': { cat:'Pro', icon:'🚀', grad:'linear-gradient(135deg,#fb923c,#a855f7)', desc:'Plan de projet', blocks:()=>[
+    {type:'h1',content:'🚀 Nom du projet'},
+    {type:'callout',content:'Vue d\'ensemble',emoji:'🎯'},
     {type:'h2',content:'Jalons'},{type:'todo',content:''},{type:'todo',content:''},
-    {type:'h2',content:'Tableau Kanban'},{type:'kanban',content:''},
-    {type:'h2',content:'Risques'},{type:'bullet',content:''},
+    {type:'h2',content:'Kanban'},{type:'kanban'},
+    {type:'h2',content:'Équipe'},{type:'bullet',content:''},
+    {type:'h2',content:'Timeline'},{type:'p',content:''},
   ]},
-  'Idea Dump': { icon:'💡', blocks:[
-    {type:'h1',content:'Brain dump'},
-    {type:'p',content:'Tout ce qui passe par la tête, sans filtre.'},
-    {type:'bullet',content:''},{type:'bullet',content:''},{type:'bullet',content:''},
+  'Sprint Planning': { cat:'Pro', icon:'⚡', grad:'linear-gradient(135deg,#f59e0b,#fb923c)', desc:'Planification sprint', blocks:()=>[
+    {type:'h1',content:'⚡ Sprint #'},
+    {type:'callout',content:'Goals',emoji:'🎯'},
+    {type:'h2',content:'Backlog'},{type:'kanban'},
   ]},
-  'Reading List': { icon:'📚', blocks:[
-    {type:'h1',content:'Liste de lecture'},
-    {type:'table',content:''},
+  'OKR Tracker': { cat:'Pro', icon:'📊', grad:'linear-gradient(135deg,#3b82f6,#8b5cf6)', desc:'Tracker OKRs', blocks:()=>[
+    {type:'h1',content:'📊 OKR Tracker'},
+    {type:'table',rows:[['Objectif','KR','%'],['','',''],['','',''],['','','']]},
+  ]},
+  'CRM Pipeline': { cat:'Pro', icon:'💼', grad:'linear-gradient(135deg,#06b6d4,#3b82f6)', desc:'Pipeline commercial', blocks:()=>[
+    {type:'h1',content:'💼 CRM'},
+    {type:'kanban',cols:[
+      {id:'k1',title:'Lead',cards:[]},{id:'k2',title:'Contact',cards:[]},
+      {id:'k3',title:'Négociation',cards:[]},{id:'k4',title:'Gagné',cards:[]},{id:'k5',title:'Perdu',cards:[]},
+    ]},
+  ]},
+  'Content Calendar': { cat:'Pro', icon:'📅', grad:'linear-gradient(135deg,#ec4899,#a855f7)', desc:'Calendrier contenu', blocks:()=>[
+    {type:'h1',content:'📅 Content Calendar'},
+    {type:'table',rows:[['Date','Plateforme','Sujet','Statut'],['','','','Idée'],['','','','Brouillon'],['','','','Publié']]},
+  ]},
+  'Bug Tracker': { cat:'Pro', icon:'🐛', grad:'linear-gradient(135deg,#ef4444,#7c2d12)', desc:'Suivi bugs', blocks:()=>[
+    {type:'h1',content:'🐛 Bug Tracker'},
+    {type:'table',rows:[['Titre','Sévérité','Statut','Assigné','Repro'],['','High','Open','',''],['','Med','In progress','','']]},
+  ]},
+  'Knowledge Base': { cat:'Pro', icon:'📖', grad:'linear-gradient(135deg,#10b981,#3b82f6)', desc:'Wiki / KB', blocks:()=>[
+    {type:'h1',content:'📖 Knowledge Base'},
+    {type:'p',content:'Index de la base de connaissances. Crée des sous-pages.'},
+    {type:'h2',content:'Sections'},{type:'bullet',content:''},{type:'bullet',content:''},
+  ]},
+  // SCHOOL
+  'Class Notes': { cat:'École', icon:'📒', grad:'linear-gradient(135deg,#a78bfa,#3b82f6)', desc:'Notes de cours', blocks:()=>[
+    {type:'h1',content:'📒 Cours · '+today()},
+    {type:'callout',content:'Matière · Prof',emoji:'📌'},
+    {type:'h2',content:'Concepts clés'},{type:'bullet',content:''},
+    {type:'h2',content:'Exemples'},{type:'p',content:''},
+    {type:'h2',content:'Résumé'},{type:'p',content:''},
+  ]},
+  'Study Planner': { cat:'École', icon:'📚', grad:'linear-gradient(135deg,#fb923c,#ec4899)', desc:'Planning révisions', blocks:()=>[
+    {type:'h1',content:'📚 Planning révisions'},
+    {type:'h2',content:'Examens'},{type:'todo',content:''},{type:'todo',content:''},
+    {type:'h2',content:'Schedule'},{type:'table',rows:[['Jour','Matière','Heures'],['L','',''],['M','','']]},
+    {type:'h2',content:'Ressources'},{type:'bullet',content:''},
+  ]},
+  'Essay Outline': { cat:'École', icon:'✍️', grad:'linear-gradient(135deg,#facc15,#f59e0b)', desc:'Plan dissertation', blocks:()=>[
+    {type:'h1',content:'✍️ Dissertation'},
+    {type:'h2',content:'Thèse'},{type:'callout',content:'',emoji:'🎯'},
+    {type:'h2',content:'Introduction'},{type:'p',content:''},
+    {type:'h2',content:'I. Premier argument'},{type:'p',content:''},
+    {type:'h2',content:'II. Deuxième argument'},{type:'p',content:''},
+    {type:'h2',content:'III. Troisième argument'},{type:'p',content:''},
+    {type:'h2',content:'Conclusion'},{type:'p',content:''},
+  ]},
+  // CONTENT
+  'Episode Brief': { cat:'Contenu', icon:'🎬', grad:'linear-gradient(135deg,#fb923c,#a855f7)', desc:'Brief épisode', blocks:()=>[
+    {type:'h1',content:'🎬 Épisode #'},
+    {type:'callout',content:'Hook · Premier scène captivante',emoji:'🪝'},
+    {type:'h2',content:'Personnages'},{type:'bullet',content:''},
+    {type:'h2',content:'Scènes'},{type:'numbered',content:''},
+    {type:'h2',content:'Dialogue clé'},{type:'quote',content:''},
+    {type:'h2',content:'Musique'},{type:'p',content:''},
+  ]},
+  'Viral Hook Library': { cat:'Contenu', icon:'🪝', grad:'linear-gradient(135deg,#ec4899,#fb923c)', desc:'Bibliothèque de hooks', blocks:()=>[
+    {type:'h1',content:'🪝 Hooks viraux'},
+    {type:'table',rows:[['Hook','Type','Exemple','Performance'],['','Curiosity','',''],['','POV','',''],['','Stat','','']]},
+  ]},
+  'Brand Deal Tracker': { cat:'Contenu', icon:'🤝', grad:'linear-gradient(135deg,#10b981,#fb923c)', desc:'Suivi brand deals', blocks:()=>[
+    {type:'h1',content:'🤝 Brand Deals'},
+    {type:'table',rows:[['Marque','Contact','Statut','Valeur','Next step'],['','','Pitched','',''],['','','Negotiating','',''],['','','Signed','','']]},
+  ]},
+  'Course Module Plan': { cat:'Contenu', icon:'🎓', grad:'linear-gradient(135deg,#a78bfa,#06b6d4)', desc:'Plan de module', blocks:()=>[
+    {type:'h1',content:'🎓 Module'},
+    {type:'callout',content:'Durée · Livrables',emoji:'⏱️'},
+    {type:'h2',content:'Leçons'},{type:'numbered',content:''},{type:'numbered',content:''},
+    {type:'h2',content:'Livrables'},{type:'todo',content:''},
   ]},
 };
 
+let tplCat = 'Tous';
 function showTemplates() {
+  const cats = ['Tous','Personnel','Pro','École','Contenu'];
   const html = `
-    <div class="modal-head"><div class="modal-title">Templates</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      ${Object.entries(TEMPLATES).map(([name,t])=>`
-        <button data-tpl="${name}" style="background:var(--bg-3);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:left;cursor:pointer;transition:border .2s">
-          <div style="font-size:24px;margin-bottom:6px">${t.icon}</div>
-          <div style="font-weight:600">${name}</div>
-          <div style="font-size:12px;color:var(--text-3)">${t.blocks.length} blocs</div>
-        </button>
-      `).join('')}
-    </div>`;
-  showModal(html);
-  document.querySelectorAll('[data-tpl]').forEach(b => b.onclick = () => {
-    const t = TEMPLATES[b.dataset.tpl];
-    const id = createPage(b.dataset.tpl, t.icon);
-    state.blocks[id] = t.blocks.map(blk => ({ ...blk, id:nbid() }));
-    Storage.save(); renderEditor();
-    closeModal();
+    <div class="modal-head"><div class="modal-title">📋 Templates</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+    <div class="tpl-modal-tabs">
+      ${cats.map(c=>`<button class="tpl-tab ${c===tplCat?'active':''}" data-cat="${c}">${c}</button>`).join('')}
+    </div>
+    <div class="tpl-grid" id="tpl-grid"></div>`;
+  showModal(html, '720px');
+  const renderGrid = () => {
+    const grid = document.getElementById('tpl-grid');
+    const entries = Object.entries(TEMPLATES).filter(([n,t])=>tplCat==='Tous'||t.cat===tplCat);
+    grid.innerHTML = entries.map(([name,t])=>`
+      <div class="tpl-card" data-tpl="${name}">
+        <div class="tpl-thumb" style="background:${t.grad}">${t.icon}</div>
+        <div class="tpl-info"><div class="tpl-name">${name}</div><div class="tpl-desc">${t.desc}</div></div>
+      </div>`).join('');
+    grid.querySelectorAll('[data-tpl]').forEach(b => b.onclick = () => {
+      const t = TEMPLATES[b.dataset.tpl];
+      const id = createPage(b.dataset.tpl, t.icon);
+      state.blocks[id] = t.blocks().map(blk => ({ id:nbid(), ...blk }));
+      Storage.save(); renderEditor();
+      closeModal();
+    });
+  };
+  renderGrid();
+  document.querySelectorAll('.tpl-tab').forEach(t => t.onclick = () => {
+    tplCat = t.dataset.cat;
+    document.querySelectorAll('.tpl-tab').forEach(x=>x.classList.toggle('active',x.dataset.cat===tplCat));
+    renderGrid();
   });
 }
 
