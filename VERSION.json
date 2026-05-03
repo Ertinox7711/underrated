@@ -1,8 +1,8 @@
 {
-  "commit": "d428f38",
-  "message": "design: implement Underrated Glass theme (visual refresh, all features preserved)",
-  "commitDate": "2026-05-04T00:11:35+02:00",
-  "buildDate": "2026-05-03T22:11:42Z",
-  "buildDateFR": "04/05/2026 00:11",
+  "commit": "90da33b",
+  "message": "Revert "design: implement Underrated Glass theme (visual refresh, all features preserved)"",
+  "commitDate": "2026-05-04T00:14:10+02:00",
+  "buildDate": "2026-05-03T22:14:19Z",
+  "buildDateFR": "04/05/2026 00:14",
   "branch": "main"
 }

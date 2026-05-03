@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 00:14 — `90da33b`
+Revert "design: implement Underrated Glass theme (visual refresh, all features preserved)"
+
 ## 04/05/2026 00:11 — `d428f38`
 design: implement Underrated Glass theme (visual refresh, all features preserved)
 
