@@ -1,8 +1,8 @@
 {
-  "commit": "0950836",
-  "message": "fix: remove duplicate page-title CSS override (was forcing weight 500, design uses 700)",
-  "commitDate": "2026-05-04T01:21:31+02:00",
-  "buildDate": "2026-05-03T23:21:43Z",
-  "buildDateFR": "04/05/2026 01:21",
+  "commit": "73e2fda",
+  "message": "feat: add Voir une démo button on login (auto-creates demo account)",
+  "commitDate": "2026-05-04T01:24:12+02:00",
+  "buildDate": "2026-05-03T23:24:20Z",
+  "buildDateFR": "04/05/2026 01:24",
   "branch": "main"
 }
