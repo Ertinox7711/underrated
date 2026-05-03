@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 16:14 — `1a0c891`
+feat: Workspace Suite — Word/Sheets/Slides/Drive/Forms/Calendar built-in
+
 ## 03/05/2026 16:04 — `1eccdf3`
 feat: workspaces + invite link + team mgmt + profile + folder confirmed
 

@@ -1,8 +1,8 @@
 {
-  "commit": "1eccdf3",
-  "message": "feat: workspaces + invite link + team mgmt + profile + folder confirmed",
-  "commitDate": "2026-05-03T16:04:15+02:00",
-  "buildDate": "2026-05-03T14:04:28Z",
-  "buildDateFR": "03/05/2026 16:04",
+  "commit": "1a0c891",
+  "message": "feat: Workspace Suite — Word/Sheets/Slides/Drive/Forms/Calendar built-in",
+  "commitDate": "2026-05-03T16:14:17+02:00",
+  "buildDate": "2026-05-03T14:14:31Z",
+  "buildDateFR": "03/05/2026 16:14",
   "branch": "main"
 }
