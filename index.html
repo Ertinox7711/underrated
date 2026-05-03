@@ -1097,6 +1097,20 @@ const firebaseApp = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
+// ============ OS DETECTION ============
+const IS_MAC = navigator.platform.toLowerCase().includes('mac');
+const MOD = IS_MAC ? '⌘' : 'Ctrl+';
+// Post-load: replace ⌘ in static HTML on Windows/Linux
+if (!IS_MAC) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let n; while (n = walker.nextNode()) if (n.nodeValue && n.nodeValue.includes('⌘')) nodes.push(n);
+    nodes.forEach(node => node.nodeValue = node.nodeValue.replace(/⌘/g, 'Ctrl+'));
+    document.querySelectorAll('[title]').forEach(el => { if (el.title.includes('⌘')) el.title = el.title.replace(/⌘/g, 'Ctrl+'); });
+  });
+}
+
 // ============ STATE ============
 let state = {
   user: null,
@@ -2388,12 +2402,12 @@ function buildCmdK(q) {
   });
   // Quick actions
   const actions = [
-    { name:'Nouvelle page', icon:'➕', kbd:'⌘N', action:()=>{closeCmdK();createPage();} },
+    { name:'Nouvelle page', icon:'➕', kbd:`${MOD}N`, action:()=>{closeCmdK();createPage();} },
     { name:'Note du jour', icon:'📅', action:()=>{closeCmdK();dailyNote();} },
     { name:'Vue graphique', icon:'🕸️', action:()=>{closeCmdK();showGraph();} },
     { name:'Templates', icon:'📋', action:()=>{closeCmdK();showTemplates();} },
     { name:'Pomodoro', icon:'⏱️', action:()=>{closeCmdK();togglePomo();} },
-    { name:'Mode focus', icon:'🎯', kbd:'⌘.', action:()=>{closeCmdK();toggleFocus();} },
+    { name:'Mode focus', icon:'🎯', kbd:`${MOD}.`, action:()=>{closeCmdK();toggleFocus();} },
     { name:'Exporter Markdown', icon:'⬇️', action:()=>{closeCmdK();exportMarkdown();} },
     { name:'Raccourcis clavier', icon:'⌨️', kbd:'?', action:()=>{closeCmdK();showShortcuts();} },
     { name:'Changelog', icon:'📜', action:()=>{closeCmdK();showChangelog();} },
@@ -2709,7 +2723,7 @@ function exportMarkdown() {
 // ============ SHORTCUTS MODAL ============
 function showShortcuts() {
   const sc = [
-    ['⌘K','Palette de commandes'],['⌘N','Nouvelle page'],['⌘.','Mode focus'],
+    [`${MOD}K`,'Palette de commandes'],[`${MOD}N`,'Nouvelle page'],[`${MOD}.`,'Mode focus'],
     ['?','Cette aide'],['Esc','Fermer modale'],['/','Menu de blocs'],
     ['# espace','Titre 1'],['## espace','Titre 2'],['### espace','Titre 3'],
     ['- espace','Liste'],['1. espace','Numérotée'],['[] espace','Todo'],
