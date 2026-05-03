@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 01:40 — `f19ff35`
+fix: logo SVG matches design (36px stroke-1.2 inline) instead of Lucide 22px
+
 ## 04/05/2026 01:29 — `92862ca`
 fix: restore exact page-title CSS rule (was placeholder comment)
 
