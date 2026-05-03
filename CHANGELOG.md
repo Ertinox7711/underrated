@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 22:55 — `d9bc356`
+feat: visual DnD indicators - line above/below = sibling, glow inside = nest
+
 ## 03/05/2026 22:50 — `c81b918`
 feat: drag pages/folders into folders + drop on root to unparent
 
