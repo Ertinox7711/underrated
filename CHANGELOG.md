@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 01:29 — `92862ca`
+fix: restore exact page-title CSS rule (was placeholder comment)
+
 ## 04/05/2026 01:24 — `73e2fda`
 feat: add Voir une démo button on login (auto-creates demo account)
 
