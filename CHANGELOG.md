@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 07:52 — `0deb423`
+fix: page icon properly overlaps cover banner like Notion
+
 ## 03/05/2026 07:46 — `01c0c59`
 feat: complete Notion-killer rebuild with 25+ features
 
