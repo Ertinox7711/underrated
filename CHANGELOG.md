@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 01:44 — `6324875`
+feat: demo button seeds 3 pages from design (Stratégie/Roadmap/Notes) — exact match
+
 ## 04/05/2026 01:41 — `91a54bd`
 fix: demo button matches design exactly (✦ VOIR UNE DÉMO uppercase + accent style)
 
