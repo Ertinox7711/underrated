@@ -1754,6 +1754,7 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
     <button id="login-btn" class="btn">Se connecter</button>
     <div class="login-divider">ou</div>
     <button id="signup-btn" class="btn btn-ghost">Créer un compte</button>
+    <button id="demo-btn" class="btn btn-ghost" style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Voir une démo</button>
     <div class="login-toggle">
       <span style="color:var(--text-3);font-size:11px" id="login-version">Underrated</span>
     </div>
@@ -3953,6 +3954,16 @@ document.getElementById('modal-overlay').onclick = (e) => { if (e.target.id==='m
 // ============ EVENT LISTENERS ============
 document.getElementById('login-btn').onclick = login;
 document.getElementById('signup-btn').onclick = signup;
+const demoBtn = document.getElementById('demo-btn');
+if (demoBtn) demoBtn.onclick = async () => {
+  document.getElementById('email').value = 'demo@underrated.app';
+  document.getElementById('password').value = 'demo1234';
+  try { await signInWithEmailAndPassword(auth, 'demo@underrated.app', 'demo1234'); }
+  catch(e) {
+    try { await createUserWithEmailAndPassword(auth, 'demo@underrated.app', 'demo1234'); }
+    catch(e2) { showLoginError(e2.message); }
+  }
+};
 document.getElementById('logout-btn').onclick = logout;
 document.getElementById('add-page-btn').onclick = () => createPage();
 document.getElementById('search').oninput = renderPages;
