@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 08:03 — `709b5fd`
+feat: template preview modal+hover popover, right-click context menus on pages and blocks
+
 ## 03/05/2026 08:00 — `7fd13ed`
 feat: detect OS, show Ctrl+ on Windows instead of mac symbol
 
