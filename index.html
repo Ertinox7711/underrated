@@ -1076,6 +1076,8 @@ body.focus-mode .editor-content{max-width:820px}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad:false, theme:'dark', securityLevel:'loose' });
@@ -5081,6 +5083,1186 @@ window.U = {
     currentWorkspace
   });
   console.log('[Underrated] Workspaces v3.0 loaded');
+})();
+
+/* ============================================================
+   WORKSPACE SUITE v1.0 — Doc / Sheet / Slides / Drive / Forms / Calendar
+   ============================================================ */
+(function(){
+  'use strict';
+  const _esc = (s) => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const _id = () => 'ws_' + Math.random().toString(36).slice(2,11);
+  const _toast = (m,t) => (typeof toast==='function')?toast(m,t):console.log(m);
+  const _save = () => { try { Storage.save(); } catch(e){} };
+  const _curPage = () => (typeof currentPage==='function')?currentPage():null;
+  const _getBlock = (id) => (typeof getBlock==='function')?getBlock(id):null;
+  const _purify = (h) => (window.DOMPurify ? DOMPurify.sanitize(h, {ADD_ATTR:['target','contenteditable','data-id','data-cell','data-cmd']}) : h);
+
+  // ====== STYLES ======
+  const css = document.createElement('style');
+  css.textContent = `
+/* === DOC MODE === */
+.doc-mode .editor-cover{display:none!important}
+.doc-mode .editor-content{max-width:none;padding:0!important;background:var(--bg)!important}
+.doc-paper{background:#fff;color:#1a1a1a;width:min(816px,100%);margin:24px auto;padding:64px 72px;min-height:1056px;box-shadow:0 4px 24px rgba(0,0,0,.4);border-radius:6px;position:relative}
+[data-theme="light"] .doc-paper{box-shadow:0 4px 24px rgba(0,0,0,.08);border:1px solid var(--border)}
+.doc-paper .block-content{color:#1a1a1a}
+.doc-paper .page-title{color:#1a1a1a;background:transparent}
+.doc-toolbar{position:sticky;top:54px;z-index:50;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:6px;display:flex;flex-wrap:wrap;gap:3px;align-items:center;margin:8px auto 0;width:min(816px,100%);box-shadow:var(--shadow)}
+.doc-tb-btn{padding:5px 9px;border-radius:5px;cursor:pointer;font-size:13px;color:var(--text-2);min-width:28px;text-align:center;border:none;background:transparent}
+.doc-tb-btn:hover{background:var(--bg-hover);color:var(--text)}
+.doc-tb-btn.active{background:var(--accent-soft);color:var(--accent)}
+.doc-tb-sep{width:1px;height:18px;background:var(--border);margin:0 3px}
+.doc-tb-sel{background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:4px 6px;border-radius:5px;font-size:12px}
+.doc-tb-color{width:22px;height:22px;border-radius:4px;cursor:pointer;border:1px solid var(--border);position:relative}
+.doc-header-area,.doc-footer-area{font-size:12px;color:#666;border-bottom:1px dashed #ccc;padding:6px 0;margin-bottom:14px}
+.doc-footer-area{border-bottom:none;border-top:1px dashed #ccc;margin-top:24px;text-align:center}
+.doc-pagenum{font-size:11px;color:#888;text-align:right;margin-top:18px}
+@media print{
+  body *{visibility:hidden}
+  .doc-paper,.doc-paper *{visibility:visible}
+  .doc-paper{position:absolute;left:0;top:0;margin:0;box-shadow:none;width:100%}
+  .doc-toolbar,.block-handle,.block-comment-btn{display:none!important}
+  .slide-print{page-break-after:always}
+}
+
+/* === SHEET BLOCK === */
+.sheet-wrap{flex:1;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg-2);font-size:13px}
+.sheet-toolbar{display:flex;gap:4px;padding:6px;background:var(--bg-3);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.sheet-tb-btn{padding:4px 8px;border-radius:4px;background:var(--bg-2);border:1px solid var(--border);color:var(--text);font-size:12px;cursor:pointer}
+.sheet-tb-btn:hover{background:var(--bg-hover)}
+.sheet-tb-btn.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.sheet-formula-bar{display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--bg-3);border-bottom:1px solid var(--border)}
+.sheet-cell-ref{font-family:monospace;background:var(--bg-2);padding:3px 8px;border-radius:4px;border:1px solid var(--border);min-width:50px;text-align:center;font-size:12px}
+.sheet-formula-input{flex:1;background:var(--bg-2);border:1px solid var(--border);padding:4px 8px;border-radius:4px;font-family:monospace;font-size:12px;color:var(--text)}
+.sheet-scroll{max-height:480px;overflow:auto;position:relative}
+.sheet-tbl{border-collapse:collapse;font-size:12px;table-layout:fixed}
+.sheet-tbl th,.sheet-tbl td{border:1px solid var(--border);padding:0;height:26px;min-width:90px;max-width:200px;position:relative;background:var(--bg-2)}
+.sheet-tbl th{background:var(--bg-3);font-weight:600;text-align:center;color:var(--text-2);font-size:11px;padding:3px;cursor:pointer;user-select:none;min-width:90px}
+.sheet-tbl th.sheet-row-h{min-width:36px;max-width:36px;text-align:center;position:sticky;left:0;z-index:2}
+.sheet-tbl thead th{position:sticky;top:0;z-index:3}
+.sheet-tbl thead th.sheet-corner{z-index:4;left:0}
+.sheet-cell{padding:3px 6px;outline:none;min-height:20px;cursor:cell;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheet-cell.selected{outline:2px solid var(--accent);outline-offset:-2px;background:var(--accent-soft)!important;z-index:1}
+.sheet-cell.editing{white-space:normal;overflow:visible;background:var(--bg)!important;z-index:2}
+.sheet-cell[data-bold="1"]{font-weight:700}
+.sheet-cell[data-italic="1"]{font-style:italic}
+.sheet-cell[data-align="c"]{text-align:center}
+.sheet-cell[data-align="r"]{text-align:right}
+.sheet-cell.formula-cell{color:var(--info)}
+.sheet-tbl tr.frozen td:first-child,.sheet-tbl td.frozen-col{position:sticky;left:36px;z-index:1;background:var(--bg-3)!important}
+.sheet-add{padding:4px 8px;background:var(--bg-3);font-size:11px;color:var(--text-2);cursor:pointer;text-align:center;border-top:1px solid var(--border)}
+.sheet-add:hover{background:var(--accent-soft);color:var(--accent)}
+
+/* === CHART BLOCK === */
+.chart-block{flex:1;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:14px;position:relative}
+.chart-block canvas{max-width:100%;max-height:400px}
+.chart-toolbar{position:absolute;top:8px;right:8px;display:flex;gap:4px}
+.chart-toolbar button{padding:3px 8px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;font-size:11px;color:var(--text-2);cursor:pointer}
+
+/* === SLIDES === */
+.slides-mode .editor-cover{display:none!important}
+.slides-mode .editor-content{padding-top:60px}
+.slides-thumbs{position:fixed;left:280px;top:54px;bottom:0;width:160px;background:var(--bg-2);border-right:1px solid var(--border);overflow-y:auto;padding:10px;z-index:30}
+@media (max-width:900px){.slides-thumbs{display:none}}
+.slide-thumb{background:var(--bg-3);border:2px solid var(--border);border-radius:6px;padding:8px;margin-bottom:8px;font-size:10px;cursor:pointer;aspect-ratio:16/9;overflow:hidden;color:var(--text-2)}
+.slide-thumb.active{border-color:var(--accent)}
+.slides-mode .editor-content{margin-left:160px}
+@media (max-width:900px){.slides-mode .editor-content{margin-left:0}}
+.slide-divider{border-top:2px dashed var(--accent);margin:32px 0;position:relative;text-align:center}
+.slide-divider::before{content:'— SLIDE —';background:var(--bg);padding:0 12px;position:relative;top:-9px;font-size:10px;color:var(--accent);letter-spacing:1px;font-weight:600}
+.present-overlay{position:fixed;inset:0;background:#000;color:#fff;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px}
+.present-overlay.show{display:flex}
+.present-slide{max-width:1200px;width:100%;aspect-ratio:16/9;display:flex;flex-direction:column;justify-content:center;padding:60px;font-size:24px;line-height:1.4;animation:slideFade .35s}
+@keyframes slideFade{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+.present-slide h1{font-size:54px;margin-bottom:30px;color:var(--accent)}
+.present-slide h2{font-size:36px;margin-bottom:20px}
+.present-slide h3{font-size:28px;margin-bottom:14px}
+.present-slide p,.present-slide li{font-size:24px;margin-bottom:12px}
+.present-counter{position:fixed;bottom:20px;right:30px;font-size:14px;color:#888;background:rgba(0,0,0,.6);padding:6px 14px;border-radius:20px}
+.present-controls{position:fixed;bottom:20px;left:30px;display:flex;gap:6px}
+.present-controls button{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer}
+.present-controls button:hover{background:rgba(255,255,255,.2)}
+
+/* === FORM BLOCK === */
+.form-block{flex:1;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:18px}
+.form-field{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px}
+.form-field-head{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.form-field-label{flex:1;background:var(--bg-2);border:1px solid var(--border);padding:6px 10px;border-radius:6px;color:var(--text);font-size:13px;font-weight:600}
+.form-field-type{background:var(--bg-2);border:1px solid var(--border);padding:5px;border-radius:6px;color:var(--text);font-size:12px}
+.form-field-del{background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:16px;padding:4px}
+.form-add-btn{padding:8px 14px;background:var(--accent);color:#000;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;margin-top:6px}
+.form-resp-list{max-height:300px;overflow-y:auto;margin-top:14px}
+.form-resp-item{background:var(--bg-3);border:1px solid var(--border);border-radius:6px;padding:10px;margin-bottom:6px;font-size:12px}
+
+/* === CALENDAR === */
+.cal-block{flex:1;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.cal-nav{display:flex;gap:4px;align-items:center}
+.cal-nav button{background:var(--bg-3);border:1px solid var(--border);padding:5px 10px;border-radius:5px;color:var(--text);cursor:pointer;font-size:12px}
+.cal-nav button:hover{background:var(--bg-hover)}
+.cal-title{font-size:16px;font-weight:600;min-width:160px;text-align:center}
+.cal-views{display:flex;gap:2px}
+.cal-view-btn{background:var(--bg-3);border:1px solid var(--border);padding:5px 10px;border-radius:5px;color:var(--text-2);font-size:12px;cursor:pointer}
+.cal-view-btn.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.cal-cell{background:var(--bg-2);min-height:80px;padding:6px;font-size:11px;cursor:pointer;position:relative}
+.cal-cell:hover{background:var(--bg-hover)}
+.cal-cell.other-month{opacity:.4}
+.cal-cell.today{background:var(--accent-soft)}
+.cal-day-num{font-weight:600;font-size:11px;color:var(--text-2);margin-bottom:4px}
+.cal-event{background:var(--accent);color:#000;padding:2px 5px;border-radius:3px;font-size:10px;margin-bottom:2px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-dow{background:var(--bg-3);padding:6px;text-align:center;font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+
+/* === DRIVE === */
+.drive-page{padding:24px;max-width:1100px;margin:0 auto}
+.drive-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.drive-search{background:var(--bg-3);border:1px solid var(--border);padding:8px 14px;border-radius:8px;width:280px;color:var(--text);font-size:13px}
+.drive-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.drive-file{background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:var(--transition);position:relative}
+.drive-file:hover{border-color:var(--accent);transform:translateY(-2px)}
+.drive-file-icon{font-size:36px;text-align:center;margin-bottom:8px}
+.drive-file-name{font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drive-file-meta{font-size:10px;color:var(--text-3);margin-top:3px}
+.drive-dropzone{border:2px dashed var(--border);border-radius:10px;padding:40px;text-align:center;color:var(--text-3);margin-bottom:18px}
+.drive-dropzone.over{border-color:var(--accent);background:var(--accent-soft)}
+
+/* === PAGE MODE PICKER === */
+.pmp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+.pmp-card{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;text-align:left}
+.pmp-card:hover{border-color:var(--accent);background:var(--accent-soft)}
+.pmp-icon{font-size:24px;margin-bottom:6px}
+.pmp-name{font-weight:600;font-size:14px}
+.pmp-desc{font-size:11px;color:var(--text-3);margin-top:3px}
+
+@media (max-width:640px){
+  .doc-paper{margin:8px;padding:24px 18px;width:auto}
+  .doc-toolbar{position:relative;top:auto;flex-wrap:wrap;font-size:11px}
+  .doc-tb-sel{font-size:11px;padding:3px 4px}
+  .sheet-scroll{max-height:300px}
+  .pmp-grid{grid-template-columns:1fr}
+  .cal-cell{min-height:50px}
+  .drive-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+}
+`;
+  document.head.appendChild(css);
+
+  // ====== FORMULA ENGINE ======
+  const Formula = (function(){
+    function colA1(n){ let s=''; n=n+1; while(n>0){ const r=(n-1)%26; s=String.fromCharCode(65+r)+s; n=Math.floor((n-1)/26);} return s; }
+    function fromA1(ref){
+      const m = /^([A-Z]+)(\d+)$/.exec(ref.toUpperCase()); if (!m) return null;
+      let c = 0; for (const ch of m[1]) c = c*26 + (ch.charCodeAt(0)-64);
+      return { c: c-1, r: parseInt(m[2],10)-1 };
+    }
+    function getCellRaw(data, c, r){
+      if (!data || r<0 || c<0 || r>=data.length) return '';
+      const row = data[r] || []; return row[c] == null ? '' : row[c];
+    }
+    function expandRange(ref){
+      const parts = ref.split(':'); if (parts.length!==2) return null;
+      const a = fromA1(parts[0]); const b = fromA1(parts[1]);
+      if (!a||!b) return null;
+      const cells=[];
+      for (let r=Math.min(a.r,b.r); r<=Math.max(a.r,b.r); r++){
+        for (let c=Math.min(a.c,b.c); c<=Math.max(a.c,b.c); c++){
+          cells.push({c,r});
+        }
+      }
+      return cells;
+    }
+    function evalCell(sheet, c, r, stack){
+      stack = stack || new Set();
+      const key = c+','+r;
+      if (stack.has(key)) return '#CIRC';
+      const raw = getCellRaw(sheet.data, c, r);
+      if (typeof raw === 'string' && raw.startsWith('=')) {
+        stack.add(key);
+        try { return evalExpr(raw.slice(1), sheet, stack); }
+        catch(e){ return '#ERR'; }
+        finally { stack.delete(key); }
+      }
+      if (raw === '' || raw == null) return '';
+      const n = Number(raw); return isNaN(n) ? raw : n;
+    }
+    function evalExpr(expr, sheet, stack){
+      expr = expr.trim();
+      // Replace ranges in functions, then cell refs, then evaluate.
+      // First: function calls FUNC(args)
+      const fnRe = /([A-Z]+)\(([^()]*)\)/;
+      let safety = 50;
+      while (fnRe.test(expr) && safety-->0){
+        expr = expr.replace(fnRe, (m, fn, args) => {
+          const argList = splitArgs(args).map(a => {
+            // is range?
+            if (/^[A-Z]+\d+:[A-Z]+\d+$/i.test(a.trim())){
+              const cells = expandRange(a.trim());
+              return cells ? cells.map(({c,r}) => evalCell(sheet, c, r, stack)) : [];
+            }
+            return evalArg(a, sheet, stack);
+          });
+          return JSON.stringify(applyFn(fn.toUpperCase(), argList));
+        });
+      }
+      return evalArg(expr, sheet, stack);
+    }
+    function splitArgs(s){
+      const out=[]; let cur=''; let depth=0; let inStr=false;
+      for (const c of s){
+        if (c==='"') inStr=!inStr;
+        if (!inStr && c==='(') depth++;
+        if (!inStr && c===')') depth--;
+        if (!inStr && c===',' && depth===0){ out.push(cur); cur=''; continue;}
+        cur+=c;
+      }
+      if (cur.trim()) out.push(cur);
+      return out;
+    }
+    function evalArg(a, sheet, stack){
+      a = a.trim(); if (!a) return '';
+      // String literal
+      if (/^".*"$/.test(a)) return a.slice(1,-1);
+      // Number
+      if (/^-?\d+(\.\d+)?$/.test(a)) return parseFloat(a);
+      // Already JSON (from function result)
+      if (/^\[.*\]$|^\{.*\}$|^".*"$|^-?\d+(\.\d+)?$/.test(a)){
+        try { return JSON.parse(a); } catch(e){}
+      }
+      // Cell ref
+      if (/^[A-Z]+\d+$/i.test(a)){
+        const p = fromA1(a); if (!p) return '#REF';
+        return evalCell(sheet, p.c, p.r, stack);
+      }
+      // Math expression with cell refs
+      let exp = a.replace(/[A-Z]+\d+/gi, (ref) => {
+        const p = fromA1(ref); if (!p) return '0';
+        const v = evalCell(sheet, p.c, p.r, stack);
+        return (typeof v==='number')?v:(parseFloat(v)||0);
+      });
+      // Replace ^ with **
+      exp = exp.replace(/\^/g,'**');
+      try {
+        if (!/^[\d+\-*/().\s%e]+(\*\*[\d+\-*/().\s%e]+)*$/i.test(exp.replace(/\*\*/g,''))) {
+          if (!/^[\d+\-*/().\s%]+$/.test(exp)) return a;
+        }
+        // eslint-disable-next-line no-new-func
+        return Function('"use strict";return ('+exp+')')();
+      } catch(e){ return a; }
+    }
+    function num(v){ const n = (typeof v==='number')?v:parseFloat(v); return isNaN(n)?0:n; }
+    function flat(arr){ const out=[]; (Array.isArray(arr)?arr:[arr]).forEach(x => Array.isArray(x)?out.push(...flat(x)):out.push(x)); return out; }
+    function applyFn(fn, args){
+      const all = flat(args);
+      const nums = all.map(num);
+      switch(fn){
+        case 'SUM': return nums.reduce((a,b)=>a+b,0);
+        case 'AVG': case 'AVERAGE': return nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:0;
+        case 'COUNT': return all.filter(v=>v!==''&&v!=null&&!isNaN(parseFloat(v))).length;
+        case 'COUNTA': return all.filter(v=>v!==''&&v!=null).length;
+        case 'MIN': return Math.min(...nums);
+        case 'MAX': return Math.max(...nums);
+        case 'PRODUCT': return nums.reduce((a,b)=>a*b,1);
+        case 'IF': return args[0] ? args[1] : (args[2]!==undefined?args[2]:'');
+        case 'AND': return all.every(v=>!!v);
+        case 'OR': return all.some(v=>!!v);
+        case 'NOT': return !args[0];
+        case 'CONCAT': case 'CONCATENATE': return all.map(v=>String(v==null?'':v)).join('');
+        case 'UPPER': return String(args[0]||'').toUpperCase();
+        case 'LOWER': return String(args[0]||'').toLowerCase();
+        case 'LEN': return String(args[0]||'').length;
+        case 'TRIM': return String(args[0]||'').trim();
+        case 'NOW': return new Date().toLocaleString();
+        case 'TODAY': return new Date().toLocaleDateString();
+        case 'ROUND': return Math.round(num(args[0]) * Math.pow(10, num(args[1]||0))) / Math.pow(10, num(args[1]||0));
+        case 'ABS': return Math.abs(num(args[0]));
+        case 'SQRT': return Math.sqrt(num(args[0]));
+        case 'POW': case 'POWER': return Math.pow(num(args[0]), num(args[1]));
+        case 'PI': return Math.PI;
+        default: return '#FN?';
+      }
+    }
+    return { evalCell, colA1, fromA1 };
+  })();
+
+  // ====== SHEET BLOCK ======
+  function defaultSheet(){
+    const data = []; for (let r=0;r<20;r++){ const row=[]; for (let c=0;c<6;c++) row.push(''); data.push(row); }
+    return { cols:6, rows:20, data, formats:{}, frozenRow:1, frozenCol:0 };
+  }
+  function renderSheet(block){
+    if (!block.sheet) block.sheet = defaultSheet();
+    const s = block.sheet;
+    if (!s.data) Object.assign(s, defaultSheet());
+    let html = `<div class="block" data-id="${block.id}" data-type="sheet">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="sheet-wrap" data-sheetid="${block.id}">
+        <div class="sheet-toolbar">
+          <button class="sheet-tb-btn" data-sf="bold" title="Gras">B</button>
+          <button class="sheet-tb-btn" data-sf="italic" title="Italique">I</button>
+          <button class="sheet-tb-btn" data-sf="al-l" title="Gauche">⬅</button>
+          <button class="sheet-tb-btn" data-sf="al-c" title="Centre">⬌</button>
+          <button class="sheet-tb-btn" data-sf="al-r" title="Droite">➡</button>
+          <span class="doc-tb-sep"></span>
+          <button class="sheet-tb-btn" data-sf="addrow" title="+ Ligne">+L</button>
+          <button class="sheet-tb-btn" data-sf="addcol" title="+ Colonne">+C</button>
+          <button class="sheet-tb-btn" data-sf="delrow" title="− Ligne">−L</button>
+          <button class="sheet-tb-btn" data-sf="delcol" title="− Colonne">−C</button>
+          <span class="doc-tb-sep"></span>
+          <button class="sheet-tb-btn" data-sf="sortasc" title="Trier ↑">A↑</button>
+          <button class="sheet-tb-btn" data-sf="sortdesc" title="Trier ↓">Z↓</button>
+          <button class="sheet-tb-btn" data-sf="csv" title="Export CSV">CSV</button>
+          <button class="sheet-tb-btn" data-sf="chart" title="Graphique">📊</button>
+        </div>
+        <div class="sheet-formula-bar">
+          <span class="sheet-cell-ref" data-cellref>A1</span>
+          <input class="sheet-formula-input" data-formula placeholder="Valeur ou =SUM(A1:A10)">
+        </div>
+        <div class="sheet-scroll"><table class="sheet-tbl">`;
+    // header
+    html += '<thead><tr><th class="sheet-row-h sheet-corner"></th>';
+    for (let c=0;c<s.cols;c++) html += `<th data-col="${c}">${Formula.colA1(c)}</th>`;
+    html += '</tr></thead><tbody>';
+    for (let r=0;r<s.rows;r++){
+      html += `<tr><th class="sheet-row-h" data-row="${r}">${r+1}</th>`;
+      for (let c=0;c<s.cols;c++){
+        const raw = (s.data[r]||[])[c]||'';
+        const fmt = s.formats?.[`${c},${r}`]||{};
+        const isFormula = typeof raw==='string' && raw.startsWith('=');
+        const display = isFormula ? Formula.evalCell(s, c, r) : raw;
+        html += `<td><div class="sheet-cell ${isFormula?'formula-cell':''}" data-c="${c}" data-r="${r}" data-bold="${fmt.bold?1:0}" data-italic="${fmt.italic?1:0}" data-align="${fmt.align||'l'}" style="${fmt.bg?'background:'+fmt.bg:''};${fmt.color?'color:'+fmt.color:''}">${_esc(display)}</div></td>`;
+      }
+      html += '</tr>';
+    }
+    html += '</tbody></table></div></div><div class="block-content" style="display:none"></div></div>';
+    return html;
+  }
+  function setupSheet(blockEl){
+    const id = blockEl.dataset.id;
+    const block = _getBlock(id); if (!block) return;
+    const s = block.sheet;
+    let selC=0, selR=0;
+    const wrap = blockEl.querySelector('.sheet-wrap');
+    const refEl = wrap.querySelector('[data-cellref]');
+    const fEl = wrap.querySelector('[data-formula]');
+    function selectCell(c, r){
+      selC=c; selR=r;
+      wrap.querySelectorAll('.sheet-cell.selected').forEach(e=>e.classList.remove('selected'));
+      const cell = wrap.querySelector(`.sheet-cell[data-c="${c}"][data-r="${r}"]`);
+      if (cell) cell.classList.add('selected');
+      refEl.textContent = Formula.colA1(c)+(r+1);
+      const raw = (s.data[r]||[])[c]||'';
+      fEl.value = raw;
+    }
+    function commit(c, r, v){
+      if (!s.data[r]) s.data[r]=[];
+      s.data[r][c] = v;
+      _save();
+      // re-render values (only data cells)
+      wrap.querySelectorAll('.sheet-cell').forEach(cell => {
+        const cc=+cell.dataset.c, rr=+cell.dataset.r;
+        const rawv = (s.data[rr]||[])[cc]||'';
+        const isF = typeof rawv==='string' && rawv.startsWith('=');
+        cell.classList.toggle('formula-cell', isF);
+        if (cell !== document.activeElement) cell.textContent = isF ? Formula.evalCell(s, cc, rr) : rawv;
+      });
+    }
+    wrap.querySelectorAll('.sheet-cell').forEach(cell => {
+      cell.onclick = () => selectCell(+cell.dataset.c, +cell.dataset.r);
+      cell.ondblclick = () => {
+        cell.classList.add('editing');
+        cell.contentEditable = 'true';
+        const raw = (s.data[+cell.dataset.r]||[])[+cell.dataset.c]||'';
+        cell.textContent = raw;
+        cell.focus();
+        document.execCommand('selectAll', false, null);
+      };
+      cell.onblur = () => {
+        if (cell.contentEditable !== 'true') return;
+        cell.contentEditable = 'false';
+        cell.classList.remove('editing');
+        commit(+cell.dataset.c, +cell.dataset.r, cell.textContent);
+      };
+      cell.onkeydown = (e) => {
+        if (e.key === 'Enter'){ e.preventDefault(); cell.blur(); selectCell(+cell.dataset.c, Math.min(s.rows-1, +cell.dataset.r+1)); }
+        else if (e.key === 'Tab'){ e.preventDefault(); cell.blur();
+          const next = e.shiftKey ? Math.max(0,+cell.dataset.c-1) : Math.min(s.cols-1, +cell.dataset.c+1);
+          selectCell(next, +cell.dataset.r);
+        } else if (e.key === 'Escape'){ cell.contentEditable='false'; cell.classList.remove('editing'); cell.textContent = (s.data[+cell.dataset.r]||[])[+cell.dataset.c]||''; }
+      };
+    });
+    fEl.onkeydown = (e) => { if (e.key === 'Enter'){ e.preventDefault(); commit(selC, selR, fEl.value); }};
+    // Toolbar actions
+    wrap.querySelectorAll('[data-sf]').forEach(btn => btn.onclick = () => {
+      const a = btn.dataset.sf;
+      const k = `${selC},${selR}`;
+      s.formats = s.formats || {};
+      if (a==='bold'){ s.formats[k]=Object.assign({},s.formats[k],{bold:!s.formats[k]?.bold}); }
+      else if (a==='italic'){ s.formats[k]=Object.assign({},s.formats[k],{italic:!s.formats[k]?.italic}); }
+      else if (a==='al-l'){ s.formats[k]=Object.assign({},s.formats[k],{align:'l'}); }
+      else if (a==='al-c'){ s.formats[k]=Object.assign({},s.formats[k],{align:'c'}); }
+      else if (a==='al-r'){ s.formats[k]=Object.assign({},s.formats[k],{align:'r'}); }
+      else if (a==='addrow'){ s.rows++; s.data.push(new Array(s.cols).fill('')); }
+      else if (a==='addcol'){ s.cols++; s.data.forEach(r => r.push('')); }
+      else if (a==='delrow' && s.rows>1){ s.rows--; s.data.splice(selR,1); }
+      else if (a==='delcol' && s.cols>1){ s.cols--; s.data.forEach(r=>r.splice(selC,1)); }
+      else if (a==='sortasc' || a==='sortdesc'){
+        const dir = a==='sortasc'?1:-1;
+        s.data.sort((A,B) => { const av=A[selC]||'', bv=B[selC]||''; const an=parseFloat(av), bn=parseFloat(bv);
+          if (!isNaN(an)&&!isNaN(bn)) return (an-bn)*dir;
+          return String(av).localeCompare(String(bv))*dir;
+        });
+      }
+      else if (a==='csv'){
+        const csv = s.data.map(r => r.map(c=>{const v=String(c==null?'':c); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(',')).join('\n');
+        const blob = new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob);
+        const a2=document.createElement('a'); a2.href=url; a2.download='sheet.csv'; a2.click(); setTimeout(()=>URL.revokeObjectURL(url),200);
+        return;
+      }
+      else if (a==='chart'){ openChartFromSheet(id); return; }
+      _save(); renderEditor();
+    });
+    selectCell(0,0);
+  }
+
+  // ====== CHART BLOCK ======
+  const chartInstances = {};
+  function renderChart(block){
+    return `<div class="block" data-id="${block.id}" data-type="chart">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="chart-block" data-chartid="${block.id}">
+        <div class="chart-toolbar">
+          <button data-chart-edit="${block.id}">⚙</button>
+          <button data-chart-refresh="${block.id}">↻</button>
+          <button data-chart-png="${block.id}">PNG</button>
+        </div>
+        <canvas id="cv-${block.id}"></canvas>
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
+  function drawChart(block){
+    if (!window.Chart) return;
+    const cv = document.getElementById('cv-'+block.id); if (!cv) return;
+    if (chartInstances[block.id]) { try{chartInstances[block.id].destroy();}catch(e){} }
+    const cfg = block.chart || {type:'bar', labels:['A','B','C'], data:[1,2,3], title:'Graphique'};
+    let labels = cfg.labels||[]; let data = cfg.data||[];
+    // Pull from sheet block source
+    if (cfg.sheetSrc){
+      const src = _getBlock(cfg.sheetSrc);
+      if (src && src.sheet){
+        const sd = src.sheet.data;
+        labels = sd.slice(1).map(r => String(r[0]||'')).filter(x=>x!=='');
+        data = sd.slice(1).map(r => parseFloat(r[1]||0)).slice(0, labels.length);
+      }
+    }
+    const colors = ['#fb923c','#60a5fa','#a78bfa','#4ade80','#f472b6','#facc15','#f87171','#34d399'];
+    chartInstances[block.id] = new Chart(cv, {
+      type: cfg.type||'bar',
+      data: { labels, datasets:[{ label: cfg.title||'', data, backgroundColor: cfg.type==='pie'||cfg.type==='doughnut' ? colors : 'rgba(251,146,60,.6)', borderColor:'#fb923c', borderWidth:1, fill: cfg.type==='line'?false:true }]},
+      options: { responsive:true, maintainAspectRatio:true, plugins:{ legend:{ display:true } } }
+    });
+  }
+  function openChartFromSheet(sheetBlockId){
+    openChartModal(sheetBlockId);
+  }
+  function openChartModal(sheetSrc){
+    const blocks = state.blocks[state.currentPageId]||[];
+    const sheets = blocks.filter(b=>b.type==='sheet');
+    const html = `<div class="modal-head"><div class="modal-title">📊 Nouveau graphique</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+      <div class="prop-row"><div class="prop-label">Type</div>
+        <select class="prop-input" id="ch-type">
+          <option value="bar">Bar</option><option value="line">Line</option>
+          <option value="pie">Pie</option><option value="doughnut">Doughnut</option><option value="radar">Radar</option>
+        </select></div>
+      <div class="prop-row"><div class="prop-label">Source de données</div>
+        <select class="prop-input" id="ch-src">
+          <option value="">Manuel (A,B,C / 1,2,3)</option>
+          ${sheets.map(s => `<option value="${s.id}" ${s.id===sheetSrc?'selected':''}>Tableur (${(s.sheet?.rows||0)} lignes)</option>`).join('')}
+        </select></div>
+      <div class="prop-row"><div class="prop-label">Titre</div><input class="prop-input" id="ch-title" value="Graphique"></div>
+      <div class="prop-row" id="ch-manual"><div class="prop-label">Labels (séparés virgule)</div><input class="prop-input" id="ch-labels" value="Jan,Fév,Mar,Avr"></div>
+      <div class="prop-row"><div class="prop-label">Valeurs (séparées virgule)</div><input class="prop-input" id="ch-data" value="10,20,15,30"></div>
+      <button class="btn-block" id="ch-create" style="margin-top:10px">Créer</button>`;
+    showModal(html, '440px');
+    document.getElementById('ch-create').onclick = () => {
+      const type = document.getElementById('ch-type').value;
+      const src = document.getElementById('ch-src').value;
+      const title = document.getElementById('ch-title').value;
+      const labels = document.getElementById('ch-labels').value.split(',').map(x=>x.trim()).filter(Boolean);
+      const data = document.getElementById('ch-data').value.split(',').map(x=>parseFloat(x.trim())||0);
+      const blocks = state.blocks[state.currentPageId];
+      blocks.push({ id:_id(), type:'chart', chart:{ type, sheetSrc:src||null, labels, data, title }});
+      _save(); closeModal(); renderEditor();
+    };
+  }
+
+  // ====== FORM BLOCK ======
+  function renderForm(block){
+    if (!block.form) block.form = { title:'Formulaire', fields:[{id:_id(),type:'text',label:'Question 1',required:false}], responses:[] };
+    const f = block.form;
+    return `<div class="block" data-id="${block.id}" data-type="form">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="form-block" data-formid="${block.id}">
+        <input class="form-field-label" data-form-title style="font-size:18px;width:100%;margin-bottom:14px" value="${_esc(f.title)}">
+        ${(f.fields||[]).map((fd,i) => `
+          <div class="form-field" data-fieldid="${fd.id}">
+            <div class="form-field-head">
+              <input class="form-field-label" data-fl="${fd.id}" value="${_esc(fd.label||'')}" placeholder="Question">
+              <select class="form-field-type" data-ft="${fd.id}">
+                ${['text','textarea','select','radio','checkbox','date','rating','file'].map(t=>`<option value="${t}" ${t===fd.type?'selected':''}>${t}</option>`).join('')}
+              </select>
+              <button class="form-field-del" data-fdel="${fd.id}">×</button>
+            </div>
+            ${['select','radio','checkbox'].includes(fd.type) ? `<input class="form-field-label" data-fopts="${fd.id}" placeholder="Options (virgule)" value="${_esc((fd.options||[]).join(','))}" style="font-size:11px;font-weight:normal">` : ''}
+          </div>`).join('')}
+        <button class="form-add-btn" data-form-add>+ Champ</button>
+        <button class="form-add-btn" data-form-resp style="background:var(--bg-3);color:var(--text);margin-left:6px">📥 Réponses (${(f.responses||[]).length})</button>
+        <button class="form-add-btn" data-form-share style="background:var(--bg-3);color:var(--text);margin-left:6px">🔗 Partager</button>
+        <button class="form-add-btn" data-form-csv style="background:var(--bg-3);color:var(--text);margin-left:6px">CSV</button>
+        <button class="form-add-btn" data-form-preview style="background:var(--info);color:#fff;margin-left:6px">👁 Aperçu</button>
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
+  function setupForm(blockEl){
+    const id = blockEl.dataset.id; const block = _getBlock(id); if (!block) return; const f = block.form;
+    const titleI = blockEl.querySelector('[data-form-title]');
+    if (titleI) titleI.oninput = () => { f.title = titleI.value; _save(); };
+    blockEl.querySelectorAll('[data-fl]').forEach(i => i.oninput = () => { const fd=f.fields.find(x=>x.id===i.dataset.fl); if (fd){fd.label=i.value; _save();}});
+    blockEl.querySelectorAll('[data-ft]').forEach(s => s.onchange = () => { const fd=f.fields.find(x=>x.id===s.dataset.ft); if (fd){fd.type=s.value; _save(); renderEditor();}});
+    blockEl.querySelectorAll('[data-fopts]').forEach(i => i.oninput = () => { const fd=f.fields.find(x=>x.id===i.dataset.fopts); if (fd){fd.options=i.value.split(',').map(x=>x.trim()); _save();}});
+    blockEl.querySelectorAll('[data-fdel]').forEach(b => b.onclick = () => { f.fields = f.fields.filter(x=>x.id!==b.dataset.fdel); _save(); renderEditor(); });
+    const add = blockEl.querySelector('[data-form-add]');
+    if (add) add.onclick = () => { f.fields.push({id:_id(),type:'text',label:'Nouvelle question'}); _save(); renderEditor(); };
+    const resp = blockEl.querySelector('[data-form-resp]');
+    if (resp) resp.onclick = () => showFormResponses(id);
+    const share = blockEl.querySelector('[data-form-share]');
+    if (share) share.onclick = () => { const url = location.origin+location.pathname+'#form='+id; navigator.clipboard.writeText(url); _toast('Lien copié'); };
+    const csv = blockEl.querySelector('[data-form-csv]');
+    if (csv) csv.onclick = () => exportFormCSV(id);
+    const prev = blockEl.querySelector('[data-form-preview]');
+    if (prev) prev.onclick = () => previewForm(id);
+  }
+  function previewForm(id){
+    const block = _getBlock(id); if (!block) return; const f = block.form;
+    let html = `<div class="modal-head"><div class="modal-title">${_esc(f.title)}</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div><form id="form-prev">`;
+    f.fields.forEach(fd => {
+      html += `<div class="prop-row"><div class="prop-label">${_esc(fd.label)}</div>`;
+      if (fd.type==='textarea') html += `<textarea class="prop-input" name="${fd.id}" rows="3"></textarea>`;
+      else if (fd.type==='select') html += `<select class="prop-input" name="${fd.id}">${(fd.options||[]).map(o=>`<option>${_esc(o)}</option>`).join('')}</select>`;
+      else if (fd.type==='radio') html += (fd.options||[]).map(o=>`<label style="display:block;font-size:13px"><input type="radio" name="${fd.id}" value="${_esc(o)}"> ${_esc(o)}</label>`).join('');
+      else if (fd.type==='checkbox') html += (fd.options||[]).map(o=>`<label style="display:block;font-size:13px"><input type="checkbox" name="${fd.id}" value="${_esc(o)}"> ${_esc(o)}</label>`).join('');
+      else if (fd.type==='date') html += `<input type="date" class="prop-input" name="${fd.id}">`;
+      else if (fd.type==='rating') html += `<input type="number" min="1" max="5" class="prop-input" name="${fd.id}">`;
+      else if (fd.type==='file') html += `<input type="file" class="prop-input" name="${fd.id}">`;
+      else html += `<input class="prop-input" name="${fd.id}">`;
+      html += '</div>';
+    });
+    html += `<button class="btn-block" type="submit" style="margin-top:10px">Envoyer</button></form>`;
+    showModal(html, '500px');
+    document.getElementById('form-prev').onsubmit = (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target); const data = {};
+      fd.forEach((v,k) => { if (data[k]!==undefined){ data[k] = [].concat(data[k], v); } else data[k]=v; });
+      block.form.responses = block.form.responses||[];
+      block.form.responses.push({ id:_id(), at: Date.now(), data });
+      _save(); _toast('Réponse enregistrée'); closeModal();
+    };
+  }
+  function showFormResponses(id){
+    const block = _getBlock(id); if (!block) return; const f = block.form;
+    let html = `<div class="modal-head"><div class="modal-title">📥 ${(f.responses||[]).length} réponse(s)</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div><div class="form-resp-list">`;
+    (f.responses||[]).forEach(r => {
+      html += `<div class="form-resp-item"><div style="font-size:10px;color:var(--text-3)">${new Date(r.at).toLocaleString()}</div>`;
+      Object.entries(r.data||{}).forEach(([k,v]) => {
+        const fd = f.fields.find(x=>x.id===k);
+        html += `<div><b>${_esc(fd?fd.label:k)}:</b> ${_esc(Array.isArray(v)?v.join(', '):v)}</div>`;
+      });
+      html += '</div>';
+    });
+    if (!f.responses?.length) html += '<div style="color:var(--text-3);text-align:center;padding:20px">Aucune réponse</div>';
+    html += '</div>';
+    showModal(html,'500px');
+  }
+  function exportFormCSV(id){
+    const block = _getBlock(id); if (!block) return; const f = block.form;
+    const headers = ['date', ...f.fields.map(x=>x.label)];
+    const rows = [headers];
+    (f.responses||[]).forEach(r => {
+      const row = [new Date(r.at).toISOString()];
+      f.fields.forEach(fd => { const v = r.data?.[fd.id]; row.push(Array.isArray(v)?v.join('|'):(v||'')); });
+      rows.push(row);
+    });
+    const csv = rows.map(r => r.map(c => /[",\n]/.test(String(c))?'"'+String(c).replace(/"/g,'""')+'"':c).join(',')).join('\n');
+    const blob = new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='form-responses.csv'; a.click();
+  }
+
+  // ====== CALENDAR BLOCK ======
+  function renderCalendar(block){
+    if (!block.cal) block.cal = { events:[], view:'month', cursor: new Date().toISOString().slice(0,10) };
+    return `<div class="block" data-id="${block.id}" data-type="calendar">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="cal-block" data-calid="${block.id}"></div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
+  function paintCalendar(blockEl){
+    const id = blockEl.dataset.id; const block = _getBlock(id); if (!block) return; const c = block.cal;
+    const root = blockEl.querySelector('.cal-block');
+    const cur = new Date(c.cursor||new Date().toISOString().slice(0,10));
+    const view = c.view||'month';
+    let html = `<div class="cal-head">
+      <div class="cal-nav"><button data-cal="prev">‹</button><div class="cal-title">${cur.toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}</div><button data-cal="next">›</button></div>
+      <div class="cal-views">${['month','week','day'].map(v=>`<button class="cal-view-btn ${view===v?'active':''}" data-cal-v="${v}">${v}</button>`).join('')}</div>
+      <button class="cal-view-btn" data-cal="add">+ Évén.</button>
+      <button class="cal-view-btn" data-cal="ics">ICS</button>
+    </div>`;
+    if (view==='month'){
+      html += '<div class="cal-grid">';
+      ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(d=>html+=`<div class="cal-dow">${d}</div>`);
+      const y=cur.getFullYear(), m=cur.getMonth();
+      const first = new Date(y,m,1);
+      let dow = (first.getDay()+6)%7;
+      const start = new Date(y,m,1-dow);
+      const today = new Date(); today.setHours(0,0,0,0);
+      for (let i=0;i<42;i++){
+        const d = new Date(start); d.setDate(start.getDate()+i);
+        const ds = d.toISOString().slice(0,10);
+        const evs = (c.events||[]).filter(e=>e.date===ds);
+        const om = d.getMonth()!==m;
+        const isToday = d.getTime()===today.getTime();
+        html += `<div class="cal-cell ${om?'other-month':''} ${isToday?'today':''}" data-cal-day="${ds}">
+          <div class="cal-day-num">${d.getDate()}</div>
+          ${evs.map(e=>`<div class="cal-event" data-cal-ev="${e.id}" style="background:${e.color||'var(--accent)'}">${_esc(e.title)}</div>`).join('')}
+        </div>`;
+      }
+      html += '</div>';
+    } else if (view==='day'){
+      const ds = cur.toISOString().slice(0,10);
+      const evs = (c.events||[]).filter(e=>e.date===ds);
+      html += `<div style="padding:10px"><h3>${cur.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}</h3>`;
+      html += evs.length?evs.map(e=>`<div class="cal-event" data-cal-ev="${e.id}" style="display:block;background:${e.color||'var(--accent)'};margin-top:6px;padding:8px"><b>${e.time||''}</b> ${_esc(e.title)}<br><small>${_esc(e.desc||'')}</small></div>`).join(''):'<p style="color:var(--text-3)">Aucun événement</p>';
+      html += '</div>';
+    } else { // week
+      const dow = (cur.getDay()+6)%7;
+      const start = new Date(cur); start.setDate(cur.getDate()-dow);
+      html += '<div class="cal-grid">';
+      for (let i=0;i<7;i++){
+        const d = new Date(start); d.setDate(start.getDate()+i);
+        const ds = d.toISOString().slice(0,10);
+        const evs = (c.events||[]).filter(e=>e.date===ds);
+        html += `<div class="cal-cell" data-cal-day="${ds}" style="min-height:200px"><div class="cal-day-num">${d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'})}</div>${evs.map(e=>`<div class="cal-event" data-cal-ev="${e.id}" style="background:${e.color||'var(--accent)'}">${_esc(e.title)}</div>`).join('')}</div>`;
+      }
+      html += '</div>';
+    }
+    root.innerHTML = html;
+    root.querySelectorAll('[data-cal]').forEach(b => b.onclick = () => {
+      const a = b.dataset.cal;
+      if (a==='prev'){ cur.setMonth(cur.getMonth()-1); c.cursor = cur.toISOString().slice(0,10); }
+      else if (a==='next'){ cur.setMonth(cur.getMonth()+1); c.cursor = cur.toISOString().slice(0,10); }
+      else if (a==='add'){ openCalEvent(id); return; }
+      else if (a==='ics'){ exportICS(id); return; }
+      _save(); paintCalendar(blockEl);
+    });
+    root.querySelectorAll('[data-cal-v]').forEach(b => b.onclick = () => { c.view = b.dataset.calV; _save(); paintCalendar(blockEl); });
+    root.querySelectorAll('[data-cal-day]').forEach(d => d.ondblclick = () => openCalEvent(id, null, d.dataset.calDay));
+    root.querySelectorAll('[data-cal-ev]').forEach(e => e.onclick = (ev) => { ev.stopPropagation(); openCalEvent(id, e.dataset.calEv); });
+  }
+  function openCalEvent(blockId, evId, dateDefault){
+    const block = _getBlock(blockId); if (!block) return; const c = block.cal;
+    const ev = evId ? (c.events||[]).find(x=>x.id===evId) : { id:_id(), title:'', date: dateDefault||new Date().toISOString().slice(0,10), time:'09:00', desc:'', color:'#fb923c' };
+    const html = `<div class="modal-head"><div class="modal-title">${evId?'Modifier':'+ Événement'}</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+      <div class="prop-row"><div class="prop-label">Titre</div><input class="prop-input" id="ev-title" value="${_esc(ev.title)}"></div>
+      <div class="prop-row"><div class="prop-label">Date</div><input type="date" class="prop-input" id="ev-date" value="${ev.date}"></div>
+      <div class="prop-row"><div class="prop-label">Heure</div><input type="time" class="prop-input" id="ev-time" value="${ev.time||''}"></div>
+      <div class="prop-row"><div class="prop-label">Description</div><textarea class="prop-input" id="ev-desc" rows="3">${_esc(ev.desc||'')}</textarea></div>
+      <div class="prop-row"><div class="prop-label">Couleur</div><input type="color" id="ev-color" value="${ev.color||'#fb923c'}"></div>
+      <div style="display:flex;gap:8px;margin-top:10px"><button class="btn-block" id="ev-save" style="flex:1">Enregistrer</button>${evId?`<button class="btn-block" id="ev-del" style="background:var(--danger)">Suppr.</button>`:''}</div>`;
+    showModal(html,'420px');
+    document.getElementById('ev-save').onclick = () => {
+      ev.title = document.getElementById('ev-title').value;
+      ev.date = document.getElementById('ev-date').value;
+      ev.time = document.getElementById('ev-time').value;
+      ev.desc = document.getElementById('ev-desc').value;
+      ev.color = document.getElementById('ev-color').value;
+      c.events = c.events || [];
+      if (!evId) c.events.push(ev);
+      _save(); closeModal(); renderEditor();
+    };
+    if (evId){ document.getElementById('ev-del').onclick = () => { c.events = c.events.filter(x=>x.id!==evId); _save(); closeModal(); renderEditor(); };}
+  }
+  function exportICS(blockId){
+    const block = _getBlock(blockId); if (!block) return;
+    const pad = n=>String(n).padStart(2,'0');
+    const fmt = (d,t) => { const dt = new Date(d+'T'+(t||'00:00')); return dt.getUTCFullYear()+pad(dt.getUTCMonth()+1)+pad(dt.getUTCDate())+'T'+pad(dt.getUTCHours())+pad(dt.getUTCMinutes())+'00Z'; };
+    let ics = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Underrated//FR\n';
+    (block.cal?.events||[]).forEach(e => {
+      ics += `BEGIN:VEVENT\nUID:${e.id}@underrated\nDTSTAMP:${fmt(e.date,e.time)}\nDTSTART:${fmt(e.date,e.time)}\nSUMMARY:${(e.title||'').replace(/\n/g,' ')}\nDESCRIPTION:${(e.desc||'').replace(/\n/g,' ')}\nEND:VEVENT\n`;
+    });
+    ics += 'END:VCALENDAR';
+    const blob = new Blob([ics],{type:'text/calendar'}); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='calendar.ics'; a.click();
+  }
+
+  // ====== HOOK INTO renderEditor TO INJECT NEW BLOCK TYPES ======
+  if (typeof window.renderEditor === 'function' || typeof renderEditor === 'function'){
+    const _orig = window.renderEditor || renderEditor;
+    window.renderEditor = function(){
+      _orig();
+      try { postProcessSuiteBlocks(); } catch(e){ console.error('suite blocks',e); }
+      try { applyPageMode(); } catch(e){ console.error('page mode',e); }
+    };
+  }
+  function postProcessSuiteBlocks(){
+    const page = _curPage(); if (!page) return;
+    const blocks = state.blocks[page.id]||[];
+    blocks.forEach(b => {
+      if (!['sheet','chart','form','calendar'].includes(b.type)) return;
+      const el = document.querySelector(`.block[data-id="${b.id}"]`);
+      if (!el) return;
+      let html;
+      if (b.type==='sheet') html = renderSheet(b);
+      else if (b.type==='chart') html = renderChart(b);
+      else if (b.type==='form') html = renderForm(b);
+      else if (b.type==='calendar') html = renderCalendar(b);
+      if (!html) return;
+      const tmp = document.createElement('div'); tmp.innerHTML = html;
+      const newEl = tmp.firstElementChild;
+      el.replaceWith(newEl);
+      if (b.type==='sheet') setupSheet(newEl);
+      else if (b.type==='chart') drawChart(b);
+      else if (b.type==='form') setupForm(newEl);
+      else if (b.type==='calendar') paintCalendar(newEl);
+    });
+    // Chart toolbar handlers
+    document.querySelectorAll('[data-chart-edit]').forEach(b => b.onclick = () => openChartModalEdit(b.dataset.chartEdit));
+    document.querySelectorAll('[data-chart-refresh]').forEach(b => b.onclick = () => { const blk=_getBlock(b.dataset.chartRefresh); if (blk) drawChart(blk); });
+    document.querySelectorAll('[data-chart-png]').forEach(b => b.onclick = () => { const cv=document.getElementById('cv-'+b.dataset.chartPng); if (!cv) return; const a=document.createElement('a'); a.href=cv.toDataURL('image/png'); a.download='chart.png'; a.click(); });
+  }
+  function openChartModalEdit(id){
+    const block = _getBlock(id); if (!block) return;
+    const c = block.chart||{};
+    const blocks = state.blocks[state.currentPageId]||[];
+    const sheets = blocks.filter(b=>b.type==='sheet');
+    const html = `<div class="modal-head"><div class="modal-title">Modifier graphique</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+      <div class="prop-row"><div class="prop-label">Type</div><select class="prop-input" id="ch-type">${['bar','line','pie','doughnut','radar'].map(t=>`<option value="${t}" ${c.type===t?'selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="prop-row"><div class="prop-label">Source</div><select class="prop-input" id="ch-src"><option value="">Manuel</option>${sheets.map(s=>`<option value="${s.id}" ${s.id===c.sheetSrc?'selected':''}>Tableur</option>`).join('')}</select></div>
+      <div class="prop-row"><div class="prop-label">Titre</div><input class="prop-input" id="ch-title" value="${_esc(c.title||'')}"></div>
+      <div class="prop-row"><div class="prop-label">Labels</div><input class="prop-input" id="ch-labels" value="${_esc((c.labels||[]).join(','))}"></div>
+      <div class="prop-row"><div class="prop-label">Données</div><input class="prop-input" id="ch-data" value="${_esc((c.data||[]).join(','))}"></div>
+      <button class="btn-block" id="ch-save">Enregistrer</button>`;
+    showModal(html,'440px');
+    document.getElementById('ch-save').onclick = () => {
+      block.chart = {
+        type: document.getElementById('ch-type').value,
+        sheetSrc: document.getElementById('ch-src').value||null,
+        title: document.getElementById('ch-title').value,
+        labels: document.getElementById('ch-labels').value.split(',').map(x=>x.trim()).filter(Boolean),
+        data: document.getElementById('ch-data').value.split(',').map(x=>parseFloat(x)||0)
+      };
+      _save(); closeModal(); renderEditor();
+    };
+  }
+
+  // ====== PAGE MODE: DOC ======
+  function applyPageMode(){
+    const page = _curPage(); if (!page) return;
+    const editor = document.getElementById('editor');
+    if (!editor) return;
+    editor.classList.toggle('doc-mode', page.mode==='doc');
+    editor.classList.toggle('slides-mode', page.mode==='slides');
+    if (page.mode==='doc') applyDocMode();
+    else if (page.mode==='slides') applySlidesMode();
+  }
+  function applyDocMode(){
+    const editor = document.getElementById('editor');
+    const content = editor.querySelector('.editor-content'); if (!content) return;
+    if (content.querySelector('.doc-paper')) return;
+    // Wrap title + blocks in a paper
+    const paper = document.createElement('div'); paper.className = 'doc-paper';
+    const title = content.querySelector('.page-title');
+    const meta = content.querySelector('.page-meta');
+    const list = content.querySelector('.block-list');
+    const icon = content.querySelector('.page-icon-big');
+    if (title) paper.appendChild(title);
+    if (meta) paper.appendChild(meta);
+    if (icon) paper.insertBefore(icon, paper.firstChild);
+    if (list) paper.appendChild(list);
+    // Toolbar
+    const toolbar = buildDocToolbar();
+    content.insertBefore(toolbar, content.firstChild);
+    content.appendChild(paper);
+    setupDocToolbar(toolbar);
+  }
+  function buildDocToolbar(){
+    const tb = document.createElement('div'); tb.className='doc-toolbar';
+    tb.innerHTML = `
+      <select class="doc-tb-sel" data-cmd="formatBlock">
+        <option value="P">Paragraphe</option>
+        <option value="H1">Titre 1</option>
+        <option value="H2">Titre 2</option>
+        <option value="H3">Titre 3</option>
+        <option value="BLOCKQUOTE">Citation</option>
+        <option value="PRE">Code</option>
+      </select>
+      <select class="doc-tb-sel" data-cmd="fontName">
+        <option value="Inter">Inter</option>
+        <option value="Georgia">Serif</option>
+        <option value="Menlo">Mono</option>
+        <option value="cursive">Cursive</option>
+      </select>
+      <select class="doc-tb-sel" data-cmd="fontSize">
+        ${['1','2','3','4','5','6','7'].map(s=>`<option value="${s}">${s===''?'?':({1:'8px',2:'10px',3:'12px',4:'14px',5:'18px',6:'24px',7:'32px'})[s]}</option>`).join('')}
+      </select>
+      <span class="doc-tb-sep"></span>
+      <button class="doc-tb-btn" data-cmd="bold"><b>B</b></button>
+      <button class="doc-tb-btn" data-cmd="italic"><i>I</i></button>
+      <button class="doc-tb-btn" data-cmd="underline"><u>U</u></button>
+      <button class="doc-tb-btn" data-cmd="strikeThrough"><s>S</s></button>
+      <span class="doc-tb-sep"></span>
+      <input type="color" class="doc-tb-color" data-cmd="foreColor" value="#000000" title="Couleur">
+      <input type="color" class="doc-tb-color" data-cmd="hiliteColor" value="#ffff00" title="Surlignage">
+      <span class="doc-tb-sep"></span>
+      <button class="doc-tb-btn" data-cmd="justifyLeft">⬅</button>
+      <button class="doc-tb-btn" data-cmd="justifyCenter">⬌</button>
+      <button class="doc-tb-btn" data-cmd="justifyRight">➡</button>
+      <button class="doc-tb-btn" data-cmd="justifyFull">⬍</button>
+      <span class="doc-tb-sep"></span>
+      <button class="doc-tb-btn" data-cmd="insertUnorderedList">• Liste</button>
+      <button class="doc-tb-btn" data-cmd="insertOrderedList">1. Liste</button>
+      <button class="doc-tb-btn" data-cmd="createLink">🔗</button>
+      <button class="doc-tb-btn" data-cmd="removeFormat">⌫</button>
+      <span class="doc-tb-sep"></span>
+      <button class="doc-tb-btn" data-cmd="print" title="Imprimer / PDF">🖨</button>
+    `;
+    return tb;
+  }
+  function setupDocToolbar(tb){
+    tb.querySelectorAll('button[data-cmd]').forEach(b => b.onmousedown = (e) => {
+      e.preventDefault();
+      const cmd = b.dataset.cmd;
+      if (cmd==='print'){ window.print(); return; }
+      if (cmd==='createLink'){ const u = prompt('URL:'); if (u) document.execCommand('createLink', false, u); return; }
+      try { document.execCommand(cmd, false, null); } catch(e){}
+      _save();
+    });
+    tb.querySelectorAll('select[data-cmd]').forEach(s => s.onchange = () => {
+      const cmd = s.dataset.cmd;
+      try { document.execCommand(cmd, false, s.value); } catch(e){}
+      _save();
+    });
+    tb.querySelectorAll('input[type=color][data-cmd]').forEach(inp => inp.onchange = () => {
+      try { document.execCommand(inp.dataset.cmd, false, inp.value); } catch(e){}
+      _save();
+    });
+  }
+
+  // ====== PAGE MODE: SLIDES ======
+  let presentState = { idx:0, slides:[], timer:0, intv:null };
+  function applySlidesMode(){
+    const editor = document.getElementById('editor');
+    const list = editor.querySelector('.block-list'); if (!list) return;
+    // Insert slide dividers before each H1
+    const blocks = state.blocks[state.currentPageId]||[];
+    list.querySelectorAll('.block[data-type="h1"]').forEach((el,i) => {
+      if (i===0) return;
+      if (el.previousElementSibling && el.previousElementSibling.classList.contains('slide-divider')) return;
+      const div = document.createElement('div'); div.className='slide-divider';
+      el.parentNode.insertBefore(div, el);
+    });
+    // Add Present button
+    const meta = editor.querySelector('.page-meta');
+    if (meta && !document.getElementById('present-btn')){
+      const btn = document.createElement('button');
+      btn.id='present-btn'; btn.className='btn'; btn.textContent='▶ Présenter';
+      btn.style.cssText='background:var(--accent);color:#000;padding:6px 14px;border-radius:6px;font-weight:600;cursor:pointer;border:none;font-size:12px';
+      btn.onclick = startPresent;
+      meta.appendChild(btn);
+    }
+  }
+  function gatherSlides(){
+    const blocks = state.blocks[state.currentPageId]||[];
+    const slides = []; let cur=[];
+    blocks.forEach(b => {
+      if (b.type==='h1'){ if (cur.length) slides.push(cur); cur=[b]; }
+      else cur.push(b);
+    });
+    if (cur.length) slides.push(cur);
+    return slides;
+  }
+  function blockToHTML(b){
+    if (b.type==='h1') return `<h1>${_esc(b.content||'')}</h1>`;
+    if (b.type==='h2') return `<h2>${_esc(b.content||'')}</h2>`;
+    if (b.type==='h3') return `<h3>${_esc(b.content||'')}</h3>`;
+    if (b.type==='bullet') return `<li>${_esc(b.content||'')}</li>`;
+    if (b.type==='quote') return `<blockquote style="border-left:3px solid var(--accent);padding-left:14px">${_esc(b.content||'')}</blockquote>`;
+    if (b.type==='image' && b.url) return `<img src="${_esc(b.url)}" style="max-width:80%;max-height:60vh;display:block;margin:14px auto">`;
+    if (b.type==='code') return `<pre style="background:#1a1a1a;color:#fb923c;padding:18px;border-radius:8px;font-size:16px;text-align:left">${_esc(b.content||'')}</pre>`;
+    if (b.type==='speaker-note') return '';
+    return `<p>${_esc(b.content||'')}</p>`;
+  }
+  function startPresent(){
+    presentState.slides = gatherSlides();
+    if (!presentState.slides.length) return _toast('Aucun H1 trouvé','error');
+    presentState.idx = 0; presentState.timer = 0;
+    if (!document.getElementById('present-overlay')){
+      const ov = document.createElement('div'); ov.id='present-overlay'; ov.className='present-overlay';
+      ov.innerHTML = `<div class="present-slide" id="present-slide"></div>
+        <div class="present-counter" id="present-counter"></div>
+        <div class="present-controls">
+          <button data-pp="prev">← Préc</button>
+          <button data-pp="next">Suiv →</button>
+          <button data-pp="full">⛶ Plein</button>
+          <button data-pp="timer">⏱ <span id="pp-time">0:00</span></button>
+          <button data-pp="exit">✕ Esc</button>
+        </div>`;
+      document.body.appendChild(ov);
+      ov.querySelectorAll('[data-pp]').forEach(b => b.onclick = () => {
+        const a = b.dataset.pp;
+        if (a==='prev') goPresent(-1);
+        else if (a==='next') goPresent(1);
+        else if (a==='full'){ if (!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
+        else if (a==='timer'){ if (presentState.intv){clearInterval(presentState.intv); presentState.intv=null;} else presentState.intv = setInterval(()=>{ presentState.timer++; const t=document.getElementById('pp-time'); if(t) t.textContent = Math.floor(presentState.timer/60)+':'+String(presentState.timer%60).padStart(2,'0');},1000);}
+        else if (a==='exit') stopPresent();
+      });
+    }
+    document.getElementById('present-overlay').classList.add('show');
+    document.addEventListener('keydown', presentKey);
+    paintPresent();
+  }
+  function presentKey(e){
+    if (!document.getElementById('present-overlay')?.classList.contains('show')) return;
+    if (e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') goPresent(1);
+    else if (e.key==='ArrowLeft'||e.key==='PageUp') goPresent(-1);
+    else if (e.key==='Escape') stopPresent();
+    else if (e.key.toLowerCase()==='f'){ if (!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
+  }
+  function goPresent(d){ presentState.idx = Math.max(0, Math.min(presentState.slides.length-1, presentState.idx+d)); paintPresent(); }
+  function paintPresent(){
+    const slide = presentState.slides[presentState.idx]||[];
+    const sl = document.getElementById('present-slide');
+    const co = document.getElementById('present-counter');
+    if (sl) sl.innerHTML = slide.map(blockToHTML).join('');
+    if (co) co.textContent = (presentState.idx+1)+'/'+presentState.slides.length;
+  }
+  function stopPresent(){
+    document.getElementById('present-overlay')?.classList.remove('show');
+    document.removeEventListener('keydown', presentKey);
+    if (presentState.intv){ clearInterval(presentState.intv); presentState.intv=null; }
+    if (document.fullscreenElement) document.exitFullscreen?.();
+  }
+
+  // ====== DRIVE ======
+  function openDrive(){
+    state.currentPageId = '__drive__';
+    const editor = document.getElementById('editor');
+    const files = collectFiles();
+    let html = `<div class="drive-page">
+      <div class="drive-head">
+        <h1 style="font-size:22px;font-weight:700">📂 Drive</h1>
+        <input class="drive-search" id="drive-q" placeholder="🔎 Rechercher...">
+      </div>
+      <div class="drive-dropzone" id="drive-dz">📥 Glisser-déposer des fichiers ici (max 5 Mo / fichier)</div>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:10px">${files.length} fichier(s) · ${(files.reduce((a,f)=>a+(f.size||0),0)/1024/1024).toFixed(2)} Mo</div>
+      <div class="drive-grid" id="drive-grid"></div>
+    </div>`;
+    editor.innerHTML = html;
+    paintDrive(files);
+    document.getElementById('drive-q').oninput = (e) => paintDrive(files.filter(f => f.name.toLowerCase().includes(e.target.value.toLowerCase())));
+    setupDriveDz();
+  }
+  function collectFiles(){
+    const files = [];
+    Object.entries(state.blocks||{}).forEach(([pid, blocks]) => {
+      const page = state.pages.find(p=>p.id===pid);
+      (blocks||[]).forEach(b => {
+        if (b.type==='file' && b.fileData){ files.push({ id:b.id, name:b.fileName||'fichier', size:b.fileSize||0, data:b.fileData, kind:'file', page:page?.title||'?', pageId:pid }); }
+        else if (b.type==='image' && b.url && b.url.startsWith('data:')){ files.push({ id:b.id, name:'image-'+b.id+'.png', size:Math.round(b.url.length*0.75), data:b.url, kind:'image', page:page?.title||'?', pageId:pid }); }
+        else if (b.type==='audio' && b.audioData){ files.push({ id:b.id, name:'audio-'+b.id+'.webm', size:Math.round(b.audioData.length*0.75), data:b.audioData, kind:'audio', page:page?.title||'?', pageId:pid }); }
+      });
+    });
+    return files;
+  }
+  function paintDrive(files){
+    const grid = document.getElementById('drive-grid'); if (!grid) return;
+    if (!files.length){ grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-3);padding:40px">Aucun fichier</div>'; return; }
+    grid.innerHTML = files.map(f => `
+      <div class="drive-file" data-fid="${f.id}">
+        <div class="drive-file-icon">${f.kind==='image'?'🖼':f.kind==='audio'?'🎙':'📄'}</div>
+        <div class="drive-file-name">${_esc(f.name)}</div>
+        <div class="drive-file-meta">${(f.size/1024).toFixed(1)} KB · ${_esc(f.page)}</div>
+      </div>`).join('');
+    grid.querySelectorAll('.drive-file').forEach(el => {
+      const f = files.find(x=>x.id===el.dataset.fid);
+      el.onclick = () => { const a=document.createElement('a'); a.href=f.data; a.download=f.name; a.click(); };
+      el.oncontextmenu = (e) => { e.preventDefault();
+        if (confirm('Aller à la page "'+f.page+'" ?')){ openPage(f.pageId); }
+      };
+    });
+  }
+  function setupDriveDz(){
+    const dz = document.getElementById('drive-dz'); if (!dz) return;
+    dz.ondragover = (e) => { e.preventDefault(); dz.classList.add('over'); };
+    dz.ondragleave = () => dz.classList.remove('over');
+    dz.ondrop = (e) => {
+      e.preventDefault(); dz.classList.remove('over');
+      [...e.dataTransfer.files].forEach(file => {
+        if (file.size > 5*1024*1024) return _toast('Trop gros: '+file.name,'error');
+        const r = new FileReader();
+        r.onload = () => {
+          // Add to a "Drive" page or create one
+          let drivePage = state.pages.find(p => p.title==='📂 Mes fichiers');
+          if (!drivePage){ const id = createPage('📂 Mes fichiers','📂',null); drivePage = state.pages.find(p=>p.id===id); }
+          state.blocks[drivePage.id] = state.blocks[drivePage.id]||[];
+          state.blocks[drivePage.id].push({ id:_id(), type:'file', fileName:file.name, fileSize:file.size, fileData:r.result });
+          _save(); openDrive();
+        };
+        r.readAsDataURL(file);
+      });
+    };
+  }
+
+  // ====== PAGE MODE PICKER ======
+  function openPageModePicker(parentId){
+    const html = `<div class="modal-head"><div class="modal-title">+ Nouveau...</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+      <div class="pmp-grid">
+        <button class="pmp-card" data-pmp="page"><div class="pmp-icon">📄</div><div class="pmp-name">Page</div><div class="pmp-desc">Bloc-style classique</div></button>
+        <button class="pmp-card" data-pmp="doc"><div class="pmp-icon">📝</div><div class="pmp-name">Document</div><div class="pmp-desc">Word-like A4</div></button>
+        <button class="pmp-card" data-pmp="slides"><div class="pmp-icon">🎬</div><div class="pmp-name">Présentation</div><div class="pmp-desc">Slides</div></button>
+        <button class="pmp-card" data-pmp="sheet"><div class="pmp-icon">📊</div><div class="pmp-name">Tableur</div><div class="pmp-desc">Spreadsheet</div></button>
+        <button class="pmp-card" data-pmp="form"><div class="pmp-icon">📋</div><div class="pmp-name">Formulaire</div><div class="pmp-desc">Google Forms</div></button>
+        <button class="pmp-card" data-pmp="cal"><div class="pmp-icon">📅</div><div class="pmp-name">Calendrier</div><div class="pmp-desc">Events</div></button>
+        <button class="pmp-card" data-pmp="drive"><div class="pmp-icon">📂</div><div class="pmp-name">Drive</div><div class="pmp-desc">Tous les fichiers</div></button>
+      </div>`;
+    showModal(html,'480px');
+    document.querySelectorAll('[data-pmp]').forEach(b => b.onclick = () => {
+      const t = b.dataset.pmp; closeModal();
+      if (t==='drive'){ openDrive(); return; }
+      const titles = {page:'Nouvelle page',doc:'Nouveau document',slides:'Nouvelle présentation',sheet:'Nouveau tableur',form:'Nouveau formulaire',cal:'Nouveau calendrier'};
+      const icons = {page:'📄',doc:'📝',slides:'🎬',sheet:'📊',form:'📋',cal:'📅'};
+      const id = createPage(titles[t], icons[t], parentId||null);
+      const page = state.pages.find(p=>p.id===id);
+      if (page){
+        if (t==='doc'){ page.mode='doc'; state.blocks[id]=[{id:_id(),type:'h1',content:'Titre du document'},{id:_id(),type:'p',content:''}]; }
+        else if (t==='slides'){ page.mode='slides'; state.blocks[id]=[{id:_id(),type:'h1',content:'Slide 1'},{id:_id(),type:'p',content:'Contenu...'},{id:_id(),type:'h1',content:'Slide 2'},{id:_id(),type:'bullet',content:'Point 1'},{id:_id(),type:'bullet',content:'Point 2'}]; }
+        else if (t==='sheet'){ state.blocks[id]=[{id:_id(),type:'sheet',sheet:defaultSheet()}]; }
+        else if (t==='form'){ state.blocks[id]=[{id:_id(),type:'form',form:{title:'Mon formulaire',fields:[{id:_id(),type:'text',label:'Nom'},{id:_id(),type:'text',label:'Email'}],responses:[]}}]; }
+        else if (t==='cal'){ state.blocks[id]=[{id:_id(),type:'calendar',cal:{events:[],view:'month',cursor:new Date().toISOString().slice(0,10)}}]; }
+        _save(); renderPages(); openPage(id);
+      }
+    });
+  }
+
+  // Override + button
+  setTimeout(() => {
+    const apb = document.getElementById('add-page-btn');
+    if (apb){ apb.onclick = (e) => { e.stopPropagation(); openPageModePicker(); }; }
+    const fab = document.getElementById('fab');
+    if (fab){ fab.onclick = (e) => { e.stopPropagation(); openPageModePicker(); }; }
+  }, 800);
+
+  // ====== SLASH COMMANDS: hook into changeBlockType to handle new types ======
+  // Add new types to SLASH_OPTIONS by injecting them after the original showSlashMenu
+  const _origShow = window.showSlashMenu || showSlashMenu;
+  const SUITE_OPTIONS = [
+    { type:'sheet', icon:'📊', name:'Tableur', desc:'Spreadsheet avec formules', cat:'Suite' },
+    { type:'chart', icon:'📈', name:'Graphique', desc:'Chart.js', cat:'Suite' },
+    { type:'form', icon:'📋', name:'Formulaire', desc:'Google Forms-like', cat:'Suite' },
+    { type:'calendar', icon:'📅', name:'Calendrier', desc:'Events + ICS', cat:'Suite' },
+    { type:'document', icon:'📝', name:'Document', desc:'Mode Word', cat:'Suite' },
+    { type:'slides', icon:'🎬', name:'Présentation', desc:'Slides mode', cat:'Suite' },
+    { type:'speaker-note', icon:'🗒', name:'Note orateur', desc:'Slides', cat:'Suite' },
+  ];
+  // Append to global SLASH_OPTIONS
+  if (typeof SLASH_OPTIONS !== 'undefined' && Array.isArray(SLASH_OPTIONS)){
+    SLASH_OPTIONS.push({ cat:'Suite', items: SUITE_OPTIONS });
+  }
+  // Hook applySlash via wrapping changeBlockType for special types
+  const _origCT = window.changeBlockType || changeBlockType;
+  window.changeBlockType = function(id, type){
+    if (type==='chart'){
+      const b = _getBlock(id); if (b){ b.type='p'; b.content=''; }
+      _origCT(id, 'p'); openChartModal(); return;
+    }
+    if (type==='document'){
+      const page = _curPage(); if (page){ page.mode='doc'; _save(); renderEditor(); }
+      const b = _getBlock(id); if (b){ b.content=''; } return;
+    }
+    if (type==='slides'){
+      const page = _curPage(); if (page){ page.mode='slides'; _save(); renderEditor(); }
+      return;
+    }
+    if (type==='sheet'){
+      const b = _getBlock(id); if (b){ b.type='sheet'; b.sheet=defaultSheet(); b.content=''; _save(); renderEditor(); return;}
+    }
+    if (type==='form'){
+      const b = _getBlock(id); if (b){ b.type='form'; b.form={title:'Formulaire',fields:[{id:_id(),type:'text',label:'Question'}],responses:[]}; b.content=''; _save(); renderEditor(); return;}
+    }
+    if (type==='calendar'){
+      const b = _getBlock(id); if (b){ b.type='calendar'; b.cal={events:[],view:'month',cursor:new Date().toISOString().slice(0,10)}; b.content=''; _save(); renderEditor(); return;}
+    }
+    return _origCT(id, type);
+  };
+
+  // ====== COMMAND PALETTE ADDITIONS ======
+  if (typeof window.buildCmdK === 'function'){
+    const _orig = window.buildCmdK;
+    window.buildCmdK = function(q){
+      const items = _orig(q);
+      const ql = (q||'').toLowerCase();
+      const extras = [
+        { cat:'Suite', icon:'📝', name:'Nouveau document', action:()=>{closeCmdK(); newSuitePage('doc');} },
+        { cat:'Suite', icon:'📊', name:'Nouveau tableur', action:()=>{closeCmdK(); newSuitePage('sheet');} },
+        { cat:'Suite', icon:'🎬', name:'Nouvelle présentation', action:()=>{closeCmdK(); newSuitePage('slides');} },
+        { cat:'Suite', icon:'📋', name:'Nouveau formulaire', action:()=>{closeCmdK(); newSuitePage('form');} },
+        { cat:'Suite', icon:'📅', name:'Nouveau calendrier', action:()=>{closeCmdK(); newSuitePage('cal');} },
+        { cat:'Suite', icon:'📂', name:'Ouvrir Drive', action:()=>{closeCmdK(); openDrive();} },
+        { cat:'Suite', icon:'▶', name:'Présenter cette page', action:()=>{closeCmdK(); startPresent();} },
+        { cat:'Suite', icon:'🖨', name:'Imprimer / PDF', action:()=>{closeCmdK(); window.print();} },
+      ];
+      extras.forEach(a => { if (!ql || a.name.toLowerCase().includes(ql)) items.push(a); });
+      return items;
+    };
+  }
+  function newSuitePage(t){
+    const titles = {doc:'Nouveau document',slides:'Nouvelle présentation',sheet:'Nouveau tableur',form:'Nouveau formulaire',cal:'Nouveau calendrier'};
+    const icons = {doc:'📝',slides:'🎬',sheet:'📊',form:'📋',cal:'📅'};
+    const id = createPage(titles[t], icons[t], null);
+    const page = state.pages.find(p=>p.id===id);
+    if (!page) return;
+    if (t==='doc'){ page.mode='doc'; state.blocks[id]=[{id:_id(),type:'h1',content:'Titre du document'},{id:_id(),type:'p',content:''}]; }
+    else if (t==='slides'){ page.mode='slides'; state.blocks[id]=[{id:_id(),type:'h1',content:'Slide 1'},{id:_id(),type:'p',content:'Contenu...'}]; }
+    else if (t==='sheet'){ state.blocks[id]=[{id:_id(),type:'sheet',sheet:defaultSheet()}]; }
+    else if (t==='form'){ state.blocks[id]=[{id:_id(),type:'form',form:{title:'Mon formulaire',fields:[{id:_id(),type:'text',label:'Nom'}],responses:[]}}]; }
+    else if (t==='cal'){ state.blocks[id]=[{id:_id(),type:'calendar',cal:{events:[],view:'month',cursor:new Date().toISOString().slice(0,10)}}]; }
+    _save(); renderPages(); openPage(id);
+  }
+
+  // Public form share via #form=ID hash
+  setTimeout(() => {
+    const m = /^#form=(.+)$/.exec(location.hash);
+    if (m){
+      const id = m[1];
+      const b = _getBlock(id);
+      if (b && b.type==='form'){ setTimeout(()=>previewForm(id), 500); }
+    }
+  }, 1500);
+
+  // Export HTML
+  function exportHTML(){
+    const page = _curPage(); if (!page) return;
+    const list = document.querySelector('.block-list');
+    if (!list) return;
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${_esc(page.title)}</title>
+      <style>body{font-family:Inter,sans-serif;max-width:780px;margin:40px auto;padding:0 20px;line-height:1.6;color:#222}h1,h2,h3{margin-top:1.6em}blockquote{border-left:3px solid #fb923c;margin:1em 0;padding-left:14px;color:#555}pre{background:#f4f4f5;padding:14px;border-radius:6px;overflow-x:auto}</style>
+      </head><body><h1>${_esc(page.title)}</h1>${list.innerHTML}</body></html>`;
+    const blob = new Blob([html],{type:'text/html'}); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=(page.title||'page')+'.html'; a.click();
+  }
+  Object.assign(window.U, { openDrive, openPageModePicker, startPresent, exportHTML, openChartModal });
+
+  console.log('[Underrated] Workspace Suite v1.0 loaded');
 })();
 </script>
 </body>
