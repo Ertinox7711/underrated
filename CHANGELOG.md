@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 22:27 — `95148d5`
+feat: expose state/Storage/renderPages on window for import scripts
+
 ## 03/05/2026 16:53 — `c5db7bf`
 feat: Drive entry in sidebar nav + global drag-drop on app (auto-upload to current page)
 
