@@ -4799,7 +4799,7 @@ window.U = {
         <button class="btn-ghost" id="inv-mail" style="flex:1;min-width:140px;padding:10px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;gap:6px">${svgIcon('mail',16)} Partager par email</button>
       </div>
       <div style="margin:14px 0;text-align:center">
-        <img id="inv-qr" alt="QR code" style="background:#fff;border-radius:10px;padding:10px;max-width:200px;width:200px;height:200px;object-fit:contain">
+        <img id="inv-qr" alt="QR" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}" style="background:#fff;border-radius:10px;padding:10px;width:200px;height:200px">
       </div>
       <div style="font-size:11px;color:var(--text-3);text-align:center">Lien public · Toute personne avec ce lien peut rejoindre l'espace</div>
     `;
@@ -4817,19 +4817,8 @@ window.U = {
       const body = encodeURIComponent(`Salut !\n\nJe t'invite à rejoindre mon espace « ${ws.name} » sur Underrated.\n\nClique pour rejoindre : ${url}\n\nÀ bientôt !`);
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
     };
-    // Render QR via toDataURL → img (more reliable)
-    setTimeout(() => {
-      try {
-        const img = document.getElementById('inv-qr');
-        if (window.QRCode && img) {
-          window.QRCode.toDataURL(url, { width: 200, margin: 1, color: { dark:'#0a0a0a', light:'#ffffff' } }, function(err, dataUrl){
-            if (err) { console.error('qr err', err); img.alt='QR error'; return; }
-            img.src = dataUrl;
-          });
-        }
-        refreshIcons();
-      } catch(e){ console.error('qr', e); }
-    }, 50);
+    // QR via api.qrserver.com (no lib, no key, set in markup directly)
+    setTimeout(refreshIcons, 50);
   }
 
   // ---- Handle ?invite=WSID&from=UID on app load ----
