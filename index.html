@@ -935,10 +935,6 @@ body.focus-mode .editor-content{max-width:820px}
         </div>
       </div>
 
-      <div class="sidebar-tpl-btn" id="sidebar-tpl-btn">
-        <span style="font-size:14px">📋</span><span>Templates</span>
-      </div>
-
       <div class="sidebar-section" id="favorites-section" style="display:none">
         <div class="section-title"><span>⭐ Favoris</span></div>
         <div id="fav-list"></div>
@@ -1301,11 +1297,11 @@ function addStarterBlocks() {
   const id = state.pages[0].id;
   state.blocks[id] = [
     { id:nbid(), type:'h1', content:'Bienvenue dans Underrated ⚡' },
-    { id:nbid(), type:'callout', content:'Tape `/` pour insérer un bloc, ou `⌘K` pour la palette.', emoji:'💡' },
+    { id:nbid(), type:'callout', content:'Tape `/` pour insérer un bloc, ou `'+MOD+'K` pour la palette.', emoji:'💡' },
     { id:nbid(), type:'h2', content:'Commencer' },
     { id:nbid(), type:'todo', content:'Créer ta première page', done:true },
-    { id:nbid(), type:'todo', content:'Tester la palette de commandes (⌘K)' },
-    { id:nbid(), type:'todo', content:'Essayer le mode focus (⌘.)' },
+    { id:nbid(), type:'todo', content:'Tester la palette de commandes ('+MOD+'K)' },
+    { id:nbid(), type:'todo', content:'Essayer le mode focus ('+MOD+'.)' },
     { id:nbid(), type:'p', content:'' },
   ];
   Storage.save();
