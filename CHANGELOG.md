@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 01:21 — `0950836`
+fix: remove duplicate page-title CSS override (was forcing weight 500, design uses 700)
+
 ## 04/05/2026 01:14 — `4d5a3c2`
 design: pixel-exact CSS port from standalone-source.html
 
