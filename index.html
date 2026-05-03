@@ -3098,7 +3098,6 @@ function renderRecent() {
 
 // ============ TRASH ============
 function softDelete(id) {
-  if (!confirm('Mettre dans la corbeille ?')) return;
   const p = state.pages.find(x=>x.id===id); if (!p) return;
   p.deleted = true; p.deletedAt = Date.now();
   Storage.save(); renderPages();
@@ -3781,7 +3780,7 @@ window.U = {
   }
   function deleteFolder(id){
     const f = getFolder(id); if (!f) return;
-    if (!confirm(`Supprimer le dossier "${f.name}" ? Son contenu sera déplacé au niveau parent.`)) return;
+    // Direct delete — content reparented to parent folder, pages remain
     const newParent = f.parentFolderId||null;
     state.folders.forEach(c => { if (c.parentFolderId===id) c.parentFolderId=newParent; });
     state.pages.forEach(p => { if (p.folderId===id) p.folderId=newParent; });
