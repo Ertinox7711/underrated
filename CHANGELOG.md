@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 08:42 — `b4af590`
+fix: buildCmdK extension reassigns module-level var (extras now show in palette)
+
 ## 03/05/2026 08:40 — `0bca77e`
 fix: remove duplicate Templates sidebar button + use MOD constant in seed content
 
