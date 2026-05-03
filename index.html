@@ -1858,21 +1858,76 @@ function setupCover() {
   };
 }
 
+function applyCover(coverEl, value) {
+  const p = currentPage(); if (!p) return;
+  p.cover = value;
+  coverEl.style.background = value;
+  coverEl.style.backgroundSize = 'cover';
+  coverEl.style.backgroundPosition = 'center';
+  Storage.save();
+}
+
+let _coverTab = 'grad';
 function showCoverPicker(coverEl) {
   const picker = document.getElementById('cover-picker');
-  picker.innerHTML = `<div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Couvertures</div>
-    <div class="cover-grid">${COVER_GRADIENTS.map((g,i)=>`<div class="cover-swatch" data-cg="${i}" style="background:${g}"></div>`).join('')}</div>`;
+  const tabs = [
+    { id:'grad', label:'🎨 Galerie' },
+    { id:'upload', label:'📤 Importer' },
+    { id:'url', label:'🔗 URL' },
+    { id:'random', label:'🎲 Aléatoire' },
+  ];
+  const renderBody = () => {
+    const body = document.getElementById('cv-body');
+    if (_coverTab === 'grad') {
+      body.innerHTML = `<div class="cover-grid">${COVER_GRADIENTS.map((g,i)=>`<div class="cover-swatch" data-cg="${i}" style="background:${g}"></div>`).join('')}</div>`;
+      body.querySelectorAll('[data-cg]').forEach(s => s.onclick = () => { applyCover(coverEl, COVER_GRADIENTS[+s.dataset.cg]); picker.classList.remove('show'); });
+    } else if (_coverTab === 'upload') {
+      body.innerHTML = `<div style="text-align:center;padding:18px 8px"><label style="display:inline-block;padding:10px 20px;background:var(--accent);color:#000;border-radius:8px;cursor:pointer;font-weight:600">📤 Choisir un fichier<input type="file" id="cv-file" accept="image/*" style="display:none"></label><div style="font-size:11px;color:var(--text-3);margin-top:8px">Max 2MB · stocké local (base64)</div></div>`;
+      document.getElementById('cv-file').onchange = (e) => {
+        const f = e.target.files[0]; if (!f) return;
+        if (f.size > 2*1024*1024) return toast('Fichier trop gros (max 2MB)', 'error');
+        const rd = new FileReader();
+        rd.onload = () => { applyCover(coverEl, `url("${rd.result}")`); picker.classList.remove('show'); toast('Image importée', 'success'); };
+        rd.readAsDataURL(f);
+      };
+    } else if (_coverTab === 'url') {
+      body.innerHTML = `<div style="padding:8px"><input id="cv-url" placeholder="https://exemple.com/image.jpg" style="width:100%;padding:10px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px"><button id="cv-url-go" class="btn" style="margin-top:8px;width:100%;padding:10px">Appliquer</button><div style="font-size:11px;color:var(--text-3);margin-top:6px">Astuce : tape le nom d'une image sur Pexels/Pixabay et copie l'URL directe.</div></div>`;
+      document.getElementById('cv-url-go').onclick = () => {
+        const u = document.getElementById('cv-url').value.trim();
+        if (!u) return;
+        applyCover(coverEl, `url("${u}")`);
+        picker.classList.remove('show');
+        toast('Cover URL appliquée', 'success');
+      };
+    } else if (_coverTab === 'random') {
+      const seeds = Array.from({length:12}, (_,i) => Date.now() + i);
+      body.innerHTML = `<div class="cover-grid">${seeds.map(s => `<img class="cover-swatch" data-pic="${s}" src="https://picsum.photos/200/80?random=${s}" style="object-fit:cover;height:50px">`).join('')}</div><div style="font-size:11px;color:var(--text-3);margin-top:8px;text-align:center">via Lorem Picsum (libre de droit)</div>`;
+      body.querySelectorAll('[data-pic]').forEach(im => im.onclick = () => {
+        applyCover(coverEl, `url("https://picsum.photos/1600/300?random=${im.dataset.pic}")`);
+        picker.classList.remove('show');
+        toast('Cover aléatoire', 'success');
+      });
+    }
+  };
+  picker.innerHTML = `
+    <div style="display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:10px;padding-bottom:6px;flex-wrap:wrap">
+      ${tabs.map(t => `<button class="cv-tab" data-cvtab="${t.id}" style="padding:6px 10px;background:${t.id===_coverTab?'var(--bg-hover)':'transparent'};border:none;color:${t.id===_coverTab?'var(--accent)':'var(--text-2)'};border-radius:5px;cursor:pointer;font-size:12px;font-weight:500">${t.label}</button>`).join('')}
+    </div>
+    <div id="cv-body"></div>`;
+  picker.style.width = '360px';
   const r = coverEl.getBoundingClientRect();
-  picker.style.left = (r.left + r.width/2) + 'px';
+  let left = r.left + r.width/2 - 180;
+  if (left < 10) left = 10;
+  if (left + 360 > window.innerWidth - 10) left = window.innerWidth - 370;
+  picker.style.left = left + 'px';
+  picker.style.transform = 'none';
   picker.style.top = (r.bottom + window.scrollY - 8) + 'px';
   picker.classList.add('show');
-  picker.querySelectorAll('[data-cg]').forEach(s => s.onclick = () => {
-    const p = currentPage(); if (!p) return;
-    p.cover = COVER_GRADIENTS[+s.dataset.cg];
-    coverEl.style.background = p.cover;
-    Storage.save();
-    picker.classList.remove('show');
+  picker.querySelectorAll('.cv-tab').forEach(b => b.onclick = () => {
+    _coverTab = b.dataset.cvtab;
+    showCoverPicker(coverEl);
   });
+  renderBody();
   setTimeout(() => {
     document.addEventListener('click', function close(e) {
       if (!e.target.closest('.cover-picker') && !e.target.closest('.cover-actions')) {
