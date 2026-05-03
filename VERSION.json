@@ -1,8 +1,8 @@
 {
-  "commit": "ed33497",
-  "message": "feat: folder system + 6 free APIs + settings panel + bug fixes",
-  "commitDate": "2026-05-03T08:14:57+02:00",
-  "buildDate": "2026-05-03T06:15:10Z",
-  "buildDateFR": "03/05/2026 08:15",
+  "commit": "21eadc6",
+  "message": "fix: ctx menu lookup index now matches actual array position (separators caused off-by-one)",
+  "commitDate": "2026-05-03T08:18:36+02:00",
+  "buildDate": "2026-05-03T06:18:44Z",
+  "buildDateFR": "03/05/2026 08:18",
   "branch": "main"
 }

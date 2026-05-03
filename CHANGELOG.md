@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 08:18 — `21eadc6`
+fix: ctx menu lookup index now matches actual array position (separators caused off-by-one)
+
 ## 03/05/2026 08:15 — `ed33497`
 feat: folder system + 6 free APIs + settings panel + bug fixes
 
