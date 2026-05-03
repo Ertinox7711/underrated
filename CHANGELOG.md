@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 16:26 — `740483e`
+feat: replace system UI emojis with Lucide SVG icons (user emoji picker preserved)
+
 ## 03/05/2026 16:14 — `1a0c891`
 feat: Workspace Suite — Word/Sheets/Slides/Drive/Forms/Calendar built-in
 
