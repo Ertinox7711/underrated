@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 07:46 — `01c0c59`
+feat: complete Notion-killer rebuild with 25+ features
+
 ## 03/05/2026 07:26 — `1597f4d`
 feat: rename project to Underrated
 
