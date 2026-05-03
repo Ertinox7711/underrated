@@ -1,8 +1,8 @@
 {
-  "commit": "f19ff35",
-  "message": "fix: logo SVG matches design (36px stroke-1.2 inline) instead of Lucide 22px",
-  "commitDate": "2026-05-04T01:39:57+02:00",
-  "buildDate": "2026-05-03T23:40:09Z",
-  "buildDateFR": "04/05/2026 01:40",
+  "commit": "91a54bd",
+  "message": "fix: demo button matches design exactly (✦ VOIR UNE DÉMO uppercase + accent style)",
+  "commitDate": "2026-05-04T01:41:27+02:00",
+  "buildDate": "2026-05-03T23:41:35Z",
+  "buildDateFR": "04/05/2026 01:41",
   "branch": "main"
 }

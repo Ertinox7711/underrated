@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 01:41 — `91a54bd`
+fix: demo button matches design exactly (✦ VOIR UNE DÉMO uppercase + accent style)
+
 ## 04/05/2026 01:40 — `f19ff35`
 fix: logo SVG matches design (36px stroke-1.2 inline) instead of Lucide 22px
 
