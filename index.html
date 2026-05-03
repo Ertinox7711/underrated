@@ -1991,6 +1991,22 @@ const IS_MAC = navigator.platform.toLowerCase().includes('mac');
 const MOD = IS_MAC ? '⌘' : 'Ctrl+';
 function svgIcon(name, size=16) { return `<i data-lucide="${name}" style="width:${size}px;height:${size}px"></i>`; }
 function refreshIcons() { try { if (window.lucide) window.lucide.createIcons(); } catch(e){} }
+// Inline SVG helper (matches design Glass) — used where Lucide refresh isn't reliable (page-meta, breadcrumb, default icons)
+window.__svg = function(name, sz){
+  sz = sz || 16;
+  const map = {
+    page:    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+    cal:     '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+    doc:     '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+    clock:   '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+    sparkle: '<path d="M12 2l2.4 6.4L21 11l-6.6 2.6L12 20l-2.4-6.4L3 11l6.6-2.6z"/>',
+    star:    '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+    folder:  '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+    link:    '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>'
+  };
+  const path = map[name] || map.page;
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-3px">${path}</svg>`;
+};
 // Post-load: replace ⌘ in static HTML on Windows/Linux
 if (!IS_MAC) {
   document.addEventListener('DOMContentLoaded', () => {
@@ -2171,7 +2187,7 @@ async function showApp() {
   setSyncStatus('Sync...');
   const fromCloud = await cloudLoad();
   if (!fromCloud && state.pages.length === 0) {
-    createPage('🎬 Bienvenue', '🎬');
+    createPage('Bienvenue', window.__svg('sparkle'));
     addStarterBlocks();
   }
   subscribeCloud();
@@ -2223,7 +2239,7 @@ function setAccent(a){ state.accent = a; applyTheme(); toast('Couleur: '+a); }
 function setTheme(t){ state.theme = t; applyTheme(); toast('Thème: '+t); }
 
 // ============ PAGES ============
-function createPage(title='Nouvelle page', icon='📄', parentId=null) {
+function createPage(title='Nouvelle page', icon=window.__svg('page'), parentId=null) {
   const id = npid();
   const page = { id, title, icon, parentId, cover:null, createdAt:Date.now(), updatedAt:Date.now() };
   state.pages.unshift(page);
@@ -2299,7 +2315,7 @@ function renderPages() {
     list.innerHTML = results.map(({p,hit}) => `
       <div class="page-item ${p.id===state.currentPageId?'active':''}" data-id="${p.id}">
         <span style="width:18px"></span>
-        <span class="page-icon">${p.icon||'📄'}</span>
+        <span class="page-icon">${p.icon||window.__svg('page')}</span>
         <span class="page-name">${escapeHtml(p.title||'Sans titre')}${hit==='body'?' <span style="color:var(--text-3);font-size:11px">(contenu)</span>':''}</span>
       </div>
     `).join('') || '<div style="padding:12px;color:var(--text-3);font-size:13px;text-align:center">Aucun résultat</div>';
@@ -2319,7 +2335,7 @@ function renderTree(tree, parent) {
     return `
       <div class="page-item ${p.id===state.currentPageId?'active':''}" data-id="${p.id}" draggable="true">
         <span class="page-toggle ${children.length?'':'empty'} ${expanded?'expanded':''}" data-toggle="${p.id}">▶</span>
-        <span class="page-icon">${p.icon||'📄'}</span>
+        <span class="page-icon">${p.icon||window.__svg('page')}</span>
         <span class="page-name">${escapeHtml(p.title||'Sans titre')}</span>
         <div class="page-actions">
           <button data-add="${p.id}" title="Sous-page">
@@ -2380,7 +2396,7 @@ function bindPageItems() {
     };
   });
   document.querySelectorAll('[data-toggle]').forEach(b => b.onclick = (e) => toggleExpanded(b.dataset.toggle, e));
-  document.querySelectorAll('[data-add]').forEach(b => b.onclick = (e) => { e.stopPropagation(); state.expanded[b.dataset.add]=true; createPage('Nouvelle page','📄', b.dataset.add); });
+  document.querySelectorAll('[data-add]').forEach(b => b.onclick = (e) => { e.stopPropagation(); state.expanded[b.dataset.add]=true; createPage('Nouvelle page',window.__svg('page'), b.dataset.add); });
   document.querySelectorAll('[data-del]').forEach(b => b.onclick = (e) => { e.stopPropagation(); deletePage(b.dataset.del); });
 }
 
@@ -2460,7 +2476,7 @@ function renderEditor() {
       <div class="page-icon-big" id="page-icon-big">${page.icon||'📄'}</div>
       <textarea class="page-title" id="page-title" rows="1" placeholder="Sans titre">${escapeHtml(page.title||'')}</textarea>
       <div class="page-meta">
-        <span>📅 ${new Date(page.createdAt||Date.now()).toLocaleDateString('fr-FR')}</span>
+        <span>${window.__svg('cal')} ${new Date(page.createdAt||Date.now()).toLocaleDateString('fr-FR')}</span>
         <span id="meta-words"></span>
         <span id="meta-readtime"></span>
       </div>
@@ -2483,7 +2499,7 @@ function renderBreadcrumb(page) {
     chain.unshift(cur);
     cur = cur.parentId ? state.pages.find(p => p.id===cur.parentId) : null;
   }
-  return chain.map((p,i) => `<span class="breadcrumb-icon">${p.icon||'📄'}</span><span style="cursor:pointer" data-bc="${p.id}">${escapeHtml(p.title||'Sans titre')}</span>${i<chain.length-1?' <span style="color:var(--text-3)">/</span> ':''}`).join('');
+  return chain.map((p,i) => `<span class="breadcrumb-icon">${p.icon||window.__svg('page')}</span><span style="cursor:pointer" data-bc="${p.id}">${escapeHtml(p.title||'Sans titre')}</span>${i<chain.length-1?' <span style="color:var(--text-3)">/</span> ':''}`).join('');
 }
 
 function renderBlock(block) {
@@ -3271,8 +3287,8 @@ function updateWordCount() {
   if (el) el.textContent = `${words} mots · ${min} min lecture`;
   const mw = document.getElementById('meta-words');
   const mr = document.getElementById('meta-readtime');
-  if (mw) mw.textContent = `${words} mots`;
-  if (mr) mr.textContent = `${min} min`;
+  if (mw) mw.innerHTML = `${window.__svg('doc')} ${words} mots`;
+  if (mr) mr.innerHTML = `${window.__svg('clock')} ${min} min`;
 }
 
 // ============ SLASH MENU ============
@@ -3377,7 +3393,7 @@ function showMentionMenu(target) {
   menu.style.top = (r.bottom + window.scrollY + 4) + 'px';
   menu.style.left = (r.left + window.scrollX) + 'px';
   if (!mentionResults.length) { hideMentionMenu(); return; }
-  menu.innerHTML = mentionResults.map((p,i) => `<div class="mention-item ${i===0?'active':''}" data-mid="${p.id}" data-i="${i}"><span>${p.icon||'📄'}</span><span>${escapeHtml(p.title)}</span></div>`).join('');
+  menu.innerHTML = mentionResults.map((p,i) => `<div class="mention-item ${i===0?'active':''}" data-mid="${p.id}" data-i="${i}"><span>${p.icon||window.__svg('page')}</span><span>${escapeHtml(p.title)}</span></div>`).join('');
   menu.classList.add('show');
   menu.querySelectorAll('.mention-item').forEach(it => {
     it.onclick = () => applyMention(it.dataset.mid);
@@ -3419,7 +3435,7 @@ function renderBacklinks() {
   const el = document.getElementById('backlinks');
   if (!el) return;
   if (!links.length) { el.innerHTML = ''; return; }
-  el.innerHTML = `<div class="backlinks"><h3>↩ Liens entrants (${links.length})</h3>${links.map(p => `<div class="backlink-item" data-bl="${p.id}"><span>${p.icon||'📄'}</span><span>${escapeHtml(p.title)}</span></div>`).join('')}</div>`;
+  el.innerHTML = `<div class="backlinks"><h3>↩ Liens entrants (${links.length})</h3>${links.map(p => `<div class="backlink-item" data-bl="${p.id}"><span>${p.icon||window.__svg('page')}</span><span>${escapeHtml(p.title)}</span></div>`).join('')}</div>`;
   el.querySelectorAll('[data-bl]').forEach(b => b.onclick = () => openPage(b.dataset.bl));
 }
 
@@ -4213,7 +4229,7 @@ function renderFavorites() {
   const favs = favIds.map(id => state.pages.find(p => p.id===id && !p.deleted)).filter(Boolean);
   if (!favs.length) { sec.style.display = 'none'; return; }
   sec.style.display = '';
-  list.innerHTML = favs.map(p => `<div class="page-item" data-favid="${p.id}"><span class="page-icon">${p.icon||'📄'}</span><span class="page-name">${escapeHtml(p.title||'Sans titre')}</span></div>`).join('');
+  list.innerHTML = favs.map(p => `<div class="page-item" data-favid="${p.id}"><span class="page-icon">${p.icon||window.__svg('page')}</span><span class="page-name">${escapeHtml(p.title||'Sans titre')}</span></div>`).join('');
   list.querySelectorAll('[data-favid]').forEach(el => el.onclick = () => openPage(el.dataset.favid));
 }
 // ============ RECENT PAGES ============
@@ -4230,7 +4246,7 @@ function renderRecent() {
   const rec = (state.recent||[]).map(id => state.pages.find(p => p.id===id && !p.deleted)).filter(Boolean);
   if (!rec.length) { sec.style.display = 'none'; return; }
   sec.style.display = '';
-  list.innerHTML = rec.map(p => `<div class="page-item" data-recid="${p.id}"><span class="page-icon">${p.icon||'📄'}</span><span class="page-name">${escapeHtml(p.title||'Sans titre')}</span></div>`).join('');
+  list.innerHTML = rec.map(p => `<div class="page-item" data-recid="${p.id}"><span class="page-icon">${p.icon||window.__svg('page')}</span><span class="page-name">${escapeHtml(p.title||'Sans titre')}</span></div>`).join('');
   list.querySelectorAll('[data-recid]').forEach(el => el.onclick = () => openPage(el.dataset.recid));
 }
 
@@ -4256,7 +4272,7 @@ function showTrash() {
     <div style="max-height:60vh;overflow-y:auto">
       ${trashed.length ? trashed.map(p => `
         <div style="display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid var(--border)">
-          <span style="font-size:18px">${p.icon||'📄'}</span>
+          <span style="font-size:18px">${p.icon||window.__svg('page')}</span>
           <span style="flex:1">${escapeHtml(p.title||'Sans titre')}</span>
           <span style="font-size:11px;color:var(--text-3)">${new Date(p.deletedAt||0).toLocaleDateString('fr-FR')}</span>
           <button data-restore="${p.id}" style="background:var(--bg-3);padding:5px 10px;border-radius:5px;font-size:12px">Restaurer</button>
@@ -5041,7 +5057,7 @@ window.renderPages = renderPages;
         subs.forEach(sub => { html += renderNode(sub, depth+1); });
         pgs.forEach(p => {
           html += `<div class="page-item" data-id="${p.id}" data-page-id="${p.id}" style="margin-left:${(depth+1)*10+8}px">
-            <span class="page-icon">${p.icon||'📄'}</span>
+            <span class="page-icon">${p.icon||window.__svg('page')}</span>
             <span class="page-name">${escapeHtml(p.title||'Sans titre')}</span>
           </div>`;
         });
