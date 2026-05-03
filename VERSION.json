@@ -1,8 +1,8 @@
 {
-  "commit": "af8a398",
-  "message": "fix: cover picker Unsplash tab uses Openverse API (no key, replaces deprecated source.unsplash.com)",
-  "commitDate": "2026-05-03T22:59:03+02:00",
-  "buildDate": "2026-05-03T20:59:12Z",
-  "buildDateFR": "03/05/2026 22:59",
+  "commit": "d428f38",
+  "message": "design: implement Underrated Glass theme (visual refresh, all features preserved)",
+  "commitDate": "2026-05-04T00:11:35+02:00",
+  "buildDate": "2026-05-03T22:11:42Z",
+  "buildDateFR": "04/05/2026 00:11",
   "branch": "main"
 }

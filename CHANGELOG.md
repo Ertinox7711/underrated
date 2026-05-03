@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 00:11 — `d428f38`
+design: implement Underrated Glass theme (visual refresh, all features preserved)
+
 ## 03/05/2026 22:59 — `af8a398`
 fix: cover picker Unsplash tab uses Openverse API (no key, replaces deprecated source.unsplash.com)
 
