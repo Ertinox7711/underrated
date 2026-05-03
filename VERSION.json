@@ -1,8 +1,8 @@
 {
-  "commit": "95148d5",
-  "message": "feat: expose state/Storage/renderPages on window for import scripts",
-  "commitDate": "2026-05-03T22:26:55+02:00",
-  "buildDate": "2026-05-03T20:27:03Z",
-  "buildDateFR": "03/05/2026 22:27",
+  "commit": "8944924",
+  "message": "data: add import-script.js for content ingestion",
+  "commitDate": "2026-05-03T22:29:10+02:00",
+  "buildDate": "2026-05-03T20:29:26Z",
+  "buildDateFR": "03/05/2026 22:29",
   "branch": "main"
 }

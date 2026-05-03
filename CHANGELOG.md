@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 22:29 — `8944924`
+data: add import-script.js for content ingestion
+
 ## 03/05/2026 22:27 — `95148d5`
 feat: expose state/Storage/renderPages on window for import scripts
 
