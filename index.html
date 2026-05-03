@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0a0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>SGRR&LAW</title>
+<title>Underrated</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
 <style>
 :root{
@@ -484,7 +484,7 @@ input,textarea{font-family:inherit;background:none;border:none;color:inherit;out
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="logo">⚡ SGRR&LAW</div>
+    <div class="logo">⚡ Underrated</div>
     <div class="logo-sub">Workspace de projet — collaboratif & temps réel</div>
     <div id="login-error" class="login-error"></div>
     <input id="email" type="email" class="login-input" placeholder="Email" autocomplete="email">
@@ -493,7 +493,7 @@ input,textarea{font-family:inherit;background:none;border:none;color:inherit;out
     <div class="login-divider">ou</div>
     <button id="signup-btn" class="btn btn-ghost">Créer un compte</button>
     <div class="login-toggle">
-      <span style="color:var(--text-3);font-size:11px" id="login-version">SGRR&LAW</span>
+      <span style="color:var(--text-3);font-size:11px" id="login-version">Underrated</span>
     </div>
   </div>
 </div>
@@ -550,7 +550,7 @@ input,textarea{font-family:inherit;background:none;border:none;color:inherit;out
         <button class="icon-btn menu-btn" id="menu-btn">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
-        <div class="breadcrumb" id="breadcrumb">SGRR&LAW</div>
+        <div class="breadcrumb" id="breadcrumb">Underrated</div>
         <div class="header-actions">
           <div class="live-indicator">
             <div class="live-dot"></div>
@@ -561,7 +561,7 @@ input,textarea{font-family:inherit;background:none;border:none;color:inherit;out
 
       <div class="editor" id="editor">
         <div class="empty-state">
-          <h2>👋 Bienvenue dans SGRR&LAW</h2>
+          <h2>👋 Bienvenue dans Underrated</h2>
           <p>Crée ta première page pour commencer</p>
           <button class="btn" style="max-width:240px" onclick="createPage()">+ Nouvelle page</button>
         </div>
@@ -605,7 +605,7 @@ let state = {
 const Storage = {
   load() {
     try {
-      const data = localStorage.getItem('sgrr-law-data');
+      const data = localStorage.getItem('underrated-data');
       if (data) {
         const parsed = JSON.parse(data);
         state.pages = parsed.pages || [];
@@ -615,7 +615,7 @@ const Storage = {
   },
   save() {
     try {
-      localStorage.setItem('sgrr-law-data', JSON.stringify({
+      localStorage.setItem('underrated-data', JSON.stringify({
         pages: state.pages,
         blocks: state.blocks,
       }));
@@ -623,13 +623,13 @@ const Storage = {
   },
   loadUser() {
     try {
-      const u = localStorage.getItem('sgrr-law-user');
+      const u = localStorage.getItem('underrated-user');
       if (u) return JSON.parse(u);
     } catch(e){}
     return null;
   },
-  saveUser(u) { localStorage.setItem('sgrr-law-user', JSON.stringify(u)); },
-  clearUser() { localStorage.removeItem('sgrr-law-user'); }
+  saveUser(u) { localStorage.setItem('underrated-user', JSON.stringify(u)); },
+  clearUser() { localStorage.removeItem('underrated-user'); }
 };
 
 // ============ AUTH ============
@@ -766,7 +766,7 @@ function showEmpty() {
       <button class="btn" style="max-width:240px" onclick="createPage()">+ Nouvelle page</button>
     </div>
   `;
-  document.getElementById('breadcrumb').textContent = 'SGRR&LAW';
+  document.getElementById('breadcrumb').textContent = 'Underrated';
 }
 
 // ============ EDITOR ============

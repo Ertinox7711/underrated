@@ -1,4 +1,5 @@
-# SGRR&LAW — Série IA Virale + Formation
+# Underrated — Série IA Virale + Formation
+(Dossier local : `SGRR&LAW`, repo GitHub : `underrated`)
 
 ## Projet
 Série IA virale TikTok/YouTube Shorts + formation payante.
@@ -7,7 +8,7 @@ Inspiration : Skibidi Tentafruit/Fruit Love Island — mais meilleure histoire +
 
 ## Stack
 - Frontend : HTML/CSS/JS vanilla — `index.html` (Notion-like app collaborative)
-- Auth + DB : Firebase (projet SGRR-LAW — en attente création)
+- Auth + DB : Firebase (app `Underrated` dans projet `robot-validation-produit`)
 - Hébergement : GitHub Pages
 - IA prod : ChatGPT, Gemini, outils génération image/vidéo
 
@@ -16,7 +17,7 @@ Inspiration : Skibidi Tentafruit/Fruit Love Island — mais meilleure histoire +
 - `.claude/settings.json` — permissions projet
 
 ## Firebase (TODO)
-Quand projet SGRR-LAW créé sur console.firebase.google.com :
+App Firebase `Underrated` (déjà créée dans projet `robot-validation-produit`) :
 1. Copier `firebaseConfig` dans `index.html` → variable `FIREBASE_CONFIG`
 2. Passer `FIREBASE_ENABLED = true`
 3. Activer Authentication (Email/Password)
@@ -75,8 +76,8 @@ GitHub Actions (`.github/workflows/deploy.yml`) se déclenche sur push vers `mai
 3. Push VERSION + CHANGELOG sur le repo (avec `[skip ci]` pour éviter boucle)
 4. Deploy sur GitHub Pages
 
-**URL live : https://ertinox7711.github.io/sgrr-law/**
-**Repo : https://github.com/Ertinox7711/sgrr-law**
+**URL live : https://ertinox7711.github.io/underrated/**
+**Repo : https://github.com/Ertinox7711/underrated**
 
 ### Format des messages de commit
 Utiliser format conventionnel pour clarté :
@@ -101,8 +102,8 @@ Exemples :
 - `CHANGELOG.md` — auto-rempli par CI (le titre `# Changelog` reste, entrées ajoutées sous)
 
 ### Setup déjà fait (référence)
-1. ✅ `git init`, repo créé : `gh repo create sgrr-law --public`
-2. ✅ GitHub Pages activé via API : `gh api -X POST repos/Ertinox7711/sgrr-law/pages -f build_type=workflow`
+1. ✅ `git init`, repo créé : `gh repo create underrated --public`
+2. ✅ GitHub Pages activé via API : `gh api -X POST repos/Ertinox7711/underrated/pages -f build_type=workflow`
 3. ✅ Workflow auto-deploy en place
 
 ### ⚠️ Firebase Auth — domaines autorisés (à faire manuellement UNE FOIS)
