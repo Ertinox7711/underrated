@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 00:47 — `636aa9c`
+design: Glass theme - CSS tokens + component polish (layout preserved)
+
 ## 04/05/2026 00:14 — `90da33b`
 Revert "design: implement Underrated Glass theme (visual refresh, all features preserved)"
 
