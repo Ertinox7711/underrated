@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 16:53 — `c5db7bf`
+feat: Drive entry in sidebar nav + global drag-drop on app (auto-upload to current page)
+
 ## 03/05/2026 16:48 — `5e0a9b2`
 feat: Drive add button + clickable dropzone opens native file picker
 
