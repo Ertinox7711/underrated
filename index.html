@@ -3570,10 +3570,11 @@ loadVersion();
 function showCtxMenu(x, y, items) {
   hideCtxMenu();
   const menu = document.getElementById('ctx-menu');
-  menu.innerHTML = items.map(it => {
+  // Use the actual array index (including seps) so lookup works
+  menu.innerHTML = items.map((it, idx) => {
     if (it.sep) return '<div class="ctx-sep"></div>';
     if (it.label) return `<div class="ctx-label">${escapeHtml(it.label)}</div>`;
-    return `<div class="ctx-item ${it.danger?'danger':''}" data-act="${it._idx}">
+    return `<div class="ctx-item ${it.danger?'danger':''}" data-act="${idx}">
       <span class="ctx-icon">${it.icon||''}</span>
       <span>${escapeHtml(it.name)}</span>
       ${it.kbd?`<span class="ctx-kbd">${it.kbd}</span>`:''}
