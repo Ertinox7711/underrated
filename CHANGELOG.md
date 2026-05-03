@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 22:44 — `80c5b83`
+feat: add Dossier card to + page mode picker
+
 ## 03/05/2026 22:38 — `c67f338`
 fix: strict workspace filter on pages + folders (no leak across workspaces)
 

@@ -1,8 +1,8 @@
 {
-  "commit": "c67f338",
-  "message": "fix: strict workspace filter on pages + folders (no leak across workspaces)",
-  "commitDate": "2026-05-03T22:38:24+02:00",
-  "buildDate": "2026-05-03T20:38:31Z",
-  "buildDateFR": "03/05/2026 22:38",
+  "commit": "80c5b83",
+  "message": "feat: add Dossier card to + page mode picker",
+  "commitDate": "2026-05-03T22:44:31+02:00",
+  "buildDate": "2026-05-03T20:44:40Z",
+  "buildDateFR": "03/05/2026 22:44",
   "branch": "main"
 }
