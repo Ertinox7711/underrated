@@ -215,8 +215,48 @@ code.inline{background:var(--bg-3);border:1px solid var(--border);padding:1px 5p
 #login-screen{
   position:fixed;inset:0;z-index:1000;
   display:flex;align-items:center;justify-content:center;
+  gap:80px;
   background:radial-gradient(ellipse at top,rgba(251,146,60,.08) 0%,var(--bg) 60%);
   padding:20px;
+}
+/* Apple-style hero on login (Glass) */
+.login-hero{
+  flex:0 1 520px;
+  max-width:560px;
+  animation:fadeUp .9s cubic-bezier(.16,1,.3,1);
+}
+.hero-title{
+  font-family:var(--serif,var(--sans));
+  font-size:clamp(40px,5.6vw,76px);
+  line-height:1.02;
+  letter-spacing:-.035em;
+  font-weight:700;
+  margin:0 0 20px;
+  color:#fff;
+  text-wrap:balance;
+}
+.hero-w{display:inline-block;background-clip:text;-webkit-background-clip:text;color:#fff}
+.hero-lav{
+  background-image:linear-gradient(135deg,#c9a5ff 0%,#8b6fe8 50%,#6f5ad6 100%);
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.hero-blue{
+  background-image:linear-gradient(135deg,#5ea7ff 0%,#3b82f6 60%,#2563eb 100%);
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.hero-sub{
+  font-family:var(--sans);
+  font-size:clamp(15px,1.3vw,18px);
+  line-height:1.5;
+  color:var(--text-2);
+  margin:0;
+  max-width:440px;
+  letter-spacing:-.005em;
+}
+@media (max-width:960px){
+  #login-screen{flex-direction:column;gap:32px;padding:32px 20px;justify-content:flex-start;padding-top:max(48px,8vh)}
+  .login-hero{text-align:center;flex:0 0 auto}
+  .hero-sub{margin:0 auto}
 }
 .login-card{
   background:var(--bg-2);
@@ -335,7 +375,7 @@ code.inline{background:var(--bg-3);border:1px solid var(--border);padding:1px 5p
 .quick-item:hover{background:var(--bg-hover);color:var(--text)}
 .quick-item svg{width:15px;height:15px;flex-shrink:0}
 .quick-item [data-lucide]{width:15px;height:15px;flex-shrink:0}
-#app.drag-over::after{content:'📥 Lâcher pour uploader';position:fixed;inset:20px;border:3px dashed var(--accent);border-radius:16px;background:rgba(251,146,60,.15);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--accent);font-weight:700;z-index:9999;pointer-events:none;backdrop-filter:blur(4px)}
+#app.drag-over::after{content:'Lâcher pour uploader';position:fixed;inset:20px;border:3px dashed var(--accent);border-radius:16px;background:rgba(251,146,60,.15);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--accent);font-weight:700;z-index:9999;pointer-events:none;backdrop-filter:blur(4px)}
 .quick-item .kbd{margin-left:auto;font-size:10px;color:var(--text-3);background:var(--bg-3);padding:1px 6px;border-radius:4px}
 
 .sidebar-section{padding:10px 8px;flex:1;overflow-y:auto;min-height:100px}
@@ -1219,6 +1259,13 @@ code.inline{color:var(--accent-3)}
 
 <!-- LOGIN -->
 <div id="login-screen">
+  <div class="login-hero">
+    <h1 class="hero-title">
+      <span class="hero-w hero-lav">De&nbsp;l'idée</span> <span class="hero-w hero-blue">à</span><br>
+      <span class="hero-w hero-blue">l'impact,</span> <span class="hero-w">plus&nbsp;vite.</span>
+    </h1>
+    <p class="hero-sub">Pensez. Écrivez. Construisez. Tout au même endroit.</p>
+  </div>
   <div class="login-card">
     <div class="logo"><i data-lucide="zap" style="width:22px;height:22px"></i> Underrated</div>
     <div class="logo-sub">Workspace de projet — collaboratif & temps réel</div>
@@ -1979,7 +2026,7 @@ function renderBlock(block) {
           <select class="code-lang" data-codelang="${block.id}">
             ${['plaintext','javascript','python','css','bash','json','markdown'].map(l=>`<option ${l===lang?'selected':''}>${l}</option>`).join('')}
           </select>
-          <span class="code-copy" data-copycode="${block.id}">📋 Copier</span>
+          <span class="code-copy" data-copycode="${block.id}">Copier</span>
         </div>
         <pre><code class="block-content language-${lang}" contenteditable="true" data-placeholder="// code">${escapeHtml(block.content||'')}</code></pre>
       </div>
@@ -2099,7 +2146,7 @@ function renderBlock(block) {
     return `<div class="block" data-id="${block.id}" data-type="toc">
       <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
       <div class="toc-block">
-        <div class="toc-h">📑 Sommaire</div>
+        <div class="toc-h">Sommaire</div>
         ${heads.length ? heads.map(h => `<a class="toc-link lvl${h.type[1]}" data-tocid="${h.id}">${escapeHtml(h.content||'(vide)')}</a>`).join('') : '<div style="color:var(--text-3);font-size:13px">Aucun titre dans cette page</div>'}
       </div>
       <div class="block-content" style="display:none"></div>
@@ -2286,9 +2333,9 @@ function showCoverPicker(coverEl) {
   const picker = document.getElementById('cover-picker');
   const tabs = [
     { id:'grad', label:'Galerie' },
-    { id:'upload', label:'📤 Charger' },
-    { id:'url', label:'🔗 Lien' },
-    { id:'unsplash', label:'📸 Unsplash' },
+    { id:'upload', label:'Charger' },
+    { id:'url', label:'Lien' },
+    { id:'unsplash', label:'Unsplash' },
   ];
   const renderBody = () => {
     const body = document.getElementById('cv-body');
@@ -2597,7 +2644,7 @@ function setupBlocks() {
 
     // comment placeholder
     const cmt = block.querySelector('[data-cmt]');
-    if (cmt) cmt.onclick = () => toast('Commentaires : bientôt 💬');
+    if (cmt) cmt.onclick = () => toast('Commentaires : bientôt');
   });
 
   // breadcrumb nav
@@ -2744,44 +2791,44 @@ function updateWordCount() {
   if (el) el.textContent = `${words} mots · ${min} min lecture`;
   const mw = document.getElementById('meta-words');
   const mr = document.getElementById('meta-readtime');
-  if (mw) mw.textContent = `📝 ${words} mots`;
-  if (mr) mr.textContent = `⏱️ ${min} min`;
+  if (mw) mw.textContent = `${words} mots`;
+  if (mr) mr.textContent = `${min} min`;
 }
 
 // ============ SLASH MENU ============
 const SLASH_OPTIONS = [
   { cat:'Texte', items:[
-    { type:'p', icon:'📝', name:'Texte', desc:'Paragraphe simple' },
-    { type:'h1', icon:'H₁', name:'Titre 1', desc:'Grand titre' },
-    { type:'h2', icon:'H₂', name:'Titre 2', desc:'Titre moyen' },
-    { type:'h3', icon:'H₃', name:'Titre 3', desc:'Petit titre' },
-    { type:'quote', icon:'❝', name:'Citation', desc:'Bloc de citation' },
-    { type:'callout', icon:'💡', name:'Encadré', desc:'Note importante' },
+    { type:'p', icon:svgIcon('type',16), name:'Texte', desc:'Paragraphe simple' },
+    { type:'h1', icon:svgIcon('heading-1',16), name:'Titre 1', desc:'Grand titre' },
+    { type:'h2', icon:svgIcon('heading-2',16), name:'Titre 2', desc:'Titre moyen' },
+    { type:'h3', icon:svgIcon('heading-3',16), name:'Titre 3', desc:'Petit titre' },
+    { type:'quote', icon:svgIcon('quote',16), name:'Citation', desc:'Bloc de citation' },
+    { type:'callout', icon:svgIcon('lightbulb',16), name:'Encadré', desc:'Note importante' },
   ]},
   { cat:'Listes', items:[
-    { type:'bullet', icon:'•', name:'Liste', desc:'Liste à puces' },
-    { type:'numbered', icon:'1.', name:'Numérotée', desc:'Liste numérotée' },
-    { type:'todo', icon:'☑', name:'To-do', desc:'Case à cocher' },
-    { type:'toggle', icon:'▸', name:'Toggle', desc:'Bloc dépliable' },
+    { type:'bullet', icon:svgIcon('list',16), name:'Liste', desc:'Liste à puces' },
+    { type:'numbered', icon:svgIcon('list-ordered',16), name:'Numérotée', desc:'Liste numérotée' },
+    { type:'todo', icon:svgIcon('square-check',16), name:'To-do', desc:'Case à cocher' },
+    { type:'toggle', icon:svgIcon('chevron-right',16), name:'Toggle', desc:'Bloc dépliable' },
   ]},
   { cat:'Médias', items:[
-    { type:'image', icon:'🖼️', name:'Image', desc:'URL ou base64' },
-    { type:'youtube', icon:'▶️', name:'YouTube', desc:'Embed vidéo' },
-    { type:'bookmark', icon:'🔖', name:'Lien', desc:'Carte de lien' },
-    { type:'code', icon:'</>', name:'Code', desc:'Bloc de code (Prism)' },
+    { type:'image', icon:svgIcon('image',16), name:'Image', desc:'URL ou base64' },
+    { type:'youtube', icon:svgIcon('play',16), name:'YouTube', desc:'Embed vidéo' },
+    { type:'bookmark', icon:svgIcon('bookmark',16), name:'Lien', desc:'Carte de lien' },
+    { type:'code', icon:svgIcon('code',16), name:'Code', desc:'Bloc de code (Prism)' },
   ]},
   { cat:'Avancé', items:[
-    { type:'table', icon:'⊞', name:'Table', desc:'Tableau éditable' },
-    { type:'kanban', icon:'▦', name:'Kanban', desc:'Tableau Kanban' },
-    { type:'divider', icon:'—', name:'Séparateur', desc:'Ligne horizontale' },
-    { type:'ai', icon:'✨', name:'IA', desc:'Demande IA (placeholder)' },
-    { type:'math', icon:'∑', name:'Équation', desc:'Formule LaTeX (KaTeX)' },
-    { type:'mermaid', icon:'📊', name:'Diagramme', desc:'Mermaid chart' },
-    { type:'toc', icon:'☰', name:'Sommaire', desc:'Table des matières auto' },
-    { type:'button', icon:'🔘', name:'Bouton', desc:'Action: nouvelle tâche' },
-    { type:'file', icon:'📎', name:'Fichier', desc:'Upload (base64)' },
-    { type:'audio', icon:'🎙️', name:'Audio', desc:'Enregistrement audio' },
-    { type:'synced', icon:'🔁', name:'Bloc synchronisé', desc:'Mirror d\'un bloc' },
+    { type:'table', icon:svgIcon('table',16), name:'Table', desc:'Tableau éditable' },
+    { type:'kanban', icon:svgIcon('kanban',16), name:'Kanban', desc:'Tableau Kanban' },
+    { type:'divider', icon:svgIcon('minus',16), name:'Séparateur', desc:'Ligne horizontale' },
+    { type:'ai', icon:svgIcon('sparkles',16), name:'IA', desc:'Demande IA (placeholder)' },
+    { type:'math', icon:svgIcon('sigma',16), name:'Équation', desc:'Formule LaTeX (KaTeX)' },
+    { type:'mermaid', icon:svgIcon('chart-network',16), name:'Diagramme', desc:'Mermaid chart' },
+    { type:'toc', icon:svgIcon('list-tree',16), name:'Sommaire', desc:'Table des matières auto' },
+    { type:'button', icon:svgIcon('mouse-pointer-click',16), name:'Bouton', desc:'Action: nouvelle tâche' },
+    { type:'file', icon:svgIcon('paperclip',16), name:'Fichier', desc:'Upload (base64)' },
+    { type:'audio', icon:svgIcon('mic',16), name:'Audio', desc:'Enregistrement audio' },
+    { type:'synced', icon:svgIcon('link',16), name:'Bloc synchronisé', desc:'Mirror d\'un bloc' },
   ]},
 ];
 
