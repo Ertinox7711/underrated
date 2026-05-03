@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 16:48 — `5e0a9b2`
+feat: Drive add button + clickable dropzone opens native file picker
+
 ## 03/05/2026 16:42 — `8be5b7a`
 fix: QR code via api.qrserver.com (no JS lib needed, always works)
 
