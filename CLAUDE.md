@@ -75,7 +75,8 @@ GitHub Actions (`.github/workflows/deploy.yml`) se déclenche sur push vers `mai
 3. Push VERSION + CHANGELOG sur le repo (avec `[skip ci]` pour éviter boucle)
 4. Deploy sur GitHub Pages
 
-URL live : `https://ertinox7711.github.io/sgrr-law/` (à confirmer après premier push)
+**URL live : https://ertinox7711.github.io/sgrr-law/**
+**Repo : https://github.com/Ertinox7711/sgrr-law**
 
 ### Format des messages de commit
 Utiliser format conventionnel pour clarté :
@@ -99,11 +100,19 @@ Exemples :
 - `VERSION.json` — généré par CI à chaque deploy
 - `CHANGELOG.md` — auto-rempli par CI (le titre `# Changelog` reste, entrées ajoutées sous)
 
-### Si premier deploy
-1. `git init && git branch -M main`
-2. `gh repo create sgrr-law --public --source=. --remote=origin --push`
-3. Sur le repo GitHub : Settings → Pages → Source = "GitHub Actions"
-4. Premier push déclenche deploy auto
+### Setup déjà fait (référence)
+1. ✅ `git init`, repo créé : `gh repo create sgrr-law --public`
+2. ✅ GitHub Pages activé via API : `gh api -X POST repos/Ertinox7711/sgrr-law/pages -f build_type=workflow`
+3. ✅ Workflow auto-deploy en place
+
+### ⚠️ Firebase Auth — domaines autorisés (à faire manuellement UNE FOIS)
+Le login Firebase ne fonctionne en prod QUE si le domaine est autorisé :
+1. Aller sur https://console.firebase.google.com/project/robot-validation-produit/authentication/settings
+2. Onglet "Domaines autorisés"
+3. Ajouter : `ertinox7711.github.io`
+4. (`localhost` est déjà autorisé par défaut)
+
+Sans ça : login marche en local mais erreur en prod.
 
 ## Permissions
 Tout pré-autorisé : git, npm, node, firebase, read/write fichiers, browser, Notion MCP, Firebase MCP.
