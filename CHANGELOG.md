@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 08:36 — `7dce985`
+fix: buildPageTree + search filter out deleted pages (so trash actually hides them)
+
 ## 03/05/2026 08:30 — `fdac463`
 fix: remove blocking confirm() on softDelete + folder delete (restorable from trash)
 
