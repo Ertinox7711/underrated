@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 08:22 — `2bc2c32`
+fix: folder UI selector - use page-list closest section instead of broken :last-of-type
+
 ## 03/05/2026 08:18 — `21eadc6`
 fix: ctx menu lookup index now matches actual array position (separators caused off-by-one)
 
