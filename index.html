@@ -4271,10 +4271,10 @@ window.U = {
     } catch(e){ toast('Erreur WorldTimeAPI','error'); }
   }
 
-  // Add to command palette via buildCmdK extension
+  // Add to command palette via buildCmdK extension — reassign module-level var
   if (typeof buildCmdK === 'function') {
     const _origBuild = buildCmdK;
-    window.buildCmdK = function(q){
+    buildCmdK = function(q){
       const items = _origBuild(q);
       const ql = (q||'').toLowerCase();
       const extras = [
@@ -4282,14 +4282,14 @@ window.U = {
         { cat:'Commandes', icon:'💰', name:'Insérer prix crypto', action: () => { closeCmdK(); slashCrypto(); }},
         { cat:'Commandes', icon:'🍽️', name:'Insérer recette aléatoire', action: () => { closeCmdK(); slashRecipe(); }},
         { cat:'Commandes', icon:'🌍', name:'Insérer pays', action: () => { closeCmdK(); slashCountry(); }},
-        { cat:'Commandes', icon:'🎬', name:'Insérer GIF', action: () => { closeCmdK(); slashGif(); }},
         { cat:'Commandes', icon:'🕐', name:'Insérer heure (fuseau)', action: () => { closeCmdK(); slashTime(); }},
-        { cat:'Commandes', icon:'⚙️', name:'Paramètres / Clés API', action: () => { closeCmdK(); openSettings(); }},
+        { cat:'Commandes', icon:'⚙️', name:'Paramètres', action: () => { closeCmdK(); openSettings(); }},
         { cat:'Commandes', icon:'📁', name:'Nouveau dossier', action: () => { closeCmdK(); const n = prompt('Nom :'); if (n) createFolder(n,null); }},
       ];
       extras.forEach(a => { if (!ql || a.name.toLowerCase().includes(ql)) items.push(a); });
       return items;
     };
+    window.buildCmdK = buildCmdK;
   }
 
   // ---- Daily Note enrichment: weather + quote ----
