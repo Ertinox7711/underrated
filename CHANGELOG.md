@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 16:33 — `40a0f3d`
+fix: remove MutationObserver loop that froze renderer on login
+
 ## 03/05/2026 16:26 — `740483e`
 feat: replace system UI emojis with Lucide SVG icons (user emoji picker preserved)
 
