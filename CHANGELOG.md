@@ -1,5 +1,8 @@
 # Changelog
 
+## 03/05/2026 22:46 — `e1d26dc`
+fix: remove Drive card from page mode picker (already in sidebar nav)
+
 ## 03/05/2026 22:44 — `80c5b83`
 feat: add Dossier card to + page mode picker
 
