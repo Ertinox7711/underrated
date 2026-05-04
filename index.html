@@ -1305,6 +1305,10 @@ body::after{
   box-shadow:var(--glass-shadow) !important;
   position:relative;
 }
+/* Floating popups must be position:fixed so JS-set top/left use viewport coords */
+.cmdk, .modal, .slash-menu, .mention-menu, .emoji-picker, .cover-picker, .ctx-menu, .format-toolbar, .bulk-bar{
+  position:fixed !important;
+}
 /* Top edge highlight (light reflection) */
 .sidebar::before, .pomodoro::before, .props-panel::before, .cmt-drawer::before, .modal::before, .cmdk::before, .login-card::before, .slash-menu::before, .mention-menu::before, .emoji-picker::before, .cover-picker::before{
   content:'';position:absolute;left:1px;right:1px;top:0;height:1px;
@@ -3018,7 +3022,7 @@ function showCoverPicker(coverEl) {
   if (left + 480 > window.innerWidth - 10) left = window.innerWidth - 490;
   picker.style.left = left + 'px';
   picker.style.transform = 'none';
-  picker.style.top = (r.bottom + window.scrollY - 8) + 'px';
+  picker.style.top = (r.bottom - 8) + 'px';
   picker.classList.add('show');
   picker.querySelectorAll('.cv-tab').forEach(b => b.onclick = () => {
     _coverTab = b.dataset.cvtab;
@@ -3049,7 +3053,7 @@ function showEmojiPicker(target, cb) {
     </div>`;
   const r = target.getBoundingClientRect();
   picker.style.left = Math.min(r.left, window.innerWidth-300) + 'px';
-  picker.style.top = (r.bottom + window.scrollY + 6) + 'px';
+  picker.style.top = (r.bottom + 6) + 'px';
   picker.classList.add('show');
   picker.querySelectorAll('button[data-e]').forEach(b => b.onclick = () => {
     cb(b.dataset.e);
@@ -5424,7 +5428,7 @@ showEmojiPicker = function(target, cb) {
   renderE();
   const r = target.getBoundingClientRect();
   picker.style.left = Math.min(r.left, window.innerWidth-320) + 'px';
-  picker.style.top = (r.bottom + window.scrollY + 6) + 'px';
+  picker.style.top = (r.bottom + 6) + 'px';
   picker.classList.add('show');
   setTimeout(() => {
     document.addEventListener('click', function close(ev) {
@@ -6157,7 +6161,7 @@ window.renderPages = renderPages;
         </div>`;
       const r = coverEl.getBoundingClientRect();
       picker.style.left = (r.left + r.width/2) + 'px';
-      picker.style.top = (r.bottom + window.scrollY - 8) + 'px';
+      picker.style.top = (r.bottom - 8) + 'px';
       picker.style.maxWidth = '420px';
       picker.classList.add('show');
 
