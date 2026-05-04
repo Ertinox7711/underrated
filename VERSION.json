@@ -1,8 +1,8 @@
 {
-  "commit": "dedf170",
-  "message": "fix: store icon as lucide:name + re-render at context size (sidebar 16px, banner 60px)",
-  "commitDate": "2026-05-04T17:11:52+02:00",
-  "buildDate": "2026-05-04T15:12:09Z",
-  "buildDateFR": "04/05/2026 17:12",
+  "commit": "8dc2783",
+  "message": "feat: Unsplash cover picker - 28 category chips + auto-load default photos + landscape orientation + photographer attribution",
+  "commitDate": "2026-05-04T17:19:34+02:00",
+  "buildDate": "2026-05-04T15:19:52Z",
+  "buildDateFR": "04/05/2026 17:19",
   "branch": "main"
 }

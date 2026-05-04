@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 17:19 — `8dc2783`
+feat: Unsplash cover picker - 28 category chips + auto-load default photos + landscape orientation + photographer attribution
+
 ## 04/05/2026 17:12 — `dedf170`
 fix: store icon as lucide:name + re-render at context size (sidebar 16px, banner 60px)
 
