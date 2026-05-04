@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 02:18 — `e374563`
+data: re-import with rich markdown conversion (callouts, bold, links, tables)
+
 ## 04/05/2026 02:14 — `61050af`
 feat: rich Notion-style templates + harden page mode picker
 
