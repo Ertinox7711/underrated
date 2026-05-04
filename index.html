@@ -2569,7 +2569,7 @@ function setupEndAddBtn() {
   if (!btn) return;
   btn.onclick = () => {
     const blocks = state.blocks[state.currentPageId];
-    const newBlock = { id:nbid(), type:'p', content:'/' };
+    const newBlock = { id:nbid(), type:'p', content:'/', _ephemeral:true };
     blocks.push(newBlock);
     Storage.save();
     renderEditor();
@@ -2588,6 +2588,24 @@ function setupEndAddBtn() {
       }
     }, 30);
   };
+}
+
+// Cleanup ephemeral / blocks abandoned without picking a slash item
+function cleanupEphemeralSlashBlocks() {
+  const blocks = state.blocks[state.currentPageId];
+  if (!blocks) return;
+  let removed = false;
+  for (let i = blocks.length - 1; i >= 0; i--) {
+    const b = blocks[i];
+    if (b._ephemeral && (b.content === '/' || b.content === '' || /^\/\w*$/.test(b.content||''))) {
+      blocks.splice(i, 1);
+      removed = true;
+    } else if (b._ephemeral) {
+      // user typed content — promote to permanent
+      delete b._ephemeral;
+    }
+  }
+  if (removed) { Storage.save(); renderEditor(); }
 }
 
 // Notion-style "+" hover button left of each block — opens slash menu
@@ -3460,6 +3478,7 @@ function changeBlockType(blockId, newType) {
   b.type = newType;
   if (newType === 'divider') b.content = '';
   if (newType === 'mindmap') b.content = '';
+  if (b._ephemeral) delete b._ephemeral;
   Storage.save();
   renderEditor();
   setTimeout(() => focusBlock(blockId), 10);
@@ -3569,7 +3588,7 @@ function applySlash(type) {
   }
   hideSlashMenu();
 }
-function hideSlashMenu() { const m = document.getElementById('slash-menu'); if (m) m.classList.remove('show'); }
+function hideSlashMenu() { const m = document.getElementById('slash-menu'); if (m) m.classList.remove('show'); try { cleanupEphemeralSlashBlocks(); } catch(_){} }
 
 // ============ MENTION MENU ============
 let mentionTarget = null, mentionIdx = 0, mentionResults = [];
