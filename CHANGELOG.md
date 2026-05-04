@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 17:04 — `e6fab89`
+fix: cover picker module-scope binding override + lucide icon picker for page banner (no emojis)
+
 ## 04/05/2026 16:56 — `995d316`
 feat: toolbar SVG icons (lucide), move toolbar below page meta, harden icon picker click handler
 
