@@ -1817,6 +1817,110 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
   .cal-cell{min-height:50px}
   .drive-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
 }
+/* === DATABASE BLOCK (Notion+Monday hybrid) === */
+.db-block{margin:12px 0;border:1px solid var(--border);border-radius:10px;background:var(--bg-2);overflow:hidden}
+.db-head{padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);background:var(--bg-3);flex-wrap:wrap}
+.db-title{font-weight:700;font-size:16px;color:var(--text);outline:none;flex:1;min-width:140px;background:transparent;border:none;font-family:inherit}
+.db-title:focus{background:var(--bg-hover);border-radius:5px;padding:0 4px}
+.db-views{display:flex;gap:2px;padding:6px 10px 0;border-bottom:1px solid var(--border);background:var(--bg-2);overflow-x:auto;scrollbar-width:none}
+.db-views::-webkit-scrollbar{display:none}
+.db-view-tab{padding:6px 12px;background:none;border:none;color:var(--text-2);font-size:12px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.db-view-tab:hover{color:var(--text)}
+.db-view-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.db-view-tab svg,.db-view-tab i[data-lucide]{width:13px;height:13px}
+.db-view-add{color:var(--text-3);font-size:14px;padding:6px 8px;cursor:pointer;background:none;border:none}
+.db-view-add:hover{color:var(--accent)}
+.db-toolbar{display:flex;align-items:center;gap:4px;padding:6px 12px;border-bottom:1px solid var(--border);background:var(--bg-2);flex-wrap:wrap}
+.db-toolbar-btn{padding:4px 10px;background:none;border:none;color:var(--text-2);font-size:12px;font-weight:500;cursor:pointer;border-radius:5px;display:inline-flex;align-items:center;gap:5px;transition:background var(--transition)}
+.db-toolbar-btn:hover{background:var(--bg-hover);color:var(--text)}
+.db-toolbar-btn svg,.db-toolbar-btn i[data-lucide]{width:13px;height:13px}
+.db-toolbar-btn.primary{background:var(--accent);color:#000;font-weight:600}
+.db-toolbar-btn.primary:hover{background:var(--accent-3);color:#000}
+.db-toolbar-btn.active{color:var(--accent);background:var(--accent-soft)}
+.db-search{flex:1;max-width:200px;padding:4px 8px;background:var(--bg-3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;outline:none}
+.db-search:focus{border-color:var(--accent)}
+.db-table-wrap{overflow-x:auto}
+.db-table{width:100%;border-collapse:collapse;font-size:13px}
+.db-table th{background:var(--bg-3);font-weight:500;color:var(--text-2);font-size:11px;padding:6px 10px;text-align:left;border-bottom:1px solid var(--border);border-right:1px solid var(--border);position:relative;cursor:pointer;user-select:none;min-width:100px}
+.db-table th:hover{background:var(--bg-hover)}
+.db-table th .db-col-icon{display:inline-flex;align-items:center;color:var(--text-3);margin-right:4px;width:12px;height:12px;vertical-align:middle}
+.db-table th .db-col-icon svg,.db-table th .db-col-icon i[data-lucide]{width:12px;height:12px}
+.db-table td{padding:6px 10px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);vertical-align:middle;height:34px;cursor:text;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px}
+.db-table tr:hover td{background:var(--bg-hover)}
+.db-cell-edit{outline:none;width:100%;background:transparent;border:none;color:inherit;font-size:inherit;font-family:inherit;padding:0}
+.db-cell-edit:focus{background:var(--bg);box-shadow:inset 0 0 0 2px var(--accent);border-radius:3px}
+.db-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:11px;font-size:11px;font-weight:500;line-height:1.6;cursor:pointer}
+.db-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;margin-right:2px}
+.db-pill.db-pill-gray{background:rgba(120,120,120,.18);color:#a3a3a3}
+.db-pill.db-pill-blue{background:rgba(59,130,246,.18);color:#60a5fa}
+.db-pill.db-pill-green{background:rgba(34,197,94,.18);color:#4ade80}
+.db-pill.db-pill-yellow{background:rgba(234,179,8,.18);color:#fbbf24}
+.db-pill.db-pill-orange{background:rgba(249,115,22,.18);color:#fb923c}
+.db-pill.db-pill-red{background:rgba(239,68,68,.18);color:#f87171}
+.db-pill.db-pill-purple{background:rgba(168,85,247,.18);color:#c084fc}
+.db-pill.db-pill-pink{background:rgba(236,72,153,.18);color:#f472b6}
+.db-multi-wrap{display:flex;flex-wrap:wrap;gap:3px}
+.db-date{color:var(--text-2);font-size:12px}
+.db-date.overdue{color:#f87171}
+.db-date.done{color:#4ade80;text-decoration:line-through}
+.db-person-avatar{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#000;font-size:10px;font-weight:700}
+.db-checkbox{width:14px;height:14px;cursor:pointer;accent-color:var(--accent)}
+.db-add-row{padding:8px 10px;color:var(--text-3);font-size:12px;cursor:pointer;background:none;border:none;width:100%;text-align:left;display:flex;align-items:center;gap:6px}
+.db-add-row:hover{background:var(--bg-hover);color:var(--accent)}
+.db-add-row svg,.db-add-row i[data-lucide]{width:13px;height:13px}
+.db-add-col{padding:6px 12px;color:var(--text-3);font-size:18px;cursor:pointer;background:var(--bg-3);border:none;border-bottom:1px solid var(--border);border-right:1px solid var(--border);min-width:40px}
+.db-add-col:hover{background:var(--bg-hover);color:var(--accent)}
+.db-group-head{padding:8px 10px;display:flex;align-items:center;gap:8px;background:var(--bg-3);border-bottom:1px solid var(--border);font-weight:500;font-size:12px;color:var(--text-2);cursor:pointer;user-select:none}
+.db-group-head:hover{background:var(--bg-hover)}
+.db-group-head .db-group-toggle{width:14px;display:inline-flex;align-items:center;color:var(--text-3);transition:transform var(--transition)}
+.db-group-head.collapsed .db-group-toggle{transform:rotate(-90deg)}
+.db-group-head .db-group-count{background:var(--bg);padding:1px 7px;border-radius:9px;font-size:11px;color:var(--text-3)}
+.db-popover{position:fixed;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;box-shadow:0 12px 32px rgba(0,0,0,.5);padding:6px;z-index:9200;min-width:220px;max-height:380px;overflow:auto;backdrop-filter:blur(12px)}
+.db-popover-search{width:100%;padding:5px 8px;background:var(--bg-3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;outline:none;margin-bottom:6px}
+.db-popover-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:5px;cursor:pointer;font-size:12px;color:var(--text);user-select:none}
+.db-popover-item:hover{background:var(--bg-hover)}
+.db-popover-divider{height:1px;background:var(--border);margin:4px 0}
+.db-popover-section{font-size:10px;color:var(--text-3);padding:6px 8px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.db-popover-action{padding:6px 8px;border-radius:5px;cursor:pointer;font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:8px}
+.db-popover-action:hover{background:var(--bg-hover);color:var(--text)}
+.db-popover-action svg,.db-popover-action i[data-lucide]{width:13px;height:13px}
+.db-popover-action.danger{color:#f87171}
+.db-popover-action.danger:hover{background:rgba(239,68,68,.12)}
+.db-popover-input{width:100%;padding:5px 8px;background:var(--bg-3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;outline:none;margin-bottom:6px}
+.db-board{display:flex;gap:10px;padding:10px;overflow-x:auto;min-height:300px}
+.db-board-col{min-width:260px;width:260px;background:var(--bg-3);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.db-board-col-head{font-size:12px;font-weight:600;padding:4px 6px;display:flex;align-items:center;gap:6px;color:var(--text-2)}
+.db-board-card{background:var(--bg-2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;cursor:pointer;transition:all var(--transition)}
+.db-board-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.db-board-card-title{font-size:13px;color:var(--text);margin-bottom:4px;font-weight:500}
+.db-board-card-meta{display:flex;flex-wrap:wrap;gap:4px;font-size:11px;align-items:center}
+.db-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;padding:10px}
+.db-gallery-card{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all var(--transition)}
+.db-gallery-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.db-gallery-card-title{font-weight:600;color:var(--text);margin-bottom:6px}
+.db-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--border);padding:0 0 1px;border-top:1px solid var(--border)}
+.db-cal-head{background:var(--bg-3);padding:6px;text-align:center;font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase}
+.db-cal-cell{background:var(--bg-2);min-height:90px;padding:4px;font-size:11px;display:flex;flex-direction:column;gap:3px}
+.db-cal-cell.other-month{opacity:.4}
+.db-cal-cell .db-cal-num{color:var(--text-3);font-weight:500;margin-bottom:2px}
+.db-cal-event{background:var(--accent-soft);color:var(--accent);padding:2px 5px;border-radius:3px;font-size:10px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.db-cal-event:hover{background:var(--accent);color:#000}
+.db-cal-nav{display:flex;align-items:center;gap:8px;padding:8px 12px}
+.db-cal-nav button{background:none;border:1px solid var(--border);color:var(--text-2);width:24px;height:24px;border-radius:5px;cursor:pointer}
+.db-cal-nav button:hover{background:var(--bg-hover);color:var(--accent)}
+.db-cal-nav-title{font-weight:600;font-size:14px;color:var(--text);flex:1;text-align:center}
+.db-detail-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9300;display:none;align-items:flex-start;justify-content:center;padding:60px 20px;backdrop-filter:blur(8px);overflow-y:auto}
+.db-detail-modal.show{display:flex}
+.db-detail-card{background:var(--bg-2);border:1px solid var(--border);border-radius:10px;width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 120px);overflow:auto;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.db-detail-head{padding:24px 30px 16px;border-bottom:1px solid var(--border);position:relative}
+.db-detail-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-3);cursor:pointer;font-size:20px}
+.db-detail-close:hover{color:var(--text)}
+.db-detail-title{font-size:24px;font-weight:700;outline:none;color:var(--text);width:100%;background:transparent;border:none;font-family:inherit}
+.db-detail-props{padding:18px 30px;display:grid;grid-template-columns:140px 1fr;gap:8px 14px;align-items:center}
+.db-detail-prop-label{font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:5px}
+.db-detail-prop-label svg,.db-detail-prop-label i[data-lucide]{width:13px;height:13px}
+.db-detail-prop-value{padding:4px 8px;border-radius:5px;cursor:pointer;font-size:13px;min-height:26px;display:flex;align-items:center;border:1px solid transparent}
+.db-detail-prop-value:hover{background:var(--bg-hover);border-color:var(--border)}
 </style>
 </head>
 <body>
@@ -2764,6 +2868,7 @@ function renderEditor() {
   setupEndAddBtn();
   updateWordCount();
   renderBacklinks();
+  if (typeof setupDatabase === 'function') setupDatabase();
   if (window.Prism) Prism.highlightAll();
   try { if (window.lucide) window.lucide.createIcons(); } catch(_){}
 }
@@ -3023,6 +3128,697 @@ function renderBreadcrumb(page) {
   return chain.map((p,i) => `<span class="breadcrumb-icon">${window.__renderIcon(p.icon, 'page')}</span><span style="cursor:pointer" data-bc="${p.id}">${escapeHtml(p.title||'Sans titre')}</span>${i<chain.length-1?' <span style="color:var(--text-3)">/</span> ':''}`).join('');
 }
 
+// ============ DATABASE BLOCK ============
+const DB_COL_TYPES = {
+  title:    { name:'Titre',       icon:'type' },
+  text:     { name:'Texte',       icon:'align-left' },
+  number:   { name:'Nombre',      icon:'hash' },
+  status:   { name:'Statut',      icon:'circle-dot' },
+  select:   { name:'Sélection',   icon:'chevron-down' },
+  multi:    { name:'Multi-sélect',icon:'tags' },
+  date:     { name:'Date',        icon:'calendar' },
+  person:   { name:'Personne',    icon:'user' },
+  checkbox: { name:'Case',        icon:'check-square' },
+  url:      { name:'URL',         icon:'link' },
+  email:    { name:'Email',       icon:'mail' },
+  phone:    { name:'Téléphone',   icon:'phone' },
+  files:    { name:'Fichiers',    icon:'paperclip' },
+  rating:   { name:'Note',        icon:'star' }
+};
+const DB_COLORS = ['gray','blue','green','yellow','orange','red','purple','pink'];
+function dbId(p){ return (p||'c')+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function dbDefaultBlock(){
+  const c1 = dbId('c'), c2 = dbId('c'), c3 = dbId('c'), c4 = dbId('c');
+  const o1 = dbId('o'), o2 = dbId('o'), o3 = dbId('o'), o4 = dbId('o');
+  return {
+    title: 'Suivi des tâches',
+    columns: [
+      { id:c1, name:'Tâche',    type:'title' },
+      { id:c2, name:'Statut',   type:'status', options:[
+          { id:o1, label:'À faire',  color:'gray',   group:'todo' },
+          { id:o2, label:'En cours', color:'orange', group:'inprogress' },
+          { id:o3, label:'Terminé',  color:'green',  group:'done' },
+          { id:o4, label:'Bloqué',   color:'red',    group:'todo' }
+      ]},
+      { id:c3, name:'Échéance', type:'date' },
+      { id:c4, name:'Personne', type:'person' }
+    ],
+    rows: [
+      { id:dbId('r'), cells:{ [c1]:'Améliorer le texte du site Web', [c2]:o3, [c3]:'2026-05-02', [c4]:'Sarah' } },
+      { id:dbId('r'), cells:{ [c1]:'Mettre à jour le centre d\'aide', [c2]:o2, [c3]:'2026-05-04', [c4]:'Léo' } },
+      { id:dbId('r'), cells:{ [c1]:'Publier les notes de mises à jour', [c2]:o1, [c3]:'2026-05-08', [c4]:'' } }
+    ],
+    views: [
+      { id:dbId('v'), name:'Toutes les tâches', type:'table' },
+      { id:dbId('v'), name:'Par état',          type:'board', groupBy:c2 },
+      { id:dbId('v'), name:'Calendrier',        type:'calendar', dateProp:c3 }
+    ],
+    activeView: 0,
+    search: ''
+  };
+}
+function renderDatabase(block){
+  if (!block.title) Object.assign(block, dbDefaultBlock());
+  const view = block.views[block.activeView] || block.views[0];
+  const id = block.id;
+  let body = '';
+  if (view.type === 'table')    body = renderDbTable(block, view);
+  else if (view.type === 'board')    body = renderDbBoard(block, view);
+  else if (view.type === 'gallery')  body = renderDbGallery(block, view);
+  else if (view.type === 'calendar') body = renderDbCalendar(block, view);
+  else if (view.type === 'list')     body = renderDbList(block, view);
+  else body = renderDbTable(block, view);
+  return `<div class="block" data-id="${id}" data-type="database">
+    <div class="block-handle"><button class="handle-btn" data-handle="${id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+    <div class="db-block" data-db="${id}">
+      <div class="db-head">
+        <div class="db-title" data-db-title="${id}" contenteditable="true">${escapeHtml(block.title||'')}</div>
+        <button class="db-toolbar-btn primary" data-db-newrow="${id}">${svgIcon('plus',13)} Ajouter tâche</button>
+      </div>
+      <div class="db-views">
+        ${block.views.map((v,i)=>`<button class="db-view-tab${i===block.activeView?' active':''}" data-db-view="${id}|${i}">${svgIcon(dbViewIcon(v.type),13)} ${escapeHtml(v.name)}</button>`).join('')}
+        <button class="db-view-add" data-db-addview="${id}" title="Nouvelle vue">+</button>
+      </div>
+      <div class="db-toolbar">
+        <input class="db-search" data-db-search="${id}" placeholder="Rechercher..." value="${escapeHtml(block.search||'')}">
+        <button class="db-toolbar-btn" data-db-filter="${id}">${svgIcon('filter',13)} Filtrer</button>
+        <button class="db-toolbar-btn" data-db-sort="${id}">${svgIcon('arrow-up-down',13)} Trier</button>
+        <button class="db-toolbar-btn" data-db-group="${id}">${svgIcon('layers',13)} Grouper</button>
+        <button class="db-toolbar-btn" data-db-hide="${id}">${svgIcon('eye-off',13)} Masquer</button>
+        <button class="db-toolbar-btn" data-db-settings="${id}" style="margin-left:auto">${svgIcon('more-horizontal',13)}</button>
+      </div>
+      ${body}
+    </div>
+    <div class="block-content" style="display:none"></div>
+  </div>`;
+}
+function dbViewIcon(t){ return ({table:'table-2',board:'kanban',gallery:'layout-grid',calendar:'calendar',list:'list',timeline:'gantt-chart'})[t] || 'table-2'; }
+function dbFilterRows(block){
+  const q = (block.search||'').toLowerCase();
+  let rows = block.rows || [];
+  if (q) {
+    rows = rows.filter(r => Object.values(r.cells||{}).some(v => String(v||'').toLowerCase().includes(q)));
+  }
+  return rows;
+}
+function renderDbTable(block, view){
+  const rows = dbFilterRows(block);
+  const visibleCols = (view.hidden||[]).length ? block.columns.filter(c => !view.hidden.includes(c.id)) : block.columns;
+  const groupBy = view.groupBy;
+  let html = '<div class="db-table-wrap"><table class="db-table"><thead><tr>';
+  visibleCols.forEach(c => {
+    html += `<th data-db-colhead="${block.id}|${c.id}"><span class="db-col-icon">${svgIcon(DB_COL_TYPES[c.type]?.icon||'type',12)}</span>${escapeHtml(c.name)}</th>`;
+  });
+  html += `<th><button class="db-add-col" data-db-addcol="${block.id}">+</button></th></tr></thead><tbody>`;
+  if (groupBy) {
+    const groups = dbGroupRows(rows, groupBy, block);
+    groups.forEach(g => {
+      html += `<tr><td colspan="${visibleCols.length+1}" style="padding:0"><div class="db-group-head" data-db-grp="${block.id}|${g.key}"><span class="db-group-toggle">${svgIcon('chevron-down',13)}</span>${dbRenderCellValue(g.column, g.key, block, true)}<span class="db-group-count">${g.rows.length}</span></div></td></tr>`;
+      g.rows.forEach(r => { html += renderDbRow(block, r, visibleCols); });
+    });
+  } else {
+    rows.forEach(r => { html += renderDbRow(block, r, visibleCols); });
+  }
+  html += `</tbody></table><button class="db-add-row" data-db-newrow="${block.id}">${svgIcon('plus',13)} Nouvelle ligne</button></div>`;
+  return html;
+}
+function renderDbRow(block, row, cols){
+  let h = `<tr data-db-row="${block.id}|${row.id}">`;
+  cols.forEach(c => {
+    h += `<td data-db-cell="${block.id}|${row.id}|${c.id}">${dbRenderCellValue(c, row.cells?.[c.id], block)}</td>`;
+  });
+  h += '<td></td></tr>';
+  return h;
+}
+function dbRenderCellValue(col, val, block, asPlain){
+  if (val === undefined || val === null || val === '') {
+    if (col.type === 'checkbox') return `<input type="checkbox" class="db-checkbox" disabled>`;
+    return '';
+  }
+  if (col.type === 'title' || col.type === 'text') return escapeHtml(String(val));
+  if (col.type === 'number') return escapeHtml(String(val));
+  if (col.type === 'status' || col.type === 'select') {
+    const opt = (col.options||[]).find(o => o.id === val);
+    if (!opt) return '';
+    return `<span class="db-pill db-pill-${opt.color||'gray'}">${escapeHtml(opt.label)}</span>`;
+  }
+  if (col.type === 'multi') {
+    const ids = Array.isArray(val) ? val : [val];
+    const opts = ids.map(id => (col.options||[]).find(o => o.id === id)).filter(Boolean);
+    return `<div class="db-multi-wrap">${opts.map(o => `<span class="db-pill db-pill-${o.color||'gray'}">${escapeHtml(o.label)}</span>`).join('')}</div>`;
+  }
+  if (col.type === 'date') {
+    const d = new Date(val);
+    if (isNaN(d)) return escapeHtml(String(val));
+    const today = new Date(); today.setHours(0,0,0,0);
+    const isPast = d < today;
+    const fmt = d.toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+    return `<span class="db-date${isPast?' overdue':''}">${fmt}</span>`;
+  }
+  if (col.type === 'person') {
+    const name = String(val); const initials = name.split(' ').map(s=>s[0]).filter(Boolean).slice(0,2).join('').toUpperCase();
+    return `<span class="db-person-avatar" title="${escapeHtml(name)}">${escapeHtml(initials)}</span> ${escapeHtml(name)}`;
+  }
+  if (col.type === 'checkbox') return `<input type="checkbox" class="db-checkbox" ${val?'checked':''}>`;
+  if (col.type === 'url') return `<a href="${escapeHtml(String(val))}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">${escapeHtml(String(val))}</a>`;
+  if (col.type === 'email') return `<a href="mailto:${escapeHtml(String(val))}" style="color:var(--accent)">${escapeHtml(String(val))}</a>`;
+  if (col.type === 'phone') return `<a href="tel:${escapeHtml(String(val))}" style="color:var(--accent)">${escapeHtml(String(val))}</a>`;
+  if (col.type === 'rating') {
+    const n = parseInt(val)||0;
+    return '★'.repeat(n) + '<span style="color:var(--text-3)">' + '☆'.repeat(5-n) + '</span>';
+  }
+  return escapeHtml(String(val));
+}
+function dbGroupRows(rows, colId, block){
+  const col = block.columns.find(c => c.id === colId);
+  if (!col) return [{ key:'', column:col, rows }];
+  const map = new Map();
+  rows.forEach(r => {
+    const v = r.cells?.[colId] || '';
+    if (!map.has(v)) map.set(v, []);
+    map.get(v).push(r);
+  });
+  // For status/select, order by options
+  if ((col.type === 'status' || col.type === 'select') && col.options) {
+    const out = col.options.map(o => ({ key:o.id, column:col, rows:map.get(o.id)||[] }));
+    if (map.has('')) out.push({ key:'', column:col, rows:map.get('') });
+    return out;
+  }
+  return Array.from(map, ([k,v]) => ({ key:k, column:col, rows:v }));
+}
+function renderDbBoard(block, view){
+  const rows = dbFilterRows(block);
+  const groupBy = view.groupBy || block.columns.find(c => c.type === 'status')?.id;
+  if (!groupBy) return '<div style="padding:20px;color:var(--text-3)">Ajoute une colonne Statut pour le mode tableau</div>';
+  const groups = dbGroupRows(rows, groupBy, block);
+  const titleCol = block.columns.find(c => c.type === 'title');
+  let html = '<div class="db-board">';
+  groups.forEach(g => {
+    html += `<div class="db-board-col"><div class="db-board-col-head">${dbRenderCellValue(g.column, g.key, block, true)} <span style="margin-left:auto;color:var(--text-3)">${g.rows.length}</span></div>`;
+    g.rows.forEach(r => {
+      const title = titleCol ? r.cells?.[titleCol.id] : '';
+      const meta = block.columns.filter(c => c.type !== 'title' && c.id !== groupBy).slice(0,3).map(c => dbRenderCellValue(c, r.cells?.[c.id], block)).filter(Boolean).join(' ');
+      html += `<div class="db-board-card" data-db-open="${block.id}|${r.id}"><div class="db-board-card-title">${escapeHtml(title||'(sans titre)')}</div><div class="db-board-card-meta">${meta}</div></div>`;
+    });
+    html += `<button class="db-add-row" data-db-newrow="${block.id}|${groupBy}=${g.key}">${svgIcon('plus',13)} Ajouter</button></div>`;
+  });
+  html += '</div>';
+  return html;
+}
+function renderDbGallery(block, view){
+  const rows = dbFilterRows(block);
+  const titleCol = block.columns.find(c => c.type === 'title');
+  let html = '<div class="db-gallery">';
+  rows.forEach(r => {
+    const title = titleCol ? r.cells?.[titleCol.id] : '';
+    const props = block.columns.filter(c => c.type !== 'title').slice(0,4).map(c => {
+      const v = dbRenderCellValue(c, r.cells?.[c.id], block);
+      if (!v) return '';
+      return `<div style="margin-top:4px;font-size:11px;color:var(--text-3)"><span style="margin-right:6px">${escapeHtml(c.name)}</span>${v}</div>`;
+    }).join('');
+    html += `<div class="db-gallery-card" data-db-open="${block.id}|${r.id}"><div class="db-gallery-card-title">${escapeHtml(title||'(sans titre)')}</div>${props}</div>`;
+  });
+  html += '</div>';
+  return html;
+}
+function renderDbList(block, view){
+  const rows = dbFilterRows(block);
+  const titleCol = block.columns.find(c => c.type === 'title');
+  let html = '<div style="padding:6px">';
+  rows.forEach(r => {
+    const title = titleCol ? r.cells?.[titleCol.id] : '';
+    const meta = block.columns.filter(c => c.type !== 'title').slice(0,4).map(c => dbRenderCellValue(c, r.cells?.[c.id], block)).filter(Boolean).join(' • ');
+    html += `<div data-db-open="${block.id}|${r.id}" style="padding:8px 10px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;gap:12px"><span style="color:var(--text);font-weight:500">${escapeHtml(title||'(sans titre)')}</span><span style="color:var(--text-3);font-size:12px">${meta}</span></div>`;
+  });
+  html += '</div>';
+  return html;
+}
+function renderDbCalendar(block, view){
+  const rows = dbFilterRows(block);
+  const dateProp = view.dateProp || block.columns.find(c => c.type === 'date')?.id;
+  if (!dateProp) return '<div style="padding:20px;color:var(--text-3)">Ajoute une colonne Date</div>';
+  const titleCol = block.columns.find(c => c.type === 'title');
+  if (!view._cur) view._cur = new Date().toISOString().slice(0,7);
+  const [y,m] = view._cur.split('-').map(Number);
+  const first = new Date(y, m-1, 1);
+  const last = new Date(y, m, 0);
+  const startDay = (first.getDay()+6)%7; // Monday=0
+  const days = [];
+  for (let i=0;i<startDay;i++) days.push({ d:null });
+  for (let d=1;d<=last.getDate();d++) {
+    const dateStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const events = rows.filter(r => String(r.cells?.[dateProp]||'').startsWith(dateStr));
+    days.push({ d, dateStr, events });
+  }
+  while (days.length % 7 !== 0) days.push({ d:null });
+  const monthName = first.toLocaleDateString('fr-FR', { month:'long', year:'numeric' });
+  let html = `<div class="db-cal-nav"><button data-db-calnav="${block.id}|prev">‹</button><div class="db-cal-nav-title">${monthName}</div><button data-db-calnav="${block.id}|next">›</button></div>`;
+  html += '<div class="db-cal">';
+  ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(d => html += `<div class="db-cal-head">${d}</div>`);
+  days.forEach(c => {
+    if (!c.d) html += '<div class="db-cal-cell other-month"></div>';
+    else {
+      html += `<div class="db-cal-cell"><div class="db-cal-num">${c.d}</div>`;
+      (c.events||[]).slice(0,3).forEach(e => {
+        const t = titleCol ? e.cells?.[titleCol.id] : '';
+        html += `<div class="db-cal-event" data-db-open="${block.id}|${e.id}">${escapeHtml(t||'(sans titre)')}</div>`;
+      });
+      if ((c.events||[]).length > 3) html += `<div style="font-size:10px;color:var(--text-3)">+${c.events.length-3}</div>`;
+      html += '</div>';
+    }
+  });
+  html += '</div>';
+  return html;
+}
+
+function dbGetBlock(id){ for (const pid in state.blocks) { const b = (state.blocks[pid]||[]).find(x => x.id === id); if (b) return b; } return null; }
+function dbSave(){ Storage.save(); }
+function dbReRender(id){
+  const b = dbGetBlock(id); if (!b) return;
+  const el = document.querySelector(`[data-db="${id}"]`);
+  if (!el) { renderEditor(); return; }
+  const wrap = el.closest('.block');
+  if (!wrap) { renderEditor(); return; }
+  const tmp = document.createElement('div');
+  tmp.innerHTML = renderDatabase(b);
+  wrap.replaceWith(tmp.firstElementChild);
+  setupDatabase();
+  try { if (window.lucide) window.lucide.createIcons(); } catch(_){}
+}
+function dbPopover(anchor, html, onSetup){
+  const ex = document.querySelector('.db-popover'); if (ex) ex.remove();
+  const pop = document.createElement('div'); pop.className = 'db-popover'; pop.innerHTML = html;
+  document.body.appendChild(pop);
+  const r = anchor.getBoundingClientRect();
+  let left = r.left, top = r.bottom + 4;
+  if (left + 240 > window.innerWidth) left = window.innerWidth - 250;
+  if (top + 360 > window.innerHeight) top = Math.max(10, r.top - 380);
+  pop.style.left = left + 'px'; pop.style.top = top + 'px';
+  if (onSetup) onSetup(pop);
+  try { if (window.lucide) window.lucide.createIcons(); } catch(_){}
+  setTimeout(() => {
+    const close = (e) => { if (!pop.contains(e.target) && e.target !== anchor) { pop.remove(); document.removeEventListener('mousedown', close); } };
+    document.addEventListener('mousedown', close);
+  }, 50);
+  return pop;
+}
+
+function setupDatabase(){
+  // Title edit
+  document.querySelectorAll('[data-db-title]').forEach(el => {
+    el.onblur = () => { const b = dbGetBlock(el.dataset.dbTitle); if (b) { b.title = el.textContent.trim(); dbSave(); } };
+    el.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } };
+  });
+  // View tabs
+  document.querySelectorAll('[data-db-view]').forEach(el => {
+    el.onclick = () => {
+      const [id, idx] = el.dataset.dbView.split('|');
+      const b = dbGetBlock(id); if (!b) return;
+      b.activeView = parseInt(idx); dbSave(); dbReRender(id);
+    };
+    el.oncontextmenu = (e) => {
+      e.preventDefault();
+      const [id, idx] = el.dataset.dbView.split('|');
+      const b = dbGetBlock(id); if (!b) return;
+      dbPopover(el, `
+        <div class="db-popover-action" data-act="rename">${svgIcon('edit',13)} Renommer</div>
+        <div class="db-popover-action" data-act="duplicate">${svgIcon('copy',13)} Dupliquer</div>
+        <div class="db-popover-action danger" data-act="delete">${svgIcon('trash-2',13)} Supprimer</div>
+      `, (pop) => {
+        pop.querySelector('[data-act="rename"]').onclick = () => {
+          const n = prompt('Nouveau nom :', b.views[idx].name);
+          if (n) { b.views[idx].name = n; dbSave(); dbReRender(id); }
+          pop.remove();
+        };
+        pop.querySelector('[data-act="duplicate"]').onclick = () => {
+          b.views.splice(parseInt(idx)+1, 0, JSON.parse(JSON.stringify({ ...b.views[idx], id:dbId('v'), name:b.views[idx].name+' (copie)' })));
+          dbSave(); dbReRender(id); pop.remove();
+        };
+        pop.querySelector('[data-act="delete"]').onclick = () => {
+          if (b.views.length <= 1) { toast('Au moins une vue requise','error'); pop.remove(); return; }
+          b.views.splice(parseInt(idx), 1);
+          if (b.activeView >= b.views.length) b.activeView = b.views.length - 1;
+          dbSave(); dbReRender(id); pop.remove();
+        };
+      });
+    };
+  });
+  // Add view
+  document.querySelectorAll('[data-db-addview]').forEach(el => {
+    el.onclick = () => {
+      const id = el.dataset.dbAddview; const b = dbGetBlock(id); if (!b) return;
+      dbPopover(el, `
+        <div class="db-popover-section">Type de vue</div>
+        <div class="db-popover-item" data-vt="table">${svgIcon('table-2',13)} Table</div>
+        <div class="db-popover-item" data-vt="board">${svgIcon('kanban',13)} Tableau (Board)</div>
+        <div class="db-popover-item" data-vt="gallery">${svgIcon('layout-grid',13)} Galerie</div>
+        <div class="db-popover-item" data-vt="calendar">${svgIcon('calendar',13)} Calendrier</div>
+        <div class="db-popover-item" data-vt="list">${svgIcon('list',13)} Liste</div>
+      `, (pop) => {
+        pop.querySelectorAll('[data-vt]').forEach(it => it.onclick = () => {
+          const t = it.dataset.vt;
+          const v = { id:dbId('v'), name: ({table:'Table',board:'Tableau',gallery:'Galerie',calendar:'Calendrier',list:'Liste'})[t], type:t };
+          if (t === 'board') v.groupBy = b.columns.find(c => c.type === 'status')?.id;
+          if (t === 'calendar') v.dateProp = b.columns.find(c => c.type === 'date')?.id;
+          b.views.push(v); b.activeView = b.views.length - 1;
+          dbSave(); dbReRender(id); pop.remove();
+        });
+      });
+    };
+  });
+  // New row
+  document.querySelectorAll('[data-db-newrow]').forEach(el => {
+    el.onclick = () => {
+      const parts = el.dataset.dbNewrow.split('|');
+      const id = parts[0]; const b = dbGetBlock(id); if (!b) return;
+      const cells = {};
+      if (parts[1]) { const [colId, val] = parts[1].split('='); cells[colId] = val; }
+      const newRow = { id:dbId('r'), cells };
+      b.rows.push(newRow); dbSave(); dbReRender(id);
+      setTimeout(() => {
+        const titleCol = b.columns.find(c => c.type === 'title');
+        if (titleCol) {
+          const cell = document.querySelector(`[data-db-cell="${id}|${newRow.id}|${titleCol.id}"]`);
+          if (cell) cell.click();
+        }
+      }, 50);
+    };
+  });
+  // Search
+  document.querySelectorAll('[data-db-search]').forEach(el => {
+    el.oninput = (e) => {
+      const id = el.dataset.dbSearch; const b = dbGetBlock(id); if (!b) return;
+      b.search = e.target.value; dbSave(); dbReRender(id);
+      setTimeout(() => { const s = document.querySelector(`[data-db-search="${id}"]`); if (s) { s.focus(); s.setSelectionRange(s.value.length, s.value.length); } }, 0);
+    };
+  });
+  // Cell click → edit popover
+  document.querySelectorAll('[data-db-cell]').forEach(el => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const [bid, rid, cid] = el.dataset.dbCell.split('|');
+      const b = dbGetBlock(bid); if (!b) return;
+      const col = b.columns.find(c => c.id === cid); if (!col) return;
+      const row = b.rows.find(r => r.id === rid); if (!row) return;
+      dbEditCell(el, b, col, row);
+    };
+  });
+  // Open detail
+  document.querySelectorAll('[data-db-open]').forEach(el => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const [bid, rid] = el.dataset.dbOpen.split('|');
+      dbOpenDetail(bid, rid);
+    };
+  });
+  // Column header → menu
+  document.querySelectorAll('[data-db-colhead]').forEach(el => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const [bid, cid] = el.dataset.dbColhead.split('|');
+      dbColumnMenu(el, bid, cid);
+    };
+  });
+  // Add column
+  document.querySelectorAll('[data-db-addcol]').forEach(el => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const id = el.dataset.dbAddcol;
+      dbAddColumnMenu(el, id);
+    };
+  });
+  // Filter / Sort / Group / Hide / Settings
+  document.querySelectorAll('[data-db-filter]').forEach(el => el.onclick = (e) => { e.stopPropagation(); dbFilterMenu(el, el.dataset.dbFilter); });
+  document.querySelectorAll('[data-db-sort]').forEach(el => el.onclick = (e) => { e.stopPropagation(); dbSortMenu(el, el.dataset.dbSort); });
+  document.querySelectorAll('[data-db-group]').forEach(el => el.onclick = (e) => { e.stopPropagation(); dbGroupMenu(el, el.dataset.dbGroup); });
+  document.querySelectorAll('[data-db-hide]').forEach(el => el.onclick = (e) => { e.stopPropagation(); dbHideMenu(el, el.dataset.dbHide); });
+  document.querySelectorAll('[data-db-settings]').forEach(el => el.onclick = (e) => { e.stopPropagation(); dbSettingsMenu(el, el.dataset.dbSettings); });
+  // Calendar nav
+  document.querySelectorAll('[data-db-calnav]').forEach(el => el.onclick = () => {
+    const [id, dir] = el.dataset.dbCalnav.split('|');
+    const b = dbGetBlock(id); if (!b) return;
+    const v = b.views[b.activeView];
+    if (!v._cur) v._cur = new Date().toISOString().slice(0,7);
+    let [y,m] = v._cur.split('-').map(Number);
+    if (dir === 'next') { m++; if (m > 12) { m = 1; y++; } } else { m--; if (m < 1) { m = 12; y--; } }
+    v._cur = `${y}-${String(m).padStart(2,'0')}`;
+    dbSave(); dbReRender(id);
+  });
+  // Group toggle
+  document.querySelectorAll('[data-db-grp]').forEach(el => el.onclick = () => el.classList.toggle('collapsed'));
+  // Checkbox cells (special)
+  document.querySelectorAll('.db-table .db-checkbox').forEach(cb => cb.onchange = (e) => {
+    const td = cb.closest('[data-db-cell]'); if (!td) return;
+    const [bid, rid, cid] = td.dataset.dbCell.split('|');
+    const b = dbGetBlock(bid); if (!b) return;
+    const row = b.rows.find(r => r.id === rid); if (!row) return;
+    row.cells = row.cells || {}; row.cells[cid] = cb.checked;
+    dbSave();
+  });
+}
+function dbEditCell(td, block, col, row){
+  if (col.type === 'title' || col.type === 'text' || col.type === 'number' || col.type === 'url' || col.type === 'email' || col.type === 'phone' || col.type === 'person') {
+    const cur = row.cells?.[col.id] || '';
+    const inp = document.createElement('input');
+    inp.type = col.type === 'number' ? 'number' : (col.type === 'email' ? 'email' : 'text');
+    inp.className = 'db-cell-edit'; inp.value = cur;
+    td.innerHTML = ''; td.appendChild(inp); inp.focus(); inp.select();
+    const save = () => {
+      row.cells = row.cells || {}; row.cells[col.id] = inp.value;
+      dbSave(); dbReRender(block.id);
+    };
+    inp.onblur = save;
+    inp.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } else if (e.key === 'Escape') { dbReRender(block.id); } };
+    return;
+  }
+  if (col.type === 'date') {
+    const cur = row.cells?.[col.id] || '';
+    const inp = document.createElement('input'); inp.type = 'date'; inp.className = 'db-cell-edit'; inp.value = cur;
+    td.innerHTML = ''; td.appendChild(inp); inp.focus();
+    inp.onchange = () => { row.cells = row.cells || {}; row.cells[col.id] = inp.value; dbSave(); dbReRender(block.id); };
+    inp.onblur = () => setTimeout(() => dbReRender(block.id), 100);
+    return;
+  }
+  if (col.type === 'checkbox') {
+    row.cells = row.cells || {}; row.cells[col.id] = !row.cells[col.id]; dbSave(); dbReRender(block.id); return;
+  }
+  if (col.type === 'rating') {
+    const cur = parseInt(row.cells?.[col.id])||0;
+    dbPopover(td, `<div style="padding:6px;display:flex;gap:4px">${[1,2,3,4,5].map(n=>`<button class="db-toolbar-btn" data-r="${n}" style="font-size:18px">${n<=cur?'★':'☆'}</button>`).join('')}</div>`, (pop) => {
+      pop.querySelectorAll('[data-r]').forEach(b => b.onclick = () => {
+        row.cells = row.cells || {}; row.cells[col.id] = parseInt(b.dataset.r); dbSave(); dbReRender(block.id); pop.remove();
+      });
+    });
+    return;
+  }
+  if (col.type === 'status' || col.type === 'select' || col.type === 'multi') {
+    const isMulti = col.type === 'multi';
+    const cur = isMulti ? (Array.isArray(row.cells?.[col.id]) ? row.cells[col.id] : (row.cells?.[col.id]?[row.cells[col.id]]:[])) : row.cells?.[col.id];
+    const setVal = (v) => {
+      row.cells = row.cells || {};
+      if (isMulti) {
+        let arr = Array.isArray(row.cells[col.id]) ? [...row.cells[col.id]] : [];
+        if (arr.includes(v)) arr = arr.filter(x => x !== v); else arr.push(v);
+        row.cells[col.id] = arr;
+      } else {
+        row.cells[col.id] = v;
+      }
+      dbSave(); dbReRender(block.id);
+    };
+    const html = `
+      <div class="db-popover-section">${escapeHtml(col.name)}</div>
+      ${(col.options||[]).map(o => {
+        const sel = isMulti ? cur.includes(o.id) : cur === o.id;
+        return `<div class="db-popover-item" data-opt="${o.id}"><span class="db-pill db-pill-${o.color||'gray'}">${escapeHtml(o.label)}</span><span style="margin-left:auto;color:var(--accent)">${sel?'✓':''}</span></div>`;
+      }).join('')}
+      <div class="db-popover-divider"></div>
+      <input class="db-popover-input" placeholder="Nouvelle option..." id="db-newopt-${col.id}">
+    `;
+    dbPopover(td, html, (pop) => {
+      pop.querySelectorAll('[data-opt]').forEach(it => it.onclick = () => { setVal(it.dataset.opt); if (!isMulti) pop.remove(); else dbEditCell(document.querySelector(`[data-db-cell="${block.id}|${row.id}|${col.id}"]`), block, col, row); });
+      const inp = pop.querySelector('input');
+      if (inp) inp.onkeydown = (e) => {
+        if (e.key === 'Enter' && inp.value.trim()) {
+          col.options = col.options || [];
+          const newOpt = { id:dbId('o'), label:inp.value.trim(), color:DB_COLORS[col.options.length % DB_COLORS.length] };
+          col.options.push(newOpt);
+          setVal(newOpt.id); if (!isMulti) pop.remove();
+        }
+      };
+    });
+    return;
+  }
+  // Fallback
+  if (col.type === 'files' || col.type === 'url') {
+    const v = prompt(col.name + ':', row.cells?.[col.id] || '');
+    if (v !== null) { row.cells = row.cells || {}; row.cells[col.id] = v; dbSave(); dbReRender(block.id); }
+  }
+}
+function dbAddColumnMenu(anchor, blockId){
+  const b = dbGetBlock(blockId); if (!b) return;
+  const html = `
+    <div class="db-popover-section">Type de propriété</div>
+    ${Object.entries(DB_COL_TYPES).filter(([t])=>t!=='title').map(([t,info]) => `<div class="db-popover-item" data-t="${t}">${svgIcon(info.icon,13)} ${info.name}</div>`).join('')}
+  `;
+  dbPopover(anchor, html, (pop) => {
+    pop.querySelectorAll('[data-t]').forEach(it => it.onclick = () => {
+      const t = it.dataset.t;
+      const c = { id:dbId('c'), name:DB_COL_TYPES[t].name, type:t };
+      if (t === 'status' || t === 'select' || t === 'multi') c.options = [];
+      b.columns.push(c); dbSave(); dbReRender(blockId); pop.remove();
+    });
+  });
+}
+function dbColumnMenu(anchor, blockId, colId){
+  const b = dbGetBlock(blockId); if (!b) return;
+  const col = b.columns.find(c => c.id === colId); if (!col) return;
+  const html = `
+    <input class="db-popover-input" id="db-colname" value="${escapeHtml(col.name)}" placeholder="Nom...">
+    <div class="db-popover-divider"></div>
+    <div class="db-popover-action" data-act="sort-asc">${svgIcon('arrow-up',13)} Trier ↑</div>
+    <div class="db-popover-action" data-act="sort-desc">${svgIcon('arrow-down',13)} Trier ↓</div>
+    ${(col.type==='status'||col.type==='select')?'<div class="db-popover-action" data-act="group">'+svgIcon('layers',13)+' Grouper par cette colonne</div>':''}
+    <div class="db-popover-action" data-act="hide">${svgIcon('eye-off',13)} Masquer dans cette vue</div>
+    <div class="db-popover-divider"></div>
+    ${col.type !== 'title' ? '<div class="db-popover-action danger" data-act="delete">'+svgIcon('trash-2',13)+' Supprimer</div>' : ''}
+  `;
+  dbPopover(anchor, html, (pop) => {
+    const inp = pop.querySelector('#db-colname');
+    inp.onblur = () => { col.name = inp.value.trim() || col.name; dbSave(); dbReRender(blockId); pop.remove(); };
+    inp.onkeydown = (e) => { if (e.key === 'Enter') inp.blur(); };
+    pop.querySelector('[data-act="sort-asc"]').onclick = () => { b.views[b.activeView].sortBy = { col:colId, dir:'asc' }; b.rows.sort((a,r)=>String(a.cells?.[colId]||'').localeCompare(String(r.cells?.[colId]||''))); dbSave(); dbReRender(blockId); pop.remove(); };
+    pop.querySelector('[data-act="sort-desc"]').onclick = () => { b.views[b.activeView].sortBy = { col:colId, dir:'desc' }; b.rows.sort((a,r)=>String(r.cells?.[colId]||'').localeCompare(String(a.cells?.[colId]||''))); dbSave(); dbReRender(blockId); pop.remove(); };
+    const grpBtn = pop.querySelector('[data-act="group"]');
+    if (grpBtn) grpBtn.onclick = () => { b.views[b.activeView].groupBy = colId; dbSave(); dbReRender(blockId); pop.remove(); };
+    pop.querySelector('[data-act="hide"]').onclick = () => {
+      const v = b.views[b.activeView]; v.hidden = v.hidden || []; if (!v.hidden.includes(colId)) v.hidden.push(colId);
+      dbSave(); dbReRender(blockId); pop.remove();
+    };
+    const delBtn = pop.querySelector('[data-act="delete"]');
+    if (delBtn) delBtn.onclick = () => {
+      if (!confirm('Supprimer la colonne "'+col.name+'" ?')) return;
+      b.columns = b.columns.filter(c => c.id !== colId);
+      b.rows.forEach(r => { if (r.cells) delete r.cells[colId]; });
+      dbSave(); dbReRender(blockId); pop.remove();
+    };
+  });
+}
+function dbHideMenu(anchor, blockId){
+  const b = dbGetBlock(blockId); if (!b) return;
+  const v = b.views[b.activeView]; v.hidden = v.hidden || [];
+  const html = '<div class="db-popover-section">Afficher / Masquer</div>' + b.columns.map(c => `<div class="db-popover-item" data-c="${c.id}"><input type="checkbox" ${v.hidden.includes(c.id)?'':'checked'} style="accent-color:var(--accent);pointer-events:none">${svgIcon(DB_COL_TYPES[c.type]?.icon||'type',13)} ${escapeHtml(c.name)}</div>`).join('');
+  dbPopover(anchor, html, (pop) => {
+    pop.querySelectorAll('[data-c]').forEach(it => it.onclick = () => {
+      const cid = it.dataset.c;
+      if (v.hidden.includes(cid)) v.hidden = v.hidden.filter(x => x !== cid);
+      else v.hidden.push(cid);
+      dbSave(); dbReRender(blockId); pop.remove();
+    });
+  });
+}
+function dbGroupMenu(anchor, blockId){
+  const b = dbGetBlock(blockId); if (!b) return;
+  const v = b.views[b.activeView];
+  const html = `<div class="db-popover-section">Grouper par</div><div class="db-popover-item" data-g=""><span style="color:var(--text-3)">Aucun</span></div>` + b.columns.filter(c => c.type === 'status' || c.type === 'select' || c.type === 'person' || c.type === 'date').map(c => `<div class="db-popover-item" data-g="${c.id}">${svgIcon(DB_COL_TYPES[c.type]?.icon||'type',13)} ${escapeHtml(c.name)}${v.groupBy===c.id?' ✓':''}</div>`).join('');
+  dbPopover(anchor, html, (pop) => {
+    pop.querySelectorAll('[data-g]').forEach(it => it.onclick = () => {
+      v.groupBy = it.dataset.g || null;
+      dbSave(); dbReRender(blockId); pop.remove();
+    });
+  });
+}
+function dbSortMenu(anchor, blockId){
+  const b = dbGetBlock(blockId); if (!b) return;
+  const html = `<div class="db-popover-section">Trier par</div>` + b.columns.map(c => `<div class="db-popover-item" data-s="${c.id}">${svgIcon(DB_COL_TYPES[c.type]?.icon||'type',13)} ${escapeHtml(c.name)}</div>`).join('');
+  dbPopover(anchor, html, (pop) => {
+    pop.querySelectorAll('[data-s]').forEach(it => it.onclick = () => {
+      const cid = it.dataset.s;
+      b.rows.sort((a,r)=>String(a.cells?.[cid]||'').localeCompare(String(r.cells?.[cid]||'')));
+      b.views[b.activeView].sortBy = { col:cid, dir:'asc' };
+      dbSave(); dbReRender(blockId); pop.remove();
+    });
+  });
+}
+function dbFilterMenu(anchor, blockId){
+  const b = dbGetBlock(blockId); if (!b) return;
+  toast('Filtres : utilise la barre de recherche pour l\'instant');
+}
+function dbSettingsMenu(anchor, blockId){
+  const b = dbGetBlock(blockId); if (!b) return;
+  const html = `
+    <div class="db-popover-action" data-act="export">${svgIcon('download',13)} Exporter CSV</div>
+    <div class="db-popover-action" data-act="duplicate">${svgIcon('copy',13)} Dupliquer database</div>
+    <div class="db-popover-divider"></div>
+    <div class="db-popover-action danger" data-act="clear">${svgIcon('trash-2',13)} Vider toutes les lignes</div>
+  `;
+  dbPopover(anchor, html, (pop) => {
+    pop.querySelector('[data-act="export"]').onclick = () => {
+      const csv = [b.columns.map(c => c.name).join(',')].concat(b.rows.map(r => b.columns.map(c => {
+        let v = r.cells?.[c.id] || '';
+        if (c.type === 'status' || c.type === 'select') { const o = (c.options||[]).find(o => o.id === v); v = o?o.label:''; }
+        if (c.type === 'multi') { const arr = Array.isArray(v)?v:[v]; v = arr.map(id => (c.options||[]).find(o=>o.id===id)?.label||'').filter(Boolean).join(';'); }
+        return '"'+String(v).replace(/"/g,'""')+'"';
+      }).join(','))).join('\n');
+      const blob = new Blob([csv], {type:'text/csv'}); const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = (b.title||'database')+'.csv'; a.click();
+      URL.revokeObjectURL(url); pop.remove();
+    };
+    pop.querySelector('[data-act="duplicate"]').onclick = () => {
+      const blocks = state.blocks[state.currentPageId]; const copy = JSON.parse(JSON.stringify(b)); copy.id = 'b_'+Date.now(); copy.title = b.title + ' (copie)';
+      blocks.push(copy); dbSave(); renderEditor(); pop.remove();
+    };
+    pop.querySelector('[data-act="clear"]').onclick = () => {
+      if (!confirm('Supprimer toutes les lignes ?')) return;
+      b.rows = []; dbSave(); dbReRender(blockId); pop.remove();
+    };
+  });
+}
+function dbOpenDetail(blockId, rowId){
+  const b = dbGetBlock(blockId); if (!b) return;
+  const row = b.rows.find(r => r.id === rowId); if (!row) return;
+  const titleCol = b.columns.find(c => c.type === 'title');
+  let modal = document.getElementById('db-detail-modal');
+  if (!modal) {
+    modal = document.createElement('div'); modal.id = 'db-detail-modal'; modal.className = 'db-detail-modal';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div class="db-detail-card">
+      <div class="db-detail-head">
+        <button class="db-detail-close" id="db-detail-close">×</button>
+        <input class="db-detail-title" id="db-detail-title" value="${escapeHtml(titleCol?(row.cells?.[titleCol.id]||''):'(sans titre)')}" placeholder="(sans titre)">
+      </div>
+      <div class="db-detail-props" id="db-detail-props">
+        ${b.columns.filter(c => c.type !== 'title').map(c => `
+          <div class="db-detail-prop-label">${svgIcon(DB_COL_TYPES[c.type]?.icon||'type',13)} ${escapeHtml(c.name)}</div>
+          <div class="db-detail-prop-value" data-detail-cell="${c.id}">${dbRenderCellValue(c, row.cells?.[c.id], b) || '<span style="color:var(--text-3)">Vide</span>'}</div>
+        `).join('')}
+      </div>
+    </div>`;
+  modal.classList.add('show');
+  try { if (window.lucide) window.lucide.createIcons(); } catch(_){}
+  document.getElementById('db-detail-close').onclick = () => modal.classList.remove('show');
+  modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('show'); };
+  const titleInput = document.getElementById('db-detail-title');
+  titleInput.onblur = () => {
+    if (titleCol) { row.cells = row.cells || {}; row.cells[titleCol.id] = titleInput.value; dbSave(); dbReRender(blockId); }
+  };
+  modal.querySelectorAll('[data-detail-cell]').forEach(el => {
+    el.onclick = (e) => {
+      const cid = el.dataset.detailCell; const col = b.columns.find(c => c.id === cid); if (!col) return;
+      // Reuse cell editor on this element
+      const fakeCell = { dataset:{ dbCell:`${blockId}|${rowId}|${cid}` }, innerHTML:'', appendChild:el.appendChild.bind(el) };
+      Object.setPrototypeOf(fakeCell, el);
+      dbEditCell(el, b, col, row);
+      // After edit, refresh content
+      setTimeout(() => {
+        el.innerHTML = dbRenderCellValue(col, row.cells?.[cid], b) || '<span style="color:var(--text-3)">Vide</span>';
+        try { if (window.lucide) window.lucide.createIcons(); } catch(_){}
+      }, 100);
+    };
+  });
+}
+
 function renderBlock(block) {
   const placeholder = getPlaceholder(block.type);
   const doneClass = block.type==='todo'&&block.done?'done':'';
@@ -3096,6 +3892,9 @@ function renderBlock(block) {
         <div class="toggle-body">${escapeHtml(block.body||'(contenu masqué)')}</div>
       </div>
     </div>`;
+  }
+  if (block.type==='database') {
+    return renderDatabase(block);
   }
   if (block.type==='table') {
     const rows = block.rows || [['Colonne 1','Colonne 2','Colonne 3'],['','',''],['','','']];
@@ -3953,6 +4752,7 @@ function changeBlockType(blockId, newType) {
   b.type = newType;
   if (newType === 'divider') b.content = '';
   if (newType === 'mindmap') b.content = '';
+  if (newType === 'database') { b.content = ''; if (typeof dbDefaultBlock === 'function') Object.assign(b, dbDefaultBlock()); }
   if (b._ephemeral) delete b._ephemeral;
   Storage.save();
   renderEditor();
@@ -3995,7 +4795,8 @@ const SLASH_OPTIONS = [
     { type:'code', icon:svgIcon('code',16), name:'Code', desc:'Bloc de code (Prism)' },
   ]},
   { cat:'Avancé', items:[
-    { type:'table', icon:svgIcon('table',16), name:'Table', desc:'Tableau éditable' },
+    { type:'database', icon:svgIcon('database',16), name:'Database', desc:'Tableau de tâches (status, dates, personnes — comme Notion/Monday)' },
+    { type:'table', icon:svgIcon('table',16), name:'Table simple', desc:'Tableau basique' },
     { type:'kanban', icon:svgIcon('kanban',16), name:'Kanban', desc:'Tableau Kanban' },
     { type:'divider', icon:svgIcon('minus',16), name:'Séparateur', desc:'Ligne horizontale' },
     { type:'ai', icon:svgIcon('sparkles',16), name:'IA', desc:'Demande IA (placeholder)' },
