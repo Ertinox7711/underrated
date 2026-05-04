@@ -770,11 +770,11 @@ mark.hl-yellow,mark.hl-green,mark.hl-blue{background:var(--accent-soft) !importa
 
 /* SLASH MENU */
 .slash-menu{
-  position:absolute;background:var(--bg-elevated);
+  position:fixed;background:var(--bg-elevated);
   border:1px solid var(--border);border-radius:var(--r);
   box-shadow:var(--shadow-lg);padding:6px;
   min-width:300px;max-height:380px;overflow-y:auto;
-  z-index:100;display:none;
+  z-index:1100;display:none;
 }
 .slash-menu.show{display:block;animation:fadeIn .15s}
 .slash-cat{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;padding:6px 10px 2px}
@@ -3443,8 +3443,8 @@ function showSlashMenu(target) {
   slashIdx = 0;
   const menu = document.getElementById('slash-menu');
   const rect = target.getBoundingClientRect();
-  menu.style.top = (rect.bottom + window.scrollY + 4) + 'px';
-  menu.style.left = (rect.left + window.scrollX) + 'px';
+  menu.style.top = (rect.bottom + 4) + 'px';
+  menu.style.left = rect.left + 'px';
   let html = '';
   let lastCat = '';
   slashFiltered.forEach((o, i) => {
