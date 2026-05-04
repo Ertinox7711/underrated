@@ -525,6 +525,21 @@ body.focus-mode .editor-content{max-width:820px}
 .cover-picker.show{display:block}
 .cover-picker-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:8999;display:none}
 .cover-picker-backdrop.show{display:block}
+.icon-picker-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9099;display:none}
+.icon-picker-backdrop.show{display:block}
+.icon-picker-modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:16px;width:min(460px,calc(100vw - 24px));max-height:min(580px,calc(100vh - 40px));overflow:auto;z-index:9100;box-shadow:0 24px 60px rgba(0,0,0,.55);display:none}
+.icon-picker-modal.show{display:block}
+.icon-picker-search{width:100%;padding:8px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;outline:none;margin-bottom:10px}
+.icon-picker-search:focus{border-color:var(--accent)}
+.icon-picker-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.icon-picker-item{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:1;border-radius:6px;cursor:pointer;background:var(--bg-3);border:1px solid transparent;color:var(--text-2);transition:all .1s;padding:0}
+.icon-picker-item:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);transform:scale(1.05)}
+.icon-picker-item svg,.icon-picker-item i[data-lucide]{width:20px;height:20px}
+.icon-picker-cat{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 6px;font-weight:600}
+.icon-picker-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.icon-picker-head h3{font-size:15px;font-weight:600;color:var(--text);margin:0}
+.icon-picker-close{background:transparent;border:none;color:var(--text-3);cursor:pointer;font-size:20px;padding:0 6px}
+.icon-picker-close:hover{color:var(--text)}
 .cover-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .cover-swatch{height:50px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all var(--transition)}
 .cover-swatch:hover{transform:scale(1.05);border-color:var(--accent)}
@@ -1922,6 +1937,8 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
 <div class="emoji-picker" id="emoji-picker"></div>
 <div class="cover-picker-backdrop" id="cover-picker-backdrop"></div>
 <div class="cover-picker" id="cover-picker"></div>
+<div class="icon-picker-backdrop" id="icon-picker-backdrop"></div>
+<div class="icon-picker-modal" id="icon-picker-modal"></div>
 <div class="toast" id="toast"></div>
 <div class="ctx-menu" id="ctx-menu"></div>
 <div class="toolbar" id="format-toolbar"></div>
@@ -3261,28 +3278,75 @@ function setupTitleAutoresize() {
   });
 }
 
+const ICON_PICKER_LIB = {
+  'Documents':['file','file-text','file-plus','book','book-open','book-marked','notebook','notebook-pen','notebook-text','clipboard','clipboard-list','clipboard-check','folder','folder-open','archive','inbox'],
+  'Travail':['briefcase','target','flag','trophy','award','medal','crown','rocket','zap','lightbulb','brain','sparkles','gem','scale'],
+  'Personnel':['heart','star','bookmark','smile','user','users','user-circle','user-check','home','tent','sofa'],
+  'Communication':['mail','message-circle','message-square','phone','send','share-2','at-sign','bell','megaphone','rss'],
+  'Tech':['code','code-2','terminal','database','server','globe','wifi','laptop','monitor','smartphone','cpu','keyboard','mouse'],
+  'Médias':['image','camera','video','film','music','headphones','play','volume-2','mic','radio','tv','disc'],
+  'Création':['palette','paintbrush','pen-tool','pencil','edit','feather','wand-2','scissors','ruler','crop','aperture'],
+  'Lieux & Voyage':['map','map-pin','compass','plane','car','bike','train-front','ship','tree-pine','tent-tree','mountain','flower-2','sun','moon','cloud','cloud-rain','snowflake','flame','droplet','leaf','sprout'],
+  'Vie & Loisirs':['coffee','pizza','utensils','wine','beer','cake','apple','dumbbell','gamepad-2','dice-6','clapperboard','party-popper','gift'],
+  'Finance':['dollar-sign','euro','credit-card','wallet','piggy-bank','trending-up','trending-down','line-chart','bar-chart','pie-chart','calculator'],
+  'Outils':['settings','wrench','hammer','tool','package','shopping-bag','shopping-cart','search','filter','key','lock','unlock','shield','eye','eye-off','calendar','clock','timer','alarm-clock'],
+  'Symboles':['plus','minus','check','check-circle','x','x-circle','info','help-circle','alert-triangle','alert-circle','hash','percent','infinity','asterisk','arrow-up','arrow-down','arrow-left','arrow-right']
+};
+function openIconPicker(onPick){
+  const modal = document.getElementById('icon-picker-modal');
+  const bd = document.getElementById('icon-picker-backdrop');
+  if (!modal || !bd) return;
+  const all = Object.entries(ICON_PICKER_LIB);
+  const renderGrid = (filter='') => {
+    const f = filter.toLowerCase().trim();
+    let html = '<div class="icon-picker-head"><h3>Choisir une icône</h3><button class="icon-picker-close" id="icon-picker-close-btn">×</button></div>';
+    html += '<input class="icon-picker-search" id="icon-picker-search" placeholder="Rechercher (ex: book, star, heart...)" value="'+filter.replace(/"/g,'&quot;')+'">';
+    all.forEach(([cat, names]) => {
+      const filtered = f ? names.filter(n => n.includes(f)) : names;
+      if (!filtered.length) return;
+      html += `<div class="icon-picker-cat">${cat}</div><div class="icon-picker-grid">`;
+      filtered.forEach(n => { html += `<button class="icon-picker-item" data-iname="${n}" title="${n}">${svgIcon(n,20)}</button>`; });
+      html += '</div>';
+    });
+    modal.innerHTML = html;
+    try { if (window.lucide) window.lucide.createIcons(); } catch(_){}
+    modal.querySelectorAll('.icon-picker-item').forEach(b => b.onclick = () => {
+      const name = b.dataset.iname;
+      const html = `<i data-lucide="${name}" style="width:60px;height:60px"></i>`;
+      onPick(html, name);
+      modal.classList.remove('show');
+      bd.classList.remove('show');
+    });
+    const sb = document.getElementById('icon-picker-search');
+    if (sb) {
+      sb.oninput = (e) => { const v = e.target.value; renderGrid(v); setTimeout(() => { const s = document.getElementById('icon-picker-search'); if (s) { s.focus(); s.setSelectionRange(v.length, v.length); } }, 0); };
+      setTimeout(() => sb.focus(), 50);
+    }
+    const cb = document.getElementById('icon-picker-close-btn');
+    if (cb) cb.onclick = () => { modal.classList.remove('show'); bd.classList.remove('show'); };
+  };
+  renderGrid('');
+  modal.classList.add('show');
+  bd.classList.add('show');
+  bd.onclick = () => { modal.classList.remove('show'); bd.classList.remove('show'); };
+}
 function setupIconPicker() {
   const icon = document.getElementById('page-icon-big');
   if (!icon) return;
   icon.style.cursor = 'pointer';
   icon.style.pointerEvents = 'auto';
-  // Make inner SVG not swallow clicks
   icon.querySelectorAll('svg, i, *').forEach(el => { el.style.pointerEvents = 'none'; });
   const open = (e) => {
     if (e) { e.stopPropagation(); e.preventDefault(); }
-    const fn = (typeof showEmojiPicker === 'function') ? showEmojiPicker : window.showEmojiPicker;
-    if (typeof fn !== 'function') { console.error('[icon] showEmojiPicker missing'); toast('Picker indisponible','error'); return; }
-    fn(icon, (emoji) => {
+    openIconPicker((html, name) => {
       const p = currentPage();
       if (!p) return;
-      p.icon = emoji;
+      p.icon = html;
       try { Storage.save(); } catch(_){}
       try { renderPages(); } catch(_){}
-      try {
-        if (window.__renderIcon) icon.innerHTML = window.__renderIcon(emoji, 'page', 60);
-        else icon.textContent = emoji;
-        icon.querySelectorAll('svg, i, *').forEach(el => { el.style.pointerEvents = 'none'; });
-      } catch(_){ icon.textContent = emoji; }
+      icon.innerHTML = html;
+      icon.querySelectorAll('svg, i, *').forEach(el => { el.style.pointerEvents = 'none'; });
+      try { if (window.lucide) window.lucide.createIcons(); } catch(_){}
       toast('Icône changée');
     });
   };
@@ -6559,7 +6623,7 @@ window.renderPages = renderPages;
 
   // ---- Cover picker enhancements (tabs) ----
   if (typeof showCoverPicker === 'function') {
-    window.showCoverPicker = function(coverEl){
+    showCoverPicker = function(coverEl){
       const picker = document.getElementById('cover-picker');
       const k = getKeys();
       picker.innerHTML = `
@@ -6636,6 +6700,7 @@ window.renderPages = renderPages;
         };
       }
     };
+    window.showCoverPicker = showCoverPicker;
   }
 
   // ---- Free APIs ----
