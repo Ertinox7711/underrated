@@ -516,13 +516,15 @@ body.focus-mode .editor-content{max-width:820px}
 }
 .cover-btn:hover{background:rgba(0,0,0,.7)}
 .cover-picker{
-  position:absolute;left:50%;top:100%;transform:translateX(-50%);
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
   background:var(--bg-2);border:1px solid var(--border);
   border-radius:var(--r);padding:14px;
-  box-shadow:var(--shadow-lg);z-index:90;
-  display:none;width:340px;
+  box-shadow:0 24px 60px rgba(0,0,0,.55);z-index:9000;
+  display:none;width:min(420px,calc(100vw - 24px));max-height:min(560px,calc(100vh - 40px));overflow:auto;
 }
 .cover-picker.show{display:block}
+.cover-picker-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:8999;display:none}
+.cover-picker-backdrop.show{display:block}
 .cover-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .cover-swatch{height:50px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all var(--transition)}
 .cover-swatch:hover{transform:scale(1.05);border-color:var(--accent)}
@@ -1607,7 +1609,8 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
     }
     .ws-switcher:hover{border-color:var(--accent) !important}
 /* === PAGE TOOLBAR (always visible, Google Docs/Word style) === */
-.page-toolbar{position:sticky;top:54px;z-index:60;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;padding:5px 8px;display:flex;flex-wrap:wrap;gap:2px;align-items:center;margin:0 auto 10px;width:100%;max-width:900px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.page-toolbar{position:sticky;top:54px;z-index:60;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;padding:6px 10px;display:flex;flex-wrap:wrap;gap:3px;align-items:center;margin:0 auto 10px;width:100%;max-width:1200px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.page-toolbar input[type="number"]{background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:4px;border-radius:5px;font-size:12px}
 .page-tb-btn{padding:5px 8px;border-radius:5px;cursor:pointer;font-size:13px;color:var(--text-2);min-width:28px;text-align:center;border:none;background:transparent;line-height:1;transition:all .1s}
 .page-tb-btn:hover{background:var(--bg-hover);color:var(--text)}
 .page-tb-btn.active{background:var(--accent-soft);color:var(--accent)}
@@ -1912,6 +1915,7 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
 <div class="slash-menu" id="slash-menu"></div>
 <div class="mention-menu" id="mention-menu"></div>
 <div class="emoji-picker" id="emoji-picker"></div>
+<div class="cover-picker-backdrop" id="cover-picker-backdrop"></div>
 <div class="cover-picker" id="cover-picker"></div>
 <div class="toast" id="toast"></div>
 <div class="ctx-menu" id="ctx-menu"></div>
@@ -2573,54 +2577,93 @@ function renderEditor() {
     </div>
     <div class="editor-content">
       <div class="page-toolbar" id="page-toolbar">
-        <select class="page-tb-sel" id="ptb-style" title="Style de paragraphe">
-          <option value="P">Paragraphe</option>
+        <button class="page-tb-btn" data-ptbcmd="undo" title="Annuler (Ctrl+Z)">↶</button>
+        <button class="page-tb-btn" data-ptbcmd="redo" title="Rétablir (Ctrl+Y)">↷</button>
+        <button class="page-tb-btn" data-ptbcmd="print" title="Imprimer / PDF">🖨</button>
+        <button class="page-tb-btn" id="ptb-paint" title="Reproduire la mise en forme">🖌️</button>
+        <span class="page-tb-sep"></span>
+        <select class="page-tb-sel" id="ptb-zoom" title="Zoom">
+          <option value="0.75">75%</option>
+          <option value="0.9">90%</option>
+          <option value="1" selected>100%</option>
+          <option value="1.1">110%</option>
+          <option value="1.25">125%</option>
+          <option value="1.5">150%</option>
+          <option value="2">200%</option>
+        </select>
+        <span class="page-tb-sep"></span>
+        <select class="page-tb-sel" id="ptb-style" title="Style de paragraphe" style="min-width:96px">
+          <option value="P">Normal</option>
           <option value="H1">Titre 1</option>
           <option value="H2">Titre 2</option>
           <option value="H3">Titre 3</option>
+          <option value="H4">Titre 4</option>
           <option value="BLOCKQUOTE">Citation</option>
           <option value="PRE">Code</option>
         </select>
         <select class="page-tb-sel" id="ptb-font" title="Police">
           <option value="Inter">Inter</option>
-          <option value="Georgia">Serif</option>
+          <option value="Arial">Arial</option>
+          <option value="Georgia">Georgia</option>
+          <option value="'Times New Roman'">Times New Roman</option>
           <option value="Menlo,monospace">Mono</option>
+          <option value="Verdana">Verdana</option>
           <option value="cursive">Cursive</option>
         </select>
-        <select class="page-tb-sel" id="ptb-size" title="Taille">
-          <option value="1">8px</option><option value="2">10px</option><option value="3" selected>12px</option>
-          <option value="4">14px</option><option value="5">18px</option><option value="6">24px</option><option value="7">32px</option>
-        </select>
+        <span class="page-tb-sep"></span>
+        <button class="page-tb-btn" id="ptb-size-down" title="Diminuer">−</button>
+        <input class="page-tb-sel" id="ptb-size-num" type="number" min="6" max="96" value="14" style="width:48px;text-align:center" title="Taille px">
+        <button class="page-tb-btn" id="ptb-size-up" title="Augmenter">+</button>
         <span class="page-tb-sep"></span>
         <div class="page-tb-group">
-          <button class="page-tb-btn" data-ptbcmd="bold" title="Gras"><b>B</b></button>
-          <button class="page-tb-btn" data-ptbcmd="italic" title="Italique"><i>I</i></button>
-          <button class="page-tb-btn" data-ptbcmd="underline" title="Souligné"><u>U</u></button>
+          <button class="page-tb-btn" data-ptbcmd="bold" title="Gras (Ctrl+B)"><b>B</b></button>
+          <button class="page-tb-btn" data-ptbcmd="italic" title="Italique (Ctrl+I)"><i>I</i></button>
+          <button class="page-tb-btn" data-ptbcmd="underline" title="Souligné (Ctrl+U)"><u>U</u></button>
           <button class="page-tb-btn" data-ptbcmd="strikeThrough" title="Barré"><s>S</s></button>
+          <button class="page-tb-btn" data-ptbcmd="superscript" title="Exposant">x²</button>
+          <button class="page-tb-btn" data-ptbcmd="subscript" title="Indice">x₂</button>
         </div>
         <span class="page-tb-sep"></span>
         <input type="color" class="page-tb-color" id="ptb-color" value="#ffffff" title="Couleur texte">
         <input type="color" class="page-tb-color" id="ptb-hilite" value="#fbbf24" title="Surlignage">
         <span class="page-tb-sep"></span>
+        <button class="page-tb-btn" data-ptbcmd="createLink" title="Insérer un lien (Ctrl+K)">🔗</button>
+        <button class="page-tb-btn" id="ptb-comment" title="Ajouter un commentaire">💬</button>
+        <button class="page-tb-btn" id="ptb-image" title="Insérer une image">🖼</button>
+        <button class="page-tb-btn" id="ptb-table" title="Insérer une table">⊞</button>
+        <span class="page-tb-sep"></span>
         <div class="page-tb-group">
-          <button class="page-tb-btn" data-ptbcmd="justifyLeft" title="Gauche">⬅</button>
-          <button class="page-tb-btn" data-ptbcmd="justifyCenter" title="Centre">⬌</button>
-          <button class="page-tb-btn" data-ptbcmd="justifyRight" title="Droite">➡</button>
+          <button class="page-tb-btn" data-ptbcmd="justifyLeft" title="Aligner à gauche">⬅</button>
+          <button class="page-tb-btn" data-ptbcmd="justifyCenter" title="Centrer">⬌</button>
+          <button class="page-tb-btn" data-ptbcmd="justifyRight" title="Aligner à droite">➡</button>
+          <button class="page-tb-btn" data-ptbcmd="justifyFull" title="Justifier">⬍</button>
+        </div>
+        <span class="page-tb-sep"></span>
+        <select class="page-tb-sel" id="ptb-spacing" title="Interligne">
+          <option value="1">1.0</option>
+          <option value="1.15">1.15</option>
+          <option value="1.5" selected>1.5</option>
+          <option value="2">2.0</option>
+          <option value="2.5">2.5</option>
+        </select>
+        <span class="page-tb-sep"></span>
+        <div class="page-tb-group">
+          <button class="page-tb-btn" id="ptb-checklist" title="Checklist">☑</button>
+          <button class="page-tb-btn" data-ptbcmd="insertUnorderedList" title="Liste à puces">• ≣</button>
+          <button class="page-tb-btn" data-ptbcmd="insertOrderedList" title="Liste numérotée">1. ≣</button>
         </div>
         <span class="page-tb-sep"></span>
         <div class="page-tb-group">
-          <button class="page-tb-btn" data-ptbcmd="insertUnorderedList" title="Liste">• Liste</button>
-          <button class="page-tb-btn" data-ptbcmd="insertOrderedList" title="Numérotée">1. Liste</button>
+          <button class="page-tb-btn" data-ptbcmd="outdent" title="Diminuer le retrait">⇤</button>
+          <button class="page-tb-btn" data-ptbcmd="indent" title="Augmenter le retrait">⇥</button>
         </div>
         <span class="page-tb-sep"></span>
-        <button class="page-tb-btn" data-ptbcmd="createLink" title="Insérer un lien">🔗</button>
-        <button class="page-tb-btn" data-ptbcmd="removeFormat" title="Effacer le format">⌫ Format</button>
+        <button class="page-tb-btn" data-ptbcmd="removeFormat" title="Effacer le format">🧹</button>
         <span class="page-tb-sep"></span>
         <button class="page-tb-btn page-tb-ai" id="ptb-ai" title="Bloc IA (Groq)">✨ IA</button>
-        <button class="page-tb-btn" id="ptb-insert" title="Insérer un bloc">＋ Insérer</button>
+        <button class="page-tb-btn" id="ptb-insert" title="Insérer un bloc (slash menu)">＋ Insérer</button>
         <span class="page-tb-sep"></span>
         <button class="page-tb-btn" id="ptb-save" title="Sauvegarder (Ctrl+S)" style="color:var(--accent);font-weight:600">💾 Sauv.</button>
-        <button class="page-tb-btn" data-ptbcmd="print" title="Imprimer / PDF" style="margin-left:auto">🖨</button>
       </div>
       <div class="page-icon-big" id="page-icon-big">${window.__renderIcon(page.icon, 'page', 60)}</div>
       <textarea class="page-title" id="page-title" rows="1" placeholder="Sans titre">${escapeHtml(page.title||'')}</textarea>
@@ -2676,10 +2719,11 @@ function setupEndAddBtn() {
 }
 
 // Cleanup ephemeral / blocks abandoned without picking a slash item
+let _formatPainterStyle = null;
 function setupPageToolbar() {
   const tb = document.getElementById('page-toolbar');
   if (!tb) return;
-  // Format buttons
+  // Format buttons (execCommand based)
   tb.querySelectorAll('[data-ptbcmd]').forEach(btn => {
     btn.onmousedown = (e) => {
       e.preventDefault();
@@ -2698,9 +2742,110 @@ function setupPageToolbar() {
   // Font select
   const fontEl = document.getElementById('ptb-font');
   if (fontEl) fontEl.onchange = () => { try { document.execCommand('fontName', false, fontEl.value); } catch(_){} };
-  // Size select
-  const sizeEl = document.getElementById('ptb-size');
-  if (sizeEl) sizeEl.onchange = () => { try { document.execCommand('fontSize', false, sizeEl.value); } catch(_){} };
+  // Size +/- (apply via inline style on selection)
+  const applyFontPx = (px) => {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+    try {
+      document.execCommand('fontSize', false, '7'); // tag selection
+      const fonts = document.querySelectorAll('font[size="7"]');
+      fonts.forEach(f => { f.removeAttribute('size'); f.style.fontSize = px + 'px'; });
+    } catch(_) {}
+  };
+  const sizeNum = document.getElementById('ptb-size-num');
+  if (sizeNum) sizeNum.onchange = () => { applyFontPx(parseInt(sizeNum.value)||14); };
+  const sizeUp = document.getElementById('ptb-size-up');
+  if (sizeUp) sizeUp.onclick = () => { sizeNum.value = Math.min(96, parseInt(sizeNum.value)+1); applyFontPx(parseInt(sizeNum.value)); };
+  const sizeDown = document.getElementById('ptb-size-down');
+  if (sizeDown) sizeDown.onclick = () => { sizeNum.value = Math.max(6, parseInt(sizeNum.value)-1); applyFontPx(parseInt(sizeNum.value)); };
+  // Zoom
+  const zoomEl = document.getElementById('ptb-zoom');
+  if (zoomEl) zoomEl.onchange = () => {
+    const list = document.getElementById('block-list');
+    if (list) { list.style.transformOrigin = 'top left'; list.style.transform = 'scale('+zoomEl.value+')'; list.style.width = (100/parseFloat(zoomEl.value))+'%'; }
+  };
+  // Line spacing
+  const spacingEl = document.getElementById('ptb-spacing');
+  if (spacingEl) spacingEl.onchange = () => {
+    document.querySelectorAll('.block-content').forEach(b => b.style.lineHeight = spacingEl.value);
+  };
+  // Format painter
+  const paintBtn = document.getElementById('ptb-paint');
+  if (paintBtn) paintBtn.onclick = () => {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) { toast('Sélectionne du texte d\'abord','error'); return; }
+    const node = sel.anchorNode && sel.anchorNode.nodeType === 3 ? sel.anchorNode.parentElement : sel.anchorNode;
+    if (!node) return;
+    const cs = getComputedStyle(node);
+    _formatPainterStyle = {
+      color: node.style.color || cs.color,
+      backgroundColor: node.style.backgroundColor,
+      fontWeight: cs.fontWeight,
+      fontStyle: cs.fontStyle,
+      textDecoration: cs.textDecoration,
+      fontFamily: cs.fontFamily,
+      fontSize: cs.fontSize,
+    };
+    paintBtn.classList.add('active');
+    toast('🖌️ Sélectionne du texte pour appliquer le format');
+  };
+  // Apply format painter on selection change
+  document.addEventListener('mouseup', () => {
+    if (!_formatPainterStyle) return;
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.rangeCount) return;
+    const range = sel.getRangeAt(0);
+    if (!range.startContainer.parentElement || !range.startContainer.parentElement.closest('.block-content')) return;
+    try {
+      const span = document.createElement('span');
+      Object.assign(span.style, _formatPainterStyle);
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+      _formatPainterStyle = null;
+      if (paintBtn) paintBtn.classList.remove('active');
+      toast('✅ Format appliqué');
+    } catch(_) {}
+  });
+  // Comment button
+  const commentBtn = document.getElementById('ptb-comment');
+  if (commentBtn) commentBtn.onclick = () => {
+    const sel = window.getSelection();
+    const node = sel && sel.anchorNode ? (sel.anchorNode.nodeType === 3 ? sel.anchorNode.parentElement : sel.anchorNode) : null;
+    const block = node && node.closest ? node.closest('.block') : null;
+    if (block && window.U && typeof window.U.openComments === 'function') { window.U.openComments(block.dataset.id); }
+    else if (typeof openComments === 'function' && block) { openComments(block.dataset.id); }
+    else toast('Sélectionne un bloc d\'abord','error');
+  };
+  // Image insert
+  const imgBtn = document.getElementById('ptb-image');
+  if (imgBtn) imgBtn.onclick = () => {
+    const u = prompt('URL de l\'image :');
+    if (!u) return;
+    const blocks = state.blocks[state.currentPageId];
+    if (!blocks) return;
+    blocks.push({ id:nbid(), type:'image', content:u });
+    Storage.save(); renderEditor();
+  };
+  // Table insert
+  const tableBtn = document.getElementById('ptb-table');
+  if (tableBtn) tableBtn.onclick = () => {
+    const blocks = state.blocks[state.currentPageId];
+    if (!blocks) return;
+    blocks.push({ id:nbid(), type:'table', content:'', table:{ rows:[['','',''],['','',''],['','','']] } });
+    Storage.save(); renderEditor();
+  };
+  // Checklist
+  const checklistBtn = document.getElementById('ptb-checklist');
+  if (checklistBtn) checklistBtn.onclick = () => {
+    const blocks = state.blocks[state.currentPageId];
+    if (!blocks) return;
+    blocks.push({ id:nbid(), type:'todo', content:'', done:false });
+    Storage.save(); renderEditor();
+    setTimeout(() => {
+      const last = document.querySelector('.block:last-of-type .block-content');
+      if (last) last.focus();
+    }, 60);
+  };
   // Color pickers
   const colorEl = document.getElementById('ptb-color');
   if (colorEl) colorEl.onchange = () => { try { document.execCommand('foreColor', false, colorEl.value); } catch(_){} };
@@ -6412,11 +6557,15 @@ window.renderPages = renderPages;
         <div data-cv-body="unsplash" style="display:none;padding:8px">
           ${k.unsplash ? `<input class="prop-input" id="cv-uns-q" placeholder="Recherche..."><div id="cv-uns-results" style="display:flex;flex-wrap:wrap;margin-top:8px;max-height:240px;overflow-y:auto"></div>` : '<div style="color:var(--text-2);font-size:13px">Ajoute ta clé Unsplash dans ⚙️ Paramètres</div>'}
         </div>`;
-      const r = coverEl.getBoundingClientRect();
-      picker.style.left = (r.left + r.width/2) + 'px';
-      picker.style.top = (r.bottom - 8) + 'px';
-      picker.style.maxWidth = '420px';
+      picker.style.left = '';
+      picker.style.top = '';
+      picker.style.maxWidth = '';
       picker.classList.add('show');
+      const bd = document.getElementById('cover-picker-backdrop');
+      if (bd) {
+        bd.classList.add('show');
+        bd.onclick = () => { picker.classList.remove('show'); bd.classList.remove('show'); };
+      }
 
       function applyCover(val){
         const p = currentPage(); if (!p) return;
@@ -6424,6 +6573,9 @@ window.renderPages = renderPages;
         coverEl.style.background = val.startsWith('http')||val.startsWith('data:') ? `url(${val}) center/cover` : val;
         Storage.save();
         picker.classList.remove('show');
+        const bd2 = document.getElementById('cover-picker-backdrop');
+        if (bd2) bd2.classList.remove('show');
+        try { toast('✅ Cover changée'); } catch(_){}
       }
       picker.querySelectorAll('.tpl-tab').forEach(tb => tb.onclick = () => {
         picker.querySelectorAll('.tpl-tab').forEach(x => x.classList.remove('active'));
@@ -6463,14 +6615,6 @@ window.renderPages = renderPages;
           }, 350);
         };
       }
-      setTimeout(() => {
-        document.addEventListener('click', function close(e){
-          if (!e.target.closest('.cover-picker') && !e.target.closest('.cover-actions')) {
-            picker.classList.remove('show');
-            document.removeEventListener('click', close);
-          }
-        });
-      }, 0);
     };
   }
 
