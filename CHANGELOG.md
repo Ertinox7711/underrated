@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 06:14 — `90a0324`
+polish: more UX wins
+
 ## 04/05/2026 06:12 — `0eff908`
 fix: critical batch from agents audit
 
