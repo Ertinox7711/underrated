@@ -1149,7 +1149,7 @@ mark.hl-yellow,mark.hl-green,mark.hl-blue{background:var(--accent-soft) !importa
 .block-content:focus,.page-title:focus{caret-color:var(--accent)}
 
 /* Blocks fluide reorder */
-.block-list .block{will-change:transform,opacity}
+.block-list .block.dragging{will-change:transform,opacity}
 .block:focus-within{transform:translateZ(0)}
 .block:focus-within .block-handle{opacity:1}
 .editor-content{perspective:1200px}
@@ -2198,6 +2198,26 @@ async function cloudLoad() {
 function subscribeCloud() {
   if (!state.user || !FIREBASE_ENABLED) return;
   if (state.unsubPages) state.unsubPages();
+  // Re-apply deferred snapshots on blur of editor (after user stops typing)
+  if (!state._snapshotBlurBound) {
+    state._snapshotBlurBound = true;
+    document.addEventListener('focusout', () => {
+      setTimeout(() => {
+        const ae = document.activeElement;
+        const stillEditing = ae && (ae.isContentEditable || ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA');
+        if (!stillEditing && state._pendingSnapshot) {
+          const d = state._pendingSnapshot;
+          state._pendingSnapshot = null;
+          state.pages = d.pages || state.pages;
+          state.blocks = d.blocks || state.blocks;
+          state.expanded = d.expanded || state.expanded;
+          if (Array.isArray(d.favorites)) state.favorites = d.favorites;
+          if (Array.isArray(d.recent)) state.recent = d.recent;
+          try { renderPages(); } catch(_){}
+        }
+      }, 250);
+    });
+  }
   state.unsubPages = onSnapshot(doc(db, 'users', state.user.id, 'workspace', 'main'), (snap) => {
     if (!snap.exists()) return;
     const d = snap.data();
@@ -2419,7 +2439,7 @@ function renderPages() {
         <span class="page-icon">${window.__renderIcon(p.icon, 'page')}</span>
         <span class="page-name">${escapeHtml(p.title||'Sans titre')}${hit==='body'?' <span style="color:var(--text-3);font-size:11px">(contenu)</span>':''}</span>
       </div>
-    `).join('') || '<div style="padding:12px;color:var(--text-3);font-size:13px;text-align:center">Aucun résultat</div>';
+    `).join('') || `<div style="padding:30px 16px;text-align:center;color:var(--text-3)"><div style="font-size:32px;margin-bottom:8px">🔍</div><div style="font-size:13px">Aucune page pour <strong style="color:var(--text-2)">"${escapeHtml(search)}"</strong></div></div>`;
     list.querySelectorAll('.page-item').forEach(el => el.onclick = () => openPage(el.dataset.id));
     return;
   }
@@ -5269,9 +5289,11 @@ function setupNewBlocks() {
     const inp = document.createElement('input'); inp.type='file';
     inp.onchange = () => {
       const f = inp.files[0]; if (!f) return;
-      if (f.size > 5*1024*1024) return toast('Fichier > 5MB');
+      if (f.size > 5*1024*1024) return toast('Fichier > 5MB','error');
+      toast('Chargement de '+f.name+'…');
       const r = new FileReader();
-      r.onload = () => { const b = getBlock(id); if (b) { b.fileData = r.result; b.fileName = f.name; b.fileSize = f.size; Storage.save(); renderEditor(); } };
+      r.onload = () => { const b = getBlock(id); if (b) { b.fileData = r.result; b.fileName = f.name; b.fileSize = f.size; Storage.save(); renderEditor(); toast('Fichier ajouté ✓','success'); } };
+      r.onerror = () => toast('Erreur lecture fichier','error');
       r.readAsDataURL(f);
     };
     inp.click();
