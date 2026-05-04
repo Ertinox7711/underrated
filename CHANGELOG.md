@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 05:42 — `e6ced78`
+fix: end-add-btn ephemeral cleanup (auto-remove abandoned / blocks)
+
 ## 04/05/2026 05:35 — `79c1969`
 fix: HIGH-severity null-derefs + mindmap centering + Storage corruption surface
 
