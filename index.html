@@ -1617,8 +1617,13 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
 .page-tb-sep{width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0}
 .page-tb-sel{background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:4px 6px;border-radius:5px;font-size:12px;cursor:pointer}
 .page-tb-color{width:22px;height:22px;border-radius:4px;cursor:pointer;border:1px solid var(--border);padding:0;background:none}
-.page-tb-ai{background:linear-gradient(135deg,var(--accent),#8b5cf6)!important;color:#fff!important;font-weight:600;padding:5px 10px;border-radius:6px!important;font-size:12px}
+.page-tb-ai{background:linear-gradient(135deg,var(--accent),#8b5cf6)!important;color:#fff!important;font-weight:600;padding:5px 10px;border-radius:6px!important;font-size:12px;display:inline-flex;align-items:center;gap:4px}
 .page-tb-ai:hover{opacity:.9!important}
+.page-toolbar .page-tb-btn{display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.page-toolbar .page-tb-btn svg,.page-toolbar .page-tb-btn i[data-lucide]{width:16px;height:16px;display:block}
+.page-tb-color-wrap{padding:4px 6px;border-radius:5px;cursor:pointer;transition:background .1s}
+.page-tb-color-wrap:hover{background:var(--bg-hover)}
+.page-tb-color-wrap svg,.page-tb-color-wrap i[data-lucide]{width:16px;height:16px;color:var(--text-2)}
 @media(max-width:700px){.page-toolbar{border-radius:0;margin:0 -16px 8px;max-width:none;width:calc(100% + 32px);top:50px;font-size:11px}}
 /* === DOC MODE === */
 .doc-mode .editor-cover{display:none!important}
@@ -2322,9 +2327,14 @@ function escapeHtml(s){ if(s==null)return ''; return String(s).replace(/&/g,'&am
 function toast(msg, type=''){ const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show '+type; setTimeout(()=>t.classList.remove('show'),2500); }
 function triggerManualSave(){
   try { Storage.save(); } catch(e){ toast('Erreur sauvegarde','error'); return; }
-  toast('✅ Sauvegardé');
+  toast('Sauvegardé');
   const btn = document.getElementById('ptb-save');
-  if (btn){ btn.textContent='✅ Sauvé'; setTimeout(()=>{ btn.textContent='💾 Sauv.'; },1200); }
+  if (btn){
+    const orig = btn.innerHTML;
+    btn.innerHTML = (typeof svgIcon==='function' ? svgIcon('check',16) : '✓') + ' Sauvé';
+    try { if (window.lucide) window.lucide.createIcons(); } catch(_){}
+    setTimeout(() => { btn.innerHTML = orig; try { if (window.lucide) window.lucide.createIcons(); } catch(_){} }, 1200);
+  }
 }
 document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); triggerManualSave(); }
@@ -2576,11 +2586,18 @@ function renderEditor() {
       </div>
     </div>
     <div class="editor-content">
+      <div class="page-icon-big" id="page-icon-big">${window.__renderIcon(page.icon, 'page', 60)}</div>
+      <textarea class="page-title" id="page-title" rows="1" placeholder="Sans titre">${escapeHtml(page.title||'')}</textarea>
+      <div class="page-meta">
+        <span>${window.__svg('cal')} ${new Date(page.createdAt||Date.now()).toLocaleDateString('fr-FR')}</span>
+        <span id="meta-words"></span>
+        <span id="meta-readtime"></span>
+      </div>
       <div class="page-toolbar" id="page-toolbar">
-        <button class="page-tb-btn" data-ptbcmd="undo" title="Annuler (Ctrl+Z)">↶</button>
-        <button class="page-tb-btn" data-ptbcmd="redo" title="Rétablir (Ctrl+Y)">↷</button>
-        <button class="page-tb-btn" data-ptbcmd="print" title="Imprimer / PDF">🖨</button>
-        <button class="page-tb-btn" id="ptb-paint" title="Reproduire la mise en forme">🖌️</button>
+        <button class="page-tb-btn" data-ptbcmd="undo" title="Annuler (Ctrl+Z)">${svgIcon('undo-2',16)}</button>
+        <button class="page-tb-btn" data-ptbcmd="redo" title="Rétablir (Ctrl+Y)">${svgIcon('redo-2',16)}</button>
+        <button class="page-tb-btn" data-ptbcmd="print" title="Imprimer / PDF">${svgIcon('printer',16)}</button>
+        <button class="page-tb-btn" id="ptb-paint" title="Reproduire la mise en forme">${svgIcon('paintbrush',16)}</button>
         <span class="page-tb-sep"></span>
         <select class="page-tb-sel" id="ptb-zoom" title="Zoom">
           <option value="0.75">75%</option>
@@ -2611,32 +2628,38 @@ function renderEditor() {
           <option value="cursive">Cursive</option>
         </select>
         <span class="page-tb-sep"></span>
-        <button class="page-tb-btn" id="ptb-size-down" title="Diminuer">−</button>
+        <button class="page-tb-btn" id="ptb-size-down" title="Diminuer">${svgIcon('minus',14)}</button>
         <input class="page-tb-sel" id="ptb-size-num" type="number" min="6" max="96" value="14" style="width:48px;text-align:center" title="Taille px">
-        <button class="page-tb-btn" id="ptb-size-up" title="Augmenter">+</button>
+        <button class="page-tb-btn" id="ptb-size-up" title="Augmenter">${svgIcon('plus',14)}</button>
         <span class="page-tb-sep"></span>
         <div class="page-tb-group">
-          <button class="page-tb-btn" data-ptbcmd="bold" title="Gras (Ctrl+B)"><b>B</b></button>
-          <button class="page-tb-btn" data-ptbcmd="italic" title="Italique (Ctrl+I)"><i>I</i></button>
-          <button class="page-tb-btn" data-ptbcmd="underline" title="Souligné (Ctrl+U)"><u>U</u></button>
-          <button class="page-tb-btn" data-ptbcmd="strikeThrough" title="Barré"><s>S</s></button>
-          <button class="page-tb-btn" data-ptbcmd="superscript" title="Exposant">x²</button>
-          <button class="page-tb-btn" data-ptbcmd="subscript" title="Indice">x₂</button>
+          <button class="page-tb-btn" data-ptbcmd="bold" title="Gras (Ctrl+B)">${svgIcon('bold',16)}</button>
+          <button class="page-tb-btn" data-ptbcmd="italic" title="Italique (Ctrl+I)">${svgIcon('italic',16)}</button>
+          <button class="page-tb-btn" data-ptbcmd="underline" title="Souligné (Ctrl+U)">${svgIcon('underline',16)}</button>
+          <button class="page-tb-btn" data-ptbcmd="strikeThrough" title="Barré">${svgIcon('strikethrough',16)}</button>
+          <button class="page-tb-btn" data-ptbcmd="superscript" title="Exposant">${svgIcon('superscript',16)}</button>
+          <button class="page-tb-btn" data-ptbcmd="subscript" title="Indice">${svgIcon('subscript',16)}</button>
         </div>
         <span class="page-tb-sep"></span>
-        <input type="color" class="page-tb-color" id="ptb-color" value="#ffffff" title="Couleur texte">
-        <input type="color" class="page-tb-color" id="ptb-hilite" value="#fbbf24" title="Surlignage">
+        <label class="page-tb-color-wrap" title="Couleur texte" style="position:relative;display:inline-flex;align-items:center;justify-content:center">
+          ${svgIcon('palette',16)}
+          <input type="color" class="page-tb-color" id="ptb-color" value="#ffffff" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+        </label>
+        <label class="page-tb-color-wrap" title="Surlignage" style="position:relative;display:inline-flex;align-items:center;justify-content:center">
+          ${svgIcon('highlighter',16)}
+          <input type="color" class="page-tb-color" id="ptb-hilite" value="#fbbf24" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+        </label>
         <span class="page-tb-sep"></span>
-        <button class="page-tb-btn" data-ptbcmd="createLink" title="Insérer un lien (Ctrl+K)">🔗</button>
-        <button class="page-tb-btn" id="ptb-comment" title="Ajouter un commentaire">💬</button>
-        <button class="page-tb-btn" id="ptb-image" title="Insérer une image">🖼</button>
-        <button class="page-tb-btn" id="ptb-table" title="Insérer une table">⊞</button>
+        <button class="page-tb-btn" data-ptbcmd="createLink" title="Insérer un lien (Ctrl+K)">${svgIcon('link',16)}</button>
+        <button class="page-tb-btn" id="ptb-comment" title="Ajouter un commentaire">${svgIcon('message-square',16)}</button>
+        <button class="page-tb-btn" id="ptb-image" title="Insérer une image">${svgIcon('image',16)}</button>
+        <button class="page-tb-btn" id="ptb-table" title="Insérer une table">${svgIcon('table',16)}</button>
         <span class="page-tb-sep"></span>
         <div class="page-tb-group">
-          <button class="page-tb-btn" data-ptbcmd="justifyLeft" title="Aligner à gauche">⬅</button>
-          <button class="page-tb-btn" data-ptbcmd="justifyCenter" title="Centrer">⬌</button>
-          <button class="page-tb-btn" data-ptbcmd="justifyRight" title="Aligner à droite">➡</button>
-          <button class="page-tb-btn" data-ptbcmd="justifyFull" title="Justifier">⬍</button>
+          <button class="page-tb-btn" data-ptbcmd="justifyLeft" title="Aligner à gauche">${svgIcon('align-left',16)}</button>
+          <button class="page-tb-btn" data-ptbcmd="justifyCenter" title="Centrer">${svgIcon('align-center',16)}</button>
+          <button class="page-tb-btn" data-ptbcmd="justifyRight" title="Aligner à droite">${svgIcon('align-right',16)}</button>
+          <button class="page-tb-btn" data-ptbcmd="justifyFull" title="Justifier">${svgIcon('align-justify',16)}</button>
         </div>
         <span class="page-tb-sep"></span>
         <select class="page-tb-sel" id="ptb-spacing" title="Interligne">
@@ -2648,29 +2671,22 @@ function renderEditor() {
         </select>
         <span class="page-tb-sep"></span>
         <div class="page-tb-group">
-          <button class="page-tb-btn" id="ptb-checklist" title="Checklist">☑</button>
-          <button class="page-tb-btn" data-ptbcmd="insertUnorderedList" title="Liste à puces">• ≣</button>
-          <button class="page-tb-btn" data-ptbcmd="insertOrderedList" title="Liste numérotée">1. ≣</button>
+          <button class="page-tb-btn" id="ptb-checklist" title="Checklist">${svgIcon('list-checks',16)}</button>
+          <button class="page-tb-btn" data-ptbcmd="insertUnorderedList" title="Liste à puces">${svgIcon('list',16)}</button>
+          <button class="page-tb-btn" data-ptbcmd="insertOrderedList" title="Liste numérotée">${svgIcon('list-ordered',16)}</button>
         </div>
         <span class="page-tb-sep"></span>
         <div class="page-tb-group">
-          <button class="page-tb-btn" data-ptbcmd="outdent" title="Diminuer le retrait">⇤</button>
-          <button class="page-tb-btn" data-ptbcmd="indent" title="Augmenter le retrait">⇥</button>
+          <button class="page-tb-btn" data-ptbcmd="outdent" title="Diminuer le retrait">${svgIcon('indent-decrease',16)}</button>
+          <button class="page-tb-btn" data-ptbcmd="indent" title="Augmenter le retrait">${svgIcon('indent-increase',16)}</button>
         </div>
         <span class="page-tb-sep"></span>
-        <button class="page-tb-btn" data-ptbcmd="removeFormat" title="Effacer le format">🧹</button>
+        <button class="page-tb-btn" data-ptbcmd="removeFormat" title="Effacer le format">${svgIcon('eraser',16)}</button>
         <span class="page-tb-sep"></span>
-        <button class="page-tb-btn page-tb-ai" id="ptb-ai" title="Bloc IA (Groq)">✨ IA</button>
-        <button class="page-tb-btn" id="ptb-insert" title="Insérer un bloc (slash menu)">＋ Insérer</button>
+        <button class="page-tb-btn page-tb-ai" id="ptb-ai" title="Bloc IA (Groq)">${svgIcon('sparkles',14)} IA</button>
+        <button class="page-tb-btn" id="ptb-insert" title="Insérer un bloc (slash menu)">${svgIcon('plus-square',16)} Insérer</button>
         <span class="page-tb-sep"></span>
-        <button class="page-tb-btn" id="ptb-save" title="Sauvegarder (Ctrl+S)" style="color:var(--accent);font-weight:600">💾 Sauv.</button>
-      </div>
-      <div class="page-icon-big" id="page-icon-big">${window.__renderIcon(page.icon, 'page', 60)}</div>
-      <textarea class="page-title" id="page-title" rows="1" placeholder="Sans titre">${escapeHtml(page.title||'')}</textarea>
-      <div class="page-meta">
-        <span>${window.__svg('cal')} ${new Date(page.createdAt||Date.now()).toLocaleDateString('fr-FR')}</span>
-        <span id="meta-words"></span>
-        <span id="meta-readtime"></span>
+        <button class="page-tb-btn" id="ptb-save" title="Sauvegarder (Ctrl+S)" style="color:var(--accent);font-weight:600">${svgIcon('save',16)} Sauv.</button>
       </div>
       <div class="block-list" id="block-list">${blocks.map(renderBlock).join('')}</div>
       <button class="end-add-btn" id="end-add-btn" title="Ajouter un bloc à la fin">
@@ -2689,6 +2705,7 @@ function renderEditor() {
   updateWordCount();
   renderBacklinks();
   if (window.Prism) Prism.highlightAll();
+  try { if (window.lucide) window.lucide.createIcons(); } catch(_){}
 }
 
 function setupEndAddBtn() {
@@ -3247,27 +3264,30 @@ function setupTitleAutoresize() {
 function setupIconPicker() {
   const icon = document.getElementById('page-icon-big');
   if (!icon) return;
-  // Ensure inner SVG/path doesn't swallow clicks: bind on icon, use closest for safety
   icon.style.cursor = 'pointer';
-  icon.addEventListener('click', (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    const target = (e.target && e.target.closest && e.target.closest('#page-icon-big')) || icon;
+  icon.style.pointerEvents = 'auto';
+  // Make inner SVG not swallow clicks
+  icon.querySelectorAll('svg, i, *').forEach(el => { el.style.pointerEvents = 'none'; });
+  const open = (e) => {
+    if (e) { e.stopPropagation(); e.preventDefault(); }
     const fn = (typeof showEmojiPicker === 'function') ? showEmojiPicker : window.showEmojiPicker;
-    if (typeof fn !== 'function') { console.error('[icon] showEmojiPicker missing'); return; }
-    fn(target, (emoji) => {
+    if (typeof fn !== 'function') { console.error('[icon] showEmojiPicker missing'); toast('Picker indisponible','error'); return; }
+    fn(icon, (emoji) => {
       const p = currentPage();
       if (!p) return;
       p.icon = emoji;
       try { Storage.save(); } catch(_){}
       try { renderPages(); } catch(_){}
-      // Re-render the icon area properly via __renderIcon
       try {
-        if (window.__renderIcon) target.innerHTML = window.__renderIcon(emoji, 'page', 60);
-        else target.textContent = emoji;
-      } catch(_){ target.textContent = emoji; }
+        if (window.__renderIcon) icon.innerHTML = window.__renderIcon(emoji, 'page', 60);
+        else icon.textContent = emoji;
+        icon.querySelectorAll('svg, i, *').forEach(el => { el.style.pointerEvents = 'none'; });
+      } catch(_){ icon.textContent = emoji; }
+      toast('Icône changée');
     });
-  });
+  };
+  icon.addEventListener('click', open);
+  icon.addEventListener('mousedown', (e) => { if (e.button === 0) e.preventDefault(); });
 }
 
 function setupCover() {
