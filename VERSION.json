@@ -1,8 +1,8 @@
 {
-  "commit": "58eff17",
-  "message": "feat: Notion-like cover actions - Changer / Repositionner (drag) / Supprimer with SVG icons (no emoji)",
-  "commitDate": "2026-05-04T17:34:45+02:00",
-  "buildDate": "2026-05-04T15:35:00Z",
-  "buildDateFR": "04/05/2026 17:35",
+  "commit": "4a29083",
+  "message": "fix: page-switch only on real navigation (no blur on typing), drop image as image block, resizable images, SVG favicon (lightning bolt)",
+  "commitDate": "2026-05-04T17:39:52+02:00",
+  "buildDate": "2026-05-04T15:40:08Z",
+  "buildDateFR": "04/05/2026 17:40",
   "branch": "main"
 }

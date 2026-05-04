@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 17:40 — `4a29083`
+fix: page-switch only on real navigation (no blur on typing), drop image as image block, resizable images, SVG favicon (lightning bolt)
+
 ## 04/05/2026 17:35 — `58eff17`
 feat: Notion-like cover actions - Changer / Repositionner (drag) / Supprimer with SVG icons (no emoji)
 
