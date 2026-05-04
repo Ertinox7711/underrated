@@ -113,18 +113,14 @@ input,textarea{font-family:inherit;background:none;border:none;color:inherit;out
 
 .ctx-menu{position:fixed;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow-lg);z-index:1200;min-width:200px;padding:4px;display:none;animation:fadeIn .12s ease-out}
 .ctx-menu.show{display:block}
-.ctx-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:5px;cursor:pointer;font-size:13px;color:var(--text);transition:background var(--transition);user-select:none}
+.ctx-item{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:5px;cursor:pointer;font-size:13px;color:var(--text);transition:background var(--transition);user-select:none}
 .ctx-item:hover{background:var(--bg-hover)}
 .ctx-item.danger{color:var(--danger)}
 .ctx-item.danger:hover{background:rgba(239,68,68,.1)}
 .ctx-icon{width:16px;text-align:center;font-size:14px;opacity:.8}
 .ctx-kbd{margin-left:auto;font-size:10px;color:var(--text-3);font-family:monospace}
-.ctx-sep{height:1px;background:var(--border);margin:4px 2px}
-.ctx-label{padding:6px 10px 4px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);font-weight:600}
-.ctx-item{padding:7px 12px;font-size:13px;cursor:pointer;border-radius:5px;display:flex;align-items:center;gap:10px}
-.ctx-item:hover{background:var(--bg-hover)}
-.ctx-item.danger{color:var(--danger)}
 .ctx-sep{height:1px;background:var(--border);margin:4px 0}
+.ctx-label{padding:6px 10px 4px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);font-weight:600}
 
 .cmt-drawer{position:fixed;right:0;top:54px;bottom:0;width:320px;background:var(--bg-2);border-left:1px solid var(--border);transform:translateX(100%);transition:transform var(--transition-slow);z-index:45;display:flex;flex-direction:column}
 .cmt-drawer.show{transform:translateX(0)}
@@ -2052,7 +2048,7 @@ const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
 // ============ OS DETECTION ============
-const IS_MAC = navigator.platform.toLowerCase().includes('mac');
+const IS_MAC = (navigator.userAgentData?.platform || navigator.platform || '').toLowerCase().includes('mac');
 const MOD = IS_MAC ? '⌘' : 'Ctrl+';
 function svgIcon(name, size=16) { return `<i data-lucide="${name}" style="width:${size}px;height:${size}px"></i>`; }
 function refreshIcons() { try { if (window.lucide) window.lucide.createIcons(); } catch(e){} }
@@ -2839,7 +2835,7 @@ function renderBlock(block) {
   if (block.type==='ai') {
     return `<div class="block" data-id="${block.id}" data-type="ai">
       <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
-      <div class="ai-wrap"><span class="ai-spark">✨</span><div class="block-content" contenteditable="true" data-placeholder="Demande à l'IA... (placeholder, non connecté)">${escapeHtml(block.content||'')}</div></div>
+      <div class="ai-wrap"><span class="ai-spark">✨</span><div class="block-content" contenteditable="true" data-placeholder="Demande à l'IA... (Paramètres → clé Groq pour activer)">${escapeHtml(block.content||'')}</div></div>
     </div>`;
   }
 
@@ -3010,7 +3006,11 @@ function linkify(text) {
   out = escapeHtml(out);
   out = out.replace(/TKN(\d+)/g, (m, i) => tokens[+i] || '');
   out = out.replace(/@\[([^\]]+)\]\(([^)]+)\)/g, (m, title, id) => `<a class="mention" href="#" data-mention="${id}">@${escapeHtml(title)}</a>`);
-  return out;
+  return DOMPurify.sanitize(out, {
+    ALLOWED_TAGS: ['a','strong','em','del','b','i','u','code','br','mark','span'],
+    ALLOWED_ATTR: ['href','target','rel','class','data-mention','style'],
+    ALLOW_DATA_ATTR: false,
+  });
 }
 
 function extractYouTubeId(url) {
@@ -3392,9 +3392,7 @@ function setupBlocks() {
         e.preventDefault();
         const data = e.dataTransfer.getData('kb'); if (!data) return;
         const [bid, fromCid, kid] = data.split('|');
-        const [, toBid, toCid] = col.dataset.kbcol.split('|').length===2 ? ['',...col.dataset.kbcol.split('|')] : col.dataset.kbcol.split('|');
-        const targetParts = col.dataset.kbcol.split('|');
-        const tBid = targetParts[0], tCid = targetParts[1];
+        const [tBid, tCid] = col.dataset.kbcol.split('|');
         const b = getBlock(tBid); if (!b) return;
         const fromCol = b.cols.find(x=>x.id===fromCid);
         const toCol = b.cols.find(x=>x.id===tCid);
@@ -3440,9 +3438,7 @@ function setupBlocks() {
       Storage.save(); renderEditor();
     };
 
-    // comment placeholder
-    const cmt = block.querySelector('[data-cmt]');
-    if (cmt) cmt.onclick = () => toast('Commentaires : bientôt');
+    // comment button — handled by delegated listener in setTimeout boot
   });
 
   // breadcrumb nav
@@ -3683,7 +3679,7 @@ function applySlash(type) {
   if (blockEl) {
     const b = getBlock(blockEl.dataset.id);
     if (b) b.content = b.content.replace(/\/\w*$/, '');
-    changeBlockType(blockEl.dataset.id, type);
+    (window.changeBlockType || changeBlockType)(blockEl.dataset.id, type);
   }
   hideSlashMenu();
 }
@@ -5179,7 +5175,7 @@ document.getElementById('password').addEventListener('keydown', e => { if (e.key
 
 // Global keyboard shortcuts
 document.addEventListener('keydown', (e) => {
-  const isMac = navigator.platform.toLowerCase().includes('mac');
+  const isMac = (navigator.userAgentData?.platform || navigator.platform || '').toLowerCase().includes('mac');
   const meta = isMac ? e.metaKey : e.ctrlKey;
   if (meta && e.key === 'k') { e.preventDefault(); openCmdK(); }
   else if (meta && e.key === 'n') { e.preventDefault(); createPage(); }
@@ -5826,7 +5822,7 @@ handleBlockKey = function(e, block, content) {
       return;
     }
   }
-  const isMac = navigator.platform.toLowerCase().includes('mac');
+  const isMac = (navigator.userAgentData?.platform || navigator.platform || '').toLowerCase().includes('mac');
   const meta = isMac ? e.metaKey : e.ctrlKey;
   if (meta && e.key === '/') { e.preventDefault(); showSlashMenu(content); return; }
   return _origHandleBlockKey(e, block, content);
@@ -6748,7 +6744,14 @@ window.renderPages = renderPages;
     document.querySelectorAll('.block[data-type="ai"]').forEach(el => {
       if (el.dataset.aiHooked) return;
       el.dataset.aiHooked = '1';
-      if (!k.groq) return;
+      if (!k.groq) {
+        const cfg = document.createElement('div');
+        cfg.style.cssText = 'margin-top:6px;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px';
+        cfg.innerHTML = `<span>Clé Groq non configurée</span><button class="btn" style="padding:4px 10px;font-size:12px">Configurer →</button>`;
+        cfg.querySelector('button').onclick = () => openSettings();
+        el.appendChild(cfg);
+        return;
+      }
       const id = el.dataset.id;
       const wrap = document.createElement('div');
       wrap.style.cssText = 'display:flex;gap:6px;margin-top:6px';
@@ -7516,20 +7519,11 @@ window.renderPages = renderPages;
 .drive-dropzone{border:2px dashed var(--border);border-radius:10px;padding:40px;text-align:center;color:var(--text-3);margin-bottom:18px}
 .drive-dropzone.over{border-color:var(--accent);background:var(--accent-soft)}
 
-/* === PAGE MODE PICKER === */
-.pmp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
-.pmp-card{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;text-align:left}
-.pmp-card:hover{border-color:var(--accent);background:var(--accent-soft)}
-.pmp-icon{font-size:24px;margin-bottom:6px}
-.pmp-name{font-weight:600;font-size:14px}
-.pmp-desc{font-size:11px;color:var(--text-3);margin-top:3px}
-
 @media (max-width:640px){
   .doc-paper{margin:8px;padding:24px 18px;width:auto}
   .doc-toolbar{position:relative;top:auto;flex-wrap:wrap;font-size:11px}
   .doc-tb-sel{font-size:11px;padding:3px 4px}
   .sheet-scroll{max-height:300px}
-  .pmp-grid{grid-template-columns:1fr}
   .cal-cell{min-height:50px}
   .drive-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
 }
@@ -7854,7 +7848,7 @@ window.renderPages = renderPages;
   function openChartFromSheet(sheetBlockId){
     openChartModal(sheetBlockId);
   }
-  function openChartModal(sheetSrc){
+  function openChartModal(sheetSrc, targetBlockId){
     const blocks = state.blocks[state.currentPageId]||[];
     const sheets = blocks.filter(b=>b.type==='sheet');
     const html = `<div class="modal-head"><div class="modal-title">${svgIcon('bar-chart-3',18)} Nouveau graphique</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
@@ -7880,7 +7874,14 @@ window.renderPages = renderPages;
       const labels = document.getElementById('ch-labels').value.split(',').map(x=>x.trim()).filter(Boolean);
       const data = document.getElementById('ch-data').value.split(',').map(x=>parseFloat(x.trim())||0);
       const blocks = state.blocks[state.currentPageId];
-      blocks.push({ id:_id(), type:'chart', chart:{ type, sheetSrc:src||null, labels, data, title }});
+      const chartData = { type, sheetSrc:src||null, labels, data, title };
+      if (targetBlockId) {
+        const b = blocks.find(x => x.id === targetBlockId);
+        if (b) { b.type = 'chart'; b.chart = chartData; b.content = ''; }
+        else blocks.push({ id:_id(), type:'chart', chart:chartData });
+      } else {
+        blocks.push({ id:_id(), type:'chart', chart:chartData });
+      }
       _save(); closeModal(); renderEditor();
     };
   }
@@ -8498,8 +8499,7 @@ window.renderPages = renderPages;
   const _origCT = window.changeBlockType || changeBlockType;
   window.changeBlockType = function(id, type){
     if (type==='chart'){
-      const b = _getBlock(id); if (b){ b.type='p'; b.content=''; }
-      _origCT(id, 'p'); openChartModal(); return;
+      openChartModal(null, id); return;
     }
     if (type==='document'){
       const page = _curPage(); if (page){ page.mode='doc'; _save(); renderEditor(); }
@@ -9060,7 +9060,7 @@ window.renderPages = renderPages;
     // 9) KEYBOARD SHORTCUTS + SLASH-COMMAND HOOK
     // ===================================================================
     document.addEventListener('keydown', (e) => {
-      const isMac = navigator.platform.toLowerCase().includes('mac');
+      const isMac = (navigator.userAgentData?.platform || navigator.platform || '').toLowerCase().includes('mac');
       const meta = isMac ? e.metaKey : e.ctrlKey;
       if (meta && (e.key === 'p' || e.key === 'P')) {
         e.preventDefault();
