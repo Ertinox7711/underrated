@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 06:20 — `f2e862e`
+fix: end-add-btn stopPropagation + drawio infinite canvas + mindmap hints
+
 ## 04/05/2026 06:14 — `90a0324`
 polish: more UX wins
 
