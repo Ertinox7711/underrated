@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 17:35 — `58eff17`
+feat: Notion-like cover actions - Changer / Repositionner (drag) / Supprimer with SVG icons (no emoji)
+
 ## 04/05/2026 17:32 — `4a4f43b`
 remove magnetic buttons and custom cursor (UX feedback)
 
