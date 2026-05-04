@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 05:21 — `ccf43af`
+style: lighter canvas + Inter font + soft shadows on mindmap nodes
+
 ## 04/05/2026 05:14 — `646ca75`
 feat: add Mindmap card to + Nouveau picker (creates page with mindmap block)
 

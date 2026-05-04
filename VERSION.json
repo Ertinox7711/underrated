@@ -1,8 +1,8 @@
 {
-  "commit": "646ca75",
-  "message": "feat: add Mindmap card to + Nouveau picker (creates page with mindmap block)",
-  "commitDate": "2026-05-04T05:14:07+02:00",
-  "buildDate": "2026-05-04T03:14:22Z",
-  "buildDateFR": "04/05/2026 05:14",
+  "commit": "ccf43af",
+  "message": "style: lighter canvas + Inter font + soft shadows on mindmap nodes",
+  "commitDate": "2026-05-04T05:21:41+02:00",
+  "buildDate": "2026-05-04T03:21:49Z",
+  "buildDateFR": "04/05/2026 05:21",
   "branch": "main"
 }
