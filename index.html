@@ -625,6 +625,12 @@ mark.hl-yellow,mark.hl-green,mark.hl-blue{background:var(--accent-soft) !importa
   content:attr(data-placeholder);
   color:var(--text-3);pointer-events:none;
 }
+.block-content code.inline-code{
+  font-family:var(--mono,ui-monospace,monospace);font-size:.88em;
+  background:var(--bg-3,rgba(255,255,255,.06));padding:1px 5px;border-radius:4px;
+  border:1px solid var(--border,rgba(255,255,255,.08));color:var(--accent,#f6c451);
+}
+.block-content a[target="_blank"]{color:var(--accent,#f6c451);text-decoration:underline;text-underline-offset:2px}
 .block[data-type="h1"] .block-content{font-size:30px;font-weight:700;margin-top:18px;margin-bottom:4px;letter-spacing:-.5px;line-height:1.25}
 .block[data-type="h2"] .block-content{font-size:24px;font-weight:700;margin-top:16px;margin-bottom:4px;letter-spacing:-.3px;line-height:1.3}
 .block[data-type="h3"] .block-content{font-size:19px;font-weight:600;margin-top:12px;margin-bottom:4px}
@@ -2743,8 +2749,24 @@ function renderBlock(block) {
 }
 
 function linkify(text) {
-  // Render @mentions as links
-  return escapeHtml(text).replace(/@\[([^\]]+)\]\(([^)]+)\)/g, (m, title, id) => `<a class="mention" href="#" data-mention="${id}">@${escapeHtml(title)}</a>`);
+  // Render @mentions as links + preserve a small set of safe inline HTML tags from imported content.
+  // Strategy: stash whitelisted tags into placeholders, escape the rest, then re-insert.
+  if (text == null) text = '';
+  const tokens = [];
+  const stash = (html) => { tokens.push(html); return `TKN${tokens.length-1}`; };
+  let out = String(text)
+    .replace(/<a\s+href="(https?:[^"]+|mailto:[^"]+)"(?:\s+target="_blank")?(?:\s+rel="[^"]*")?\s*>([^<]{0,300})<\/a>/gi, (m, href, label) => {
+      const safeHref = href.replace(/"/g, '&quot;');
+      const safeLabel = label.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return stash(`<a href="${safeHref}" target="_blank" rel="noopener">${safeLabel}</a>`);
+    })
+    .replace(/<code>([^<]{0,500})<\/code>/g, (m, c) => stash(`<code class="inline-code">${c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code>`))
+    .replace(/<\/?(strong|em|del|b|i|u)>/gi, (m) => stash(m.toLowerCase()))
+    .replace(/<br\s*\/?>/gi, () => stash('<br>'));
+  out = escapeHtml(out);
+  out = out.replace(/TKN(\d+)/g, (m, i) => tokens[+i] || '');
+  out = out.replace(/@\[([^\]]+)\]\(([^)]+)\)/g, (m, title, id) => `<a class="mention" href="#" data-mention="${id}">@${escapeHtml(title)}</a>`);
+  return out;
 }
 
 function extractYouTubeId(url) {
