@@ -1,8 +1,8 @@
 {
-  "commit": "cbb32ec",
-  "message": "fix: AI block configure button, navigator.platform deprecation, URL escaping, CI push guard",
-  "commitDate": "2026-05-04T16:29:24+02:00",
-  "buildDate": "2026-05-04T14:29:35Z",
-  "buildDateFR": "04/05/2026 16:29",
+  "commit": "311fef0",
+  "message": "feat: remove whiteboard/mindmap, add persistent Word-style toolbar on every page",
+  "commitDate": "2026-05-04T16:40:12+02:00",
+  "buildDate": "2026-05-04T14:40:29Z",
+  "buildDateFR": "04/05/2026 16:40",
   "branch": "main"
 }
