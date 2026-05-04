@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 17:12 — `dedf170`
+fix: store icon as lucide:name + re-render at context size (sidebar 16px, banner 60px)
+
 ## 04/05/2026 17:04 — `e6fab89`
 fix: cover picker module-scope binding override + lucide icon picker for page banner (no emojis)
 

@@ -1,8 +1,8 @@
 {
-  "commit": "e6fab89",
-  "message": "fix: cover picker module-scope binding override + lucide icon picker for page banner (no emojis)",
-  "commitDate": "2026-05-04T17:04:07+02:00",
-  "buildDate": "2026-05-04T15:04:24Z",
-  "buildDateFR": "04/05/2026 17:04",
+  "commit": "dedf170",
+  "message": "fix: store icon as lucide:name + re-render at context size (sidebar 16px, banner 60px)",
+  "commitDate": "2026-05-04T17:11:52+02:00",
+  "buildDate": "2026-05-04T15:12:09Z",
+  "buildDateFR": "04/05/2026 17:12",
   "branch": "main"
 }
