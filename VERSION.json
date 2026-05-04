@@ -1,8 +1,8 @@
 {
-  "commit": "202c35e",
-  "message": "feat: mindmap as full-width section (escape editor max-width, 680px tall)",
-  "commitDate": "2026-05-04T05:01:16+02:00",
-  "buildDate": "2026-05-04T03:01:22Z",
-  "buildDateFR": "04/05/2026 05:01",
+  "commit": "646ca75",
+  "message": "feat: add Mindmap card to + Nouveau picker (creates page with mindmap block)",
+  "commitDate": "2026-05-04T05:14:07+02:00",
+  "buildDate": "2026-05-04T03:14:22Z",
+  "buildDateFR": "04/05/2026 05:14",
   "branch": "main"
 }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 05:14 — `646ca75`
+feat: add Mindmap card to + Nouveau picker (creates page with mindmap block)
+
 ## 04/05/2026 05:01 — `202c35e`
 feat: mindmap as full-width section (escape editor max-width, 680px tall)
 
