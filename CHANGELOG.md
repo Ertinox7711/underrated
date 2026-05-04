@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 02:02 — `dc9b671`
+fix: demo bypasses showApp (was overwriting seed via Storage.load + cloudLoad)
+
 ## 04/05/2026 01:59 — `f908349`
 fix: render-time emoji-to-SVG strip for stored icons (workspace/page/folder)
 
