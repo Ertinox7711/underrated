@@ -8170,6 +8170,568 @@ window.renderPages = renderPages;
   }
   Object.assign(window.U, { openDrive, openPageModePicker, startPresent, exportHTML, openChartModal });
 
+  // ============================================================
+  // NOTION-PARITY EXTENSIONS (v1.1)
+  // Self-contained module — adds: Cmd+P quick-jump, page settings
+  // dropdown (style/width/lock), public share, columns block,
+  // inline highlight, db view switcher, @date mention.
+  // Uses existing helpers: showModal, closeModal, currentPage,
+  // openPage, Storage, renderEditor, svgIcon. No core code edits.
+  // ============================================================
+  (function npExt(){
+    const $ = (s, r) => (r||document).querySelector(s);
+    const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+    const esc = (s) => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const ic = (n, sz=16) => (typeof svgIcon==='function') ? svgIcon(n, sz) : `<i data-lucide="${n}" style="width:${sz}px;height:${sz}px"></i>`;
+    const save = () => { try { Storage.save(); } catch(e){} };
+
+    // --- Inject CSS for new features
+    const css = `
+      /* Page style toggle */
+      .editor-content.np-style-serif, .editor-content.np-style-serif .block-content { font-family: var(--serif, Georgia, serif) !important; }
+      .editor-content.np-style-mono,  .editor-content.np-style-mono  .block-content { font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important; }
+      /* Page width toggle */
+      .editor-content.np-full { max-width: none !important; padding-left: 40px !important; padding-right: 40px !important; }
+      /* Page lock */
+      body.np-locked .block-content[contenteditable="true"],
+      body.np-locked .page-title { pointer-events: none; }
+      .np-lock-banner { position: sticky; top: 0; z-index: 25; padding: 8px 14px; background: var(--accent-soft, rgba(251,146,60,.12)); color: var(--accent-3, #fb923c); font-size: 13px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+      /* Page settings menu button */
+      .np-page-menu-btn { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; color:var(--text-3); background:transparent; cursor:pointer; }
+      .np-page-menu-btn:hover { background: var(--bg-hover); color: var(--text); }
+      .np-dropdown { position: fixed; min-width: 240px; background: var(--bg-2, #1c1b18); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,.4); padding: 6px; z-index: 1000; font-size: 13px; }
+      .np-dropdown .np-row { display:flex; align-items:center; gap:10px; padding: 8px 10px; border-radius: 6px; cursor: pointer; color: var(--text); }
+      .np-dropdown .np-row:hover { background: var(--bg-hover); }
+      .np-dropdown .np-row .np-row-end { margin-left:auto; color: var(--text-3); font-size:12px; }
+      .np-dropdown .np-sep { height:1px; background: var(--border); margin: 4px 2px; }
+      .np-dropdown .np-label { font-size:11px; text-transform:uppercase; color: var(--text-3); padding: 6px 10px 2px; font-weight:600; letter-spacing:.05em; }
+      .np-seg { display:flex; gap:4px; padding: 4px 8px 6px; }
+      .np-seg button { flex:1; padding: 6px 8px; background: var(--bg-3, #2a2825); border:1px solid var(--border); border-radius:6px; color:var(--text-2); cursor:pointer; font-size:12px; }
+      .np-seg button.active { background: var(--accent, #fb923c); color: #fff; border-color: var(--accent, #fb923c); }
+      /* Columns block */
+      .np-columns { display:grid; gap:18px; margin: 8px 0; }
+      .np-columns[data-cols="2"] { grid-template-columns: 1fr 1fr; }
+      .np-columns[data-cols="3"] { grid-template-columns: 1fr 1fr 1fr; }
+      .np-col { min-height: 60px; padding: 10px; border-radius: 8px; border: 1px dashed transparent; }
+      .np-col:hover { border-color: var(--border); }
+      .np-col [contenteditable="true"]:empty::before { content: attr(data-placeholder); color: var(--text-3); }
+      @media (max-width: 720px) { .np-columns[data-cols="2"], .np-columns[data-cols="3"] { grid-template-columns: 1fr; } }
+      /* Highlight palette */
+      .np-hl-yellow { background: rgba(250, 204, 21, .25); padding: 0 2px; border-radius: 3px; }
+      .np-hl-orange { background: rgba(251, 146, 60, .28); padding: 0 2px; border-radius: 3px; }
+      .np-hl-pink   { background: rgba(244, 114, 182, .28); padding: 0 2px; border-radius: 3px; }
+      .np-hl-green  { background: rgba(74, 222, 128, .25); padding: 0 2px; border-radius: 3px; }
+      .np-hl-blue   { background: rgba(96, 165, 250, .25); padding: 0 2px; border-radius: 3px; }
+      /* Date chip */
+      .np-date-chip { display:inline-flex; align-items:center; gap:4px; padding: 1px 7px; border-radius: 4px; background: var(--accent-soft, rgba(251,146,60,.12)); color: var(--accent-3, #fb923c); font-size: 0.95em; cursor: default; }
+      /* DB view switcher */
+      .np-db-switch { display:inline-flex; gap:2px; margin: 6px 0 8px; padding: 3px; background: var(--bg-2); border:1px solid var(--border); border-radius: 8px; }
+      .np-db-switch button { padding: 5px 10px; background: transparent; border: none; color: var(--text-2); cursor: pointer; border-radius: 6px; display:inline-flex; align-items:center; gap:6px; font-size:12px; }
+      .np-db-switch button.active { background: var(--accent, #fb923c); color: #fff; }
+      .np-gallery { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+      .np-gallery-card { padding: 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-2); }
+      .np-gallery-card .np-gc-title { font-weight:600; margin-bottom:6px; color: var(--text); }
+      .np-gallery-card .np-gc-field { font-size:12px; color: var(--text-3); margin-top:4px; }
+      .np-board { display:grid; grid-auto-flow: column; grid-auto-columns: minmax(220px, 1fr); gap: 12px; overflow-x:auto; padding-bottom: 6px; }
+      .np-board-col { background: var(--bg-2); border:1px solid var(--border); border-radius: 10px; padding: 10px; }
+      .np-board-col h4 { font-size: 12px; text-transform: uppercase; color: var(--text-3); margin: 0 0 8px; letter-spacing: .05em; }
+      .np-board-card { padding: 8px 10px; background: var(--bg); border:1px solid var(--border); border-radius: 8px; margin-bottom:6px; font-size:13px; color: var(--text); }
+      /* Read-only view */
+      body.np-read-only #sidebar, body.np-read-only .main-header, body.np-read-only .fab,
+      body.np-read-only .pomodoro, body.np-read-only #cmdk-overlay, body.np-read-only .block-handle,
+      body.np-read-only .block-comment-btn, body.np-read-only .props-panel, body.np-read-only .cmt-drawer,
+      body.np-read-only .toolbar, body.np-read-only #sidebar-overlay { display: none !important; }
+      body.np-read-only .main { margin-left: 0 !important; }
+      body.np-read-only .editor-content { padding-top: 30px; }
+    `;
+    const styleEl = document.createElement('style');
+    styleEl.id = 'np-ext-css';
+    styleEl.textContent = css;
+    document.head.appendChild(styleEl);
+
+    // ===================================================================
+    // 1) APPLY PAGE SETTINGS (style, width, lock) ON RENDER
+    // ===================================================================
+    function applyPageSettings(){
+      const page = (typeof currentPage==='function') ? currentPage() : null;
+      const ec = $('.editor-content');
+      if (!ec) return;
+      ec.classList.remove('np-style-serif','np-style-mono','np-full');
+      if (page){
+        if (page.style==='serif') ec.classList.add('np-style-serif');
+        else if (page.style==='mono') ec.classList.add('np-style-mono');
+        if (page.fullWidth) ec.classList.add('np-full');
+      }
+      // lock
+      document.body.classList.toggle('np-locked', !!(page && page.locked));
+      // remove existing banner
+      const oldBanner = $('#np-lock-banner'); if (oldBanner) oldBanner.remove();
+      if (page && page.locked){
+        const banner = document.createElement('div');
+        banner.id = 'np-lock-banner';
+        banner.className = 'np-lock-banner';
+        banner.innerHTML = `${ic('lock',14)} <span>Page verrouillée — lecture seule</span> <button class="np-page-menu-btn" id="np-unlock-btn" title="Déverrouiller">${ic('unlock',14)}</button>`;
+        ec.parentElement && ec.parentElement.insertBefore(banner, ec);
+        $('#np-unlock-btn').onclick = () => { page.locked = false; save(); applyPageSettings(); };
+      }
+      // Toggle contenteditable for safety
+      $$('.editor-content [contenteditable="true"]').forEach(el => {
+        if (page && page.locked) el.setAttribute('contenteditable','false');
+        else el.setAttribute('contenteditable','true');
+      });
+    }
+
+    // ===================================================================
+    // 2) PAGE HEADER MENU BUTTON (style/width/lock/share)
+    // ===================================================================
+    function injectHeaderMenu(){
+      // Re-inject after each renderEditor
+      if (!$('.editor-content')) return;
+      if ($('#np-page-menu-btn')) return;
+      const meta = $('.page-meta');
+      if (!meta) return;
+      const btn = document.createElement('button');
+      btn.id = 'np-page-menu-btn';
+      btn.className = 'np-page-menu-btn';
+      btn.title = 'Options de la page';
+      btn.style.marginLeft = 'auto';
+      btn.innerHTML = ic('more-horizontal', 18);
+      meta.style.display = 'flex';
+      meta.style.alignItems = 'center';
+      meta.appendChild(btn);
+      btn.onclick = (e) => { e.stopPropagation(); openPageMenu(btn); };
+    }
+
+    function openPageMenu(anchor){
+      const old = $('.np-dropdown'); if (old) old.remove();
+      const page = currentPage(); if (!page) return;
+      const dd = document.createElement('div');
+      dd.className = 'np-dropdown';
+      dd.innerHTML = `
+        <div class="np-label">Style</div>
+        <div class="np-seg" data-seg="style">
+          <button data-v="default" class="${(!page.style||page.style==='default')?'active':''}">Aa Défaut</button>
+          <button data-v="serif" class="${page.style==='serif'?'active':''}">Aa Serif</button>
+          <button data-v="mono"  class="${page.style==='mono'?'active':''}">Aa Mono</button>
+        </div>
+        <div class="np-label">Largeur</div>
+        <div class="np-seg" data-seg="width">
+          <button data-v="fixed" class="${!page.fullWidth?'active':''}">Fixe</button>
+          <button data-v="full"  class="${page.fullWidth?'active':''}">Pleine</button>
+        </div>
+        <div class="np-sep"></div>
+        <div class="np-row" data-act="lock">${ic(page.locked?'unlock':'lock',16)} <span>${page.locked?'Déverrouiller':'Verrouiller'} la page</span></div>
+        <div class="np-row" data-act="share">${ic('share-2',16)} <span>Partager (lien public)</span></div>
+        <div class="np-sep"></div>
+        <div class="np-row" data-act="copylink">${ic('link',16)} <span>Copier lien interne</span></div>
+      `;
+      document.body.appendChild(dd);
+      const r = anchor.getBoundingClientRect();
+      dd.style.top = (r.bottom + 6) + 'px';
+      dd.style.left = Math.max(8, r.right - 240) + 'px';
+      // segment handlers
+      dd.querySelectorAll('[data-seg] button').forEach(b => {
+        b.onclick = (e) => {
+          e.stopPropagation();
+          const seg = b.parentElement.dataset.seg;
+          const v = b.dataset.v;
+          if (seg==='style') page.style = (v==='default') ? null : v;
+          else if (seg==='width') page.fullWidth = (v==='full');
+          save(); applyPageSettings();
+          dd.querySelectorAll(`[data-seg="${seg}"] button`).forEach(x => x.classList.toggle('active', x.dataset.v===v));
+        };
+      });
+      dd.querySelectorAll('[data-act]').forEach(r2 => {
+        r2.onclick = (e) => {
+          e.stopPropagation();
+          const a = r2.dataset.act;
+          if (a==='lock'){ page.locked = !page.locked; save(); applyPageSettings(); dd.remove(); }
+          else if (a==='share'){ dd.remove(); openShareModal(page); }
+          else if (a==='copylink'){
+            const url = location.origin + location.pathname + '#page=' + page.id;
+            try { navigator.clipboard.writeText(url); } catch(e){}
+            dd.remove();
+          }
+        };
+      });
+      setTimeout(() => {
+        document.addEventListener('click', function once(){ dd.remove(); document.removeEventListener('click', once); });
+      }, 0);
+      try { if (window.lucide) window.lucide.createIcons(); } catch(e){}
+    }
+
+    // ===================================================================
+    // 3) PUBLIC SHARE LINK + READ-ONLY VIEW
+    // ===================================================================
+    function openShareModal(page){
+      const url = location.origin + location.pathname + '?view=' + page.id;
+      const html = `
+        <div class="modal-head"><div class="modal-title">${ic('share-2',18)} Partager la page</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+        <div style="padding: 16px 20px">
+          <label style="display:flex;align-items:center;gap:10px;margin-bottom:14px;cursor:pointer">
+            <input type="checkbox" id="np-share-toggle" ${page.published?'checked':''}>
+            <span><b>Page publique</b><br><small style="color:var(--text-3)">Toute personne ayant le lien peut consulter (lecture seule).</small></span>
+          </label>
+          <div id="np-share-link" style="${page.published?'':'display:none'}">
+            <div style="display:flex;gap:8px">
+              <input id="np-share-url" readonly value="${esc(url)}" style="flex:1;padding:8px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px">
+              <button id="np-share-copy" class="btn" style="padding:8px 14px">Copier</button>
+            </div>
+            <p style="font-size:12px;color:var(--text-3);margin-top:10px">Note : ce lien fonctionne uniquement si la page est synchronisée dans le cloud.</p>
+          </div>
+        </div>`;
+      showModal(html, '460px');
+      const tgl = $('#np-share-toggle');
+      tgl.onchange = () => {
+        page.published = tgl.checked;
+        if (tgl.checked) page.publishedUrl = url;
+        save();
+        $('#np-share-link').style.display = tgl.checked ? '' : 'none';
+      };
+      $('#np-share-copy').onclick = () => {
+        const u = $('#np-share-url').value;
+        try { navigator.clipboard.writeText(u); $('#np-share-copy').textContent = 'Copié !'; setTimeout(()=>$('#np-share-copy').textContent='Copier', 1500); } catch(e){}
+      };
+    }
+
+    function checkReadOnlyView(){
+      const params = new URLSearchParams(location.search);
+      const viewId = params.get('view');
+      if (!viewId) return false;
+      // wait for state to populate
+      const tryRender = () => {
+        const page = state.pages.find(p => p.id === viewId);
+        if (!page) { setTimeout(tryRender, 400); return; }
+        document.body.classList.add('np-read-only');
+        if (typeof openPage==='function') openPage(viewId);
+        // also force lock-like
+        setTimeout(() => {
+          $$('.editor-content [contenteditable="true"]').forEach(el => el.setAttribute('contenteditable','false'));
+          const tt = $('#page-title'); if (tt) tt.setAttribute('readonly','true');
+        }, 300);
+      };
+      tryRender();
+      return true;
+    }
+
+    // ===================================================================
+    // 4) Cmd+P QUICK FIND (page-jump)
+    // ===================================================================
+    function openQuickFind(){
+      const html = `
+        <div class="modal-head"><div class="modal-title">${ic('search',18)} Aller à la page</div><button class="modal-close" onclick="window.U.closeModal()">×</button></div>
+        <div style="padding: 12px 14px">
+          <input id="np-qf-input" placeholder="Tapez un nom de page..." style="width:100%;padding:10px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px" autofocus>
+          <div id="np-qf-list" style="margin-top:10px;max-height:340px;overflow-y:auto"></div>
+        </div>`;
+      showModal(html, '480px');
+      const inp = $('#np-qf-input');
+      const list = $('#np-qf-list');
+      let idx = 0;
+      let items = [];
+      const render = () => {
+        const q = inp.value.trim().toLowerCase();
+        items = state.pages
+          .filter(p => !q || (p.title||'').toLowerCase().includes(q))
+          .slice(0, 30);
+        if (!items.length) { list.innerHTML = '<div style="padding:18px;color:var(--text-3);text-align:center;font-size:13px">Aucune page</div>'; return; }
+        list.innerHTML = items.map((p, i) => `
+          <div class="np-qf-item" data-i="${i}" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;${i===idx?'background:var(--accent-soft);color:var(--accent-3)':''}">
+            <span style="width:18px;text-align:center">${(window.__renderIcon?window.__renderIcon(p.icon,'page',16):ic('file-text',16))}</span>
+            <span style="flex:1">${esc(p.title||'Sans titre')}</span>
+            <span style="font-size:11px;color:var(--text-3)">${p.parentId?'Sous-page':''}</span>
+          </div>`).join('');
+        list.querySelectorAll('.np-qf-item').forEach(el => {
+          el.onclick = () => { closeModal(); openPage(items[+el.dataset.i].id); };
+          el.onmouseenter = () => { idx = +el.dataset.i; render(); };
+        });
+      };
+      render();
+      inp.oninput = () => { idx = 0; render(); };
+      inp.onkeydown = (e) => {
+        if (e.key === 'ArrowDown'){ e.preventDefault(); idx = Math.min(items.length-1, idx+1); render(); }
+        else if (e.key === 'ArrowUp'){ e.preventDefault(); idx = Math.max(0, idx-1); render(); }
+        else if (e.key === 'Enter'){ e.preventDefault(); if (items[idx]) { closeModal(); openPage(items[idx].id); } }
+      };
+    }
+
+    // ===================================================================
+    // 5) COLUMNS BLOCK (slash command + render)
+    // ===================================================================
+    function insertColumnsBlock(n){
+      const page = currentPage(); if (!page) return;
+      const cols = Math.max(2, Math.min(3, n||2));
+      const blocks = state.blocks[page.id] || (state.blocks[page.id] = []);
+      // Find current selection block to insert after
+      const sel = document.activeElement && document.activeElement.closest && document.activeElement.closest('.block');
+      const id = 'b_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+      const newBlock = { id, type: 'np-columns', cols, columns: Array.from({length: cols}, () => '') };
+      if (sel){
+        const sid = sel.dataset.id;
+        const i = blocks.findIndex(b => b.id===sid);
+        blocks.splice(i+1, 0, newBlock);
+      } else {
+        blocks.push(newBlock);
+      }
+      save();
+      if (typeof renderEditor==='function') renderEditor();
+    }
+
+    function renderColumnsBlocks(){
+      // Find any block stored as np-columns and render placeholders
+      const page = currentPage(); if (!page) return;
+      const blocks = state.blocks[page.id] || [];
+      blocks.filter(b => b.type === 'np-columns').forEach(b => {
+        // Render or rebuild the block element
+        const el = document.querySelector(`.block[data-id="${b.id}"]`);
+        if (!el) {
+          // Was rendered as unknown — try replace its plain placeholder
+          const blockList = $('#block-list');
+          if (!blockList) return;
+        }
+        const target = document.querySelector(`.block[data-id="${b.id}"]`);
+        if (!target) return;
+        // Skip if already rendered
+        if (target.querySelector('.np-columns')) return;
+        const cols = b.cols || 2;
+        const colsHtml = Array.from({length: cols}, (_, i) =>
+          `<div class="np-col" contenteditable="true" data-placeholder="Colonne ${i+1}..." data-npcol="${b.id}|${i}">${esc(b.columns?.[i] || '')}</div>`
+        ).join('');
+        target.innerHTML = `<div class="np-columns" data-cols="${cols}" data-id="${b.id}">${colsHtml}</div>`;
+        target.querySelectorAll('[data-npcol]').forEach(c => {
+          c.oninput = () => {
+            const [bid, idx] = c.dataset.npcol.split('|');
+            const blk = (state.blocks[page.id]||[]).find(x=>x.id===bid);
+            if (blk) { blk.columns = blk.columns || []; blk.columns[+idx] = c.innerHTML; save(); }
+          };
+        });
+      });
+    }
+
+    // ===================================================================
+    // 6) HIGHLIGHT INLINE (selection toolbar enhancement)
+    // ===================================================================
+    function attachHighlightToolbar(){
+      // Watch for the existing format-toolbar visibility and inject palette buttons
+      const tb = $('#format-toolbar');
+      if (!tb) return;
+      const observer = new MutationObserver(() => {
+        if (!tb.classList.contains('show') && tb.style.display==='none') return;
+        if (tb.querySelector('.np-hl-row')) return;
+        if (!tb.children.length) return;
+        const row = document.createElement('div');
+        row.className = 'np-hl-row';
+        row.style.cssText = 'display:flex;gap:4px;padding:4px 6px;border-left:1px solid var(--border);margin-left:4px';
+        const colors = [
+          ['yellow', '#facc15'],
+          ['orange', '#fb923c'],
+          ['pink', '#f472b6'],
+          ['green', '#4ade80'],
+          ['blue', '#60a5fa'],
+        ];
+        colors.forEach(([name, hex]) => {
+          const b = document.createElement('button');
+          b.title = 'Surligner ' + name;
+          b.style.cssText = `width:22px;height:22px;border-radius:4px;border:1px solid var(--border);background:${hex};cursor:pointer;opacity:.6`;
+          b.onmouseenter = () => b.style.opacity='1';
+          b.onmouseleave = () => b.style.opacity='.6';
+          b.onmousedown = (e) => e.preventDefault();
+          b.onclick = (e) => {
+            e.preventDefault(); e.stopPropagation();
+            const sel = window.getSelection();
+            if (!sel || !sel.rangeCount || sel.isCollapsed) return;
+            try {
+              const range = sel.getRangeAt(0);
+              const span = document.createElement('span');
+              span.className = 'np-hl-' + name;
+              span.appendChild(range.extractContents());
+              range.insertNode(span);
+              sel.removeAllRanges();
+              // Trigger save by dispatching input on parent block
+              const blk = span.closest('.block-content');
+              if (blk) blk.dispatchEvent(new Event('input', {bubbles:true}));
+            } catch(err) { console.warn('hl', err); }
+          };
+          row.appendChild(b);
+        });
+        tb.appendChild(row);
+      });
+      observer.observe(tb, { attributes: true, childList: true, subtree: false, attributeFilter: ['class', 'style'] });
+    }
+
+    // ===================================================================
+    // 7) DB VIEW SWITCHER for table blocks
+    // ===================================================================
+    function attachDbViewSwitcher(){
+      $$('.block[data-type="table"]').forEach(blk => {
+        if (blk.querySelector('.np-db-switch')) return;
+        const id = blk.dataset.id;
+        const page = currentPage(); if (!page) return;
+        const b = (state.blocks[page.id]||[]).find(x => x.id===id);
+        if (!b) return;
+        b.view = b.view || 'table';
+        const sw = document.createElement('div');
+        sw.className = 'np-db-switch';
+        sw.innerHTML = `
+          <button data-v="table" class="${b.view==='table'?'active':''}">${ic('table-2',13)} Tableau</button>
+          <button data-v="gallery" class="${b.view==='gallery'?'active':''}">${ic('layout-grid',13)} Galerie</button>
+          <button data-v="board" class="${b.view==='board'?'active':''}">${ic('kanban',13)} Tableau</button>
+        `;
+        const wrap = blk.querySelector('div[style*="overflow"]') || blk.firstElementChild;
+        if (wrap && wrap.parentElement) wrap.parentElement.insertBefore(sw, wrap);
+        sw.querySelectorAll('button').forEach(btn => {
+          btn.onclick = () => {
+            b.view = btn.dataset.v;
+            save();
+            renderTableView(blk, b);
+            sw.querySelectorAll('button').forEach(x => x.classList.toggle('active', x.dataset.v===b.view));
+          };
+        });
+        if (b.view !== 'table') renderTableView(blk, b);
+      });
+    }
+
+    function renderTableView(blockEl, b){
+      const wrap = blockEl.querySelector('div[style*="overflow"]') || blockEl.querySelector('table')?.parentElement;
+      if (!wrap) return;
+      const rows = b.rows || [];
+      if (b.view === 'table') {
+        // Re-render full table (simple)
+        const tbl = `<table>${rows.map((r,ri)=>`<tr>${r.map((c,ci)=>ri===0?`<th contenteditable="true" data-cell="${b.id}|${ri}|${ci}">${esc(c)}</th>`:`<td contenteditable="true" data-cell="${b.id}|${ri}|${ci}">${esc(c)}</td>`).join('')}</tr>`).join('')}</table>
+          <div class="table-actions"><button data-tbl-row="${b.id}">+ Ligne</button><button data-tbl-col="${b.id}">+ Colonne</button></div>`;
+        wrap.innerHTML = tbl;
+      } else if (b.view === 'gallery') {
+        const headers = rows[0] || [];
+        const data = rows.slice(1);
+        wrap.innerHTML = `<div class="np-gallery">${data.map(r => `
+          <div class="np-gallery-card">
+            <div class="np-gc-title">${esc(r[0]||'(sans titre)')}</div>
+            ${headers.slice(1).map((h,i)=> r[i+1] ? `<div class="np-gc-field"><b>${esc(h)}:</b> ${esc(r[i+1])}</div>`: '').join('')}
+          </div>`).join('')}</div>`;
+      } else if (b.view === 'board') {
+        const headers = rows[0] || [];
+        const data = rows.slice(1);
+        // Find a 'Status' or 'Statut' column, else use last column
+        let statusIdx = headers.findIndex(h => /status|statut|état|etat/i.test(h));
+        if (statusIdx === -1) statusIdx = headers.length - 1;
+        const groups = {};
+        data.forEach(r => {
+          const key = (r[statusIdx]||'(vide)').trim() || '(vide)';
+          (groups[key] = groups[key] || []).push(r);
+        });
+        wrap.innerHTML = `<div class="np-board">${Object.entries(groups).map(([k, arr]) => `
+          <div class="np-board-col">
+            <h4>${esc(k)} <span style="color:var(--text-3);font-weight:400">(${arr.length})</span></h4>
+            ${arr.map(r => `<div class="np-board-card">${esc(r[0]||'(sans titre)')}</div>`).join('')}
+          </div>`).join('')}</div>`;
+      }
+    }
+
+    // ===================================================================
+    // 8) @date MENTION INSERT (helper exposed)
+    // ===================================================================
+    function insertDateChip(label, dateStr){
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+      const range = sel.getRangeAt(0);
+      const chip = document.createElement('span');
+      chip.className = 'np-date-chip';
+      chip.contentEditable = 'false';
+      chip.dataset.npdate = dateStr;
+      chip.innerHTML = `${ic('calendar',12)} ${esc(label)}`;
+      range.deleteContents();
+      range.insertNode(chip);
+      // Move caret after
+      range.setStartAfter(chip); range.setEndAfter(chip);
+      sel.removeAllRanges(); sel.addRange(range);
+      const blk = chip.closest('.block-content');
+      if (blk) blk.dispatchEvent(new Event('input', {bubbles:true}));
+    }
+
+    // ===================================================================
+    // 9) KEYBOARD SHORTCUTS + SLASH-COMMAND HOOK
+    // ===================================================================
+    document.addEventListener('keydown', (e) => {
+      const isMac = navigator.platform.toLowerCase().includes('mac');
+      const meta = isMac ? e.metaKey : e.ctrlKey;
+      if (meta && (e.key === 'p' || e.key === 'P')) {
+        e.preventDefault();
+        openQuickFind();
+      }
+    }, true);
+
+    // Listen for /columns slash command via input on block-content
+    document.addEventListener('input', (e) => {
+      const t = e.target;
+      if (!t || !t.matches || !t.matches('.block-content')) return;
+      const txt = (t.textContent || '').trim();
+      const m = txt.match(/^\/columns\s*([23])?$/i);
+      if (m) {
+        const n = parseInt(m[1]||'2',10);
+        // Clear current block and insert columns
+        t.textContent = '';
+        // Trigger save
+        const blkEl = t.closest('.block');
+        if (blkEl) {
+          const id = blkEl.dataset.id;
+          const page = currentPage();
+          if (page) {
+            const b = (state.blocks[page.id]||[]).find(x => x.id===id);
+            if (b) b.content = '';
+          }
+        }
+        insertColumnsBlock(n);
+      }
+      // @aujourd'hui or @demain
+      if (/@(aujourd'hui|aujourdhui|today)\b/i.test(txt)) {
+        const d = new Date();
+        const label = d.toLocaleDateString('fr-FR', {day:'numeric', month:'long'});
+        t.innerHTML = t.innerHTML.replace(/@(aujourd'hui|aujourdhui|today)/i, '');
+        insertDateChip(label, d.toISOString().slice(0,10));
+      } else if (/@(demain|tomorrow)\b/i.test(txt)) {
+        const d = new Date(Date.now() + 86400000);
+        const label = d.toLocaleDateString('fr-FR', {day:'numeric', month:'long'});
+        t.innerHTML = t.innerHTML.replace(/@(demain|tomorrow)/i, '');
+        insertDateChip(label, d.toISOString().slice(0,10));
+      }
+    });
+
+    // ===================================================================
+    // 10) HOOK INTO renderEditor — wrap to apply settings + render extras
+    // ===================================================================
+    if (typeof renderEditor === 'function') {
+      const orig = renderEditor;
+      window.renderEditor = function npRenderEditor(){
+        const r = orig.apply(this, arguments);
+        try {
+          applyPageSettings();
+          injectHeaderMenu();
+          renderColumnsBlocks();
+          attachDbViewSwitcher();
+        } catch(e) { console.warn('np-ext post-render', e); }
+        try { if (window.lucide) window.lucide.createIcons(); } catch(e){}
+        return r;
+      };
+    }
+
+    // ===================================================================
+    // INIT
+    // ===================================================================
+    attachHighlightToolbar();
+    // Check share view AFTER state is ready
+    setTimeout(() => { try { checkReadOnlyView(); } catch(e){} }, 800);
+
+    // Expose
+    Object.assign(window.U, {
+      openQuickFind,
+      openShareModal,
+      insertColumnsBlock,
+      applyPageSettings,
+    });
+
+    console.log('[Underrated] Notion-parity extensions v1.1 loaded');
+  })();
+
   console.log('[Underrated] Workspace Suite v1.0 loaded');
 })();
 
