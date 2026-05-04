@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 04:01 — `5f8caf6`
+fix: slash menu position fixed (was hidden offscreen due to scrollY math)
+
 ## 04/05/2026 03:55 — `473e105`
 fix: + button doesn't fire global hide; remove demo button
 
