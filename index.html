@@ -5153,7 +5153,8 @@ function setupNewBlocks() {
       const el = document.getElementById('mer-'+id);
       if (!el || !window.__mermaid) return;
       try {
-        const { svg } = await window.__mermaid.render('mer-svg-'+id+'-'+Date.now(), inp.value);
+        const safeId = ('mer-svg-'+id+'-'+Date.now()).replace(/[^a-zA-Z0-9_-]/g, '_');
+        const { svg } = await window.__mermaid.render(safeId, inp.value);
         el.innerHTML = svg;
       } catch(e) { el.innerHTML = '<span style="color:var(--danger);font-size:12px">⚠️ '+escapeHtml(String(e.message||e))+'</span>'; }
     };
