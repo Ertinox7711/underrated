@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 17:32 — `4a4f43b`
+remove magnetic buttons and custom cursor (UX feedback)
+
 ## 04/05/2026 17:29 — `7430542`
 fix: remove cover parallax + cursor ring (keep just gold dot)
 
