@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 04:45 — `74a7cc3`
+fix: end-add-btn pre-fills / and positions caret so slash menu stays open while typing
+
 ## 04/05/2026 04:42 — `05e9bb8`
 feat: interactive mindmap block via mind-elixir (Whimsical-like)
 
