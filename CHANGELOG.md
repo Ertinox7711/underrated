@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 05:58 — `fc872d2`
+fix: drawio whiteboard config (dark, single page, grid, better defaults)
+
 ## 04/05/2026 05:53 — `4617896`
 feat: whiteboard block via drawio embed (formes, flèches, sticky, dessin, full-section)
 
