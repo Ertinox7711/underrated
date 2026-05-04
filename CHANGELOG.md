@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 04:14 — `9b60b28`
+fix: slash menu icons missing (lucide not hydrated after render)
+
 ## 04/05/2026 04:12 — `d261d51`
 fix: popup positioning (cover picker, slash menu, emoji picker, +button)
 

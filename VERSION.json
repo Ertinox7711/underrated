@@ -1,8 +1,8 @@
 {
-  "commit": "d261d51",
-  "message": "fix: popup positioning (cover picker, slash menu, emoji picker, +button)",
-  "commitDate": "2026-05-04T04:12:27+02:00",
-  "buildDate": "2026-05-04T02:12:34Z",
-  "buildDateFR": "04/05/2026 04:12",
+  "commit": "9b60b28",
+  "message": "fix: slash menu icons missing (lucide not hydrated after render)",
+  "commitDate": "2026-05-04T04:14:36+02:00",
+  "buildDate": "2026-05-04T02:14:43Z",
+  "buildDateFR": "04/05/2026 04:14",
   "branch": "main"
 }
