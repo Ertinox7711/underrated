@@ -163,6 +163,14 @@ code.inline{background:var(--bg-3);border:1px solid var(--border);padding:1px 5p
 .math-block{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:14px;margin:6px 0;overflow-x:auto;text-align:center}
 .math-edit{font-family:'SF Mono',Menlo,monospace;font-size:13px;background:transparent;color:var(--text-2);padding:6px 0 0;width:100%;outline:none;border:none;border-top:1px dashed var(--border);margin-top:8px}
 .mermaid-block{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:14px;margin:6px 0;text-align:center}
+.mindmap-block{background:var(--bg-3);border:1px solid var(--border);border-radius:10px;margin:8px 0;overflow:hidden;position:relative}
+.mindmap-toolbar{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--border);background:var(--bg-2)}
+.mindmap-hint{font-size:11px;color:var(--text-3)}
+.mindmap-fs{background:transparent;border:1px solid var(--border);color:var(--text-2);border-radius:6px;padding:3px 8px;cursor:pointer;font-size:13px}
+.mindmap-fs:hover{background:var(--bg-hover);color:var(--accent)}
+.mindmap-canvas{height:420px;width:100%;background:var(--bg-2);position:relative}
+.mindmap-block.fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;margin:0}
+.mindmap-block.fullscreen .mindmap-canvas{height:calc(100vh - 38px)}
 
 .synced-marker{display:inline-block;background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-right:6px}
 
@@ -1981,6 +1989,7 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
 <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-elixir@4.5.1/dist/MindElixir.js"></script>
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad:false, theme:'dark', securityLevel:'loose' });
@@ -2721,6 +2730,19 @@ function renderBlock(block) {
       <div class="block-content" style="display:none"></div>
     </div>`;
   }
+  if (block.type==='mindmap') {
+    return `<div class="block" data-id="${block.id}" data-type="mindmap">
+      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
+      <div class="mindmap-block" data-mindmap="${block.id}">
+        <div class="mindmap-toolbar">
+          <span class="mindmap-hint">Tab = enfant · Entrée = sibling · F2 = renommer · Suppr = effacer</span>
+          <button class="mindmap-fs" data-mmfs="${block.id}" title="Plein écran">⛶</button>
+        </div>
+        <div class="mindmap-canvas" id="mm-${block.id}"></div>
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
   if (block.type==='mermaid') {
     return `<div class="block" data-id="${block.id}" data-type="mermaid">
       <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
@@ -3404,13 +3426,9 @@ function changeBlockType(blockId, newType) {
   const b = getBlock(blockId);
   if (!b) return;
   if (b.content) b.content = b.content.replace(/\/\w*$/, '');
-  if (newType === 'mindmap') {
-    b.type = 'mermaid';
-    b.content = 'mindmap\n  root((Idée centrale))\n    Branche 1\n      Sous-idée A\n      Sous-idée B\n    Branche 2\n      Sous-idée C\n    Branche 3';
-  } else {
-    b.type = newType;
-    if (newType === 'divider') b.content = '';
-  }
+  b.type = newType;
+  if (newType === 'divider') b.content = '';
+  if (newType === 'mindmap') b.content = '';
   Storage.save();
   renderEditor();
   setTimeout(() => focusBlock(blockId), 10);
@@ -5049,6 +5067,31 @@ function setupNewBlocks() {
     };
     renderMath();
     inp.oninput = () => { const b = getBlock(id); if (b) { b.content = inp.value; Storage.save(); renderMath(); } };
+  });
+  document.querySelectorAll('[data-mindmap]').forEach(wrap => {
+    const id = wrap.dataset.mindmap;
+    const canvas = document.getElementById('mm-'+id);
+    if (!canvas || !window.MindElixir) return;
+    if (canvas.dataset.mounted) return;
+    canvas.dataset.mounted = '1';
+    const b = getBlock(id);
+    let data;
+    try { data = b && b.content ? JSON.parse(b.content) : null; } catch(_){ data = null; }
+    if (!data) data = { nodeData: { id:'root', topic:'Idée centrale', children:[
+      { id:'b1', topic:'Branche 1', children:[{id:'b1a',topic:'Sous-idée A'},{id:'b1b',topic:'Sous-idée B'}] },
+      { id:'b2', topic:'Branche 2', children:[{id:'b2a',topic:'Sous-idée C'}] },
+      { id:'b3', topic:'Branche 3' }
+    ] } };
+    const me = new window.MindElixir({ el:canvas, direction:window.MindElixir.SIDE, draggable:true, contextMenu:true, toolBar:true, nodeMenu:true, keypress:true, theme:{ name:'underrated', palette:['#fbbf24','#a78bfa','#34d399','#60a5fa','#f472b6','#fb923c'], cssVar:{'--main-bgcolor':'transparent','--main-color':'#fff','--bgcolor':'transparent','--root-color':'#000','--root-bgcolor':'#fbbf24','--main-radius':'8px','--topic-padding':'6px 12px','--color':'#e5e7eb','--gap':'30px','--root-radius':'10px','--topic-radius':'8px'} } });
+    me.init(data);
+    const save = () => { const b2 = getBlock(id); if (b2) { try { b2.content = JSON.stringify(me.getData()); Storage.save(); } catch(_){} } };
+    me.bus.addListener('operation', save);
+    const fsBtn = document.querySelector(`[data-mmfs="${id}"]`);
+    if (fsBtn) fsBtn.onclick = () => {
+      const block = canvas.closest('.mindmap-block');
+      block.classList.toggle('fullscreen');
+      setTimeout(()=>{ try { me.refresh(); me.toCenter(); } catch(_){} }, 100);
+    };
   });
   document.querySelectorAll('[data-merin]').forEach(inp => {
     const id = inp.dataset.merin;
