@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 04:12 — `d261d51`
+fix: popup positioning (cover picker, slash menu, emoji picker, +button)
+
 ## 04/05/2026 04:01 — `5f8caf6`
 fix: slash menu position fixed (was hidden offscreen due to scrollY math)
 

@@ -1,8 +1,8 @@
 {
-  "commit": "5f8caf6",
-  "message": "fix: slash menu position fixed (was hidden offscreen due to scrollY math)",
-  "commitDate": "2026-05-04T04:00:57+02:00",
-  "buildDate": "2026-05-04T02:01:06Z",
-  "buildDateFR": "04/05/2026 04:01",
+  "commit": "d261d51",
+  "message": "fix: popup positioning (cover picker, slash menu, emoji picker, +button)",
+  "commitDate": "2026-05-04T04:12:27+02:00",
+  "buildDate": "2026-05-04T02:12:34Z",
+  "buildDateFR": "04/05/2026 04:12",
   "branch": "main"
 }
