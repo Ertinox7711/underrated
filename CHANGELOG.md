@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 17:29 — `7430542`
+fix: remove cover parallax + cursor ring (keep just gold dot)
+
 ## 04/05/2026 17:23 — `e678f49`
 feat: immersive motion system - aurora topbar, custom cursor with lag, magnetic buttons, page transitions, parallax cover, focus glow, title shimmer
 
