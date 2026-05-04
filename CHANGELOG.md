@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 03:37 — `e35544e`
+feat(notion-parity): Cmd+P quick find, page menu (style/width/lock), share, columns, highlight, db view switcher, @date mention
+
 ## 04/05/2026 02:18 — `e374563`
 data: re-import with rich markdown conversion (callouts, bold, links, tables)
 
