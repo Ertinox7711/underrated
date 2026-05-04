@@ -3278,8 +3278,8 @@ function onBlockInput(block, content, e) {
       return;
     }
   }
-  // slash menu
-  if (txt.endsWith('/')) showSlashMenu(content);
+  // slash menu — show on `/` and keep open while typing query (`/foo`)
+  if (/\/\w*$/.test(txt)) showSlashMenu(content);
   else hideSlashMenu();
   // mention menu
   if (/@\w*$/.test(txt)) showMentionMenu(content);
