@@ -2622,7 +2622,8 @@ function renderEditor() {
 function setupEndAddBtn() {
   const btn = document.getElementById('end-add-btn');
   if (!btn) return;
-  btn.onclick = () => {
+  btn.onclick = (e) => {
+    e.stopPropagation();
     const blocks = state.blocks[state.currentPageId];
     const newBlock = { id:nbid(), type:'p', content:'/', _ephemeral:true };
     blocks.push(newBlock);
@@ -2851,7 +2852,7 @@ function renderBlock(block) {
       <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
       <div class="mindmap-block" data-mindmap="${block.id}">
         <div class="mindmap-toolbar">
-          <span class="mindmap-hint">Tab = enfant · Entrée = sibling · F2 = renommer · Suppr = effacer</span>
+          <span class="mindmap-hint">Tab=enfant · Entrée=sibling · F2=renommer · Suppr=effacer · Clic-droit=menu (couleur, lien, icône)</span>
           <button class="mindmap-fs" data-mmfs="${block.id}" title="Plein écran">⛶</button>
         </div>
         <div class="mindmap-canvas" id="mm-${block.id}"></div>
@@ -5210,8 +5211,12 @@ function setupNewBlocks() {
       let msg; try { msg = JSON.parse(ev.data); } catch(_) { return; }
       const b = getBlock(id); if (!b) return;
       if (msg.event === 'init') {
-        const xml = b.content || '<mxfile><diagram name="Page-1"><mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel></diagram></mxfile>';
+        const xml = b.content || '<mxfile><diagram name="Canvas"><mxGraphModel dx="2400" dy="1800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="2400" pageHeight="1800" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel></diagram></mxfile>';
         iframe.contentWindow.postMessage(JSON.stringify({ action:'load', autosave:1, xml }), DRAWIO_ORIGIN);
+        // Switch to fit-canvas mode after load
+        setTimeout(() => {
+          try { iframe.contentWindow.postMessage(JSON.stringify({ action:'prompt', text:'' }), DRAWIO_ORIGIN); } catch(_){}
+        }, 500);
       } else if (msg.event === 'save' || msg.event === 'autosave') {
         b.content = msg.xml || '';
         try { Storage.save(); } catch(e){ console.error('whiteboard save', e); }
