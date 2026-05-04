@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 02:14 — `61050af`
+feat: rich Notion-style templates + harden page mode picker
+
 ## 04/05/2026 02:02 — `dc9b671`
 fix: demo bypasses showApp (was overwriting seed via Storage.load + cloudLoad)
 
