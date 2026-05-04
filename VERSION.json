@@ -1,8 +1,8 @@
 {
-  "commit": "d39bcc6",
-  "message": "fix: mermaid render id sanitize (Math.random dots broke querySelector)",
-  "commitDate": "2026-05-04T05:45:52+02:00",
-  "buildDate": "2026-05-04T03:46:01Z",
-  "buildDateFR": "04/05/2026 05:46",
+  "commit": "4617896",
+  "message": "feat: whiteboard block via drawio embed (formes, flèches, sticky, dessin, full-section)",
+  "commitDate": "2026-05-04T05:53:37+02:00",
+  "buildDate": "2026-05-04T03:53:49Z",
+  "buildDateFR": "04/05/2026 05:53",
   "branch": "main"
 }

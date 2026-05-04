@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 05:53 — `4617896`
+feat: whiteboard block via drawio embed (formes, flèches, sticky, dessin, full-section)
+
 ## 04/05/2026 05:46 — `d39bcc6`
 fix: mermaid render id sanitize (Math.random dots broke querySelector)
 
