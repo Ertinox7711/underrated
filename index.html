@@ -166,8 +166,14 @@ code.inline{background:var(--bg-3);border:1px solid var(--border);padding:1px 5p
 .block[data-type="mindmap"]{margin:24px -50vw;padding:0 50vw;max-width:none}
 .block[data-type="mindmap"] > .block-handle{display:none}
 .mindmap-block{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;position:relative;width:min(1400px, calc(100vw - 320px));margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.25)}
-.mindmap-toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg-3)}
+.mindmap-toolbar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);background:var(--bg-3);gap:8px;flex-wrap:wrap}
 .mindmap-hint{font-size:12px;color:var(--text-3);font-weight:500}
+.mm-actions{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.mm-btn{padding:5px 10px;background:var(--bg-2);border:1px solid var(--border);border-radius:6px;color:var(--text-2);font-size:12px;font-weight:500;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:4px}
+.mm-btn:hover{background:var(--bg-hover);color:var(--text);border-color:var(--accent)}
+.mm-btn.mm-color{width:22px;height:22px;padding:0;border:2px solid transparent;border-radius:50%}
+.mm-btn.mm-color:hover{transform:scale(1.15);border-color:#fff}
+.mm-sep{width:1px;height:18px;background:var(--border);margin:0 4px}
 .mindmap-fs{background:transparent;border:1px solid var(--border);color:var(--text-2);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:14px}
 .mindmap-fs:hover{background:var(--bg-hover);color:var(--accent)}
 .mindmap-canvas{height:680px;width:100%;background:#fafafa;position:relative}
@@ -2852,7 +2858,26 @@ function renderBlock(block) {
       <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
       <div class="mindmap-block" data-mindmap="${block.id}">
         <div class="mindmap-toolbar">
-          <span class="mindmap-hint">Tab=enfant · Entrée=sibling · F2=renommer · Suppr=effacer · Clic-droit=menu (couleur, lien, icône)</span>
+          <div class="mm-actions">
+            <button class="mm-btn" data-mma="addChild" data-mmid="${block.id}" title="Ajouter un enfant (Tab)">➕ Enfant</button>
+            <button class="mm-btn" data-mma="addSibling" data-mmid="${block.id}" title="Ajouter un sibling (Entrée)">↔ Sibling</button>
+            <button class="mm-btn" data-mma="rename" data-mmid="${block.id}" title="Renommer (F2)">✎ Renommer</button>
+            <button class="mm-btn" data-mma="delete" data-mmid="${block.id}" title="Supprimer (Suppr)">🗑 Suppr</button>
+            <span class="mm-sep"></span>
+            <button class="mm-btn mm-color" data-mmc="#ec4899" data-mmid="${block.id}" title="Rose" style="background:#ec4899"></button>
+            <button class="mm-btn mm-color" data-mmc="#f97316" data-mmid="${block.id}" title="Orange" style="background:#f97316"></button>
+            <button class="mm-btn mm-color" data-mmc="#eab308" data-mmid="${block.id}" title="Jaune" style="background:#eab308"></button>
+            <button class="mm-btn mm-color" data-mmc="#22c55e" data-mmid="${block.id}" title="Vert" style="background:#22c55e"></button>
+            <button class="mm-btn mm-color" data-mmc="#06b6d4" data-mmid="${block.id}" title="Cyan" style="background:#06b6d4"></button>
+            <button class="mm-btn mm-color" data-mmc="#3b82f6" data-mmid="${block.id}" title="Bleu" style="background:#3b82f6"></button>
+            <button class="mm-btn mm-color" data-mmc="#8b5cf6" data-mmid="${block.id}" title="Violet" style="background:#8b5cf6"></button>
+            <span class="mm-sep"></span>
+            <button class="mm-btn" data-mma="link" data-mmid="${block.id}" title="Ajouter un lien">🔗 Lien</button>
+            <button class="mm-btn" data-mma="image" data-mmid="${block.id}" title="Ajouter une image">🖼 Image</button>
+            <button class="mm-btn" data-mma="note" data-mmid="${block.id}" title="Note">📝 Note</button>
+            <span class="mm-sep"></span>
+            <button class="mm-btn" data-mma="center" data-mmid="${block.id}" title="Recentrer">⊕ Centrer</button>
+          </div>
           <button class="mindmap-fs" data-mmfs="${block.id}" title="Plein écran">⛶</button>
         </div>
         <div class="mindmap-canvas" id="mm-${block.id}"></div>
@@ -5247,6 +5272,8 @@ function setupNewBlocks() {
     me.init(data);
     requestAnimationFrame(() => { try { me.toCenter(); } catch(_){} });
     setTimeout(() => { try { me.toCenter(); } catch(_){} }, 250);
+    window.__meInstances = window.__meInstances || {};
+    window.__meInstances[id] = me;
     const save = () => { const b2 = getBlock(id); if (b2) { try { b2.content = JSON.stringify(me.getData()); Storage.save(); } catch(e){ console.error('mindmap save', e); } } };
     me.bus.addListener('operation', save);
     const fsBtn = document.querySelector(`[data-mmfs="${id}"]`);
@@ -5255,6 +5282,42 @@ function setupNewBlocks() {
       block.classList.toggle('fullscreen');
       setTimeout(()=>{ try { me.refresh(); me.toCenter(); } catch(_){} }, 100);
     };
+    // Wire visible toolbar action buttons
+    const wrapper = canvas.closest('.mindmap-block');
+    wrapper.querySelectorAll('[data-mma]').forEach(btn => btn.onclick = () => {
+      const action = btn.dataset.mma;
+      const node = me.currentNode;
+      if (!node && action !== 'center') { try { toast('Sélectionne un nœud d\'abord','error'); } catch(_){}; return; }
+      try {
+        if (action === 'addChild') me.addChild();
+        else if (action === 'addSibling') me.insertSibling('after');
+        else if (action === 'rename') me.editTopic(node);
+        else if (action === 'delete') me.removeNode();
+        else if (action === 'center') me.toCenter();
+        else if (action === 'link') {
+          const u = prompt('URL du lien :', node?.hyperLink||'');
+          if (u !== null) { node.hyperLink = u; me.refresh(); save(); }
+        } else if (action === 'image') {
+          const u = prompt('URL de l\'image :', node?.image?.url||'');
+          if (u) { node.image = { url:u, width:120, height:80 }; me.refresh(); save(); }
+        } else if (action === 'note') {
+          const t = prompt('Note :', node?.note||'');
+          if (t !== null) { node.note = t; me.refresh(); save(); }
+        }
+      } catch(e){ console.error('mm action', e); }
+    });
+    wrapper.querySelectorAll('[data-mmc]').forEach(btn => btn.onclick = () => {
+      const node = me.currentNode;
+      if (!node) { try { toast('Sélectionne un nœud d\'abord','error'); } catch(_){}; return; }
+      try {
+        const color = btn.dataset.mmc;
+        node.style = node.style || {};
+        node.style.background = color;
+        node.style.color = '#fff';
+        me.refresh();
+        save();
+      } catch(e){ console.error('mm color', e); }
+    });
   });
   document.querySelectorAll('[data-merin]').forEach(inp => {
     const id = inp.dataset.merin;
@@ -8034,11 +8097,14 @@ window.renderPages = renderPages;
   // ====== HOOK INTO renderEditor TO INJECT NEW BLOCK TYPES ======
   if (typeof window.renderEditor === 'function' || typeof renderEditor === 'function'){
     const _orig = window.renderEditor || renderEditor;
-    window.renderEditor = function(){
+    const wrapped = function(){
       _orig();
       try { postProcessSuiteBlocks(); } catch(e){ console.error('suite blocks',e); }
       try { applyPageMode(); } catch(e){ console.error('page mode',e); }
     };
+    window.renderEditor = wrapped;
+    // Also rebind the outer lexical `renderEditor` so internal callers go through the wrapper
+    try { renderEditor = wrapped; } catch(_){}
   }
   function postProcessSuiteBlocks(){
     const page = _curPage(); if (!page) return;
