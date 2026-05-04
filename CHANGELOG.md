@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 16:50 — `1e0416b`
+feat: cover picker modal+backdrop, Google Docs-style toolbar (undo/redo, paint, zoom, +/- size, comment, image, table, checklist, indent, line spacing)
+
 ## 04/05/2026 16:42 — `9e3c4bd`
 fix: emoji picker categories stay open + save button + Ctrl+S shortcut
 
