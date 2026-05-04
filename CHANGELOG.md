@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 04:49 — `5601213`
+fix: use mind-elixir IIFE bundle so window.MindElixir is exposed
+
 ## 04/05/2026 04:45 — `74a7cc3`
 fix: end-add-btn pre-fills / and positions caret so slash menu stays open while typing
 
