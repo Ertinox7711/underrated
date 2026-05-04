@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 05:46 — `d39bcc6`
+fix: mermaid render id sanitize (Math.random dots broke querySelector)
+
 ## 04/05/2026 05:42 — `e6ced78`
 fix: end-add-btn ephemeral cleanup (auto-remove abandoned / blocks)
 
