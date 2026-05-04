@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 06:26 — `3d0a0b0`
+feat: mindmap visible toolbar (boutons cliquables) + fix calendar/sheet/form render hook
+
 ## 04/05/2026 06:20 — `f2e862e`
 fix: end-add-btn stopPropagation + drawio infinite canvas + mindmap hints
 
