@@ -2053,6 +2053,14 @@ window.__renderIcon = function(stored, type, sz){
   sz = sz || 16;
   type = type || 'page';
   if (!stored) return window.__svg(type, sz);
+  if (typeof stored === 'string' && stored.startsWith('lucide:')) {
+    return `<i data-lucide="${stored.slice(7)}" style="width:${sz}px;height:${sz}px"></i>`;
+  }
+  // Legacy: extract lucide name from stored <i data-lucide="X"...> HTML
+  if (typeof stored === 'string' && stored.includes('data-lucide=')) {
+    const m = stored.match(/data-lucide="([^"]+)"/);
+    if (m) return `<i data-lucide="${m[1]}" style="width:${sz}px;height:${sz}px"></i>`;
+  }
   if (typeof stored === 'string' && stored.startsWith('<svg')) return stored;
   if (window.__isEmoji(stored)) return window.__svg(type, sz);
   return stored;
@@ -3312,8 +3320,7 @@ function openIconPicker(onPick){
     try { if (window.lucide) window.lucide.createIcons(); } catch(_){}
     modal.querySelectorAll('.icon-picker-item').forEach(b => b.onclick = () => {
       const name = b.dataset.iname;
-      const html = `<i data-lucide="${name}" style="width:60px;height:60px"></i>`;
-      onPick(html, name);
+      onPick('lucide:'+name, name);
       modal.classList.remove('show');
       bd.classList.remove('show');
     });
@@ -3338,13 +3345,13 @@ function setupIconPicker() {
   icon.querySelectorAll('svg, i, *').forEach(el => { el.style.pointerEvents = 'none'; });
   const open = (e) => {
     if (e) { e.stopPropagation(); e.preventDefault(); }
-    openIconPicker((html, name) => {
+    openIconPicker((stored, name) => {
       const p = currentPage();
       if (!p) return;
-      p.icon = html;
+      p.icon = stored;
       try { Storage.save(); } catch(_){}
       try { renderPages(); } catch(_){}
-      icon.innerHTML = html;
+      icon.innerHTML = window.__renderIcon(stored, 'page', 60);
       icon.querySelectorAll('svg, i, *').forEach(el => { el.style.pointerEvents = 'none'; });
       try { if (window.lucide) window.lucide.createIcons(); } catch(_){}
       toast('Icône changée');
