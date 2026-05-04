@@ -1039,16 +1039,7 @@ mark.hl-yellow,mark.hl-green,mark.hl-blue{background:var(--accent-soft) !importa
   filter:drop-shadow(0 0 10px rgba(232,200,137,.6));
   will-change:transform;
 }
-.lux-cursor-ring{
-  position:fixed;top:0;left:0;width:36px;height:36px;border-radius:50%;
-  border:1px solid rgba(212,175,106,.45);
-  pointer-events:none;z-index:99997;
-  transform:translate(-50%,-50%);
-  transition:width .3s cubic-bezier(.16,1,.3,1),height .3s cubic-bezier(.16,1,.3,1),border-color .25s,opacity .25s;
-  will-change:transform;
-}
-.lux-cursor-ring.hover{width:54px;height:54px;border-color:rgba(232,200,137,.85);box-shadow:0 0 24px rgba(212,175,106,.4)}
-@media(hover:none),(max-width:768px){.lux-cursor,.lux-cursor-ring{display:none}}
+@media(hover:none),(max-width:768px){.lux-cursor{display:none}}
 
 /* === MAGNETIC HOVER (buttons feel alive) === */
 .btn,.icon-btn,.cover-btn,.page-tb-btn,.tpl-tab,.btn-block{
@@ -1838,7 +1829,6 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
 </head>
 <body>
 <div class="lux-topbar" aria-hidden="true"></div>
-<div class="lux-cursor-ring" id="lux-cursor-ring" aria-hidden="true"></div>
 <div class="lux-cursor" id="lux-cursor" aria-hidden="true"></div>
 
 <!-- LOGIN -->
@@ -5541,37 +5531,22 @@ document.addEventListener('touchend', e => {
 (() => {
   if (matchMedia('(hover:none)').matches || window.innerWidth < 768) return;
   const dot = document.getElementById('lux-cursor');
-  const ring = document.getElementById('lux-cursor-ring');
-  if (!dot || !ring) return;
+  if (!dot) return;
   let mx = window.innerWidth/2, my = window.innerHeight/2;
-  let dx = mx, dy = my, rx = mx, ry = my;
+  let dx = mx, dy = my;
   let visible = false;
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
-    if (!visible) { visible = true; dot.style.opacity = '1'; ring.style.opacity = '1'; }
+    if (!visible) { visible = true; dot.style.opacity = '1'; }
   });
-  document.addEventListener('mouseleave', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; visible = false; });
+  document.addEventListener('mouseleave', () => { dot.style.opacity = '0'; visible = false; });
   const tick = () => {
     dx += (mx - dx) * 0.55;
     dy += (my - dy) * 0.55;
-    rx += (mx - rx) * 0.18;
-    ry += (my - ry) * 0.18;
     dot.style.transform = `translate(${dx}px,${dy}px) translate(-50%,-50%)`;
-    ring.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%)`;
     requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
-  // Hover hot zones
-  document.addEventListener('mouseover', e => {
-    if (e.target.closest('button,a,.page-item,.block,input,textarea,[data-cv],[data-cg],.icon-picker-item,.cover-swatch,[data-uns-cat],.tpl-tab')) {
-      ring.classList.add('hover');
-    }
-  });
-  document.addEventListener('mouseout', e => {
-    if (e.target.closest && e.target.closest('button,a,.page-item,.block,input,textarea,[data-cv],[data-cg],.icon-picker-item,.cover-swatch,[data-uns-cat],.tpl-tab')) {
-      ring.classList.remove('hover');
-    }
-  });
 })();
 
 // Magnetic buttons (subtle pull toward cursor)
@@ -5610,19 +5585,6 @@ document.addEventListener('touchend', e => {
   obs.observe(editor, { childList: true });
 })();
 
-// Cover parallax on mouse move
-(() => {
-  if (matchMedia('(hover:none)').matches || window.innerWidth < 768) return;
-  document.addEventListener('mousemove', e => {
-    const cover = document.getElementById('editor-cover');
-    if (!cover) return;
-    const r = cover.getBoundingClientRect();
-    if (e.clientY > r.bottom + 200) return;
-    const px = (e.clientX / window.innerWidth - .5) * 8;
-    const py = (e.clientY / window.innerHeight - .5) * 4;
-    cover.style.backgroundPosition = `calc(50% + ${px}px) calc(50% + ${py}px)`;
-  });
-})();
 
 // ============ NEW: KaTeX / Mermaid / TOC / Buttons / File / Audio / Synced setup ============
 function setupNewBlocks() {
