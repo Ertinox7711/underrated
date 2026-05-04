@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 04:42 — `05e9bb8`
+feat: interactive mindmap block via mind-elixir (Whimsical-like)
+
 ## 04/05/2026 04:22 — `38128a4`
 feat: end-of-page + button + mindmap block (Whimsical-style mermaid mindmap)
 
