@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Underrated</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af6a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M13 2L3 14h9l-1 8 10-12h-9l1-8z' fill='%23d4af6a' fill-opacity='.25'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -720,7 +720,12 @@ mark.hl-yellow,mark.hl-green,mark.hl-blue{background:var(--accent-soft) !importa
   white-space:pre;tab-size:2;
 }
 .block[data-type="image"] .block-content{display:none}
-.block[data-type="image"] .image-wrap{flex:1;border-radius:var(--r);overflow:hidden;background:var(--bg-3);position:relative}
+.block[data-type="image"] .image-wrap{border-radius:var(--r);background:transparent;position:relative;display:inline-block}
+.block[data-type="image"] .image-wrap img{display:block;border-radius:var(--r);max-width:100%}
+.img-resize-handle{position:absolute;right:-3px;bottom:-3px;width:14px;height:14px;background:var(--accent);border:2px solid var(--bg);border-radius:3px;cursor:nwse-resize;opacity:0;transition:opacity .15s;z-index:5}
+.block[data-type="image"]:hover .img-resize-handle{opacity:1}
+.img-resize-handle:hover{transform:scale(1.2)}
+.image-wrap.resizing{outline:2px dashed var(--accent);outline-offset:4px;user-select:none}
 .block[data-type="image"] .image-wrap img{display:block;max-width:100%;height:auto}
 .block[data-type="image"] .image-empty{
   padding:30px;text-align:center;color:var(--text-3);
@@ -3046,9 +3051,13 @@ function renderBlock(block) {
   }
   if (block.type==='image') {
     if (block.url) {
+      const w = block.width ? `width:${block.width}px;` : 'width:100%;max-width:720px;';
       return `<div class="block" data-id="${block.id}" data-type="image">
         <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
-        <div class="image-wrap"><img src="${escapeHtml(block.url)}" alt=""></div>
+        <div class="image-wrap" data-imgwrap="${block.id}" style="${w}position:relative;display:inline-block;max-width:100%">
+          <img src="${escapeHtml(block.url)}" alt="" style="width:100%;height:auto;display:block;border-radius:8px">
+          <div class="img-resize-handle" data-imgresize="${block.id}" title="Redimensionner"></div>
+        </div>
         <div class="block-content" contenteditable="true" data-placeholder=""></div>
       </div>`;
     }
@@ -3672,6 +3681,33 @@ function setupBlocks() {
       const b = getBlock(block.dataset.id);
       if (b) { b.url = url; Storage.save(); renderEditor(); }
     };
+    // image resize
+    const imgResize = block.querySelector('[data-imgresize]');
+    if (imgResize) {
+      imgResize.onmousedown = (e) => {
+        e.preventDefault(); e.stopPropagation();
+        const wrap = block.querySelector('[data-imgwrap]');
+        const id = imgResize.dataset.imgresize;
+        if (!wrap) return;
+        wrap.classList.add('resizing');
+        const startX = e.clientX;
+        const startW = wrap.offsetWidth;
+        const onMove = (ev) => {
+          const w = Math.max(80, Math.min(window.innerWidth - 100, startW + (ev.clientX - startX)));
+          wrap.style.width = w + 'px';
+          wrap.style.maxWidth = '100%';
+        };
+        const onUp = () => {
+          wrap.classList.remove('resizing');
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+          const b = getBlock(id);
+          if (b) { b.width = wrap.offsetWidth; Storage.save(); }
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      };
+    }
     const ytAdd = block.querySelector('[data-ytadd]');
     if (ytAdd) ytAdd.onclick = () => {
       const url = prompt('URL YouTube:');
@@ -5480,11 +5516,18 @@ if (qiDrive) qiDrive.onclick = () => { if (window.U.openDrive) window.U.openDriv
     [...e.dataTransfer.files].forEach(f => {
       if (f.size > 5*1024*1024) return toast('Trop gros: '+f.name, 'error');
       const r = new FileReader();
+      const isImage = (f.type || '').startsWith('image/');
       r.onload = () => {
         const pid = state.currentPageId;
+        const newId = 'b_'+Date.now()+Math.random().toString(36).slice(2,5);
         if (pid && pid !== '__drive__' && state.blocks[pid]) {
-          state.blocks[pid].push({ id:'b_'+Date.now()+Math.random().toString(36).slice(2,5), type:'file', fileName:f.name, fileSize:f.size, fileData:r.result });
-          Storage.save(); renderEditor(); toast('Fichier ajouté');
+          if (isImage) {
+            state.blocks[pid].push({ id:newId, type:'image', url:r.result, content:'' });
+            Storage.save(); renderEditor(); toast('Image ajoutée');
+          } else {
+            state.blocks[pid].push({ id:newId, type:'file', fileName:f.name, fileSize:f.size, fileData:r.result });
+            Storage.save(); renderEditor(); toast('Fichier ajouté');
+          }
         } else {
           let drivePage = state.pages.find(p => p.title==='📂 Mes fichiers');
           if (!drivePage) { const id = createPage('📂 Mes fichiers','📂',null); drivePage = state.pages.find(p=>p.id===id); }
@@ -5549,20 +5592,25 @@ document.addEventListener('touchend', e => {
   lastTap = now;
 }, { passive: false });
 
-// Page switch transition
+// Page switch transition - only fires on actual page navigation (not on every re-render)
 (() => {
   const editor = document.getElementById('editor');
   if (!editor) return;
-  const _origRender = window.renderEditor;
-  if (typeof _origRender !== 'function') return;
-  const fired = new Set();
-  const obs = new MutationObserver(() => {
+  let lastPageId = null;
+  const triggerSwitch = () => {
     editor.classList.remove('page-switch');
     void editor.offsetWidth;
     editor.classList.add('page-switch');
-  });
-  // Watch editor's first child for changes (renderEditor replaces innerHTML)
-  obs.observe(editor, { childList: true });
+    setTimeout(() => editor.classList.remove('page-switch'), 600);
+  };
+  const check = () => {
+    const cur = window.state && window.state.currentPageId;
+    if (cur && cur !== lastPageId) {
+      if (lastPageId !== null) triggerSwitch();
+      lastPageId = cur;
+    }
+  };
+  setInterval(check, 200);
 })();
 
 
