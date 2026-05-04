@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 17:54 — `1ac0733`
+feat: Database block (Notion+Monday) - 5 views (Table/Board/Gallery/Calendar/List), 14 column types (status/select/multi/date/person/checkbox/url/email/phone/rating...), filter/sort/group/hide, popovers, detail modal, CSV export
+
 ## 04/05/2026 17:40 — `4a29083`
 fix: page-switch only on real navigation (no blur on typing), drop image as image block, resizable images, SVG favicon (lightning bolt)
 
