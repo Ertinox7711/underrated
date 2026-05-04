@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 16:42 — `9e3c4bd`
+fix: emoji picker categories stay open + save button + Ctrl+S shortcut
+
 ## 04/05/2026 16:40 — `311fef0`
 feat: remove whiteboard/mindmap, add persistent Word-style toolbar on every page
 
