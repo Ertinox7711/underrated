@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 18:14 — `487b68a`
+fix: image block resize - fix draggable conflict, add touch support, handle always visible
+
 ## 04/05/2026 18:11 — `ee76b64`
 feat: Monday-style task board - sidebar button, groups, statuts En cours/Fait/Bloqué, échéances, drag-to-check, add/delete tasks & groups
 
