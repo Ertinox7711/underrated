@@ -1,8 +1,8 @@
 {
-  "commit": "8fca177",
-  "message": "fix: icon picker reliable + cover clickable + block + button + demo auto-import",
-  "commitDate": "2026-05-04T03:46:35+02:00",
-  "buildDate": "2026-05-04T01:46:43Z",
-  "buildDateFR": "04/05/2026 03:46",
+  "commit": "473e105",
+  "message": "fix: + button doesn't fire global hide; remove demo button",
+  "commitDate": "2026-05-04T03:54:54+02:00",
+  "buildDate": "2026-05-04T01:55:03Z",
+  "buildDateFR": "04/05/2026 03:55",
   "branch": "main"
 }

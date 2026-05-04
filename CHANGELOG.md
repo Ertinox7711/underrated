@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 03:55 — `473e105`
+fix: + button doesn't fire global hide; remove demo button
+
 ## 04/05/2026 03:46 — `8fca177`
 fix: icon picker reliable + cover clickable + block + button + demo auto-import
 
