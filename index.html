@@ -5152,7 +5152,7 @@ function setupNewBlocks() {
     const id = iframe.dataset.wbframe;
     if (iframe.dataset.mounted) return;
     iframe.dataset.mounted = '1';
-    iframe.src = 'https://embed.diagrams.net/?embed=1&proto=json&spin=1&saveAndExit=0&noSaveBtn=0&noExitBtn=1&dark=auto&libraries=1';
+    iframe.src = 'https://embed.diagrams.net/?embed=1&proto=json&spin=1&saveAndExit=0&noSaveBtn=0&noExitBtn=1&dark=1&libraries=1&pages=0&toolbar=1&edit=_blank&grid=1';
     const onMsg = (ev) => {
       if (ev.source !== iframe.contentWindow) return;
       let msg; try { msg = JSON.parse(ev.data); } catch(_) { return; }
