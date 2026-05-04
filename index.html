@@ -500,9 +500,18 @@ body.focus-mode .editor-content{max-width:820px}
 }
 .editor-cover .cover-actions{
   position:absolute;bottom:10px;right:14px;
-  display:none;gap:6px;
+  display:flex;gap:6px;opacity:.55;transition:opacity var(--transition);
 }
-.editor-cover:hover .cover-actions{display:flex}
+.editor-cover:hover .cover-actions{display:flex;opacity:1}
+.block-add-btn{
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  border-radius:4px;color:var(--text-3);cursor:pointer;
+  opacity:0;transition:opacity var(--transition),background var(--transition),color var(--transition);
+  flex-shrink:0;margin-top:4px;
+}
+.block:hover .block-add-btn,.block:focus-within .block-add-btn{opacity:1}
+.block-add-btn:hover{background:var(--bg-hover);color:var(--accent)}
+.block-add-btn svg{width:14px;height:14px}
 .cover-btn{
   background:rgba(0,0,0,.5);backdrop-filter:blur(8px);
   color:#fff;font-size:12px;padding:6px 10px;
@@ -2504,10 +2513,48 @@ function renderEditor() {
   setupBlocks();
   setupIconPicker();
   setupCover();
+  injectBlockAddButtons();
   updateWordCount();
   renderBacklinks();
   if (window.Prism) Prism.highlightAll();
 }
+
+// Notion-style "+" hover button left of each block — opens slash menu
+function injectBlockAddButtons() {
+  const list = document.getElementById('block-list');
+  if (!list) return;
+  const plusSvg = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>';
+  list.querySelectorAll('.block').forEach(blockEl => {
+    if (blockEl.querySelector(':scope > .block-add-btn')) return;
+    const handle = blockEl.querySelector(':scope > .block-handle');
+    const btn = document.createElement('div');
+    btn.className = 'block-add-btn';
+    btn.title = 'Cliquer pour ajouter un bloc';
+    btn.innerHTML = plusSvg;
+    btn.addEventListener('mousedown', (e) => e.preventDefault());
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const content = blockEl.querySelector('.block-content');
+      if (!content) return;
+      content.focus();
+      // Insert a "/" trigger so the slash menu picks up
+      try {
+        const sel = window.getSelection();
+        // Place caret at end
+        const range = document.createRange();
+        range.selectNodeContents(content);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } catch(_){}
+      const fn = (typeof showSlashMenu === 'function') ? showSlashMenu : window.showSlashMenu;
+      if (typeof fn === 'function') fn(content);
+    });
+    if (handle && handle.nextSibling) blockEl.insertBefore(btn, handle.nextSibling);
+    else blockEl.insertBefore(btn, blockEl.firstChild);
+  });
+}
+window.injectBlockAddButtons = injectBlockAddButtons;
 
 function renderBreadcrumb(page) {
   const chain = [];
@@ -2814,27 +2861,49 @@ function setupTitleAutoresize() {
 function setupIconPicker() {
   const icon = document.getElementById('page-icon-big');
   if (!icon) return;
-  icon.onclick = (e) => {
+  // Ensure inner SVG/path doesn't swallow clicks: bind on icon, use closest for safety
+  icon.style.cursor = 'pointer';
+  icon.addEventListener('click', (e) => {
     e.stopPropagation();
-    showEmojiPicker(icon, (emoji) => {
+    e.preventDefault();
+    const target = (e.target && e.target.closest && e.target.closest('#page-icon-big')) || icon;
+    const fn = (typeof showEmojiPicker === 'function') ? showEmojiPicker : window.showEmojiPicker;
+    if (typeof fn !== 'function') { console.error('[icon] showEmojiPicker missing'); return; }
+    fn(target, (emoji) => {
       const p = currentPage();
-      if (p) { p.icon = emoji; Storage.save(); renderPages(); icon.textContent = emoji; }
+      if (!p) return;
+      p.icon = emoji;
+      try { Storage.save(); } catch(_){}
+      try { renderPages(); } catch(_){}
+      // Re-render the icon area properly via __renderIcon
+      try {
+        if (window.__renderIcon) target.innerHTML = window.__renderIcon(emoji, 'page', 60);
+        else target.textContent = emoji;
+      } catch(_){ target.textContent = emoji; }
     });
-  };
+  });
 }
 
 function setupCover() {
   const cover = document.getElementById('editor-cover');
   if (!cover) return;
-  document.getElementById('cover-pick').onclick = (e) => { e.stopPropagation(); showCoverPicker(cover); };
-  document.getElementById('cover-rand').onclick = (e) => {
+  // Direct click on the cover banner opens the picker (fix: actions used to require hover)
+  cover.onclick = (e) => {
+    if (e.target.closest('.cover-btn')) return; // let buttons handle their own clicks
+    e.stopPropagation();
+    showCoverPicker(cover);
+  };
+  const pick = document.getElementById('cover-pick');
+  if (pick) pick.onclick = (e) => { e.stopPropagation(); showCoverPicker(cover); };
+  const rand = document.getElementById('cover-rand');
+  if (rand) rand.onclick = (e) => {
     e.stopPropagation();
     const p = currentPage();
     if (!p) return;
     const r = COVER_GRADIENTS[Math.floor(Math.random()*COVER_GRADIENTS.length)];
     p.cover = r;
     cover.style.background = r;
-    Storage.save();
+    try { Storage.save(); } catch(_){}
   };
 }
 
@@ -4815,6 +4884,22 @@ if (demoBtn) demoBtn.onclick = () => {
   if (typeof renderPages === 'function') renderPages();
   if (typeof openPage === 'function') openPage(p1);
   if (typeof refreshIcons === 'function') refreshIcons();
+  // Auto-import research workspace bundle so the user sees real research data
+  (async () => {
+    try {
+      const r = await fetch('import-script.js?t=' + Date.now());
+      if (!r.ok) throw new Error('fetch failed');
+      let t = await r.text();
+      // Neutralize the alert popup at the end of the bundle
+      t = t.replace(/alert\s*\(/g, '(function(){})(');
+      const fn = new Function(t);
+      fn();
+      if (typeof toast === 'function') toast('Démo + recherche importée', 'success');
+      if (typeof renderPages === 'function') renderPages();
+    } catch(e) {
+      console.error('[demo] auto-import failed', e);
+    }
+  })();
 };
 document.getElementById('logout-btn').onclick = logout;
 document.getElementById('add-page-btn').onclick = () => createPage();
