@@ -171,6 +171,21 @@ code.inline{background:var(--bg-3);border:1px solid var(--border);padding:1px 5p
 .mindmap-fs{background:transparent;border:1px solid var(--border);color:var(--text-2);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:14px}
 .mindmap-fs:hover{background:var(--bg-hover);color:var(--accent)}
 .mindmap-canvas{height:680px;width:100%;background:#fafafa;position:relative}
+.block[data-type="whiteboard"]{margin:24px -50vw;padding:0 50vw;max-width:none}
+.block[data-type="whiteboard"] > .block-handle{display:none}
+.whiteboard-block{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;width:min(1400px,calc(100vw - 320px));margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.whiteboard-toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg-3)}
+.whiteboard-hint{font-size:12px;color:var(--text-3);font-weight:500}
+.whiteboard-fs{background:transparent;border:1px solid var(--border);color:var(--text-2);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:14px}
+.whiteboard-fs:hover{background:var(--bg-hover);color:var(--accent)}
+.whiteboard-iframe{width:100%;height:680px;background:#fff;display:block;border:0}
+.whiteboard-block.fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;margin:0;width:100vw;max-width:none}
+.whiteboard-block.fullscreen .whiteboard-iframe{height:calc(100vh - 48px)}
+@media (max-width:900px){
+  .block[data-type="whiteboard"]{margin:24px 0;padding:0}
+  .whiteboard-block{width:100%}
+  .whiteboard-iframe{height:480px}
+}
 .mindmap-canvas .map-container{background:#fafafa !important}
 .mindmap-canvas me-tpc, .mindmap-canvas .topic{font-family:'Inter',-apple-system,sans-serif !important;font-weight:500 !important;color:#1f2937 !important;font-size:15px !important;letter-spacing:-.005em}
 .mindmap-canvas me-root me-tpc, .mindmap-canvas .root me-tpc{font-weight:700 !important;font-size:17px !important;color:#fff !important}
@@ -2762,6 +2777,18 @@ function renderBlock(block) {
       <div class="block-content" style="display:none"></div>
     </div>`;
   }
+  if (block.type==='whiteboard') {
+    return `<div class="block" data-id="${block.id}" data-type="whiteboard">
+      <div class="whiteboard-block" data-wb="${block.id}">
+        <div class="whiteboard-toolbar">
+          <span class="whiteboard-hint">Whiteboard — formes, flèches, sticky notes, dessin (auto-save)</span>
+          <button class="whiteboard-fs" data-wbfs="${block.id}" title="Plein écran">⛶</button>
+        </div>
+        <iframe class="whiteboard-iframe" data-wbframe="${block.id}" src="about:blank" frameborder="0"></iframe>
+      </div>
+      <div class="block-content" style="display:none"></div>
+    </div>`;
+  }
   if (block.type==='ai') {
     return `<div class="block" data-id="${block.id}" data-type="ai">
       <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
@@ -3527,6 +3554,7 @@ const SLASH_OPTIONS = [
     { type:'math', icon:svgIcon('sigma',16), name:'Équation', desc:'Formule LaTeX (KaTeX)' },
     { type:'mermaid', icon:svgIcon('chart-network',16), name:'Diagramme', desc:'Mermaid chart' },
     { type:'mindmap', icon:svgIcon('git-branch',16), name:'Mindmap', desc:'Carte mentale (style Whimsical)' },
+    { type:'whiteboard', icon:svgIcon('pen-tool',16), name:'Whiteboard', desc:'Tableau blanc — formes, flèches, dessin (drawio)' },
     { type:'toc', icon:svgIcon('list-tree',16), name:'Sommaire', desc:'Table des matières auto' },
     { type:'button', icon:svgIcon('mouse-pointer-click',16), name:'Bouton', desc:'Action: nouvelle tâche' },
     { type:'file', icon:svgIcon('paperclip',16), name:'Fichier', desc:'Upload (base64)' },
@@ -5119,6 +5147,30 @@ function setupNewBlocks() {
     };
     renderMath();
     inp.oninput = () => { const b = getBlock(id); if (b) { b.content = inp.value; Storage.save(); renderMath(); } };
+  });
+  document.querySelectorAll('[data-wbframe]').forEach(iframe => {
+    const id = iframe.dataset.wbframe;
+    if (iframe.dataset.mounted) return;
+    iframe.dataset.mounted = '1';
+    iframe.src = 'https://embed.diagrams.net/?embed=1&proto=json&spin=1&saveAndExit=0&noSaveBtn=0&noExitBtn=1&dark=auto&libraries=1';
+    const onMsg = (ev) => {
+      if (ev.source !== iframe.contentWindow) return;
+      let msg; try { msg = JSON.parse(ev.data); } catch(_) { return; }
+      const b = getBlock(id); if (!b) return;
+      if (msg.event === 'init') {
+        const xml = b.content || '<mxfile><diagram name="Page-1"><mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel></diagram></mxfile>';
+        iframe.contentWindow.postMessage(JSON.stringify({ action:'load', autosave:1, xml }), '*');
+      } else if (msg.event === 'save' || msg.event === 'autosave') {
+        b.content = msg.xml || '';
+        try { Storage.save(); } catch(e){ console.error('whiteboard save', e); }
+      }
+    };
+    window.addEventListener('message', onMsg);
+    const fsBtn = document.querySelector(`[data-wbfs="${id}"]`);
+    if (fsBtn) fsBtn.onclick = () => {
+      const block = iframe.closest('.whiteboard-block');
+      block.classList.toggle('fullscreen');
+    };
   });
   document.querySelectorAll('[data-mindmap]').forEach(wrap => {
     const id = wrap.dataset.mindmap;
@@ -8256,6 +8308,7 @@ window.renderPages = renderPages;
         <button class="pmp-card" data-pmp="form"><div class="pmp-icon"><i data-lucide="clipboard-list" style="width:24px;height:24px"></i></div><div class="pmp-name">Formulaire</div><div class="pmp-desc">Google Forms</div></button>
         <button class="pmp-card" data-pmp="cal"><div class="pmp-icon"><i data-lucide="calendar-days" style="width:24px;height:24px"></i></div><div class="pmp-name">Calendrier</div><div class="pmp-desc">Events</div></button>
         <button class="pmp-card" data-pmp="mindmap"><div class="pmp-icon"><i data-lucide="git-branch" style="width:24px;height:24px"></i></div><div class="pmp-name">Mindmap</div><div class="pmp-desc">Carte mentale Whimsical</div></button>
+        <button class="pmp-card" data-pmp="whiteboard"><div class="pmp-icon"><i data-lucide="pen-tool" style="width:24px;height:24px"></i></div><div class="pmp-name">Whiteboard</div><div class="pmp-desc">Tableau blanc — formes, flèches</div></button>
         <button class="pmp-card" data-pmp="folder"><div class="pmp-icon"><i data-lucide="folder-plus" style="width:24px;height:24px"></i></div><div class="pmp-name">Dossier</div><div class="pmp-desc">Organiser tes pages</div></button>
       </div>`;
     showModal(html,'480px');
@@ -8267,8 +8320,8 @@ window.renderPages = renderPages;
       const t = b.dataset.pmp; closeModal();
       if (t==='drive'){ openDrive(); return; }
       if (t==='folder'){ const n = prompt('Nom du dossier :','Nouveau dossier'); if (n && window.U.createFolder) window.U.createFolder(n, null); return; }
-      const titles = {page:'Nouvelle page',doc:'Nouveau document',slides:'Nouvelle présentation',sheet:'Nouveau tableur',form:'Nouveau formulaire',cal:'Nouveau calendrier',mindmap:'Nouvelle mindmap'};
-      const icons = {page:'📄',doc:'📝',slides:'🎬',sheet:'📊',form:'📋',cal:'📅',mindmap:'🧠'};
+      const titles = {page:'Nouvelle page',doc:'Nouveau document',slides:'Nouvelle présentation',sheet:'Nouveau tableur',form:'Nouveau formulaire',cal:'Nouveau calendrier',mindmap:'Nouvelle mindmap',whiteboard:'Nouveau whiteboard'};
+      const icons = {page:'📄',doc:'📝',slides:'🎬',sheet:'📊',form:'📋',cal:'📅',mindmap:'🧠',whiteboard:'🎨'};
       const id = createPage(titles[t], icons[t], parentId||null);
       const page = state.pages.find(p=>p.id===id);
       if (page){
@@ -8278,6 +8331,7 @@ window.renderPages = renderPages;
         else if (t==='form'){ state.blocks[id]=[{id:_id(),type:'form',form:{title:'Mon formulaire',fields:[{id:_id(),type:'text',label:'Nom'},{id:_id(),type:'text',label:'Email'}],responses:[]}}]; }
         else if (t==='cal'){ state.blocks[id]=[{id:_id(),type:'calendar',cal:{events:[],view:'month',cursor:new Date().toISOString().slice(0,10)}}]; }
         else if (t==='mindmap'){ state.blocks[id]=[{id:_id(),type:'mindmap',content:''}]; }
+        else if (t==='whiteboard'){ state.blocks[id]=[{id:_id(),type:'whiteboard',content:''}]; }
         try { _save(); } catch(e){ try { Storage.save(); } catch(_){} }
         try { renderPages(); } catch(e){}
         try { openPage(id); } catch(e){}
