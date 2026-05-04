@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 18:35 — `f2bba19`
+fix: tasks board - scope localStorage per user, sync done/status, fix date timezone, prevent focus loss on date edit
+
 ## 04/05/2026 18:21 — `4769013`
 fix: mobile layout - sidebar position:fixed !important, toolbar scroll, title size, cover, touch resize
 
