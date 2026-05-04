@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 18:21 — `4769013`
+fix: mobile layout - sidebar position:fixed !important, toolbar scroll, title size, cover, touch resize
+
 ## 04/05/2026 18:14 — `487b68a`
 fix: image block resize - fix draggable conflict, add touch support, handle always visible
 
