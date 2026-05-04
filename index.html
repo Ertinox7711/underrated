@@ -4039,14 +4039,19 @@ if (demoBtn) demoBtn.onclick = () => {
   state.currentPageId = p1;
   state.recent = [p1, p3, p2];
   state.favorites = [p1, p2, p3];
+  // Demo: bypass showApp (which calls Storage.load + cloudLoad and overwrites seed)
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').classList.add('show');
-  if (typeof showApp === 'function') {
-    try { showApp(); } catch(e){}
+  document.getElementById('user-avatar').textContent = 'DE';
+  document.getElementById('user-name').textContent = 'demo';
+  // Disable cloud save in demo
+  if (Storage && Storage.save) {
+    const _origSave = Storage.save;
+    Storage.save = function(){};
+    Storage._origSave = _origSave;
   }
   if (typeof renderPages === 'function') renderPages();
   if (typeof openPage === 'function') openPage(p1);
-  if (window.U?.refreshSidebarAvatar) window.U.refreshSidebarAvatar();
   if (typeof refreshIcons === 'function') refreshIcons();
 };
 document.getElementById('logout-btn').onclick = logout;
