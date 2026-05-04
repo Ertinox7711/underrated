@@ -3458,6 +3458,7 @@ function showSlashMenu(target) {
   if (!slashFiltered.length) html = '<div style="padding:20px;color:var(--text-3);font-size:13px;text-align:center">Aucun bloc</div>';
   menu.innerHTML = html;
   menu.classList.add('show');
+  if (typeof refreshIcons === 'function') refreshIcons();
   menu.querySelectorAll('.slash-item').forEach(item => {
     item.onclick = () => applySlash(item.dataset.type);
     item.onmouseenter = () => { slashIdx = +item.dataset.i; updateSlashActive(); };
