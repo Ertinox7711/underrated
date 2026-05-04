@@ -985,73 +985,124 @@ mark.hl-yellow,mark.hl-green,mark.hl-blue{background:var(--accent-soft) !importa
 .ctx-icon [data-lucide]{width:16px;height:16px}
 .slash-icon [data-lucide]{width:18px;height:18px}
 
-/* === LUX MOTION SYSTEM === */
-/* Animated metallic gold bar at the very top of the page */
+/* === LUX MOTION SYSTEM v2 — elegant aurora flow, no moving sharp dots === */
 .lux-topbar{
-  position:fixed;top:0;left:0;right:0;height:5px;z-index:99999;pointer-events:none;
-  background:linear-gradient(90deg,
-    #0a0805 0%,
-    #1a1410 20%,
-    #2a2018 40%,
-    #1a1410 60%,
-    #2a2018 80%,
-    #0a0805 100%);
-  box-shadow:
-    inset 0 -1px 0 rgba(0,0,0,.8),
-    inset 0 1px 0 rgba(212,175,106,.12),
-    0 2px 5px rgba(212,175,106,.32),
-    0 4px 10px rgba(212,175,106,.14);
+  position:fixed;top:0;left:0;right:0;height:3px;z-index:99999;pointer-events:none;
+  background:linear-gradient(90deg,#0a0805 0%,#1a1410 50%,#0a0805 100%);
+  box-shadow:0 1px 14px rgba(212,175,106,.38),inset 0 1px 0 rgba(212,175,106,.18);
   overflow:hidden;
 }
-/* Layer 1: fast bright gold sweep */
+/* Slow flowing aurora — wide, soft, never sharp */
 .lux-topbar::before{
-  content:'';position:absolute;inset:0;width:40%;
-  background:linear-gradient(90deg,
-    transparent 0%,
-    rgba(212,175,106,.4) 25%,
-    rgba(255,235,180,.95) 45%,
-    #fffbe8 50%,
-    rgba(255,235,180,.95) 55%,
-    rgba(212,175,106,.4) 75%,
-    transparent 100%);
-  filter:
-    drop-shadow(0 0 4px #fff8d4)
-    drop-shadow(0 0 10px rgba(255,200,100,.85))
-    drop-shadow(0 0 20px rgba(212,175,106,.6));
-  animation:luxBarSweep 2.8s linear infinite;
+  content:'';position:absolute;inset:-100% 0;
+  background:
+    linear-gradient(90deg,
+      transparent 0%,
+      rgba(212,175,106,.4) 20%,
+      rgba(232,200,137,.85) 40%,
+      rgba(255,235,180,.95) 50%,
+      rgba(232,200,137,.85) 60%,
+      rgba(212,175,106,.4) 80%,
+      transparent 100%);
+  filter:blur(1px);
+  background-size:200% 100%;
+  animation:luxAuroraFlow 14s ease-in-out infinite;
   mix-blend-mode:screen;
 }
-/* Layer 2: slower wider amber wash going opposite */
+/* Subtle breathing glow underlay */
 .lux-topbar::after{
-  content:'';position:absolute;inset:0;width:65%;
-  background:linear-gradient(90deg,
-    transparent 0%,
-    rgba(184,146,74,.5) 30%,
-    rgba(232,200,137,.9) 50%,
-    rgba(184,146,74,.5) 70%,
-    transparent 100%);
-  filter:blur(1px) drop-shadow(0 0 14px rgba(212,175,106,.7));
-  mix-blend-mode:screen;opacity:.7;
-  animation:luxBarSweep2 5.5s ease-in-out infinite;
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 200% at 50% 50%,rgba(232,200,137,.55) 0%,transparent 70%);
+  mix-blend-mode:screen;
+  animation:luxBreathe 6s ease-in-out infinite alternate;
 }
-/* Layer 3 disabled */
 .lux-topbar > span{display:none}
-/* Layer 4: pulsing center hotspot */
-.lux-topbar::before,.lux-topbar::after{will-change:transform}
-@keyframes luxBarSweep{
-  0%{transform:translateX(-110%)}
-  100%{transform:translateX(360%)}
+.lux-topbar::before,.lux-topbar::after{will-change:background-position,opacity,transform}
+@keyframes luxAuroraFlow{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
-@keyframes luxBarSweep2{
-  0%{transform:translateX(-80%) scaleX(.9);opacity:.55}
-  50%{transform:translateX(60%) scaleX(1.3);opacity:.85}
-  100%{transform:translateX(180%) scaleX(.9);opacity:.55}
+@keyframes luxBreathe{
+  0%{opacity:.45;transform:scale(.92)}
+  100%{opacity:.95;transform:scale(1.08)}
 }
-@keyframes luxBarParticles{
-  0%{background-position:0% 50%;opacity:.4}
-  20%{opacity:1}
-  80%{opacity:1}
-  100%{background-position:200% 50%;opacity:.4}
+
+/* === CUSTOM CURSOR (immersive) === */
+.lux-cursor{
+  position:fixed;top:0;left:0;width:14px;height:14px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,175,106,.95) 0%,rgba(212,175,106,.0) 70%);
+  pointer-events:none;z-index:99998;
+  mix-blend-mode:screen;
+  transition:opacity .25s ease,transform .15s cubic-bezier(.4,0,.2,1);
+  transform:translate(-50%,-50%);
+  filter:drop-shadow(0 0 10px rgba(232,200,137,.6));
+  will-change:transform;
+}
+.lux-cursor-ring{
+  position:fixed;top:0;left:0;width:36px;height:36px;border-radius:50%;
+  border:1px solid rgba(212,175,106,.45);
+  pointer-events:none;z-index:99997;
+  transform:translate(-50%,-50%);
+  transition:width .3s cubic-bezier(.16,1,.3,1),height .3s cubic-bezier(.16,1,.3,1),border-color .25s,opacity .25s;
+  will-change:transform;
+}
+.lux-cursor-ring.hover{width:54px;height:54px;border-color:rgba(232,200,137,.85);box-shadow:0 0 24px rgba(212,175,106,.4)}
+@media(hover:none),(max-width:768px){.lux-cursor,.lux-cursor-ring{display:none}}
+
+/* === MAGNETIC HOVER (buttons feel alive) === */
+.btn,.icon-btn,.cover-btn,.page-tb-btn,.tpl-tab,.btn-block{
+  transition:transform .25s cubic-bezier(.16,1,.3,1),background var(--transition),color var(--transition),box-shadow var(--transition),border-color var(--transition);
+  will-change:transform;
+}
+
+/* === GLOBAL SMOOTH SCROLL === */
+html{scroll-behavior:smooth}
+.editor-content{scroll-behavior:smooth}
+
+/* === FOCUS GLOW (inputs feel premium) === */
+.prop-input:focus,.page-title:focus,.block-content:focus,input.icon-picker-search:focus,input.emoji-search:focus,input.cv-uns-q:focus{
+  box-shadow:0 0 0 1px var(--accent),0 0 24px rgba(212,175,106,.18);
+  outline:none;
+}
+
+/* === PAGE FADE-IN on switch === */
+.editor.page-switch{animation:pageSwitch .55s cubic-bezier(.16,1,.3,1)}
+@keyframes pageSwitch{
+  0%{opacity:0;transform:translateY(8px) scale(.998);filter:blur(3px)}
+  100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+}
+
+/* === SIDEBAR ITEMS stagger reveal === */
+.sidebar .page-item{animation:sideEnter .42s cubic-bezier(.16,1,.3,1) both}
+@keyframes sideEnter{
+  0%{opacity:0;transform:translateX(-12px)}
+  100%{opacity:1;transform:translateX(0)}
+}
+
+/* === COVER subtle parallax === */
+.editor-cover{transition:transform .8s cubic-bezier(.16,1,.3,1)}
+.editor-content:hover ~ .editor-cover{transform:scale(1.02)}
+
+/* === GLASS DEPTH on elevated panels === */
+.modal,.cmdk,.props-panel,.cmt-drawer,.icon-picker-modal,.cover-picker,.slash-menu,.emoji-picker{
+  backdrop-filter:blur(18px) saturate(1.4);
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);
+}
+
+/* === BLOCK micro-bounce on hover === */
+.block:hover{transition:transform .35s cubic-bezier(.16,1,.3,1)}
+
+/* === PAGE TITLE: slow shimmer === */
+.page-title{
+  background:linear-gradient(90deg,var(--text) 0%,var(--text) 40%,var(--accent-3) 50%,var(--text) 60%,var(--text) 100%);
+  background-size:300% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  animation:titleShimmer 8s ease-in-out infinite;
+}
+@keyframes titleShimmer{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
 }
 
 .block{transition:transform var(--transition),background var(--transition);transform-style:preserve-3d}
@@ -1787,6 +1838,8 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
 </head>
 <body>
 <div class="lux-topbar" aria-hidden="true"></div>
+<div class="lux-cursor-ring" id="lux-cursor-ring" aria-hidden="true"></div>
+<div class="lux-cursor" id="lux-cursor" aria-hidden="true"></div>
 
 <!-- LOGIN -->
 <div id="login-screen">
@@ -5482,6 +5535,94 @@ document.addEventListener('touchend', e => {
   if (now - lastTap < 300) e.preventDefault();
   lastTap = now;
 }, { passive: false });
+
+// ============ IMMERSIVE LAYER ============
+// Custom cursor with smooth lag follow
+(() => {
+  if (matchMedia('(hover:none)').matches || window.innerWidth < 768) return;
+  const dot = document.getElementById('lux-cursor');
+  const ring = document.getElementById('lux-cursor-ring');
+  if (!dot || !ring) return;
+  let mx = window.innerWidth/2, my = window.innerHeight/2;
+  let dx = mx, dy = my, rx = mx, ry = my;
+  let visible = false;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    if (!visible) { visible = true; dot.style.opacity = '1'; ring.style.opacity = '1'; }
+  });
+  document.addEventListener('mouseleave', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; visible = false; });
+  const tick = () => {
+    dx += (mx - dx) * 0.55;
+    dy += (my - dy) * 0.55;
+    rx += (mx - rx) * 0.18;
+    ry += (my - ry) * 0.18;
+    dot.style.transform = `translate(${dx}px,${dy}px) translate(-50%,-50%)`;
+    ring.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%)`;
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+  // Hover hot zones
+  document.addEventListener('mouseover', e => {
+    if (e.target.closest('button,a,.page-item,.block,input,textarea,[data-cv],[data-cg],.icon-picker-item,.cover-swatch,[data-uns-cat],.tpl-tab')) {
+      ring.classList.add('hover');
+    }
+  });
+  document.addEventListener('mouseout', e => {
+    if (e.target.closest && e.target.closest('button,a,.page-item,.block,input,textarea,[data-cv],[data-cg],.icon-picker-item,.cover-swatch,[data-uns-cat],.tpl-tab')) {
+      ring.classList.remove('hover');
+    }
+  });
+})();
+
+// Magnetic buttons (subtle pull toward cursor)
+(() => {
+  if (matchMedia('(hover:none)').matches || window.innerWidth < 768) return;
+  const STRENGTH = 0.18;
+  const SELECTORS = '.cover-btn,.icon-btn,.page-tb-ai,#ptb-save,#ptb-insert,.btn-block';
+  document.addEventListener('mousemove', e => {
+    document.querySelectorAll(SELECTORS).forEach(btn => {
+      const r = btn.getBoundingClientRect();
+      const cx = r.left + r.width/2, cy = r.top + r.height/2;
+      const dx = e.clientX - cx, dy = e.clientY - cy;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 90) {
+        btn.style.transform = `translate(${dx*STRENGTH}px,${dy*STRENGTH}px)`;
+      } else if (btn.style.transform) {
+        btn.style.transform = '';
+      }
+    });
+  });
+})();
+
+// Page switch transition
+(() => {
+  const editor = document.getElementById('editor');
+  if (!editor) return;
+  const _origRender = window.renderEditor;
+  if (typeof _origRender !== 'function') return;
+  const fired = new Set();
+  const obs = new MutationObserver(() => {
+    editor.classList.remove('page-switch');
+    void editor.offsetWidth;
+    editor.classList.add('page-switch');
+  });
+  // Watch editor's first child for changes (renderEditor replaces innerHTML)
+  obs.observe(editor, { childList: true });
+})();
+
+// Cover parallax on mouse move
+(() => {
+  if (matchMedia('(hover:none)').matches || window.innerWidth < 768) return;
+  document.addEventListener('mousemove', e => {
+    const cover = document.getElementById('editor-cover');
+    if (!cover) return;
+    const r = cover.getBoundingClientRect();
+    if (e.clientY > r.bottom + 200) return;
+    const px = (e.clientX / window.innerWidth - .5) * 8;
+    const py = (e.clientY / window.innerHeight - .5) * 4;
+    cover.style.backgroundPosition = `calc(50% + ${px}px) calc(50% + ${py}px)`;
+  });
+})();
 
 // ============ NEW: KaTeX / Mermaid / TOC / Buttons / File / Audio / Synced setup ============
 function setupNewBlocks() {
