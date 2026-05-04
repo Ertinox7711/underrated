@@ -722,10 +722,10 @@ mark.hl-yellow,mark.hl-green,mark.hl-blue{background:var(--accent-soft) !importa
 .block[data-type="image"] .block-content{display:none}
 .block[data-type="image"] .image-wrap{border-radius:var(--r);background:transparent;position:relative;display:inline-block}
 .block[data-type="image"] .image-wrap img{display:block;border-radius:var(--r);max-width:100%}
-.img-resize-handle{position:absolute;right:-3px;bottom:-3px;width:14px;height:14px;background:var(--accent);border:2px solid var(--bg);border-radius:3px;cursor:nwse-resize;opacity:0;transition:opacity .15s;z-index:5}
+.img-resize-handle{position:absolute;right:4px;bottom:4px;width:20px;height:20px;background:var(--accent);border:2px solid rgba(0,0,0,.3);border-radius:4px;cursor:nwse-resize;opacity:.25;transition:opacity .15s,transform .1s;z-index:5;touch-action:none}
 .block[data-type="image"]:hover .img-resize-handle{opacity:1}
-.img-resize-handle:hover{transform:scale(1.2)}
-.image-wrap.resizing{outline:2px dashed var(--accent);outline-offset:4px;user-select:none}
+.img-resize-handle:hover{transform:scale(1.15)}
+.image-wrap.resizing{outline:2px dashed var(--accent);outline-offset:4px;user-select:none;touch-action:none}
 .block[data-type="image"] .image-wrap img{display:block;max-width:100%;height:auto}
 .block[data-type="image"] .image-empty{
   padding:30px;text-align:center;color:var(--text-3);
@@ -4552,29 +4552,37 @@ function setupBlocks() {
     // image resize
     const imgResize = block.querySelector('[data-imgresize]');
     if (imgResize) {
-      imgResize.onmousedown = (e) => {
-        e.preventDefault(); e.stopPropagation();
+      const startResize = (clientX) => {
         const wrap = block.querySelector('[data-imgwrap]');
         const id = imgResize.dataset.imgresize;
         if (!wrap) return;
+        block.setAttribute('draggable','false');
         wrap.classList.add('resizing');
-        const startX = e.clientX;
+        const startX = clientX;
         const startW = wrap.offsetWidth;
         const onMove = (ev) => {
-          const w = Math.max(80, Math.min(window.innerWidth - 100, startW + (ev.clientX - startX)));
+          const cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
+          const w = Math.max(80, Math.min((wrap.parentElement?.offsetWidth||window.innerWidth) - 20, startW + (cx - startX)));
           wrap.style.width = w + 'px';
           wrap.style.maxWidth = '100%';
         };
         const onUp = () => {
           wrap.classList.remove('resizing');
+          block.setAttribute('draggable','true');
           document.removeEventListener('mousemove', onMove);
           document.removeEventListener('mouseup', onUp);
+          document.removeEventListener('touchmove', onMove);
+          document.removeEventListener('touchend', onUp);
           const b = getBlock(id);
           if (b) { b.width = wrap.offsetWidth; Storage.save(); }
         };
         document.addEventListener('mousemove', onMove);
         document.addEventListener('mouseup', onUp);
+        document.addEventListener('touchmove', onMove, {passive:false});
+        document.addEventListener('touchend', onUp);
       };
+      imgResize.onmousedown = (e) => { e.preventDefault(); e.stopPropagation(); startResize(e.clientX); };
+      imgResize.ontouchstart = (e) => { e.preventDefault(); e.stopPropagation(); startResize(e.touches[0].clientX); };
     }
     const ytAdd = block.querySelector('[data-ytadd]');
     if (ytAdd) ytAdd.onclick = () => {
