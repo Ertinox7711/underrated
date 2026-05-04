@@ -590,6 +590,9 @@ mark.hl-yellow,mark.hl-green,mark.hl-blue{background:var(--accent-soft) !importa
 
 /* BLOCKS */
 .block-list{display:flex;flex-direction:column;gap:1px}
+.end-add-btn{margin:14px 0 30px;padding:10px 16px;background:transparent;border:1px dashed var(--border);border-radius:8px;color:var(--text-3);cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;width:fit-content;transition:all .15s ease}
+.end-add-btn:hover{background:var(--bg-hover);border-color:var(--accent);color:var(--accent)}
+.end-add-btn svg{width:16px;height:16px}
 .block{
   position:relative;
   display:flex;align-items:flex-start;gap:4px;
@@ -2510,6 +2513,10 @@ function renderEditor() {
         <span id="meta-readtime"></span>
       </div>
       <div class="block-list" id="block-list">${blocks.map(renderBlock).join('')}</div>
+      <button class="end-add-btn" id="end-add-btn" title="Ajouter un bloc à la fin">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <span>Ajouter un bloc</span>
+      </button>
       <div id="backlinks"></div>
     </div>`;
   setupTitleAutoresize();
@@ -2517,9 +2524,30 @@ function renderEditor() {
   setupIconPicker();
   setupCover();
   injectBlockAddButtons();
+  setupEndAddBtn();
   updateWordCount();
   renderBacklinks();
   if (window.Prism) Prism.highlightAll();
+}
+
+function setupEndAddBtn() {
+  const btn = document.getElementById('end-add-btn');
+  if (!btn) return;
+  btn.onclick = () => {
+    const blocks = state.blocks[state.currentPageId];
+    const newBlock = { id:nbid(), type:'p', content:'' };
+    blocks.push(newBlock);
+    Storage.save();
+    renderEditor();
+    setTimeout(() => {
+      const el = document.querySelector(`[data-id="${newBlock.id}"] .block-content`);
+      if (el) {
+        el.focus();
+        const fn = (typeof showSlashMenu === 'function') ? showSlashMenu : window.showSlashMenu;
+        if (typeof fn === 'function') fn(el);
+      }
+    }, 30);
+  };
 }
 
 // Notion-style "+" hover button left of each block — opens slash menu
@@ -3375,9 +3403,14 @@ function addBlockBelow(afterId, type='p') {
 function changeBlockType(blockId, newType) {
   const b = getBlock(blockId);
   if (!b) return;
-  b.type = newType;
   if (b.content) b.content = b.content.replace(/\/\w*$/, '');
-  if (newType === 'divider') b.content = '';
+  if (newType === 'mindmap') {
+    b.type = 'mermaid';
+    b.content = 'mindmap\n  root((Idée centrale))\n    Branche 1\n      Sous-idée A\n      Sous-idée B\n    Branche 2\n      Sous-idée C\n    Branche 3';
+  } else {
+    b.type = newType;
+    if (newType === 'divider') b.content = '';
+  }
   Storage.save();
   renderEditor();
   setTimeout(() => focusBlock(blockId), 10);
@@ -3425,6 +3458,7 @@ const SLASH_OPTIONS = [
     { type:'ai', icon:svgIcon('sparkles',16), name:'IA', desc:'Demande IA (placeholder)' },
     { type:'math', icon:svgIcon('sigma',16), name:'Équation', desc:'Formule LaTeX (KaTeX)' },
     { type:'mermaid', icon:svgIcon('chart-network',16), name:'Diagramme', desc:'Mermaid chart' },
+    { type:'mindmap', icon:svgIcon('git-branch',16), name:'Mindmap', desc:'Carte mentale (style Whimsical)' },
     { type:'toc', icon:svgIcon('list-tree',16), name:'Sommaire', desc:'Table des matières auto' },
     { type:'button', icon:svgIcon('mouse-pointer-click',16), name:'Bouton', desc:'Action: nouvelle tâche' },
     { type:'file', icon:svgIcon('paperclip',16), name:'Fichier', desc:'Upload (base64)' },
