@@ -10491,19 +10491,31 @@ window.renderPages = renderPages;
     { id:'blocked',  label:'Bloqué',   color:'#e2445c', text:'#fff' },
   ];
   const GROUP_COLORS = ['#0073ea','#fdab3d','#00c875','#e2445c','#a25ddc','#037f4c','#bb3354'];
-  const TBKEY = 'underrated-taskboard';
+  const TBKEY_BASE = 'underrated-taskboard';
+  function tbKey(){
+    const uid = (typeof state!=='undefined' && state.user && state.user.id) ? state.user.id : 'default';
+    return TBKEY_BASE + '-' + uid;
+  }
+  const rid = (p) => p + Date.now() + '_' + Math.random().toString(36).slice(2,8);
 
   function tbLoad(){
-    try { return JSON.parse(localStorage.getItem(TBKEY)); } catch(e){ return null; }
+    try {
+      const cur = localStorage.getItem(tbKey());
+      if (cur) return JSON.parse(cur);
+      // Migrate legacy global key on first load per user
+      const legacy = localStorage.getItem(TBKEY_BASE);
+      if (legacy) { localStorage.setItem(tbKey(), legacy); return JSON.parse(legacy); }
+      return null;
+    } catch(e){ return null; }
   }
-  function tbSave(tb){ try { localStorage.setItem(TBKEY, JSON.stringify(tb)); } catch(e){} }
+  function tbSave(tb){ try { localStorage.setItem(tbKey(), JSON.stringify(tb)); } catch(e){} }
   function tbDefault(){
-    const gid1 = 'g_'+Date.now(), gid2 = 'g_'+(Date.now()+1);
+    const gid1 = rid('g_'), gid2 = rid('g_');
     return { groups:[
       { id:gid1, name:'To-do', color:'#0073ea', open:true, tasks:[
-        { id:'t_'+Date.now(),     title:'Tâche 1', assignee:'', status:'progress', due:'2026-05-03', done:false },
-        { id:'t_'+(Date.now()+1), title:'Tâche 2', assignee:'', status:'done',     due:'2026-05-04', done:true  },
-        { id:'t_'+(Date.now()+2), title:'Tâche 3', assignee:'', status:'blocked',  due:'2026-05-05', done:false },
+        { id:rid('t_'), title:'Tâche 1', assignee:'', status:'progress', due:'2026-05-03', done:false },
+        { id:rid('t_'), title:'Tâche 2', assignee:'', status:'done',     due:'2026-05-04', done:true  },
+        { id:rid('t_'), title:'Tâche 3', assignee:'', status:'blocked',  due:'2026-05-05', done:false },
       ]},
       { id:gid2, name:'Terminé', color:'#00c875', open:true, tasks:[] }
     ]};
@@ -10519,7 +10531,9 @@ window.renderPages = renderPages;
 
   function isDueOverdue(due){
     if (!due) return false;
-    return new Date(due) < new Date(new Date().toDateString());
+    const d = new Date(due+'T00:00:00');
+    if (isNaN(d)) return false;
+    return d < new Date(new Date().toDateString());
   }
   function formatDue(due){
     if (!due) return '';
@@ -10726,7 +10740,7 @@ window.renderPages = renderPages;
         const gid = chk.dataset.chkAll;
         const g = tb.groups.find(x=>x.id===gid);
         if (!g) return;
-        g.tasks.forEach(t => { t.done = chk.checked; if(chk.checked) t.status='done'; });
+        g.tasks.forEach(t => { t.done = chk.checked; t.status = chk.checked ? 'done' : 'todo'; });
         tbSave(tb); renderBoard();
       };
     });
@@ -10735,7 +10749,7 @@ window.renderPages = renderPages;
     document.querySelectorAll('[data-chk-task]').forEach(chk => {
       chk.onchange = () => {
         const tid = chk.dataset.chkTask;
-        tb.groups.forEach(g=>{ const t=g.tasks.find(x=>x.id===tid); if(t){ t.done=chk.checked; if(chk.checked) t.status='done'; } });
+        tb.groups.forEach(g=>{ const t=g.tasks.find(x=>x.id===tid); if(t){ t.done=chk.checked; t.status = chk.checked ? 'done' : 'todo'; } });
         tbSave(tb); renderBoard();
       };
     });
@@ -10769,7 +10783,9 @@ window.renderPages = renderPages;
       inp.onchange = () => {
         const tid = inp.dataset.taskDue;
         tb.groups.forEach(g=>{ const t=g.tasks.find(x=>x.id===tid); if(t) t.due=inp.value; });
-        tbSave(tb); renderBoard();
+        tbSave(tb);
+        const overdue = isDueOverdue(inp.value);
+        inp.classList.toggle('overdue', overdue && !inp.closest('.task-row.done'));
       };
     });
 
@@ -10796,7 +10812,7 @@ window.renderPages = renderPages;
     const addGrpBtn = document.getElementById('tb-add-group');
     if (addGrpBtn) addGrpBtn.onclick = () => {
       const color = GROUP_COLORS[tb.groups.length % GROUP_COLORS.length];
-      tb.groups.push({ id:'g_'+Date.now(), name:'Nouveau groupe', color, open:true, tasks:[] });
+      tb.groups.push({ id:rid('g_'), name:'Nouveau groupe', color, open:true, tasks:[] });
       tbSave(tb); renderBoard();
       // focus the new group name
       setTimeout(()=>{
