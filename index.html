@@ -1769,7 +1769,6 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
     <button id="login-btn" class="btn">Se connecter</button>
     <div class="login-divider">ou</div>
     <button id="signup-btn" class="btn btn-ghost">Créer un compte</button>
-    <button id="demo-btn" class="btn btn-ghost" style="margin-top:10px;font-size:11px;letter-spacing:.08em;color:var(--accent-3);border-color:var(--accent-soft);background:transparent">✦ VOIR UNE DÉMO</button>
     <div class="login-toggle">
       <span style="color:var(--text-3);font-size:11px" id="login-version">Underrated</span>
     </div>
@@ -4988,7 +4987,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('click', e => {
-  if (!e.target.closest('.slash-menu') && !e.target.closest('.block-content')) hideSlashMenu();
+  if (!e.target.closest('.slash-menu') && !e.target.closest('.block-content') && !e.target.closest('.block-add-btn')) hideSlashMenu();
   if (!e.target.closest('.mention-menu') && !e.target.closest('.block-content')) hideMentionMenu();
 });
 
