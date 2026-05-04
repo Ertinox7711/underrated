@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 16:56 — `995d316`
+feat: toolbar SVG icons (lucide), move toolbar below page meta, harden icon picker click handler
+
 ## 04/05/2026 16:50 — `1e0416b`
 feat: cover picker modal+backdrop, Google Docs-style toolbar (undo/redo, paint, zoom, +/- size, comment, image, table, checklist, indent, line spacing)
 
