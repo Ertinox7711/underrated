@@ -2544,7 +2544,7 @@ function setupEndAddBtn() {
   if (!btn) return;
   btn.onclick = () => {
     const blocks = state.blocks[state.currentPageId];
-    const newBlock = { id:nbid(), type:'p', content:'' };
+    const newBlock = { id:nbid(), type:'p', content:'/' };
     blocks.push(newBlock);
     Storage.save();
     renderEditor();
@@ -2552,6 +2552,12 @@ function setupEndAddBtn() {
       const el = document.querySelector(`[data-id="${newBlock.id}"] .block-content`);
       if (el) {
         el.focus();
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
         const fn = (typeof showSlashMenu === 'function') ? showSlashMenu : window.showSlashMenu;
         if (typeof fn === 'function') fn(el);
       }
