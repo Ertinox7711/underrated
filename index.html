@@ -1907,7 +1907,7 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
 
     <main class="main">
       <header class="main-header">
-        <button class="icon-btn menu-btn" id="menu-btn">
+        <button class="icon-btn menu-btn" id="menu-btn" title="Ouvrir le menu" aria-label="Ouvrir le menu">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
         <div class="breadcrumb" id="breadcrumb">Underrated</div>
@@ -2114,12 +2114,19 @@ const Storage = {
         state.pages = p.pages || [];
         state.blocks = p.blocks || {};
         state.expanded = p.expanded || {};
+        state.favorites = p.favorites || [];
+        state.recent = p.recent || [];
       } catch(e) {
         console.error('[Storage.load] corrupt underrated-data', e);
         try { localStorage.setItem('underrated-data-backup-'+Date.now(), data); } catch(_){}
         try { if (typeof toast === 'function') toast('Données locales corrompues — sauvegarde créée','error'); } catch(_){}
       }
     }
+    // Prune old corruption backups (keep only last 3)
+    try {
+      const keys = Object.keys(localStorage).filter(k => k.startsWith('underrated-data-backup-')).sort();
+      while (keys.length > 3) localStorage.removeItem(keys.shift());
+    } catch(_){}
     const prefs = localStorage.getItem('underrated-prefs');
     if (prefs) {
       try {
@@ -2135,7 +2142,8 @@ const Storage = {
     state.saveDebounce = setTimeout(() => {
       try {
         localStorage.setItem('underrated-data', JSON.stringify({
-          pages: state.pages, blocks: state.blocks, expanded: state.expanded
+          pages: state.pages, blocks: state.blocks, expanded: state.expanded,
+          favorites: state.favorites || [], recent: state.recent || []
         }));
         cloudSave();
       } catch(e) {
@@ -2156,9 +2164,11 @@ const Storage = {
 // ============ FIRESTORE SYNC ============
 async function cloudSave() {
   if (!state.user || !FIREBASE_ENABLED) return;
+  if (state.user.id === 'demo-local') return; // never write demo data to cloud
   try {
     await setDoc(doc(db, 'users', state.user.id, 'workspace', 'main'), {
       pages: state.pages, blocks: state.blocks, expanded: state.expanded,
+      favorites: state.favorites || [], recent: state.recent || [],
       updatedAt: serverTimestamp(),
     });
     setSyncStatus('Synchronisé');
@@ -2192,14 +2202,20 @@ function subscribeCloud() {
     if (!snap.exists()) return;
     const d = snap.data();
     if (!d.pages) return;
-    // basic conflict-free merge: last write wins
+    // Don't apply remote snapshot while user is actively editing — prevents cursor jump / data loss
+    const ae = document.activeElement;
+    const isEditing = ae && (ae.isContentEditable || ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA');
+    if (isEditing) {
+      // Stash for later apply (deferred until blur)
+      state._pendingSnapshot = d;
+      return;
+    }
     state.pages = d.pages;
     state.blocks = d.blocks || {};
     state.expanded = d.expanded || {};
+    if (Array.isArray(d.favorites)) state.favorites = d.favorites;
+    if (Array.isArray(d.recent)) state.recent = d.recent;
     renderPages();
-    if (state.currentPageId && state.pages.find(p => p.id === state.currentPageId)) {
-      // Don't re-render editor if user is typing — only update title in sidebar
-    }
     setSyncStatus('Synchronisé');
   }, (err) => {
     console.error('snapshot', err);
@@ -2267,14 +2283,18 @@ async function showApp() {
   // Try cloud first
   setSyncStatus('Sync...');
   const fromCloud = await cloudLoad();
-  if (!fromCloud && state.pages.length === 0) {
-    createPage('Bienvenue', window.__svg('sparkle'));
-    addStarterBlocks();
+  if (!fromCloud) {
+    setSyncStatus('Local', true);
+    if (state.pages.length === 0) {
+      createPage('Bienvenue', window.__svg('sparkle'));
+      addStarterBlocks();
+    }
+  } else {
+    setSyncStatus('Synchronisé');
   }
   subscribeCloud();
   renderPages();
   if (state.pages[0]) openPage(state.pages[0].id);
-  setSyncStatus('Synchronisé');
 }
 
 function addStarterBlocks() {
@@ -2714,7 +2734,7 @@ function renderBlock(block) {
     const ytid = extractYouTubeId(block.url||block.content||'');
     return `<div class="block" data-id="${block.id}" data-type="youtube">
       <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
-      ${ytid ? `<div class="yt-wrap"><iframe src="https://www.youtube.com/embed/${ytid}" allowfullscreen></iframe></div>` : `<div class="image-empty" data-ytadd="${block.id}">▶️ Coller une URL YouTube</div>`}
+      ${ytid ? `<div class="yt-wrap"><iframe src="https://www.youtube.com/embed/${encodeURIComponent(ytid)}" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>` : `<div class="image-empty" data-ytadd="${block.id}">▶️ Coller une URL YouTube</div>`}
       <div class="block-content" contenteditable="true" data-placeholder="" style="display:none">${escapeHtml(block.url||'')}</div>
     </div>`;
   }
@@ -2898,10 +2918,12 @@ function renderBlock(block) {
     </div>`;
   }
   if (block.type==='embed') {
+    // Security: never inject raw embedHtml — only render iframe with safe URL
+    const safeUrl = (block.url||'').match(/^https?:\/\//) ? block.url : '';
     return `<div class="block" data-id="${block.id}" data-type="embed">
       <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
       <div class="embed-block">
-        ${block.embedHtml || `<iframe src="${escapeHtml(block.url||'')}" allowfullscreen></iframe>`}
+        ${safeUrl ? `<iframe src="${escapeHtml(safeUrl)}" sandbox="allow-scripts allow-same-origin allow-popups" allowfullscreen></iframe>` : `<div class="image-empty" data-embedadd="${block.id}">🔗 URL invalide</div>`}
       </div>
       <div class="block-content" style="display:none"></div>
     </div>`;
@@ -3203,7 +3225,10 @@ function showEmojiPicker(target, cb) {
 
 // ============ BLOCKS ============
 function setupBlocks() {
+  // Ensure every block is draggable (some renderBlock branches forget the attribute)
+  document.querySelectorAll('.block:not([draggable])').forEach(b => b.setAttribute('draggable','true'));
   document.querySelectorAll('.block').forEach(block => {
+    if (block.getAttribute('draggable') !== 'true') block.setAttribute('draggable','true');
     const content = block.querySelector('.block-content');
     if (!content) return;
 
@@ -5037,7 +5062,7 @@ if (demoBtn) demoBtn.onclick = () => {
     }
   })();
 };
-document.getElementById('logout-btn').onclick = logout;
+document.getElementById('logout-btn').onclick = () => { if (confirm('Se déconnecter ?')) logout(); };
 document.getElementById('add-page-btn').onclick = () => createPage();
 document.getElementById('search').oninput = renderPages;
 document.getElementById('cmdk-trigger').onclick = (e) => { if (e.target.tagName!=='INPUT') openCmdK(); };
@@ -5113,10 +5138,14 @@ document.addEventListener('keydown', (e) => {
   if (meta && e.key === 'k') { e.preventDefault(); openCmdK(); }
   else if (meta && e.key === 'n') { e.preventDefault(); createPage(); }
   else if (meta && e.key === '.') { e.preventDefault(); toggleFocus(); }
+  else if (meta && e.key === 's') {
+    e.preventDefault();
+    try { Storage.save(); if (typeof cloudSave === 'function') cloudSave(); toast('Sauvegardé ✓','success'); } catch(_){}
+  }
   else if (e.key === 'Escape') {
     closeCmdK(); closeModal(); hideSlashMenu(); hideMentionMenu();
-    document.getElementById('cover-picker').classList.remove('show');
-    document.getElementById('emoji-picker').classList.remove('show');
+    const cp = document.getElementById('cover-picker'); if (cp) cp.classList.remove('show');
+    const ep = document.getElementById('emoji-picker'); if (ep) ep.classList.remove('show');
   }
   else if (e.key === '?' && !e.target.matches('input,textarea,[contenteditable="true"]')) {
     e.preventDefault(); showShortcuts();
@@ -5152,14 +5181,17 @@ function setupNewBlocks() {
     const id = iframe.dataset.wbframe;
     if (iframe.dataset.mounted) return;
     iframe.dataset.mounted = '1';
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
     iframe.src = 'https://embed.diagrams.net/?embed=1&proto=json&spin=1&saveAndExit=0&noSaveBtn=0&noExitBtn=1&dark=1&libraries=1&pages=0&toolbar=1&edit=_blank&grid=1';
+    const DRAWIO_ORIGIN = 'https://embed.diagrams.net';
     const onMsg = (ev) => {
+      if (ev.origin !== DRAWIO_ORIGIN) return;
       if (ev.source !== iframe.contentWindow) return;
       let msg; try { msg = JSON.parse(ev.data); } catch(_) { return; }
       const b = getBlock(id); if (!b) return;
       if (msg.event === 'init') {
         const xml = b.content || '<mxfile><diagram name="Page-1"><mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel></diagram></mxfile>';
-        iframe.contentWindow.postMessage(JSON.stringify({ action:'load', autosave:1, xml }), '*');
+        iframe.contentWindow.postMessage(JSON.stringify({ action:'load', autosave:1, xml }), DRAWIO_ORIGIN);
       } else if (msg.event === 'save' || msg.event === 'autosave') {
         b.content = msg.xml || '';
         try { Storage.save(); } catch(e){ console.error('whiteboard save', e); }
@@ -5305,6 +5337,9 @@ function renderRecent() {
 function softDelete(id) {
   const p = state.pages.find(x=>x.id===id); if (!p) return;
   p.deleted = true; p.deletedAt = Date.now();
+  // Prune from sidebar arrays so deleted pages don't ghost
+  if (Array.isArray(state.recent)) state.recent = state.recent.filter(x => x !== id);
+  if (Array.isArray(state.favorites)) state.favorites = state.favorites.filter(x => x !== id);
   Storage.save(); renderPages();
   if (state.currentPageId === id) {
     const next = state.pages.find(x => !x.deleted);
@@ -5542,7 +5577,10 @@ function updateBulkBar() {
   bar.querySelectorAll('[data-bulk]').forEach(b => b.onclick = () => {
     const blocks = state.blocks[state.currentPageId];
     const action = b.dataset.bulk;
-    if (action === 'del') state.blocks[state.currentPageId] = blocks.filter(x => !selectedBlocks.has(x.id));
+    if (action === 'del') {
+      if (!confirm(`Supprimer ${selectedBlocks.size} bloc(s) ?`)) return;
+      state.blocks[state.currentPageId] = blocks.filter(x => !selectedBlocks.has(x.id));
+    }
     else if (action === 'todo' || action === 'bullet') blocks.forEach(x => { if (selectedBlocks.has(x.id)) x.type = action; });
     selectedBlocks.clear();
     Storage.save(); renderEditor(); updateBulkBar();
