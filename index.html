@@ -159,49 +159,6 @@ code.inline{background:var(--bg-3);border:1px solid var(--border);padding:1px 5p
 .math-block{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:14px;margin:6px 0;overflow-x:auto;text-align:center}
 .math-edit{font-family:'SF Mono',Menlo,monospace;font-size:13px;background:transparent;color:var(--text-2);padding:6px 0 0;width:100%;outline:none;border:none;border-top:1px dashed var(--border);margin-top:8px}
 .mermaid-block{background:var(--bg-3);border:1px solid var(--border);border-radius:8px;padding:14px;margin:6px 0;text-align:center}
-.block[data-type="mindmap"]{margin:24px -50vw;padding:0 50vw;max-width:none}
-.block[data-type="mindmap"] > .block-handle{display:none}
-.mindmap-block{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;position:relative;width:min(1400px, calc(100vw - 320px));margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.25)}
-.mindmap-toolbar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);background:var(--bg-3);gap:8px;flex-wrap:wrap}
-.mindmap-hint{font-size:12px;color:var(--text-3);font-weight:500}
-.mm-actions{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.mm-btn{padding:5px 10px;background:var(--bg-2);border:1px solid var(--border);border-radius:6px;color:var(--text-2);font-size:12px;font-weight:500;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:4px}
-.mm-btn:hover{background:var(--bg-hover);color:var(--text);border-color:var(--accent)}
-.mm-btn.mm-color{width:22px;height:22px;padding:0;border:2px solid transparent;border-radius:50%}
-.mm-btn.mm-color:hover{transform:scale(1.15);border-color:#fff}
-.mm-sep{width:1px;height:18px;background:var(--border);margin:0 4px}
-.mindmap-fs{background:transparent;border:1px solid var(--border);color:var(--text-2);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:14px}
-.mindmap-fs:hover{background:var(--bg-hover);color:var(--accent)}
-.mindmap-canvas{height:680px;width:100%;background:#fafafa;position:relative}
-.block[data-type="whiteboard"]{margin:24px -50vw;padding:0 50vw;max-width:none}
-.block[data-type="whiteboard"] > .block-handle{display:none}
-.whiteboard-block{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;width:min(1400px,calc(100vw - 320px));margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.25)}
-.whiteboard-toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg-3)}
-.whiteboard-hint{font-size:12px;color:var(--text-3);font-weight:500}
-.whiteboard-fs{background:transparent;border:1px solid var(--border);color:var(--text-2);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:14px}
-.whiteboard-fs:hover{background:var(--bg-hover);color:var(--accent)}
-.whiteboard-iframe{width:100%;height:680px;background:#fff;display:block;border:0}
-.whiteboard-block.fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;margin:0;width:100vw;max-width:none}
-.whiteboard-block.fullscreen .whiteboard-iframe{height:calc(100vh - 48px)}
-@media (max-width:900px){
-  .block[data-type="whiteboard"]{margin:24px 0;padding:0}
-  .whiteboard-block{width:100%}
-  .whiteboard-iframe{height:480px}
-}
-.mindmap-canvas .map-container{background:#fafafa !important}
-.mindmap-canvas me-tpc, .mindmap-canvas .topic{font-family:'Inter',-apple-system,sans-serif !important;font-weight:500 !important;color:#1f2937 !important;font-size:15px !important;letter-spacing:-.005em}
-.mindmap-canvas me-root me-tpc, .mindmap-canvas .root me-tpc{font-weight:700 !important;font-size:17px !important;color:#fff !important}
-.mindmap-canvas .map-container svg path{stroke-linecap:round;stroke-linejoin:round}
-.mindmap-canvas me-tpc{border-radius:10px !important;padding:8px 14px !important;box-shadow:0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05) !important;transition:box-shadow .15s,transform .15s}
-.mindmap-canvas me-tpc:hover{box-shadow:0 6px 16px rgba(0,0,0,.12), 0 2px 4px rgba(0,0,0,.08) !important;transform:translateY(-1px)}
-.mindmap-canvas me-root me-tpc{box-shadow:0 8px 24px rgba(251,191,36,.35) !important;border-radius:14px !important;padding:12px 22px !important}
-.mindmap-block.fullscreen{position:fixed;inset:0;z-index:9999;border-radius:0;margin:0;width:100vw;max-width:none}
-.mindmap-block.fullscreen .mindmap-canvas{height:calc(100vh - 48px)}
-@media (max-width:900px){
-  .block[data-type="mindmap"]{margin:24px 0;padding:0}
-  .mindmap-block{width:100%}
-  .mindmap-canvas{height:480px}
-}
 
 .synced-marker{display:inline-block;background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;margin-right:6px}
 
@@ -1649,6 +1606,17 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
       #ws-dropdown{min-width:200px !important}
     }
     .ws-switcher:hover{border-color:var(--accent) !important}
+/* === PAGE TOOLBAR (always visible, Google Docs/Word style) === */
+.page-toolbar{position:sticky;top:54px;z-index:60;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;padding:5px 8px;display:flex;flex-wrap:wrap;gap:2px;align-items:center;margin:0 auto 10px;width:100%;max-width:900px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.page-tb-btn{padding:5px 8px;border-radius:5px;cursor:pointer;font-size:13px;color:var(--text-2);min-width:28px;text-align:center;border:none;background:transparent;line-height:1;transition:all .1s}
+.page-tb-btn:hover{background:var(--bg-hover);color:var(--text)}
+.page-tb-btn.active{background:var(--accent-soft);color:var(--accent)}
+.page-tb-sep{width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0}
+.page-tb-sel{background:var(--bg-3);border:1px solid var(--border);color:var(--text);padding:4px 6px;border-radius:5px;font-size:12px;cursor:pointer}
+.page-tb-color{width:22px;height:22px;border-radius:4px;cursor:pointer;border:1px solid var(--border);padding:0;background:none}
+.page-tb-ai{background:linear-gradient(135deg,var(--accent),#8b5cf6)!important;color:#fff!important;font-weight:600;padding:5px 10px;border-radius:6px!important;font-size:12px}
+.page-tb-ai:hover{opacity:.9!important}
+@media(max-width:700px){.page-toolbar{border-radius:0;margin:0 -16px 8px;max-width:none;width:calc(100% + 32px);top:50px;font-size:11px}}
 /* === DOC MODE === */
 .doc-mode .editor-cover{display:none!important}
 .doc-mode .editor-content{max-width:none;padding:0!important;background:var(--bg)!important}
@@ -2020,7 +1988,6 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
 <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mind-elixir@4.5.1/dist/MindElixir.iife.js"></script>
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad:false, theme:'dark', securityLevel:'loose' });
@@ -2596,6 +2563,54 @@ function renderEditor() {
       </div>
     </div>
     <div class="editor-content">
+      <div class="page-toolbar" id="page-toolbar">
+        <select class="page-tb-sel" id="ptb-style" title="Style de paragraphe">
+          <option value="P">Paragraphe</option>
+          <option value="H1">Titre 1</option>
+          <option value="H2">Titre 2</option>
+          <option value="H3">Titre 3</option>
+          <option value="BLOCKQUOTE">Citation</option>
+          <option value="PRE">Code</option>
+        </select>
+        <select class="page-tb-sel" id="ptb-font" title="Police">
+          <option value="Inter">Inter</option>
+          <option value="Georgia">Serif</option>
+          <option value="Menlo,monospace">Mono</option>
+          <option value="cursive">Cursive</option>
+        </select>
+        <select class="page-tb-sel" id="ptb-size" title="Taille">
+          <option value="1">8px</option><option value="2">10px</option><option value="3" selected>12px</option>
+          <option value="4">14px</option><option value="5">18px</option><option value="6">24px</option><option value="7">32px</option>
+        </select>
+        <span class="page-tb-sep"></span>
+        <div class="page-tb-group">
+          <button class="page-tb-btn" data-ptbcmd="bold" title="Gras"><b>B</b></button>
+          <button class="page-tb-btn" data-ptbcmd="italic" title="Italique"><i>I</i></button>
+          <button class="page-tb-btn" data-ptbcmd="underline" title="Souligné"><u>U</u></button>
+          <button class="page-tb-btn" data-ptbcmd="strikeThrough" title="Barré"><s>S</s></button>
+        </div>
+        <span class="page-tb-sep"></span>
+        <input type="color" class="page-tb-color" id="ptb-color" value="#ffffff" title="Couleur texte">
+        <input type="color" class="page-tb-color" id="ptb-hilite" value="#fbbf24" title="Surlignage">
+        <span class="page-tb-sep"></span>
+        <div class="page-tb-group">
+          <button class="page-tb-btn" data-ptbcmd="justifyLeft" title="Gauche">⬅</button>
+          <button class="page-tb-btn" data-ptbcmd="justifyCenter" title="Centre">⬌</button>
+          <button class="page-tb-btn" data-ptbcmd="justifyRight" title="Droite">➡</button>
+        </div>
+        <span class="page-tb-sep"></span>
+        <div class="page-tb-group">
+          <button class="page-tb-btn" data-ptbcmd="insertUnorderedList" title="Liste">• Liste</button>
+          <button class="page-tb-btn" data-ptbcmd="insertOrderedList" title="Numérotée">1. Liste</button>
+        </div>
+        <span class="page-tb-sep"></span>
+        <button class="page-tb-btn" data-ptbcmd="createLink" title="Insérer un lien">🔗</button>
+        <button class="page-tb-btn" data-ptbcmd="removeFormat" title="Effacer le format">⌫ Format</button>
+        <span class="page-tb-sep"></span>
+        <button class="page-tb-btn page-tb-ai" id="ptb-ai" title="Bloc IA (Groq)">✨ IA</button>
+        <button class="page-tb-btn" id="ptb-insert" title="Insérer un bloc">＋ Insérer</button>
+        <button class="page-tb-btn" data-ptbcmd="print" title="Imprimer / PDF" style="margin-left:auto">🖨</button>
+      </div>
       <div class="page-icon-big" id="page-icon-big">${window.__renderIcon(page.icon, 'page', 60)}</div>
       <textarea class="page-title" id="page-title" rows="1" placeholder="Sans titre">${escapeHtml(page.title||'')}</textarea>
       <div class="page-meta">
@@ -2612,6 +2627,7 @@ function renderEditor() {
     </div>`;
   setupTitleAutoresize();
   setupBlocks();
+  setupPageToolbar();
   setupIconPicker();
   setupCover();
   injectBlockAddButtons();
@@ -2649,6 +2665,64 @@ function setupEndAddBtn() {
 }
 
 // Cleanup ephemeral / blocks abandoned without picking a slash item
+function setupPageToolbar() {
+  const tb = document.getElementById('page-toolbar');
+  if (!tb) return;
+  // Format buttons
+  tb.querySelectorAll('[data-ptbcmd]').forEach(btn => {
+    btn.onmousedown = (e) => {
+      e.preventDefault();
+      const cmd = btn.dataset.ptbcmd;
+      if (cmd === 'print') { window.print(); return; }
+      if (cmd === 'createLink') {
+        const u = prompt('URL :'); if (u) document.execCommand('createLink', false, u);
+        return;
+      }
+      try { document.execCommand(cmd, false, null); } catch(_) {}
+    };
+  });
+  // Style select
+  const styleEl = document.getElementById('ptb-style');
+  if (styleEl) styleEl.onchange = () => { try { document.execCommand('formatBlock', false, styleEl.value); } catch(_){} };
+  // Font select
+  const fontEl = document.getElementById('ptb-font');
+  if (fontEl) fontEl.onchange = () => { try { document.execCommand('fontName', false, fontEl.value); } catch(_){} };
+  // Size select
+  const sizeEl = document.getElementById('ptb-size');
+  if (sizeEl) sizeEl.onchange = () => { try { document.execCommand('fontSize', false, sizeEl.value); } catch(_){} };
+  // Color pickers
+  const colorEl = document.getElementById('ptb-color');
+  if (colorEl) colorEl.onchange = () => { try { document.execCommand('foreColor', false, colorEl.value); } catch(_){} };
+  const hiliteEl = document.getElementById('ptb-hilite');
+  if (hiliteEl) hiliteEl.onchange = () => { try { document.execCommand('hiliteColor', false, hiliteEl.value); } catch(_){} };
+  // AI button — insert AI block at end
+  const aiBtn = document.getElementById('ptb-ai');
+  if (aiBtn) aiBtn.onclick = () => {
+    const blocks = state.blocks[state.currentPageId];
+    if (!blocks) return;
+    const b = { id:nbid(), type:'ai', content:'' };
+    blocks.push(b);
+    Storage.save(); renderEditor();
+    setTimeout(() => {
+      const el = document.querySelector(`[data-id="${b.id}"] .block-content`);
+      if (el) el.focus();
+    }, 80);
+  };
+  // Insert button — open slash menu on last block
+  const insertBtn = document.getElementById('ptb-insert');
+  if (insertBtn) insertBtn.onclick = () => {
+    const blocks = state.blocks[state.currentPageId];
+    if (!blocks) return;
+    const nb = { id:nbid(), type:'p', content:'/', _ephemeral:true };
+    blocks.push(nb);
+    Storage.save(); renderEditor();
+    setTimeout(() => {
+      const el = document.querySelector(`[data-id="${nb.id}"] .block-content`);
+      if (el) { el.focus(); const fn = window.showSlashMenu; if (fn) fn(el); }
+    }, 80);
+  };
+}
+
 function cleanupEphemeralSlashBlocks() {
   const blocks = state.blocks[state.currentPageId];
   if (!blocks) return;
@@ -2820,18 +2894,6 @@ function renderBlock(block) {
       <div class="block-content" style="display:none"></div>
     </div>`;
   }
-  if (block.type==='whiteboard') {
-    return `<div class="block" data-id="${block.id}" data-type="whiteboard">
-      <div class="whiteboard-block" data-wb="${block.id}">
-        <div class="whiteboard-toolbar">
-          <span class="whiteboard-hint">Whiteboard — formes, flèches, sticky notes, dessin (auto-save)</span>
-          <button class="whiteboard-fs" data-wbfs="${block.id}" title="Plein écran">⛶</button>
-        </div>
-        <iframe class="whiteboard-iframe" data-wbframe="${block.id}" src="about:blank" frameborder="0"></iframe>
-      </div>
-      <div class="block-content" style="display:none"></div>
-    </div>`;
-  }
   if (block.type==='ai') {
     return `<div class="block" data-id="${block.id}" data-type="ai">
       <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
@@ -2845,38 +2907,6 @@ function renderBlock(block) {
       <div class="math-block" data-mathid="${block.id}">
         <div class="math-render" id="math-r-${block.id}"></div>
         <input class="math-edit" data-mathin="${block.id}" placeholder="\\\\sum_{i=1}^n i = \\\\frac{n(n+1)}{2}" value="${escapeHtml(block.content||'')}">
-      </div>
-      <div class="block-content" style="display:none"></div>
-    </div>`;
-  }
-  if (block.type==='mindmap') {
-    return `<div class="block" data-id="${block.id}" data-type="mindmap">
-      <div class="block-handle"><button class="handle-btn" data-handle="${block.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
-      <div class="mindmap-block" data-mindmap="${block.id}">
-        <div class="mindmap-toolbar">
-          <div class="mm-actions">
-            <button class="mm-btn" data-mma="addChild" data-mmid="${block.id}" title="Ajouter un enfant (Tab)">➕ Enfant</button>
-            <button class="mm-btn" data-mma="addSibling" data-mmid="${block.id}" title="Ajouter un sibling (Entrée)">↔ Sibling</button>
-            <button class="mm-btn" data-mma="rename" data-mmid="${block.id}" title="Renommer (F2)">✎ Renommer</button>
-            <button class="mm-btn" data-mma="delete" data-mmid="${block.id}" title="Supprimer (Suppr)">🗑 Suppr</button>
-            <span class="mm-sep"></span>
-            <button class="mm-btn mm-color" data-mmc="#ec4899" data-mmid="${block.id}" title="Rose" style="background:#ec4899"></button>
-            <button class="mm-btn mm-color" data-mmc="#f97316" data-mmid="${block.id}" title="Orange" style="background:#f97316"></button>
-            <button class="mm-btn mm-color" data-mmc="#eab308" data-mmid="${block.id}" title="Jaune" style="background:#eab308"></button>
-            <button class="mm-btn mm-color" data-mmc="#22c55e" data-mmid="${block.id}" title="Vert" style="background:#22c55e"></button>
-            <button class="mm-btn mm-color" data-mmc="#06b6d4" data-mmid="${block.id}" title="Cyan" style="background:#06b6d4"></button>
-            <button class="mm-btn mm-color" data-mmc="#3b82f6" data-mmid="${block.id}" title="Bleu" style="background:#3b82f6"></button>
-            <button class="mm-btn mm-color" data-mmc="#8b5cf6" data-mmid="${block.id}" title="Violet" style="background:#8b5cf6"></button>
-            <span class="mm-sep"></span>
-            <button class="mm-btn" data-mma="link" data-mmid="${block.id}" title="Ajouter un lien">🔗 Lien</button>
-            <button class="mm-btn" data-mma="image" data-mmid="${block.id}" title="Ajouter une image">🖼 Image</button>
-            <button class="mm-btn" data-mma="note" data-mmid="${block.id}" title="Note">📝 Note</button>
-            <span class="mm-sep"></span>
-            <button class="mm-btn" data-mma="center" data-mmid="${block.id}" title="Recentrer">⊕ Centrer</button>
-          </div>
-          <button class="mindmap-fs" data-mmfs="${block.id}" title="Plein écran">⛶</button>
-        </div>
-        <div class="mindmap-canvas" id="mm-${block.id}"></div>
       </div>
       <div class="block-content" style="display:none"></div>
     </div>`;
@@ -3620,9 +3650,7 @@ const SLASH_OPTIONS = [
     { type:'ai', icon:svgIcon('sparkles',16), name:'IA', desc:'Demande IA (placeholder)' },
     { type:'math', icon:svgIcon('sigma',16), name:'Équation', desc:'Formule LaTeX (KaTeX)' },
     { type:'mermaid', icon:svgIcon('chart-network',16), name:'Diagramme', desc:'Mermaid chart' },
-    { type:'mindmap', icon:svgIcon('git-branch',16), name:'Mindmap', desc:'Carte mentale (style Whimsical)' },
-    { type:'whiteboard', icon:svgIcon('pen-tool',16), name:'Whiteboard', desc:'Tableau blanc — formes, flèches, dessin (drawio)' },
-    { type:'toc', icon:svgIcon('list-tree',16), name:'Sommaire', desc:'Table des matières auto' },
+{ type:'toc', icon:svgIcon('list-tree',16), name:'Sommaire', desc:'Table des matières auto' },
     { type:'button', icon:svgIcon('mouse-pointer-click',16), name:'Bouton', desc:'Action: nouvelle tâche' },
     { type:'file', icon:svgIcon('paperclip',16), name:'Fichier', desc:'Upload (base64)' },
     { type:'audio', icon:svgIcon('mic',16), name:'Audio', desc:'Enregistrement audio' },
@@ -5218,102 +5246,6 @@ function setupNewBlocks() {
     };
     renderMath();
     inp.oninput = () => { const b = getBlock(id); if (b) { b.content = inp.value; Storage.save(); renderMath(); } };
-  });
-  document.querySelectorAll('[data-wbframe]').forEach(iframe => {
-    const id = iframe.dataset.wbframe;
-    if (iframe.dataset.mounted) return;
-    iframe.dataset.mounted = '1';
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
-    iframe.src = 'https://embed.diagrams.net/?embed=1&proto=json&spin=1&saveAndExit=0&noSaveBtn=0&noExitBtn=1&dark=1&libraries=1&pages=0&toolbar=1&edit=_blank&grid=1';
-    const DRAWIO_ORIGIN = 'https://embed.diagrams.net';
-    const onMsg = (ev) => {
-      if (ev.origin !== DRAWIO_ORIGIN) return;
-      if (ev.source !== iframe.contentWindow) return;
-      let msg; try { msg = JSON.parse(ev.data); } catch(_) { return; }
-      const b = getBlock(id); if (!b) return;
-      if (msg.event === 'init') {
-        const xml = b.content || '<mxfile><diagram name="Canvas"><mxGraphModel dx="2400" dy="1800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="2400" pageHeight="1800" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel></diagram></mxfile>';
-        iframe.contentWindow.postMessage(JSON.stringify({ action:'load', autosave:1, xml }), DRAWIO_ORIGIN);
-        // Switch to fit-canvas mode after load
-        setTimeout(() => {
-          try { iframe.contentWindow.postMessage(JSON.stringify({ action:'prompt', text:'' }), DRAWIO_ORIGIN); } catch(_){}
-        }, 500);
-      } else if (msg.event === 'save' || msg.event === 'autosave') {
-        b.content = msg.xml || '';
-        try { Storage.save(); } catch(e){ console.error('whiteboard save', e); }
-      }
-    };
-    window.addEventListener('message', onMsg);
-    const fsBtn = document.querySelector(`[data-wbfs="${id}"]`);
-    if (fsBtn) fsBtn.onclick = () => {
-      const block = iframe.closest('.whiteboard-block');
-      block.classList.toggle('fullscreen');
-    };
-  });
-  document.querySelectorAll('[data-mindmap]').forEach(wrap => {
-    const id = wrap.dataset.mindmap;
-    const canvas = document.getElementById('mm-'+id);
-    if (!canvas || !window.MindElixir) return;
-    if (canvas.dataset.mounted) return;
-    canvas.dataset.mounted = '1';
-    const b = getBlock(id);
-    let data;
-    try { data = b && b.content ? JSON.parse(b.content) : null; } catch(_){ data = null; }
-    if (!data) data = { nodeData: { id:'root', topic:'Idée centrale', children:[
-      { id:'b1', topic:'Branche 1', children:[{id:'b1a',topic:'Sous-idée A'},{id:'b1b',topic:'Sous-idée B'}] },
-      { id:'b2', topic:'Branche 2', children:[{id:'b2a',topic:'Sous-idée C'}] },
-      { id:'b3', topic:'Branche 3' }
-    ] } };
-    const me = new window.MindElixir({ el:canvas, direction:window.MindElixir.SIDE, draggable:true, contextMenu:true, toolBar:true, nodeMenu:true, keypress:true, theme:{ name:'whimsy-clone', palette:['#ec4899','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6'], cssVar:{'--main-bgcolor':'#fafafa','--main-color':'#1f2937','--bgcolor':'#fafafa','--root-color':'#fff','--root-bgcolor':'#111827','--main-radius':'10px','--topic-padding':'8px 14px','--color':'#374151','--gap':'40px','--root-radius':'14px','--topic-radius':'10px'} } });
-    me.init(data);
-    requestAnimationFrame(() => { try { me.toCenter(); } catch(_){} });
-    setTimeout(() => { try { me.toCenter(); } catch(_){} }, 250);
-    window.__meInstances = window.__meInstances || {};
-    window.__meInstances[id] = me;
-    const save = () => { const b2 = getBlock(id); if (b2) { try { b2.content = JSON.stringify(me.getData()); Storage.save(); } catch(e){ console.error('mindmap save', e); } } };
-    me.bus.addListener('operation', save);
-    const fsBtn = document.querySelector(`[data-mmfs="${id}"]`);
-    if (fsBtn) fsBtn.onclick = () => {
-      const block = canvas.closest('.mindmap-block');
-      block.classList.toggle('fullscreen');
-      setTimeout(()=>{ try { me.refresh(); me.toCenter(); } catch(_){} }, 100);
-    };
-    // Wire visible toolbar action buttons
-    const wrapper = canvas.closest('.mindmap-block');
-    wrapper.querySelectorAll('[data-mma]').forEach(btn => btn.onclick = () => {
-      const action = btn.dataset.mma;
-      const node = me.currentNode;
-      if (!node && action !== 'center') { try { toast('Sélectionne un nœud d\'abord','error'); } catch(_){}; return; }
-      try {
-        if (action === 'addChild') me.addChild();
-        else if (action === 'addSibling') me.insertSibling('after');
-        else if (action === 'rename') me.editTopic(node);
-        else if (action === 'delete') me.removeNode();
-        else if (action === 'center') me.toCenter();
-        else if (action === 'link') {
-          const u = prompt('URL du lien :', node?.hyperLink||'');
-          if (u !== null) { node.hyperLink = u; me.refresh(); save(); }
-        } else if (action === 'image') {
-          const u = prompt('URL de l\'image :', node?.image?.url||'');
-          if (u) { node.image = { url:u, width:120, height:80 }; me.refresh(); save(); }
-        } else if (action === 'note') {
-          const t = prompt('Note :', node?.note||'');
-          if (t !== null) { node.note = t; me.refresh(); save(); }
-        }
-      } catch(e){ console.error('mm action', e); }
-    });
-    wrapper.querySelectorAll('[data-mmc]').forEach(btn => btn.onclick = () => {
-      const node = me.currentNode;
-      if (!node) { try { toast('Sélectionne un nœud d\'abord','error'); } catch(_){}; return; }
-      try {
-        const color = btn.dataset.mmc;
-        node.style = node.style || {};
-        node.style.background = color;
-        node.style.color = '#fff';
-        me.refresh();
-        save();
-      } catch(e){ console.error('mm color', e); }
-    });
   });
   document.querySelectorAll('[data-merin]').forEach(inp => {
     const id = inp.dataset.merin;
