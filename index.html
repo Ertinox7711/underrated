@@ -2092,22 +2092,28 @@ let state = {
 // ============ STORAGE ============
 const Storage = {
   load() {
-    try {
-      const data = localStorage.getItem('underrated-data');
-      if (data) {
+    const data = localStorage.getItem('underrated-data');
+    if (data) {
+      try {
         const p = JSON.parse(data);
         state.pages = p.pages || [];
         state.blocks = p.blocks || {};
         state.expanded = p.expanded || {};
+      } catch(e) {
+        console.error('[Storage.load] corrupt underrated-data', e);
+        try { localStorage.setItem('underrated-data-backup-'+Date.now(), data); } catch(_){}
+        try { if (typeof toast === 'function') toast('Données locales corrompues — sauvegarde créée','error'); } catch(_){}
       }
-      const prefs = localStorage.getItem('underrated-prefs');
-      if (prefs) {
+    }
+    const prefs = localStorage.getItem('underrated-prefs');
+    if (prefs) {
+      try {
         const p = JSON.parse(prefs);
         state.theme = p.theme || 'dark';
         state.accent = p.accent || 'orange';
         applyTheme();
-      }
-    } catch(e) { console.error(e); }
+      } catch(e) { console.error('[Storage.load] corrupt prefs', e); }
+    }
   },
   save() {
     clearTimeout(state.saveDebounce);
@@ -2117,7 +2123,12 @@ const Storage = {
           pages: state.pages, blocks: state.blocks, expanded: state.expanded
         }));
         cloudSave();
-      } catch(e) { console.error(e); }
+      } catch(e) {
+        console.error('[Storage.save]', e);
+        if (e && e.name === 'QuotaExceededError') {
+          try { if (typeof toast === 'function') toast('Stockage local plein — pages non sauvegardées','error'); } catch(_){}
+        }
+      }
     }, 400);
   },
   savePrefs() {
@@ -3376,13 +3387,13 @@ function handleBlockKey(e, block, content) {
 
   // Slash menu nav
   const sm = document.getElementById('slash-menu');
-  if (sm.classList.contains('show')) {
+  if (sm && sm.classList.contains('show')) {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === 'Escape') {
       handleSlashKey(e); return;
     }
   }
   const mm = document.getElementById('mention-menu');
-  if (mm.classList.contains('show')) {
+  if (mm && mm.classList.contains('show')) {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === 'Escape') {
       handleMentionKey(e); return;
     }
@@ -3510,6 +3521,7 @@ let slashIdx = 0;
 let slashFiltered = [];
 
 function showSlashMenu(target) {
+  if (!target) return;
   slashTarget = target;
   const text = target.textContent;
   const m = text.match(/\/(\w*)$/);
@@ -3518,6 +3530,7 @@ function showSlashMenu(target) {
   slashFiltered = q ? flat.filter(i => i.name.toLowerCase().includes(q) || i.type.includes(q)) : flat;
   slashIdx = 0;
   const menu = document.getElementById('slash-menu');
+  if (!menu) return;
   const rect = target.getBoundingClientRect();
   menu.style.top = (rect.bottom + 4) + 'px';
   menu.style.left = rect.left + 'px';
@@ -3556,7 +3569,7 @@ function applySlash(type) {
   }
   hideSlashMenu();
 }
-function hideSlashMenu() { document.getElementById('slash-menu').classList.remove('show'); }
+function hideSlashMenu() { const m = document.getElementById('slash-menu'); if (m) m.classList.remove('show'); }
 
 // ============ MENTION MENU ============
 let mentionTarget = null, mentionIdx = 0, mentionResults = [];
@@ -3598,7 +3611,7 @@ function applyMention(pageId) {
   renderEditor();
   setTimeout(()=>focusBlock(b.id), 10);
 }
-function hideMentionMenu() { document.getElementById('mention-menu').classList.remove('show'); }
+function hideMentionMenu() { const m = document.getElementById('mention-menu'); if (m) m.classList.remove('show'); }
 
 // ============ BACKLINKS ============
 function renderBacklinks() {
@@ -5104,7 +5117,9 @@ function setupNewBlocks() {
     ] } };
     const me = new window.MindElixir({ el:canvas, direction:window.MindElixir.SIDE, draggable:true, contextMenu:true, toolBar:true, nodeMenu:true, keypress:true, theme:{ name:'whimsy-clone', palette:['#ec4899','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6'], cssVar:{'--main-bgcolor':'#fafafa','--main-color':'#1f2937','--bgcolor':'#fafafa','--root-color':'#fff','--root-bgcolor':'#111827','--main-radius':'10px','--topic-padding':'8px 14px','--color':'#374151','--gap':'40px','--root-radius':'14px','--topic-radius':'10px'} } });
     me.init(data);
-    const save = () => { const b2 = getBlock(id); if (b2) { try { b2.content = JSON.stringify(me.getData()); Storage.save(); } catch(_){} } };
+    requestAnimationFrame(() => { try { me.toCenter(); } catch(_){} });
+    setTimeout(() => { try { me.toCenter(); } catch(_){} }, 250);
+    const save = () => { const b2 = getBlock(id); if (b2) { try { b2.content = JSON.stringify(me.getData()); Storage.save(); } catch(e){ console.error('mindmap save', e); } } };
     me.bus.addListener('operation', save);
     const fsBtn = document.querySelector(`[data-mmfs="${id}"]`);
     if (fsBtn) fsBtn.onclick = () => {
