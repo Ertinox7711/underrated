@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 16:29 — `cbb32ec`
+fix: AI block configure button, navigator.platform deprecation, URL escaping, CI push guard
+
 ## 04/05/2026 06:26 — `3d0a0b0`
 feat: mindmap visible toolbar (boutons cliquables) + fix calendar/sheet/form render hook
 

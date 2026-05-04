@@ -1,8 +1,8 @@
 {
-  "commit": "3d0a0b0",
-  "message": "feat: mindmap visible toolbar (boutons cliquables) + fix calendar/sheet/form render hook",
-  "commitDate": "2026-05-04T06:26:12+02:00",
-  "buildDate": "2026-05-04T04:26:26Z",
-  "buildDateFR": "04/05/2026 06:26",
+  "commit": "cbb32ec",
+  "message": "fix: AI block configure button, navigator.platform deprecation, URL escaping, CI push guard",
+  "commitDate": "2026-05-04T16:29:24+02:00",
+  "buildDate": "2026-05-04T14:29:35Z",
+  "buildDateFR": "04/05/2026 16:29",
   "branch": "main"
 }
