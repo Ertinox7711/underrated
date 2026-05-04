@@ -1,8 +1,8 @@
 {
-  "commit": "adbf3cb",
-  "message": "fix: slash menu hides when typing query (only triggered on bare /)",
-  "commitDate": "2026-05-04T04:17:26+02:00",
-  "buildDate": "2026-05-04T02:17:35Z",
-  "buildDateFR": "04/05/2026 04:17",
+  "commit": "38128a4",
+  "message": "feat: end-of-page + button + mindmap block (Whimsical-style mermaid mindmap)",
+  "commitDate": "2026-05-04T04:22:23+02:00",
+  "buildDate": "2026-05-04T02:22:33Z",
+  "buildDateFR": "04/05/2026 04:22",
   "branch": "main"
 }

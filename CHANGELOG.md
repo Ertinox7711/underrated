@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 04:22 — `38128a4`
+feat: end-of-page + button + mindmap block (Whimsical-style mermaid mindmap)
+
 ## 04/05/2026 04:17 — `adbf3cb`
 fix: slash menu hides when typing query (only triggered on bare /)
 
