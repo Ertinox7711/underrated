@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 05:01 — `202c35e`
+feat: mindmap as full-width section (escape editor max-width, 680px tall)
+
 ## 04/05/2026 04:49 — `5601213`
 fix: use mind-elixir IIFE bundle so window.MindElixir is exposed
 

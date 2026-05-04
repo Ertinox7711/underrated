@@ -1,8 +1,8 @@
 {
-  "commit": "5601213",
-  "message": "fix: use mind-elixir IIFE bundle so window.MindElixir is exposed",
-  "commitDate": "2026-05-04T04:49:24+02:00",
-  "buildDate": "2026-05-04T02:49:32Z",
-  "buildDateFR": "04/05/2026 04:49",
+  "commit": "202c35e",
+  "message": "feat: mindmap as full-width section (escape editor max-width, 680px tall)",
+  "commitDate": "2026-05-04T05:01:16+02:00",
+  "buildDate": "2026-05-04T03:01:22Z",
+  "buildDateFR": "04/05/2026 05:01",
   "branch": "main"
 }
