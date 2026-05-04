@@ -1,8 +1,8 @@
 {
-  "commit": "8dc2783",
-  "message": "feat: Unsplash cover picker - 28 category chips + auto-load default photos + landscape orientation + photographer attribution",
-  "commitDate": "2026-05-04T17:19:34+02:00",
-  "buildDate": "2026-05-04T15:19:52Z",
-  "buildDateFR": "04/05/2026 17:19",
+  "commit": "e678f49",
+  "message": "feat: immersive motion system - aurora topbar, custom cursor with lag, magnetic buttons, page transitions, parallax cover, focus glow, title shimmer",
+  "commitDate": "2026-05-04T17:23:32+02:00",
+  "buildDate": "2026-05-04T15:23:49Z",
+  "buildDateFR": "04/05/2026 17:23",
   "branch": "main"
 }

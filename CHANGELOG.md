@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 17:23 — `e678f49`
+feat: immersive motion system - aurora topbar, custom cursor with lag, magnetic buttons, page transitions, parallax cover, focus glow, title shimmer
+
 ## 04/05/2026 17:19 — `8dc2783`
 feat: Unsplash cover picker - 28 category chips + auto-load default photos + landscape orientation + photographer attribution
 
