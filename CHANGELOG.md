@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 06:12 — `0eff908`
+fix: critical batch from agents audit
+
 ## 04/05/2026 05:58 — `fc872d2`
 fix: drawio whiteboard config (dark, single page, grid, better defaults)
 
