@@ -2316,6 +2316,15 @@ function nbid(){ return 'b_'+Date.now()+'_'+Math.random().toString(36).substr(2,
 function npid(){ return 'p_'+Date.now()+'_'+Math.random().toString(36).substr(2,5); }
 function escapeHtml(s){ if(s==null)return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function toast(msg, type=''){ const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show '+type; setTimeout(()=>t.classList.remove('show'),2500); }
+function triggerManualSave(){
+  try { Storage.save(); } catch(e){ toast('Erreur sauvegarde','error'); return; }
+  toast('✅ Sauvegardé');
+  const btn = document.getElementById('ptb-save');
+  if (btn){ btn.textContent='✅ Sauvé'; setTimeout(()=>{ btn.textContent='💾 Sauv.'; },1200); }
+}
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); triggerManualSave(); }
+});
 function getBlock(id){ const b=state.blocks[state.currentPageId]||[]; return b.find(x=>x.id===id); }
 function currentPage(){ return state.pages.find(p=>p.id===state.currentPageId); }
 
@@ -2609,6 +2618,8 @@ function renderEditor() {
         <span class="page-tb-sep"></span>
         <button class="page-tb-btn page-tb-ai" id="ptb-ai" title="Bloc IA (Groq)">✨ IA</button>
         <button class="page-tb-btn" id="ptb-insert" title="Insérer un bloc">＋ Insérer</button>
+        <span class="page-tb-sep"></span>
+        <button class="page-tb-btn" id="ptb-save" title="Sauvegarder (Ctrl+S)" style="color:var(--accent);font-weight:600">💾 Sauv.</button>
         <button class="page-tb-btn" data-ptbcmd="print" title="Imprimer / PDF" style="margin-left:auto">🖨</button>
       </div>
       <div class="page-icon-big" id="page-icon-big">${window.__renderIcon(page.icon, 'page', 60)}</div>
@@ -2721,6 +2732,9 @@ function setupPageToolbar() {
       if (el) { el.focus(); const fn = window.showSlashMenu; if (fn) fn(el); }
     }, 80);
   };
+  // Save button
+  const saveBtn = document.getElementById('ptb-save');
+  if (saveBtn) saveBtn.onclick = () => { triggerManualSave(); };
 }
 
 function cleanupEphemeralSlashBlocks() {
@@ -3291,12 +3305,11 @@ function showEmojiPicker(target, cb) {
   };
   setTimeout(() => {
     document.addEventListener('click', function close(ev) {
-      if (!ev.target.closest('.emoji-picker') && ev.target !== target) {
-        picker.classList.remove('show');
-        document.removeEventListener('click', close);
-      }
+      if (picker.contains(ev.target) || ev.target === target) return;
+      picker.classList.remove('show');
+      document.removeEventListener('click', close);
     });
-  }, 0);
+  }, 100);
 }
 
 // ============ BLOCKS ============
@@ -5655,7 +5668,7 @@ showEmojiPicker = function(target, cb) {
       try { localStorage.setItem('underrated-recent-emojis', JSON.stringify(recentEmojis)); } catch(e){}
       picker.classList.remove('show');
     });
-    picker.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { activeCat = b.dataset.cat; renderE(); });
+    picker.querySelectorAll('[data-cat]').forEach(b => b.addEventListener('mousedown', (ev) => { ev.preventDefault(); ev.stopPropagation(); activeCat = b.dataset.cat; renderE(); }));
     const search = document.getElementById('emoji-search');
     if (search) search.oninput = (e) => {
       const q = e.target.value.toLowerCase();
@@ -5673,12 +5686,11 @@ showEmojiPicker = function(target, cb) {
   picker.classList.add('show');
   setTimeout(() => {
     document.addEventListener('click', function close(ev) {
-      if (!ev.target.closest('.emoji-picker') && ev.target !== target) {
-        picker.classList.remove('show');
-        document.removeEventListener('click', close);
-      }
+      if (picker.contains(ev.target) || ev.target === target) return;
+      picker.classList.remove('show');
+      document.removeEventListener('click', close);
     });
-  }, 0);
+  }, 100);
 };
 
 // ============ HOOKS into core ============
