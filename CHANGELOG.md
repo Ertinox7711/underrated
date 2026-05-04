@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 04:17 — `adbf3cb`
+fix: slash menu hides when typing query (only triggered on bare /)
+
 ## 04/05/2026 04:14 — `9b60b28`
 fix: slash menu icons missing (lucide not hydrated after render)
 
