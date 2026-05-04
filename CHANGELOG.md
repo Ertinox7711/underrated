@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 18:11 — `ee76b64`
+feat: Monday-style task board - sidebar button, groups, statuts En cours/Fait/Bloqué, échéances, drag-to-check, add/delete tasks & groups
+
 ## 04/05/2026 17:58 — `ae6d7fa`
 fix: workspace isolation audit - graph view, mentions, favs, recent, backlinks, cmdK, daily note now strictly filter by currentWorkspaceId; createPage tags new pages; new pagesInWs() helper + window.wsMatchPage; graph layout improved (tree clustering)
 
