@@ -6646,7 +6646,7 @@ window.renderPages = renderPages;
         <div data-cv-body="url" style="display:none;padding:8px"><input class="prop-input" id="cv-url" placeholder="https://..."><button class="btn" id="cv-url-go" style="margin-top:8px;padding:8px">Appliquer</button></div>
         <div data-cv-body="random" style="display:none"><div class="cover-grid">${[1,2,3,4,5,6,7,8,9,10,11,12].map(n => `<img data-pic="${n}" src="https://picsum.photos/200/80?random=${n}" style="width:60px;height:36px;object-fit:cover;border-radius:6px;cursor:pointer;margin:3px">`).join('')}</div></div>
         <div data-cv-body="unsplash" style="display:none;padding:8px">
-          ${k.unsplash ? `<input class="prop-input" id="cv-uns-q" placeholder="Recherche..."><div id="cv-uns-results" style="display:flex;flex-wrap:wrap;margin-top:8px;max-height:240px;overflow-y:auto"></div>` : '<div style="color:var(--text-2);font-size:13px">Ajoute ta clé Unsplash dans ⚙️ Paramètres</div>'}
+          ${k.unsplash ? `<input class="prop-input" id="cv-uns-q" placeholder="Recherche libre (ex: ocean, neon, abstract...)"><div id="cv-uns-cats" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">${['nature','space','city','ocean','mountain','forest','desert','minimal','technology','pattern','sunset','aurora','dark','neon','vintage','architecture','flowers','animals','food','coffee','workspace','art','texture','gradient','sky','beach','snow','autumn'].map(c=>`<button class="cv-uns-cat" data-uns-cat="${c}" style="padding:3px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:14px;color:var(--text-2);font-size:11px;cursor:pointer">${c}</button>`).join('')}</div><div id="cv-uns-results" style="display:flex;flex-wrap:wrap;margin-top:8px;max-height:280px;overflow-y:auto;gap:4px"></div>` : '<div style="color:var(--text-2);font-size:13px">Ajoute ta clé Unsplash dans ⚙️ Paramètres</div>'}
         </div>`;
       picker.style.left = '';
       picker.style.top = '';
@@ -6689,22 +6689,55 @@ window.renderPages = renderPages;
       };
       picker.querySelectorAll('[data-pic]').forEach(im => im.onclick = () => applyCover(`url(https://picsum.photos/1600/300?random=${im.dataset.pic}) center/cover`));
       const unsQ = document.getElementById('cv-uns-q');
+      const runUnsSearch = async (q) => {
+        const grid = document.getElementById('cv-uns-results');
+        if (!grid) return;
+        grid.innerHTML = '<div style="color:var(--text-3);font-size:12px;padding:8px">Chargement…</div>';
+        try {
+          const r = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=24&orientation=landscape&client_id=${getKeys().unsplash}`);
+          const j = await r.json();
+          if (!(j.results||[]).length) { grid.innerHTML = '<div style="color:var(--text-3);font-size:12px;padding:8px">Aucun résultat</div>'; return; }
+          grid.innerHTML = j.results.map(p => `<img data-uurl="${p.urls.regular}" data-attr="${escapeHtml((p.user&&p.user.name)||'')}" src="${p.urls.thumb}" title="Photo: ${escapeHtml((p.user&&p.user.name)||'')}" style="width:96px;height:64px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid var(--border);transition:all .12s">`).join('');
+          grid.querySelectorAll('[data-uurl]').forEach(im => {
+            im.onmouseenter = () => { im.style.transform='scale(1.05)'; im.style.borderColor='var(--accent)'; };
+            im.onmouseleave = () => { im.style.transform=''; im.style.borderColor='var(--border)'; };
+            im.onclick = () => applyCover(`url(${im.dataset.uurl}) center/cover`);
+          });
+        } catch(e) { toast('Erreur Unsplash','error'); grid.innerHTML = '<div style="color:var(--danger);font-size:12px;padding:8px">Erreur API</div>'; }
+      };
       if (unsQ) {
         let t;
         unsQ.oninput = (e) => {
           clearTimeout(t);
           const q = e.target.value.trim();
           if (!q) return;
-          t = setTimeout(async () => {
-            try {
-              const r = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=12&client_id=${getKeys().unsplash}`);
-              const j = await r.json();
-              const grid = document.getElementById('cv-uns-results');
-              grid.innerHTML = (j.results||[]).map(p => `<img data-uurl="${p.urls.regular}" src="${p.urls.thumb}" style="width:90px;height:60px;object-fit:cover;border-radius:6px;cursor:pointer;margin:3px">`).join('');
-              grid.querySelectorAll('[data-uurl]').forEach(im => im.onclick = () => applyCover(`url(${im.dataset.uurl}) center/cover`));
-            } catch(e) { toast('Erreur Unsplash','error'); }
-          }, 350);
+          t = setTimeout(() => runUnsSearch(q), 350);
         };
+        // Wire category chips
+        picker.querySelectorAll('[data-uns-cat]').forEach(chip => {
+          chip.onclick = () => {
+            const cat = chip.dataset.unsCat;
+            unsQ.value = cat;
+            picker.querySelectorAll('[data-uns-cat]').forEach(c => { c.style.background='var(--bg-3)'; c.style.color='var(--text-2)'; c.style.borderColor='var(--border)'; });
+            chip.style.background='var(--accent-soft)'; chip.style.color='var(--accent)'; chip.style.borderColor='var(--accent)';
+            runUnsSearch(cat);
+          };
+          chip.onmouseenter = () => { if (chip.style.background !== 'var(--accent-soft)') chip.style.background='var(--bg-hover)'; };
+          chip.onmouseleave = () => { if (chip.style.color !== 'var(--accent)') chip.style.background='var(--bg-3)'; };
+        });
+        // Auto-load default photos when Unsplash tab activated
+        const unsTab = picker.querySelector('[data-cv="unsplash"]');
+        if (unsTab) {
+          const origClick = unsTab.onclick;
+          unsTab.addEventListener('click', () => {
+            const grid = document.getElementById('cv-uns-results');
+            if (grid && !grid.innerHTML.trim()) {
+              const defaults = ['nature','minimal','abstract','space'];
+              const pick = defaults[Math.floor(Math.random()*defaults.length)];
+              runUnsSearch(pick);
+            }
+          });
+        }
       }
     };
     window.showCoverPicker = showCoverPicker;
