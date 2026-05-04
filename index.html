@@ -1921,6 +1921,61 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
 .db-detail-prop-label svg,.db-detail-prop-label i[data-lucide]{width:13px;height:13px}
 .db-detail-prop-value{padding:4px 8px;border-radius:5px;cursor:pointer;font-size:13px;min-height:26px;display:flex;align-items:center;border:1px solid transparent}
 .db-detail-prop-value:hover{background:var(--bg-hover);border-color:var(--border)}
+
+/* ===== TASKS BOARD (Monday-style) ===== */
+.tasks-view{padding:28px 32px;max-width:1100px;margin:0 auto;font-family:inherit}
+.tasks-view-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.tasks-view-title{font-size:24px;font-weight:800;color:var(--text)}
+.tasks-view-actions{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.tb-add-btn{display:flex;align-items:center;gap:7px;padding:7px 14px;background:#0073ea;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+.tb-add-btn:hover{background:#0060c0}
+.tb-add-btn-arrow{padding:7px 10px;background:#0073ea;color:#fff;border:none;border-left:1px solid rgba(255,255,255,.3);border-radius:0 6px 6px 0;cursor:pointer}
+.tb-act-btn{display:flex;align-items:center;gap:6px;padding:6px 11px;background:var(--bg-3);color:var(--text-2);border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;transition:.15s}
+.tb-act-btn:hover{background:var(--bg-hover);color:var(--text)}
+.tb-act-btn svg{width:14px;height:14px}
+.tasks-group{margin-bottom:28px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.tasks-group-hdr{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--bg-2);cursor:pointer;border-left:4px solid var(--gc,#0073ea)}
+.tasks-group-hdr:hover{background:var(--bg-3)}
+.tasks-group-toggle{font-size:10px;color:var(--text-3);transition:.2s;display:inline-block}
+.tasks-group-toggle.open{transform:rotate(90deg)}
+.tasks-group-name{font-size:14px;font-weight:700;color:var(--text)}
+.tasks-group-count{font-size:12px;color:var(--text-3);background:var(--bg-3);border-radius:10px;padding:2px 8px;margin-left:4px}
+.tasks-group-body{overflow:hidden}
+.tasks-tbl{width:100%;border-collapse:collapse;background:var(--bg)}
+.tasks-tbl th{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);padding:7px 12px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg-2);white-space:nowrap}
+.tasks-tbl td{padding:0;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px}
+.tasks-tbl tr:last-child td{border-bottom:none}
+.tasks-tbl tr.task-row:hover td{background:var(--bg-3)}
+.td-check{width:36px;text-align:center}
+.task-check{width:15px;height:15px;cursor:pointer;accent-color:#0073ea}
+.td-title{min-width:220px;max-width:400px}
+.task-title-input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;padding:10px 12px;cursor:text}
+.task-row.done .task-title-input{text-decoration:line-through;color:var(--text-3)}
+.td-assignee{width:110px}
+.task-assignee-input{width:100%;background:transparent;border:none;outline:none;color:var(--text-2);font-size:12px;padding:9px 12px}
+.td-status{width:130px}
+.task-status-pill{display:inline-block;padding:4px 12px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.02em;transition:.1s;white-space:nowrap}
+.task-status-pill:hover{filter:brightness(1.1)}
+.td-due{width:110px}
+.task-due-input{width:100%;background:transparent;border:none;outline:none;color:var(--text-2);font-size:12px;padding:9px 12px;cursor:pointer}
+.task-due-input.overdue{color:#e2445c!important}
+.td-actions{width:36px;text-align:center}
+.task-del-btn{opacity:0;background:none;border:none;cursor:pointer;color:var(--text-3);padding:4px;border-radius:4px;transition:.1s}
+.task-row:hover .task-del-btn{opacity:1}
+.task-del-btn:hover{color:#e2445c;background:rgba(226,68,92,.1)}
+.tasks-add-row{display:flex;align-items:center;gap:8px;padding:9px 14px;color:var(--text-3);font-size:13px;cursor:pointer;background:var(--bg);border-top:1px solid var(--border)}
+.tasks-add-row:hover{color:var(--accent);background:var(--accent-soft)}
+.tasks-add-row svg{width:14px;height:14px}
+.tasks-summary-row td{padding:6px 12px;background:var(--bg-2);font-size:11px;color:var(--text-3);border-top:2px solid var(--border)}
+.tasks-status-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;gap:2px;min-width:80px}
+.tasks-status-bar-seg{height:100%;border-radius:2px;transition:width .3s}
+.tasks-add-group-wrap{margin-top:8px}
+.tasks-add-group-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;color:var(--text-3);font-size:13px;cursor:pointer;border:1px dashed var(--border);border-radius:8px;background:transparent;transition:.15s;width:auto}
+.tasks-add-group-btn:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+.task-status-menu{position:fixed;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:1000;padding:6px;min-width:150px}
+.task-status-opt{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:5px;cursor:pointer;font-size:13px;font-weight:600}
+.task-status-opt:hover{background:var(--bg-hover)}
+@media(max-width:700px){.tasks-view{padding:16px 12px}.tasks-tbl th,.tasks-tbl td{padding:6px 8px}.td-assignee,.td-due{display:none}}
 </style>
 </head>
 <body>
@@ -1997,6 +2052,10 @@ h1,h2,h3,h4,.serif-h,.logo,.page-title,.empty-state h2{font-family:var(--sans) !
         <div class="quick-item" id="qi-drive">
           <i data-lucide="folder-open"></i>
           <span>Drive</span>
+        </div>
+        <div class="quick-item" id="qi-tasks">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          <span>Tâches</span>
         </div>
         <div class="quick-item" id="qi-shortcuts">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -10339,6 +10398,358 @@ window.renderPages = renderPages;
   })();
 
   console.log('[Underrated] Workspace Suite v1.0 loaded');
+})();
+
+// ============ TASKS BOARD (Monday-style) ============
+(function(){
+  const STATUSES = [
+    { id:'todo',     label:'À faire',  color:'#c4c4c4', text:'#333' },
+    { id:'progress', label:'En cours', color:'#fdab3d', text:'#fff' },
+    { id:'done',     label:'Fait',     color:'#00c875', text:'#fff' },
+    { id:'blocked',  label:'Bloqué',   color:'#e2445c', text:'#fff' },
+  ];
+  const GROUP_COLORS = ['#0073ea','#fdab3d','#00c875','#e2445c','#a25ddc','#037f4c','#bb3354'];
+  const TBKEY = 'underrated-taskboard';
+
+  function tbLoad(){
+    try { return JSON.parse(localStorage.getItem(TBKEY)); } catch(e){ return null; }
+  }
+  function tbSave(tb){ try { localStorage.setItem(TBKEY, JSON.stringify(tb)); } catch(e){} }
+  function tbDefault(){
+    const gid1 = 'g_'+Date.now(), gid2 = 'g_'+(Date.now()+1);
+    return { groups:[
+      { id:gid1, name:'To-do', color:'#0073ea', open:true, tasks:[
+        { id:'t_'+Date.now(),     title:'Tâche 1', assignee:'', status:'progress', due:'2026-05-03', done:false },
+        { id:'t_'+(Date.now()+1), title:'Tâche 2', assignee:'', status:'done',     due:'2026-05-04', done:true  },
+        { id:'t_'+(Date.now()+2), title:'Tâche 3', assignee:'', status:'blocked',  due:'2026-05-05', done:false },
+      ]},
+      { id:gid2, name:'Terminé', color:'#00c875', open:true, tasks:[] }
+    ]};
+  }
+  function tbGet(){ return tbLoad() || tbDefault(); }
+
+  function statusMeta(id){ return STATUSES.find(s=>s.id===id) || STATUSES[0]; }
+
+  function renderStatusPill(statusId){
+    const s = statusMeta(statusId);
+    return `<span class="task-status-pill" style="background:${s.color};color:${s.text}">${s.label}</span>`;
+  }
+
+  function isDueOverdue(due){
+    if (!due) return false;
+    return new Date(due) < new Date(new Date().toDateString());
+  }
+  function formatDue(due){
+    if (!due) return '';
+    const d = new Date(due);
+    if (isNaN(d)) return due;
+    return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+  }
+
+  function renderBoard(){
+    const tb = tbGet();
+    const editor = document.getElementById('editor');
+    if (!editor) return;
+    document.getElementById('breadcrumb').innerHTML = '<span style="font-weight:600">📋 Tâches</span>';
+
+    editor.innerHTML = `<div class="tasks-view">
+      <div class="tasks-view-header">
+        <div class="tasks-view-title">📋 Tâches</div>
+      </div>
+      <div class="tasks-view-actions">
+        <div style="display:flex;border-radius:6px;overflow:hidden">
+          <button class="tb-add-btn" id="tb-add-task" style="border-radius:6px 0 0 6px">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Ajouter tâche
+          </button>
+          <button class="tb-add-btn tb-add-btn-arrow" id="tb-add-task-arrow" title="Choisir le groupe">▼</button>
+        </div>
+        <button class="tb-act-btn" id="tb-search-btn">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/></svg>
+          Rechercher
+        </button>
+        <button class="tb-act-btn" id="tb-filter-btn">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
+          Filtre
+        </button>
+        <button class="tb-act-btn" id="tb-sort-btn">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
+          Trier
+        </button>
+        <button class="tb-act-btn" id="tb-groupby-btn">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+          Grouper par
+        </button>
+      </div>
+      <div id="tb-groups">
+        ${tb.groups.map(g => renderGroup(g)).join('')}
+      </div>
+      <div class="tasks-add-group-wrap">
+        <button class="tasks-add-group-btn" id="tb-add-group">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Ajouter un groupe
+        </button>
+      </div>
+    </div>`;
+
+    wireBoard();
+  }
+
+  function renderGroup(g){
+    const done = g.tasks.filter(t=>t.status==='done').length;
+    const progress = g.tasks.filter(t=>t.status==='progress').length;
+    const blocked = g.tasks.filter(t=>t.status==='blocked').length;
+    const todo = g.tasks.filter(t=>t.status==='todo').length;
+    const total = g.tasks.length;
+    const pctDone = total ? Math.round(done/total*100) : 0;
+    const pctProg = total ? Math.round(progress/total*100) : 0;
+    const pctBlck = total ? Math.round(blocked/total*100) : 0;
+
+    return `<div class="tasks-group" data-gid="${g.id}" style="--gc:${g.color}">
+      <div class="tasks-group-hdr" data-gh-toggle="${g.id}">
+        <span class="tasks-group-toggle ${g.open!==false?'open':''}">▶</span>
+        <span class="tasks-group-name" contenteditable="true" data-gh-name="${g.id}" style="outline:none;min-width:60px" spellcheck="false">${escapeHtml(g.name)}</span>
+        <span class="tasks-group-count">${total}</span>
+        <button class="task-del-btn" data-del-group="${g.id}" style="margin-left:auto;opacity:.5" title="Supprimer ce groupe">✕</button>
+      </div>
+      ${g.open!==false ? `
+      <div class="tasks-group-body">
+        <table class="tasks-tbl">
+          <thead><tr>
+            <th class="td-check"><input type="checkbox" class="task-check" data-chk-all="${g.id}" title="Tout cocher"></th>
+            <th>Tâche</th>
+            <th class="td-assignee">Assigné</th>
+            <th class="td-status">Statut</th>
+            <th class="td-due">Échéance</th>
+            <th class="td-actions"></th>
+          </tr></thead>
+          <tbody>
+            ${g.tasks.map(t => renderTaskRow(t, g.id)).join('')}
+            <tr class="tasks-add-row" data-add-task="${g.id}">
+              <td colspan="6">
+                <div style="display:flex;align-items:center;gap:8px;padding:2px 4px">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                  Ajouter tâche
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        ${total > 0 ? `<table class="tasks-tbl"><tbody><tr class="tasks-summary-row">
+          <td class="td-check"></td>
+          <td></td>
+          <td class="td-assignee"></td>
+          <td class="td-status">
+            <div class="tasks-status-bar" title="${done} fait · ${progress} en cours · ${blocked} bloqué · ${todo} à faire">
+              ${pctDone>0?`<div class="tasks-status-bar-seg" style="width:${pctDone}%;background:#00c875"></div>`:''}
+              ${pctProg>0?`<div class="tasks-status-bar-seg" style="width:${pctProg}%;background:#fdab3d"></div>`:''}
+              ${pctBlck>0?`<div class="tasks-status-bar-seg" style="width:${pctBlck}%;background:#e2445c"></div>`:''}
+              ${(100-pctDone-pctProg-pctBlck)>0?`<div class="tasks-status-bar-seg" style="width:${100-pctDone-pctProg-pctBlck}%;background:#c4c4c4"></div>`:''}
+            </div>
+          </td>
+          <td class="td-due" style="font-size:11px;color:var(--text-3)">${total} tâche${total>1?'s':''}</td>
+          <td class="td-actions"></td>
+        </tr></tbody></table>` : ''}
+      </div>` : ''}
+    </div>`;
+  }
+
+  function renderTaskRow(t, gid){
+    const s = statusMeta(t.status);
+    const overdue = !t.done && isDueOverdue(t.due);
+    return `<tr class="task-row${t.done?' done':''}" data-tid="${t.id}" data-gid="${gid}">
+      <td class="td-check"><input type="checkbox" class="task-check" data-chk-task="${t.id}" ${t.done?'checked':''}></td>
+      <td class="td-title"><input class="task-title-input" data-task-title="${t.id}" value="${escapeHtml(t.title||'')}" placeholder="Nom de la tâche..."></td>
+      <td class="td-assignee"><input class="task-assignee-input" data-task-assignee="${t.id}" value="${escapeHtml(t.assignee||'')}" placeholder="—"></td>
+      <td class="td-status" style="padding:6px 12px"><span class="task-status-pill" data-status-pill="${t.id}" style="background:${s.color};color:${s.text}">${s.label}</span></td>
+      <td class="td-due"><input type="date" class="task-due-input${overdue?' overdue':''}" data-task-due="${t.id}" value="${t.due||''}"></td>
+      <td class="td-actions"><button class="task-del-btn" data-del-task="${t.id}" title="Supprimer">✕</button></td>
+    </tr>`;
+  }
+
+  function addTask(gid){
+    const tb = tbGet();
+    const g = tb.groups.find(x=>x.id===gid);
+    if (!g) return;
+    const newTask = { id:'t_'+Date.now()+'_'+Math.random().toString(36).slice(2,5), title:'', assignee:'', status:'todo', due:'', done:false };
+    g.tasks.push(newTask);
+    tbSave(tb);
+    renderBoard();
+    // Focus the new task title
+    setTimeout(()=>{
+      const inp = document.querySelector(`[data-task-title="${newTask.id}"]`);
+      if (inp) inp.focus();
+    }, 30);
+  }
+
+  function openStatusMenu(pillEl, taskId){
+    document.querySelectorAll('.task-status-menu').forEach(m=>m.remove());
+    const menu = document.createElement('div');
+    menu.className = 'task-status-menu';
+    menu.innerHTML = STATUSES.map(s=>`<div class="task-status-opt" data-smopt="${taskId}|${s.id}">
+      <span style="width:12px;height:12px;border-radius:3px;background:${s.color};display:inline-block;flex-shrink:0"></span>
+      ${s.label}
+    </div>`).join('');
+    document.body.appendChild(menu);
+    const r = pillEl.getBoundingClientRect();
+    menu.style.left = Math.min(r.left, window.innerWidth-180)+'px';
+    menu.style.top = (r.bottom+4)+'px';
+    menu.querySelectorAll('[data-smopt]').forEach(opt => opt.onclick = (ev) => {
+      ev.stopPropagation();
+      const [tid, sid] = opt.dataset.smopt.split('|');
+      const tb = tbGet();
+      tb.groups.forEach(g => { const t = g.tasks.find(x=>x.id===tid); if(t) t.status=sid; });
+      tbSave(tb); menu.remove(); renderBoard();
+    });
+    setTimeout(()=>{ document.addEventListener('click', ()=>menu.remove(), {once:true}); }, 50);
+  }
+
+  function wireBoard(){
+    const tb = tbGet();
+
+    // toggle group
+    document.querySelectorAll('[data-gh-toggle]').forEach(hdr => {
+      hdr.addEventListener('click', e => {
+        if (e.target.closest('[data-gh-name]') || e.target.closest('[data-del-group]')) return;
+        const gid = hdr.dataset.ghToggle;
+        const g = tb.groups.find(x=>x.id===gid);
+        if (g) { g.open = g.open===false; tbSave(tb); renderBoard(); }
+      });
+    });
+
+    // rename group
+    document.querySelectorAll('[data-gh-name]').forEach(el => {
+      el.addEventListener('blur', () => {
+        const gid = el.dataset.ghName;
+        const g = tb.groups.find(x=>x.id===gid);
+        if (g) { g.name = el.textContent.trim() || g.name; tbSave(tb); }
+      });
+      el.addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();el.blur();} });
+    });
+
+    // delete group
+    document.querySelectorAll('[data-del-group]').forEach(btn => {
+      btn.onclick = e => {
+        e.stopPropagation();
+        const gid = btn.dataset.delGroup;
+        if (!confirm('Supprimer ce groupe et toutes ses tâches ?')) return;
+        const idx = tb.groups.findIndex(x=>x.id===gid);
+        if (idx>-1) { tb.groups.splice(idx,1); tbSave(tb); renderBoard(); }
+      };
+    });
+
+    // check all
+    document.querySelectorAll('[data-chk-all]').forEach(chk => {
+      chk.onchange = () => {
+        const gid = chk.dataset.chkAll;
+        const g = tb.groups.find(x=>x.id===gid);
+        if (!g) return;
+        g.tasks.forEach(t => { t.done = chk.checked; if(chk.checked) t.status='done'; });
+        tbSave(tb); renderBoard();
+      };
+    });
+
+    // check task
+    document.querySelectorAll('[data-chk-task]').forEach(chk => {
+      chk.onchange = () => {
+        const tid = chk.dataset.chkTask;
+        tb.groups.forEach(g=>{ const t=g.tasks.find(x=>x.id===tid); if(t){ t.done=chk.checked; if(chk.checked) t.status='done'; } });
+        tbSave(tb); renderBoard();
+      };
+    });
+
+    // task title edit
+    document.querySelectorAll('[data-task-title]').forEach(inp => {
+      inp.oninput = () => {
+        const tid = inp.dataset.taskTitle;
+        tb.groups.forEach(g=>{ const t=g.tasks.find(x=>x.id===tid); if(t) t.title=inp.value; });
+        tbSave(tb);
+      };
+      inp.onkeydown = e => { if(e.key==='Enter'){ e.preventDefault(); const row=inp.closest('[data-gid]'); if(row) addTask(row.dataset.gid); } };
+    });
+
+    // assignee edit
+    document.querySelectorAll('[data-task-assignee]').forEach(inp => {
+      inp.oninput = () => {
+        const tid = inp.dataset.taskAssignee;
+        tb.groups.forEach(g=>{ const t=g.tasks.find(x=>x.id===tid); if(t) t.assignee=inp.value; });
+        tbSave(tb);
+      };
+    });
+
+    // status pill click → menu
+    document.querySelectorAll('[data-status-pill]').forEach(pill => {
+      pill.onclick = e => { e.stopPropagation(); openStatusMenu(pill, pill.dataset.statusPill); };
+    });
+
+    // due date change
+    document.querySelectorAll('[data-task-due]').forEach(inp => {
+      inp.onchange = () => {
+        const tid = inp.dataset.taskDue;
+        tb.groups.forEach(g=>{ const t=g.tasks.find(x=>x.id===tid); if(t) t.due=inp.value; });
+        tbSave(tb); renderBoard();
+      };
+    });
+
+    // delete task
+    document.querySelectorAll('[data-del-task]').forEach(btn => {
+      btn.onclick = e => {
+        e.stopPropagation();
+        const tid = btn.dataset.delTask;
+        tb.groups.forEach(g=>{ g.tasks = g.tasks.filter(t=>t.id!==tid); });
+        tbSave(tb); renderBoard();
+      };
+    });
+
+    // add task row click
+    document.querySelectorAll('[data-add-task]').forEach(row => {
+      row.onclick = () => addTask(row.dataset.addTask);
+    });
+
+    // top "Ajouter tâche" → add to first group
+    const addBtn = document.getElementById('tb-add-task');
+    if (addBtn) addBtn.onclick = () => { if(tb.groups[0]) addTask(tb.groups[0].id); };
+
+    // add group
+    const addGrpBtn = document.getElementById('tb-add-group');
+    if (addGrpBtn) addGrpBtn.onclick = () => {
+      const color = GROUP_COLORS[tb.groups.length % GROUP_COLORS.length];
+      tb.groups.push({ id:'g_'+Date.now(), name:'Nouveau groupe', color, open:true, tasks:[] });
+      tbSave(tb); renderBoard();
+      // focus the new group name
+      setTimeout(()=>{
+        const names = document.querySelectorAll('[data-gh-name]');
+        if (names.length) { const last = names[names.length-1]; last.focus(); document.execCommand('selectAll',false,null); }
+      }, 30);
+    };
+  }
+
+  // Hook renderEditor to intercept __tasks__
+  const _tbOrig = typeof renderEditor==='function' ? renderEditor : null;
+  if (_tbOrig) {
+    window.renderEditor = function(){
+      if (state.currentPageId === '__tasks__') { renderBoard(); return; }
+      _tbOrig();
+    };
+  }
+
+  // Sidebar button
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const btn = document.getElementById('qi-tasks');
+    if (btn) btn.onclick = openTasksBoard;
+  });
+  // Also try immediately (DOMContentLoaded may have already fired)
+  const qiTasks = document.getElementById('qi-tasks');
+  if (qiTasks) qiTasks.onclick = openTasksBoard;
+
+  function openTasksBoard(){
+    state.currentPageId = '__tasks__';
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+    renderBoard();
+  }
+
+  window.openTasksBoard = openTasksBoard;
 })();
 
 // ============ LUCIDE ICON REFRESH HOOKS ============
