@@ -1,8 +1,8 @@
 {
-  "commit": "ccf43af",
-  "message": "style: lighter canvas + Inter font + soft shadows on mindmap nodes",
-  "commitDate": "2026-05-04T05:21:41+02:00",
-  "buildDate": "2026-05-04T03:21:49Z",
-  "buildDateFR": "04/05/2026 05:21",
+  "commit": "79c1969",
+  "message": "fix: HIGH-severity null-derefs + mindmap centering + Storage corruption surface",
+  "commitDate": "2026-05-04T05:35:22+02:00",
+  "buildDate": "2026-05-04T03:35:30Z",
+  "buildDateFR": "04/05/2026 05:35",
   "branch": "main"
 }

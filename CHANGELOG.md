@@ -1,5 +1,8 @@
 # Changelog
 
+## 04/05/2026 05:35 — `79c1969`
+fix: HIGH-severity null-derefs + mindmap centering + Storage corruption surface
+
 ## 04/05/2026 05:21 — `ccf43af`
 style: lighter canvas + Inter font + soft shadows on mindmap nodes
 
