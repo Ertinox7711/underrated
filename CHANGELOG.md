@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:30 — `d4d234b`
+feat: login simplifié - pseudo + mdp, admin gère les mots de passe
+
 ## 05/05/2026 07:27 — `3a0408f`
 feat: login - toggle connexion/créer un compte, credentials en localStorage
 
