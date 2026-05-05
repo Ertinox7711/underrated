@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:54 — `8f02423`
+fix: reset credentials v3 - force pseudo=mdp pour tout le monde
+
 ## 05/05/2026 07:53 — `e5c5eb6`
 feat: add task modal - plus de prompt, sélecteur personne inline
 
