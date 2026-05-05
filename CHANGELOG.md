@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 22:54 — `c59ee9c`
+feat: email-based login (ertidiscord, bastlusso, wawa22500)
+
 ## 05/05/2026 22:49 — `9fe3f78`
 feat: Firebase Firestore sync - real-time collaboration for all shared data
 
