@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 22:20 — `2e5a663`
+feat: marketing plan section in hub offres - court/moyen/long terme, auto-save localStorage
+
 ## 05/05/2026 21:50 — `38647a1`
 feat: espace equipe - timestamps, activity log, badges sur tabs, dates images/tasks/notes
 
