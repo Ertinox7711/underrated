@@ -1,8 +1,8 @@
 {
-  "commit": "c550b71",
-  "message": "feat: tools page restructured with Bastien inner sidebar (6 tabs: hub, visual, episode, retention, bots, concurrents)",
-  "commitDate": "2026-05-05T19:41:43+02:00",
-  "buildDate": "2026-05-05T17:42:03Z",
-  "buildDateFR": "05/05/2026 19:42",
+  "commit": "85405cc",
+  "message": "feat: hub offres page (STUDIO 97€ vs ELITE 1200€) + inline admin editor with localStorage persistence",
+  "commitDate": "2026-05-05T20:11:31+02:00",
+  "buildDate": "2026-05-05T18:11:48Z",
+  "buildDateFR": "05/05/2026 20:11",
   "branch": "main"
 }

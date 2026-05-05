@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 20:11 — `85405cc`
+feat: hub offres page (STUDIO 97€ vs ELITE 1200€) + inline admin editor with localStorage persistence
+
 ## 05/05/2026 19:42 — `c550b71`
 feat: tools page restructured with Bastien inner sidebar (6 tabs: hub, visual, episode, retention, bots, concurrents)
 
