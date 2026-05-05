@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 22:39 — `d4f97d1`
+feat: bell activity feed + task-only tab badges in Espace Equipe
+
 ## 05/05/2026 22:33 — `48731c4`
 fix: pass input values directly to doLogin to fix sandbox iframe issue
 
