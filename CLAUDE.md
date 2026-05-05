@@ -12,8 +12,16 @@ Inspiration : Skibidi Tentafruit/Fruit Love Island — mais meilleure histoire +
 - Hébergement : GitHub Pages
 - IA prod : ChatGPT, Gemini, outils génération image/vidéo
 
+## Équipe (4 membres)
+- **Mathieu (SGRRBOOM)** — Fondateur/CEO + COO : narration, VSL, marketing, décision finale, coordination, Teachable, pubs
+- **Bastien (@lussori)** — Head of Content & Product : CRM/tools/bots (P1), vidéos Gen Z (P2)
+- **Théo** — Infrastructure : BDD, bots, Discord, clippers, accompagnement 1200€
+- **Ilame** — Head of Sales & Community : closing, community, mentorat, accompagnement 1200€
+
 ## Fichiers clés
 - `index.html` — app collaborative complète (login, éditeur de blocs, mobile-first)
+- `dashboard.html` — war room interne équipe (membres, phases, funnel, série) — déployé sur GitHub Pages avec versioning
+- `audit-underrated.html` — audit stratégique pourquoi Skibidi Fruits marche
 - `.claude/settings.json` — permissions projet
 
 ## Firebase (TODO)
