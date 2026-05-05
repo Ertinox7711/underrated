@@ -361,6 +361,34 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .cp-swatch:hover{transform:scale(1.2)}
 .cp-swatch.active{border-color:#fff;transform:scale(1.15)}
 
+/* ══ ADD TASK MODAL ══ */
+#add-task-modal{
+  position:fixed;inset:0;z-index:9995;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
+}
+#add-task-modal.open{display:flex}
+.atm-box{
+  background:rgba(10,15,30,.97);border:1px solid var(--border);border-radius:14px;
+  padding:28px 32px;width:100%;max-width:400px;
+  box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 40px rgba(30,144,255,.06);
+  animation:fadeUp .25s ease both;
+}
+.atm-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;margin-bottom:4px}
+.atm-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+.atm-who{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.atm-btn{padding:10px;border-radius:7px;cursor:pointer;text-align:center;border:1px solid var(--border);background:rgba(255,255,255,.03);transition:all var(--ease)}
+.atm-btn:hover{border-color:var(--border-hi);background:rgba(255,255,255,.05)}
+.atm-btn.sel{border-color:var(--sel-col,var(--b1));background:rgba(var(--sel-rgb,30,144,255),.12)}
+.atm-btn-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.06em}
+.atm-btn-role{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:1px}
+.atm-input{width:100%;padding:11px 14px;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-family:'Manrope',sans-serif;font-size:13px;outline:none;margin-bottom:16px;transition:border-color var(--ease)}
+.atm-input:focus{border-color:rgba(30,144,255,.4)}
+.atm-actions{display:flex;gap:8px}
+.atm-confirm{flex:1;padding:11px;border-radius:7px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--b1),var(--b3));color:#fff;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.08em;transition:opacity var(--ease)}
+.atm-confirm:hover{opacity:.88}
+.atm-cancel{padding:11px 16px;border-radius:7px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;transition:all var(--ease)}
+.atm-cancel:hover{border-color:var(--border-hi);color:var(--text)}
+
 /* ══ STRAT ══ */
 .strat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .strat-card{padding:22px}
@@ -766,6 +794,37 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 
 </main>
 
+<!-- ADD TASK MODAL -->
+<div id="add-task-modal" onclick="if(event.target===this)closeAddTask()">
+  <div class="atm-box">
+    <div class="atm-title">AJOUTER UNE TÂCHE</div>
+    <div class="atm-sub" id="atm-phase-lbl">Phase 1 — Setup</div>
+    <div class="atm-who" id="atm-who-grid">
+      <div class="atm-btn" data-key="mathieu" onclick="atSelectWho('mathieu')" style="--sel-col:#1E90FF;--sel-rgb:30,144,255">
+        <div class="atm-btn-name" style="color:#1E90FF">MATHIEU</div>
+        <div class="atm-btn-role">CEO + COO</div>
+      </div>
+      <div class="atm-btn" data-key="bastien" onclick="atSelectWho('bastien')" style="--sel-col:#9B59B6;--sel-rgb:155,89,182">
+        <div class="atm-btn-name" style="color:#9B59B6">BASTIEN</div>
+        <div class="atm-btn-role">Content & Product</div>
+      </div>
+      <div class="atm-btn" data-key="theo" onclick="atSelectWho('theo')" style="--sel-col:#4F6EF7;--sel-rgb:79,110,247">
+        <div class="atm-btn-name" style="color:#4F6EF7">THÉO</div>
+        <div class="atm-btn-role">Infrastructure</div>
+      </div>
+      <div class="atm-btn" data-key="ilame" onclick="atSelectWho('ilame')" style="--sel-col:#27AE60;--sel-rgb:39,174,96">
+        <div class="atm-btn-name" style="color:#27AE60">ILAME</div>
+        <div class="atm-btn-role">Sales & Community</div>
+      </div>
+    </div>
+    <input class="atm-input" id="atm-txt" placeholder="Description de la tâche…" onkeydown="if(event.key==='Enter')confirmAddTask()">
+    <div class="atm-actions">
+      <button class="atm-cancel" onclick="closeAddTask()">Annuler</button>
+      <button class="atm-confirm" onclick="confirmAddTask()">AJOUTER</button>
+    </div>
+  </div>
+</div>
+
 <!-- CHANGELOG PANEL -->
 <div class="cl-overlay" id="cl-overlay" onclick="closeChangelog()"></div>
 <div id="changelog-panel">
@@ -1166,24 +1225,43 @@ function phDeleteTask(btn) {
   saveTasks(tasks); buildPhaseTasks(); buildAdminOverview();
 }
 
-// Phases page: add task (admin) — auto-use active person filter
+// Phases page: add task modal
+let _atPhase = 'p1', _atWho = null;
+
 function addTask(phase) {
   if (!SESSION || !SESSION.isAdmin) return;
-  let who = currentPersonFilter;
-  if (who === 'all') {
-    who = window.prompt('Pour qui ? (mathieu / bastien / theo / ilame)');
-    if (!who || !PERSONS_DATA[who.toLowerCase()]) return;
-    who = who.toLowerCase();
+  _atPhase = phase;
+  _atWho = currentPersonFilter !== 'all' ? currentPersonFilter : null;
+  document.getElementById('atm-phase-lbl').textContent = phase === 'p1' ? 'Phase 1 — Setup' : 'Phase 2 — Launch';
+  document.querySelectorAll('.atm-btn').forEach(b => b.classList.remove('sel'));
+  if (_atWho) {
+    const btn = document.querySelector(`.atm-btn[data-key="${_atWho}"]`);
+    if (btn) btn.classList.add('sel');
   }
+  document.getElementById('atm-txt').value = '';
+  document.getElementById('add-task-modal').classList.add('open');
+  setTimeout(() => document.getElementById('atm-txt').focus(), 80);
+}
+
+function atSelectWho(key) {
+  _atWho = key;
+  document.querySelectorAll('.atm-btn').forEach(b => b.classList.toggle('sel', b.dataset.key === key));
+}
+
+function confirmAddTask() {
+  if (!_atWho) { document.getElementById('atm-who-grid').style.outline = '1px solid rgba(255,80,80,.5)'; setTimeout(()=>document.getElementById('atm-who-grid').style.outline='',1000); return; }
+  const txt = document.getElementById('atm-txt').value.trim();
+  if (!txt) { document.getElementById('atm-txt').focus(); return; }
   const tasks = getSavedTasks();
-  if (!tasks[who]) tasks[who] = JSON.parse(JSON.stringify(DEFAULT_TASKS[who] || {p1:[],p2:[]}));
-  if (!tasks[who][phase]) tasks[who][phase] = [];
-  tasks[who][phase].push('Nouvelle tâche');
+  if (!tasks[_atWho]) tasks[_atWho] = JSON.parse(JSON.stringify(DEFAULT_TASKS[_atWho] || {p1:[],p2:[]}));
+  if (!tasks[_atWho][_atPhase]) tasks[_atWho][_atPhase] = [];
+  tasks[_atWho][_atPhase].push(txt);
   saveTasks(tasks); buildPhaseTasks(); buildAdminOverview();
-  setTimeout(() => {
-    const c = document.getElementById('tasks-' + phase);
-    if (c) { const els = [...c.querySelectorAll(`.ph-task[data-key="${who}"] .ph-task-txt`)]; if (els.length) { els[els.length-1].focus(); document.execCommand('selectAll',false,null); } }
-  }, 50);
+  closeAddTask();
+}
+
+function closeAddTask() {
+  document.getElementById('add-task-modal').classList.remove('open');
 }
 
 // ══ NAV ══
