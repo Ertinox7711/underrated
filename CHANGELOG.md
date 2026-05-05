@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:16 — `0bc3a9f`
+fix: CSS-only reveals (no blank page), add phases sub-menu par personne
+
 ## 05/05/2026 07:09 — `b5b32c3`
 feat: dashboard SPA 6 pages - Home, Equipe, Phases, Tools+Serie, Audit, Strategie
 

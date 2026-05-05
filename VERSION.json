@@ -1,8 +1,8 @@
 {
-  "commit": "b5b32c3",
-  "message": "feat: dashboard SPA 6 pages - Home, Equipe, Phases, Tools+Serie, Audit, Strategie",
-  "commitDate": "2026-05-05T07:09:46+02:00",
-  "buildDate": "2026-05-05T05:09:56Z",
-  "buildDateFR": "05/05/2026 07:09",
+  "commit": "0bc3a9f",
+  "message": "fix: CSS-only reveals (no blank page), add phases sub-menu par personne",
+  "commitDate": "2026-05-05T07:16:21+02:00",
+  "buildDate": "2026-05-05T05:16:32Z",
+  "buildDateFR": "05/05/2026 07:16",
   "branch": "main"
 }
