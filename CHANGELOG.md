@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 08:55 — `a658738`
+feat: reminders widget on home - public/private, due times, per-user filtering
+
 ## 05/05/2026 08:49 — `119b9eb`
 feat(notes): team-mode integration - auto-login, visibility (public/private), no Firebase race, no ownership theft
 

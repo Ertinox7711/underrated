@@ -1,8 +1,8 @@
 {
-  "commit": "119b9eb",
-  "message": "feat(notes): team-mode integration - auto-login, visibility (public/private), no Firebase race, no ownership theft",
-  "commitDate": "2026-05-05T08:49:27+02:00",
-  "buildDate": "2026-05-05T06:49:42Z",
-  "buildDateFR": "05/05/2026 08:49",
+  "commit": "a658738",
+  "message": "feat: reminders widget on home - public/private, due times, per-user filtering",
+  "commitDate": "2026-05-05T08:54:58+02:00",
+  "buildDate": "2026-05-05T06:55:09Z",
+  "buildDateFR": "05/05/2026 08:55",
   "branch": "main"
 }
