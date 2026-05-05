@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:23 — `3c083e4`
+feat: login system - person selector, email/password auth, admin panel, personalized views
+
 ## 05/05/2026 07:16 — `0bc3a9f`
 fix: CSS-only reveals (no blank page), add phases sub-menu par personne
 
