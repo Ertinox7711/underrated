@@ -300,6 +300,26 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .mc-add-btn{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;margin-top:4px;opacity:0;transition:opacity .2s}
 .mc-add-btn:hover{color:var(--acc)}
 .member:hover .mc-add-btn{opacity:1}
+/* ══ SUGGESTIONS ══ */
+.mc-suggest-btn{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;margin-top:8px;padding:6px 10px;border-radius:6px;border:1px dashed rgba(255,255,255,.12);transition:all .2s;background:transparent}
+.mc-suggest-btn:hover{color:var(--acc);border-color:var(--acc);background:rgba(30,144,255,.04)}
+.mc-suggest-input-wrap{margin-top:8px;display:none}
+.mc-suggest-input-wrap.open{display:block}
+.mc-suggest-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:rgba(255,255,255,.8);font-family:'Manrope',sans-serif;font-size:11px;padding:7px 10px;outline:none;resize:none}
+.mc-suggest-input:focus{border-color:var(--acc)}
+.mc-suggest-actions{display:flex;gap:6px;margin-top:6px}
+.mc-suggest-submit{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;background:rgba(30,144,255,.15);border:1px solid rgba(30,144,255,.3);color:var(--b1);border-radius:5px;padding:4px 10px;cursor:pointer;transition:all .2s}
+.mc-suggest-submit:hover{background:rgba(30,144,255,.25)}
+.mc-suggest-cancel{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:none;background:none;cursor:pointer;padding:4px 6px}
+.mc-pending{margin-top:10px;border-top:1px solid rgba(255,255,255,.06);padding-top:10px}
+.mc-pending-title{font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.mc-suggestion{background:rgba(255,213,0,.05);border:1px solid rgba(255,213,0,.15);border-radius:6px;padding:7px 9px;margin-bottom:6px;font-size:11px;color:rgba(255,255,255,.65);line-height:1.4}
+.mc-suggestion .sg-meta{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,213,0,.5);margin-bottom:3px}
+.mc-suggestion .sg-actions{display:flex;gap:5px;margin-top:6px}
+.sg-approve{font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.3);color:#5DC48A;border-radius:4px;padding:3px 8px;cursor:pointer;transition:all .2s}
+.sg-approve:hover{background:rgba(39,174,96,.28)}
+.sg-reject{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1px solid rgba(255,255,255,.1);background:none;border-radius:4px;padding:3px 8px;cursor:pointer;transition:all .2s}
+.sg-reject:hover{color:#E74C3C;border-color:rgba(231,76,60,.3)}
 .m-phases{display:flex;gap:5px;flex-wrap:wrap}
 
 /* ══ PHASES ══ */
@@ -936,6 +956,51 @@ function getMemberCards() {
 function saveMemberCards(cards) {
   localStorage.setItem('ur_member_cards', JSON.stringify(cards));
 }
+
+// ══ SUGGESTIONS ══
+function getSuggestions() {
+  try { return JSON.parse(localStorage.getItem('ur_suggestions') || '[]'); }
+  catch(e) { return []; }
+}
+function saveSuggestions(arr) {
+  localStorage.setItem('ur_suggestions', JSON.stringify(arr));
+}
+function toggleSuggestInput(key) {
+  const wrap = document.getElementById('sg-input-' + key);
+  if (!wrap) return;
+  const isOpen = wrap.classList.contains('open');
+  wrap.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    const ta = wrap.querySelector('.mc-suggest-input');
+    if (ta) { ta.value = ''; ta.focus(); }
+  }
+}
+function submitSuggestion(key) {
+  const wrap = document.getElementById('sg-input-' + key);
+  const ta = wrap ? wrap.querySelector('.mc-suggest-input') : null;
+  if (!ta) return;
+  const text = ta.value.trim();
+  if (!text) return;
+  const suggestions = getSuggestions();
+  suggestions.push({ id: Date.now() + Math.random(), personKey: key, authorKey: SESSION.key, text, ts: Date.now() });
+  saveSuggestions(suggestions);
+  wrap.classList.remove('open');
+  buildEquipe();
+}
+function approveSuggestion(id) {
+  const suggestions = getSuggestions();
+  const sg = suggestions.find(s => s.id == id);
+  if (!sg) return;
+  const cards = getMemberCards();
+  cards[sg.personKey].tasks.push(sg.text);
+  saveMemberCards(cards);
+  saveSuggestions(suggestions.filter(s => s.id != id));
+  buildEquipe();
+}
+function rejectSuggestion(id) {
+  saveSuggestions(getSuggestions().filter(s => s.id != id));
+  buildEquipe();
+}
 function mcSaveRole(key, el) {
   const cards = getMemberCards();
   cards[key].role = el.textContent.trim() || MEMBER_CARDS_DEFAULT[key].role;
@@ -974,7 +1039,9 @@ function buildEquipe() {
   const container = document.getElementById('team-grid-dynamic');
   if (!container) return;
   const cards = getMemberCards();
+  const allSuggestions = getSuggestions();
   const nums = { mathieu:'01', bastien:'02', theo:'03', ilame:'04' };
+  const names = { mathieu:'MATHIEU', bastien:'BASTIEN', theo:'THÉO', ilame:'ILAME' };
   const isAdmin = SESSION && SESSION.isAdmin;
   const myKey = SESSION ? SESSION.key : null;
 
@@ -982,9 +1049,12 @@ function buildEquipe() {
     const d = cards[key] || MEMBER_CARDS_DEFAULT[key];
     const isMe = myKey === key;
     const cls = `member m-${key} rv d${i+1}${isMe ? ' me' : ''}`;
+    const cardSuggestions = allSuggestions.filter(s => s.personKey === key);
+
     const phaseBadges = (d.phases || []).map(p =>
       `<span class="mph mph-${p === 'P1' ? '1' : '2'}">${p}</span>`
     ).join('');
+
     const taskItems = d.tasks.map((t, idx) => {
       if (isAdmin) {
         return `<li>
@@ -997,11 +1067,59 @@ function buildEquipe() {
       }
       return `<li><span class="mc-txt">${t}</span></li>`;
     }).join('');
-    const addBtn = isAdmin
-      ? `<div class="mc-add-btn" onclick="mcAddTask('${key}')">
+
+    // Admin: add button + pending suggestions to review
+    let bottomContent = '';
+    if (isAdmin) {
+      const sgHtml = cardSuggestions.length ? `
+        <div class="mc-pending">
+          <div class="mc-pending-title">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            ${cardSuggestions.length} suggestion${cardSuggestions.length > 1 ? 's' : ''} en attente
+          </div>
+          ${cardSuggestions.map(sg => `
+            <div class="mc-suggestion">
+              <div class="sg-meta">${names[sg.authorKey] || sg.authorKey}</div>
+              ${sg.text}
+              <div class="sg-actions">
+                <button class="sg-approve" onclick="approveSuggestion(${sg.id})">Approuver</button>
+                <button class="sg-reject" onclick="rejectSuggestion(${sg.id})">Refuser</button>
+              </div>
+            </div>`).join('')}
+        </div>` : '';
+      bottomContent = `
+        <div class="mc-add-btn" onclick="mcAddTask('${key}')">
           <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Ajouter
+        </div>
+        ${sgHtml}`;
+    } else if (isMe) {
+      // Non-admin on their own card: suggest button + pending their suggestions (read-only)
+      const mySuggestions = cardSuggestions.filter(s => s.authorKey === myKey);
+      const pendingHtml = mySuggestions.length ? `
+        <div class="mc-pending" style="margin-top:8px">
+          <div class="mc-pending-title">Tes suggestions (en attente)</div>
+          ${mySuggestions.map(sg => `
+            <div class="mc-suggestion" style="cursor:default">
+              ${sg.text}
+            </div>`).join('')}
         </div>` : '';
+      bottomContent = `
+        <button class="mc-suggest-btn" onclick="toggleSuggestInput('${key}')">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Suggérer une tâche
+        </button>
+        <div class="mc-suggest-input-wrap" id="sg-input-${key}">
+          <textarea class="mc-suggest-input" rows="2" placeholder="Ex: Créer les sous-titres auto pour chaque épisode…"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitSuggestion('${key}')}"></textarea>
+          <div class="mc-suggest-actions">
+            <button class="mc-suggest-submit" onclick="submitSuggestion('${key}')">Envoyer</button>
+            <button class="mc-suggest-cancel" onclick="toggleSuggestInput('${key}')">Annuler</button>
+          </div>
+        </div>
+        ${pendingHtml}`;
+    }
+
     const meTag = isMe ? `<div class="me-tag">MOI</div>` : '';
     const roleEl = isAdmin
       ? `<div class="m-role" contenteditable="true"
@@ -1009,14 +1127,15 @@ function buildEquipe() {
             onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
           >${d.role}</div>`
       : `<div class="m-role">${d.role}</div>`;
+
     return `<div class="${cls}" id="card-${key}">
       ${meTag}
       <div class="m-num">${nums[key]}</div>
-      <div class="m-name">${{mathieu:'MATHIEU',bastien:'BASTIEN',theo:'THÉO',ilame:'ILAME'}[key]||key.toUpperCase()}</div>
+      <div class="m-name">${names[key]}</div>
       ${roleEl}
       <ul class="m-tasks">${taskItems}</ul>
-      ${addBtn}
-      <div class="m-phases">${phaseBadges}</div>
+      ${bottomContent}
+      <div class="m-phases" style="margin-top:10px">${phaseBadges}</div>
     </div>`;
   }).join('');
 }
