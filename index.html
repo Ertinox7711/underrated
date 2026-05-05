@@ -571,6 +571,69 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 /* ══ AUDIT ══ */
 .audit-frame{width:100%;height:100vh;border:none}
 
+/* ══ TOOLS INNER LAYOUT ══ */
+.tools-layout{display:flex;height:100vh;overflow:hidden}
+.tools-sb{width:190px;flex-shrink:0;background:rgba(6,9,18,.98);border-right:1px solid rgba(155,89,182,.15);display:flex;flex-direction:column}
+.tools-sb-hd{padding:18px 15px 13px;border-bottom:1px solid rgba(155,89,182,.12)}
+.tools-sb-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.1em;color:#9B59B6}
+.tools-sb-role{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.tools-sb-nav{flex:1;padding:6px 0;overflow-y:auto}
+.tools-sb-item{display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-right:2px solid transparent;transition:background var(--ease),color var(--ease),border-color var(--ease)}
+.tools-sb-item:hover{background:rgba(155,89,182,.07);color:var(--text)}
+.tools-sb-item.active{background:rgba(155,89,182,.13);color:#9B59B6;border-right-color:#9B59B6}
+.tools-sb-item svg{flex-shrink:0;opacity:.5}.tools-sb-item.active svg{opacity:1}
+.tools-content{flex:1;overflow-y:auto}
+.tools-tab{display:none;padding:28px 26px}
+.tools-tab.active{display:block}
+.ttab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:13px;margin-bottom:24px}
+.ttab-card{background:rgba(14,20,40,.7);border:1px solid var(--border);border-radius:9px;padding:15px;transition:border-color var(--ease),transform var(--ease)}
+.ttab-card:hover{border-color:rgba(155,89,182,.28);transform:translateY(-2px)}
+.ttab-cat{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#9B59B6;margin-bottom:5px}
+.ttab-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.06em;color:var(--text);margin-bottom:3px}
+.ttab-use{font-size:11px;color:var(--muted);line-height:1.5}
+.ttab-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-top:6px}
+.ttab-badge.free{background:rgba(0,200,100,.1);border:1px solid rgba(0,200,100,.2);color:#00C864}
+.ttab-badge.paid{background:rgba(155,89,182,.1);border:1px solid rgba(155,89,182,.25);color:#9B59B6}
+.ttab-badge.req{background:rgba(255,94,125,.1);border:1px solid rgba(255,94,125,.25);color:#FF5E7D}
+.vi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.vi-card{background:rgba(14,20,40,.7);border:1px solid var(--border);border-radius:9px;padding:18px}
+.vi-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:.06em;margin-bottom:9px}
+.vi-rule{font-size:11.5px;color:var(--muted);line-height:1.7;margin-bottom:6px}
+.vi-rule strong{color:var(--text)}
+.char-palette{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.char-p-item{display:flex;align-items:center;gap:8px}
+.char-p-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0}
+.char-p-name{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em}
+.ret-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:13px}
+.ret-card{background:rgba(14,20,40,.7);border:1px solid var(--border);border-radius:9px;padding:17px}
+.ret-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.06em;margin-bottom:6px;color:var(--b2)}
+.ret-body{font-size:11.5px;color:var(--muted);line-height:1.65}
+.bot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:13px}
+.bot-card{background:rgba(14,20,40,.7);border:1px solid var(--border);border-radius:9px;padding:18px}
+.bot-status{display:inline-flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:4px;margin-bottom:10px}
+.bot-status.p1{background:rgba(255,94,125,.1);border:1px solid rgba(255,94,125,.25);color:#FF5E7D}
+.bot-status.p2{background:rgba(255,165,0,.1);border:1px solid rgba(255,165,0,.25);color:orange}
+.bot-status.p3{background:rgba(86,204,242,.1);border:1px solid rgba(86,204,242,.2);color:var(--b2)}
+.bot-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;margin-bottom:6px}
+.bot-desc{font-size:11.5px;color:var(--muted);line-height:1.65;margin-bottom:10px}
+.bot-tags{display:flex;flex-wrap:wrap;gap:5px}
+.bot-tag{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted)}
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:13px;margin-bottom:20px}
+.comp-card{background:rgba(14,20,40,.7);border:1px solid var(--border);border-radius:9px;padding:17px}
+.comp-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.06em;margin-bottom:3px}
+.comp-stat{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--b1);letter-spacing:.04em;line-height:1}
+.comp-sub{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.comp-body{font-size:11.5px;color:var(--muted);line-height:1.65}
+@media(max-width:700px){
+  .tools-layout{flex-direction:column;height:auto;overflow:visible}
+  .tools-sb{width:100%;border-right:none;border-bottom:1px solid rgba(155,89,182,.15)}
+  .tools-sb-nav{display:flex;flex-direction:row;overflow-x:auto;padding:4px 0;flex:none}
+  .tools-sb-item{flex-direction:column;gap:2px;padding:8px 11px;font-size:8px;border-right:none;border-bottom:2px solid transparent;white-space:nowrap;min-width:60px;text-align:center}
+  .tools-sb-item.active{border-right-color:transparent;border-bottom-color:#9B59B6}
+  .tools-content{overflow-y:visible}
+  .tools-tab.active{padding:16px 15px}
+}
+
 /* ══ MOBILE ══ */
 @media(max-width:700px){
   body{flex-direction:column;overflow:hidden}
@@ -780,57 +843,268 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 
   <!-- ════ TOOLS & SÉRIE ════ -->
   <div class="page" id="p-tools">
-    <div class="ph">
-      <div class="ph-eye">Production</div>
-      <div class="ph-title">TOOLS &amp; <em>SÉRIE</em></div>
-      <div class="ph-sub">Stack IA, personnages, format épisode, funnel de vente.</div>
-    </div>
-    <div class="pc">
-      <div class="sec-lbl">Stack production</div>
-      <div class="sec-h2">LES <em>OUTILS</em></div>
-      <div class="tools-grid">
-        <div class="gc tool-card rv d1"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="tool-name">CHATGPT</div><div class="tool-use">Scripts, narration, dialogues</div></div>
-        <div class="gc tool-card rv d2"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div class="tool-name">ELEVENLABS</div><div class="tool-use">Voix personnages (Pro)</div></div>
-        <div class="gc tool-card rv d3"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div><div class="tool-name">RUNWAY / VEO3</div><div class="tool-use">Génération vidéo IA</div></div>
-        <div class="gc tool-card rv d4"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><div class="tool-name">MIDJOURNEY V7</div><div class="tool-use">Visuels + décors</div></div>
-        <div class="gc tool-card rv d5"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="tool-name">CAPCUT PRO</div><div class="tool-use">Montage, sous-titres, effets</div></div>
-      </div>
-      <div class="sec-lbl" style="margin-top:4px">Série — Personnages</div>
-      <div class="sec-h2">LES <em>PERSOS</em></div>
-      <div class="chars-grid">
-        <div class="gc char-card rv d1"><div class="char-dot c-fraisita"></div><div class="char-name" style="color:#DC143C">FRAISITA</div><div class="char-desc">Féminine · Fraise rouge · Meneuse</div></div>
-        <div class="gc char-card rv d2"><div class="char-dot c-fraisio"></div><div class="char-name" style="color:#1E64FF">FRAISIO</div><div class="char-desc">Masculin · Fraise bleue · Stratège</div></div>
-        <div class="gc char-card rv d3"><div class="char-dot c-cerisa"></div><div class="char-name" style="color:#9400D3">CERISA</div><div class="char-desc">Féminine · Cerise · Imprévisible</div></div>
-        <div class="gc char-card rv d4"><div class="char-dot c-bananello"></div><div class="char-name" style="color:#FFD700">BANANELLO</div><div class="char-desc">Masculin · Banane · Naif attachant</div></div>
-        <div class="gc char-card rv d5"><div class="char-dot c-tbd"></div><div class="char-name" style="color:var(--muted)">TBD 5–8</div><div class="char-desc">4 personnages à définir</div></div>
-      </div>
-      <div class="sec-lbl" style="margin-top:4px">Format épisode</div>
-      <div class="sec-h2">60–90 <em>SECONDES</em></div>
-      <div class="gc" style="overflow:hidden;margin-bottom:34px">
-        <table class="ep-table"><thead><tr><th>Timing</th><th>Phase</th><th>Objectif</th></tr></thead>
-        <tbody>
-          <tr><td><span class="ep-time">0–3s</span></td><td>Accroche</td><td>Extrait du moment intense</td></tr>
-          <tr><td><span class="ep-time">3–8s</span></td><td>Intro</td><td>Logo + "Épisode X — Underrated Game"</td></tr>
-          <tr><td><span class="ep-time">8–25s</span></td><td>Setup</td><td>Récap ou annonce du jeu</td></tr>
-          <tr><td><span class="ep-time">25–50s</span></td><td>Action</td><td>Déroulement — coupes &lt;2s, dialogues Gen Z</td></tr>
-          <tr><td><span class="ep-time">50–55s</span></td><td>Choc</td><td>Élimination ou révélation</td></tr>
-          <tr><td><span class="ep-time">55–60s</span></td><td>CTA</td><td>Cliffhanger + appel commentaire</td></tr>
-        </tbody></table>
-      </div>
-      <div class="sec-lbl">Funnel de vente</div>
-      <div class="sec-h2">99€ → <em>1200€</em></div>
-      <div class="funnel rv d1">
-        <div class="f-tier">
-          <div class="f-tier-top"><div><div class="f-label">Entrée</div><div class="f-price">99€</div></div><div style="text-align:right"><div class="f-label">Plateforme</div><div style="font-family:'Barlow Condensed';font-size:13px;color:var(--b2)">TEACHABLE</div></div></div>
-          <div class="f-desc">Formation "Comment créer une série IA virale"<br><span style="font-size:10px;color:rgba(255,255,255,.25)">Géré par Mathieu</span></div>
+    <div class="tools-layout">
+
+      <!-- Sub-sidebar Bastien -->
+      <div class="tools-sb">
+        <div class="tools-sb-hd">
+          <div class="tools-sb-name">BASTIEN</div>
+          <div class="tools-sb-role">Head of Content &amp; Product</div>
         </div>
-        <div class="f-arrow">↓</div>
-        <div class="f-tier" style="border-color:rgba(86,204,242,.22)">
-          <div class="f-tier-top"><div><div class="f-label">Upsell</div><div class="f-price" style="color:var(--b2)">1200€</div></div><div style="text-align:right"><div class="f-label">Type</div><div style="font-family:'Barlow Condensed';font-size:13px;color:var(--b2)">COACHING 1-TO-1</div></div></div>
-          <div class="f-desc">Accompagnement perso — scalable après 99€<br><span style="font-size:10px;color:rgba(255,255,255,.25)">Géré par Théo + Ilame</span></div>
+        <div class="tools-sb-nav">
+          <div class="tools-sb-item active" data-ttab="hub" onclick="toolsTab('hub')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Hub Outils
+          </div>
+          <div class="tools-sb-item" data-ttab="visual" onclick="toolsTab('visual')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20"/></svg>
+            Identité Visuelle
+          </div>
+          <div class="tools-sb-item" data-ttab="episode" onclick="toolsTab('episode')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            Structure Épisode
+          </div>
+          <div class="tools-sb-item" data-ttab="retention" onclick="toolsTab('retention')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Rétention
+          </div>
+          <div class="tools-sb-item" data-ttab="bots" onclick="toolsTab('bots')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>
+            Bots IA
+          </div>
+          <div class="tools-sb-item" data-ttab="concurrents" onclick="toolsTab('concurrents')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Concurrents
+          </div>
         </div>
       </div>
-    </div>
+
+      <!-- Content area -->
+      <div class="tools-content">
+
+        <!-- ── HUB OUTILS ── -->
+        <div class="tools-tab active" id="ttab-hub">
+          <div class="ph" style="padding-left:0;padding-right:0">
+            <div class="ph-eye">Bastien P1</div>
+            <div class="ph-title">HUB <em>OUTILS</em></div>
+            <div class="ph-sub">Tous les outils de la chaîne de production IA.</div>
+          </div>
+          <div class="sec-lbl">Scripts &amp; Narration</div>
+          <div class="ttab-grid">
+            <div class="ttab-card"><div class="ttab-cat">LLM</div><div class="ttab-name">CHATGPT PRO</div><div class="ttab-use">Scripts, narration, dialogues Gen Z, prompts Midjourney</div><span class="ttab-badge paid">20$/mois</span></div>
+            <div class="ttab-card"><div class="ttab-cat">LLM</div><div class="ttab-name">CLAUDE</div><div class="ttab-use">Longs formats, bots, specs techniques, édition</div><span class="ttab-badge paid">18$/mois</span></div>
+            <div class="ttab-card"><div class="ttab-cat">LLM</div><div class="ttab-name">GEMINI PRO</div><div class="ttab-use">Analyse vidéo, multimodal, YouTube Shorts</div><span class="ttab-badge paid">20$/mois</span></div>
+          </div>
+          <div class="sec-lbl">Personnages &amp; Images</div>
+          <div class="ttab-grid">
+            <div class="ttab-card" style="border-color:rgba(255,94,125,.3)"><div class="ttab-cat" style="color:#FF5E7D">KEY TOOL</div><div class="ttab-name">NANO BANANA</div><div class="ttab-use">Personnages fruits Pixar 3D — consistance absolue entre épisodes</div><span class="ttab-badge req">Indispensable</span></div>
+            <div class="ttab-card"><div class="ttab-cat">Image IA</div><div class="ttab-name">MIDJOURNEY V7</div><div class="ttab-use">Décors, scènes, thumbnails, variantes visuelles</div><span class="ttab-badge paid">30$/mois</span></div>
+            <div class="ttab-card"><div class="ttab-cat">Image IA</div><div class="ttab-name">DALL·E 3</div><div class="ttab-use">Intégré ChatGPT Pro — storyboards rapides</div><span class="ttab-badge free">Inclus GPT</span></div>
+            <div class="ttab-card"><div class="ttab-cat">Animation</div><div class="ttab-name">OPENART / FREEPIK</div><div class="ttab-use">Animation personnages Pixar 3D depuis image statique</div><span class="ttab-badge paid">20$/mois</span></div>
+            <div class="ttab-card"><div class="ttab-cat">Image IA</div><div class="ttab-name">IDEOGRAM</div><div class="ttab-use">Texte dans images — titres, cartons, logos épisodes</div><span class="ttab-badge free">Free tier</span></div>
+          </div>
+          <div class="sec-lbl">Voix &amp; Audio</div>
+          <div class="ttab-grid">
+            <div class="ttab-card" style="border-color:rgba(255,94,125,.3)"><div class="ttab-cat" style="color:#FF5E7D">KEY TOOL</div><div class="ttab-name">ELEVENLABS PRO</div><div class="ttab-use">Voix par personnage — clone vocal, multilangue, émotions</div><span class="ttab-badge req">22$/mois</span></div>
+            <div class="ttab-card"><div class="ttab-cat">Audio IA</div><div class="ttab-name">SUNO</div><div class="ttab-use">Musique originale — ambiance, thème Underrated, stings</div><span class="ttab-badge paid">10$/mois</span></div>
+            <div class="ttab-card"><div class="ttab-cat">SFX</div><div class="ttab-name">FREESOUND</div><div class="ttab-use">Bruitages libres de droits — impacts, ambiance, transitions</div><span class="ttab-badge free">Gratuit</span></div>
+          </div>
+          <div class="sec-lbl">Vidéo IA</div>
+          <div class="ttab-grid">
+            <div class="ttab-card"><div class="ttab-cat">Vidéo IA</div><div class="ttab-name">RUNWAY GEN-3</div><div class="ttab-use">Image-to-video — mouvement personnages, scènes dynamiques</div><span class="ttab-badge paid">15$/mois</span></div>
+            <div class="ttab-card"><div class="ttab-cat">Vidéo IA</div><div class="ttab-name">VEO 3</div><div class="ttab-use">Génération vidéo haute fidélité — leader US market</div><span class="ttab-badge paid">Google AI</span></div>
+            <div class="ttab-card"><div class="ttab-cat">Vidéo IA</div><div class="ttab-name">KLING 2.6</div><div class="ttab-use">Mouvement fluide, lip sync — alternative Runway</div><span class="ttab-badge paid">10$/mois</span></div>
+          </div>
+          <div class="sec-lbl">Montage &amp; Publication</div>
+          <div class="ttab-grid">
+            <div class="ttab-card"><div class="ttab-cat">Montage</div><div class="ttab-name">CAPCUT PRO</div><div class="ttab-use">Coupes rapides, sous-titres auto, effets TikTok natifs</div><span class="ttab-badge paid">10$/mois</span></div>
+            <div class="ttab-card"><div class="ttab-cat">Montage</div><div class="ttab-name">FINAL CUT PRO</div><div class="ttab-use">Production avancée Mac — timeline multi-track</div><span class="ttab-badge paid">300€ once</span></div>
+            <div class="ttab-card"><div class="ttab-cat">Scheduling</div><div class="ttab-name">METRICOOL</div><div class="ttab-use">Drop 18h quotidien auto TikTok + YouTube</div><span class="ttab-badge free">Free tier</span></div>
+            <div class="ttab-card"><div class="ttab-cat">Analytics</div><div class="ttab-name">TIKTOK STUDIO</div><div class="ttab-use">Retention curve, audience démo, top vids natifs</div><span class="ttab-badge free">Gratuit</span></div>
+          </div>
+          <div class="sec-lbl">Bots &amp; Automation (Bastien — Build)</div>
+          <div class="ttab-grid">
+            <div class="ttab-card" style="border-color:rgba(255,94,125,.3)"><div class="ttab-cat" style="color:#FF5E7D">P1 — BUILD</div><div class="ttab-name">BOT SCRIPT</div><div class="ttab-use">GPT-4o API → script complet 60-90s depuis prompt court. Inclus 1200€.</div><span class="ttab-badge req">Bastien builds</span></div>
+            <div class="ttab-card" style="border-color:rgba(255,165,0,.2)"><div class="ttab-cat" style="color:orange">P2 — BUILD</div><div class="ttab-name">BOT COMMENTAIRES</div><div class="ttab-use">Scrape TikTok → extrait demandes → génère brief prochain épisode</div><span class="ttab-badge req">Bastien builds</span></div>
+            <div class="ttab-card"><div class="ttab-cat" style="color:var(--b2)">P3 — BUILD</div><div class="ttab-name">BOT PUBLISHER</div><div class="ttab-use">Cron 18h → upload auto TikTok + YouTube via API</div><span class="ttab-badge req">Bastien builds</span></div>
+          </div>
+        </div>
+
+        <!-- ── IDENTITÉ VISUELLE ── -->
+        <div class="tools-tab" id="ttab-visual">
+          <div class="ph" style="padding-left:0;padding-right:0">
+            <div class="ph-eye">Audit visuel</div>
+            <div class="ph-title">IDENTITÉ <em>VISUELLE</em></div>
+            <div class="ph-sub">Standards obligatoires pour consistance algorithmique.</div>
+          </div>
+          <div class="vi-grid">
+            <div class="vi-card gc rv d1">
+              <div class="vi-title">STYLE PIXAR 3D</div>
+              <div class="vi-rule"><strong>Obligatoire</strong> — pas de 2D, pas de réaliste, pas de cartoon plat.</div>
+              <div class="vi-rule">Pixar 3D = reconnaissance en <strong>0.3s</strong> dans le feed. Le cerveau identifie avant de lire le texte.</div>
+              <div class="vi-rule">Corps humanoïde + tête fruit = <strong>identité immédiate</strong>. Expressions exagérées (yeux larges, émotions amplifiées).</div>
+            </div>
+            <div class="vi-card gc rv d2">
+              <div class="vi-title">PALETTE SATURÉE</div>
+              <div class="vi-rule"><strong>1 couleur = 1 personnage</strong> — invariable entre tous les épisodes.</div>
+              <div class="char-palette">
+                <div class="char-p-item"><div class="char-p-dot" style="background:#DC143C"></div><div class="char-p-name" style="color:#DC143C">FRAISITA — #DC143C</div></div>
+                <div class="char-p-item"><div class="char-p-dot" style="background:#1E64FF"></div><div class="char-p-name" style="color:#1E64FF">FRAISIO — #1E64FF</div></div>
+                <div class="char-p-item"><div class="char-p-dot" style="background:#9400D3"></div><div class="char-p-name" style="color:#9400D3">CERISA — #9400D3</div></div>
+                <div class="char-p-item"><div class="char-p-dot" style="background:#FFD700"></div><div class="char-p-name" style="color:#FFD700">BANANELLO — #FFD700</div></div>
+              </div>
+            </div>
+            <div class="vi-card gc rv d3">
+              <div class="vi-title">DESIGN PERSO</div>
+              <div class="vi-rule"><strong>Corps</strong> : humanoïde stylisé, tête grande, corps court.</div>
+              <div class="vi-rule"><strong>Tête</strong> : fruit 3D Pixar — texture réaliste stylisée.</div>
+              <div class="vi-rule"><strong>Expressions</strong> : exagérées, lisibles en miniature. Sourcils épais, bouche grande.</div>
+              <div class="vi-rule"><strong>Tenue</strong> : fixe par personnage — identité = reconnaissance immédiate.</div>
+              <div class="vi-rule"><strong>Tool</strong> : Nano Banana → paramètres figés par character sheet.</div>
+            </div>
+            <div class="vi-card gc rv d4">
+              <div class="vi-title">DÉCORS &amp; AMBIANCE</div>
+              <div class="vi-rule"><strong>Arène</strong> : inspirée Squid Game — formes géométriques, couleurs tranchées, ombres dures.</div>
+              <div class="vi-rule"><strong>Contraste</strong> : fond sombre si perso clair. Rim light sur personnages.</div>
+              <div class="vi-rule"><strong>Tools</strong> : Midjourney V7 (décors) + Runway (mouvement caméra).</div>
+            </div>
+            <div class="vi-card gc rv d5" style="grid-column:1/-1">
+              <div class="vi-title">POURQUOI LE PIXAR MARCHE SUR L'ALGO</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:10px">
+                <div><div style="font-family:'Barlow Condensed';font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:#9B59B6;margin-bottom:4px">Reconnaissance</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">Le cerveau identifie "Underrated" en 0.3s — avant le son, avant le texte.</div></div>
+                <div><div style="font-family:'Barlow Condensed';font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:#9B59B6;margin-bottom:4px">Rétention</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">Pixar 3D = qualité perçue élevée → l'algo TikTok booste les vidéos "production value".</div></div>
+                <div><div style="font-family:'Barlow Condensed';font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:#9B59B6;margin-bottom:4px">Partage</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">Style unique = davantage partagé. "T'as vu les fruits ?" = branded recall naturel.</div></div>
+                <div><div style="font-family:'Barlow Condensed';font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:#9B59B6;margin-bottom:4px">Réwatch</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">Attrait universel enfants → adultes. Regardent une 2e fois par plaisir visuel pur.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── STRUCTURE ÉPISODE ── -->
+        <div class="tools-tab" id="ttab-episode">
+          <div class="ph" style="padding-left:0;padding-right:0">
+            <div class="ph-eye">Format validé</div>
+            <div class="ph-title">STRUCTURE <em>ÉPISODE</em></div>
+            <div class="ph-sub">60–90 secondes. Chaque phase a un rôle algorithmique précis.</div>
+          </div>
+          <div class="gc rv d1" style="overflow:hidden;margin-bottom:20px;padding:0">
+            <table style="width:100%;border-collapse:collapse">
+              <thead><tr style="background:rgba(155,89,182,.1)">
+                <th style="padding:12px 14px;font-family:'Barlow Condensed';font-size:8px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#9B59B6;text-align:left">Timing</th>
+                <th style="padding:12px 14px;font-family:'Barlow Condensed';font-size:8px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#9B59B6;text-align:left">Phase</th>
+                <th style="padding:12px 14px;font-family:'Barlow Condensed';font-size:8px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#9B59B6;text-align:left">Objectif</th>
+                <th style="padding:12px 14px;font-family:'Barlow Condensed';font-size:8px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#9B59B6;text-align:left">Levier algo</th>
+              </tr></thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--border)"><td style="padding:11px 14px"><span class="ep-time">0–3s</span></td><td style="padding:11px 14px;font-family:'Barlow Condensed';font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:12px">ACCROCHE</td><td style="padding:11px 14px;font-size:11.5px;color:var(--muted)">Extrait moment le plus intense de l'épisode</td><td style="padding:11px 14px;font-size:11px;color:var(--b2)">Stop scroll — 0.3s threshold</td></tr>
+                <tr style="border-bottom:1px solid var(--border)"><td style="padding:11px 14px"><span class="ep-time">3–8s</span></td><td style="padding:11px 14px;font-family:'Barlow Condensed';font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:12px">INTRO</td><td style="padding:11px 14px;font-size:11.5px;color:var(--muted)">Logo animé + "Épisode X — Underrated Game"</td><td style="padding:11px 14px;font-size:11px;color:var(--b2)">Brand recall + curiosité résiduelle</td></tr>
+                <tr style="border-bottom:1px solid var(--border)"><td style="padding:11px 14px"><span class="ep-time">8–25s</span></td><td style="padding:11px 14px;font-family:'Barlow Condensed';font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:12px">SETUP</td><td style="padding:11px 14px;font-size:11.5px;color:var(--muted)">Récap jeu ou annonce enjeu — contexte rapide</td><td style="padding:11px 14px;font-size:11px;color:var(--b2)">Watch time qualifié — 25%</td></tr>
+                <tr style="border-bottom:1px solid var(--border)"><td style="padding:11px 14px"><span class="ep-time">25–50s</span></td><td style="padding:11px 14px;font-family:'Barlow Condensed';font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:12px">ACTION</td><td style="padding:11px 14px;font-size:11.5px;color:var(--muted)">Déroulement — coupes &lt;2s, dialogues Gen Z</td><td style="padding:11px 14px;font-size:11px;color:var(--b2)">Rétention &gt;75% — signal boost</td></tr>
+                <tr style="border-bottom:1px solid var(--border)"><td style="padding:11px 14px"><span class="ep-time">50–55s</span></td><td style="padding:11px 14px;font-family:'Barlow Condensed';font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:12px">CHOC</td><td style="padding:11px 14px;font-size:11.5px;color:var(--muted)">Élimination inattendue ou révélation</td><td style="padding:11px 14px;font-size:11px;color:var(--b2)">Réwatch trigger</td></tr>
+                <tr><td style="padding:11px 14px"><span class="ep-time">55–60s</span></td><td style="padding:11px 14px;font-family:'Barlow Condensed';font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:12px">CTA</td><td style="padding:11px 14px;font-size:11.5px;color:var(--muted)">Cliffhanger + question commentaire ouverte</td><td style="padding:11px 14px;font-size:11px;color:var(--b2)">Comments + share + follow</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:13px">
+            <div class="gc rv d2" style="padding:18px"><div class="sec-lbl">Règle montage</div><div class="vi-title">COUPES &lt;2S</div><div class="vi-rule">Chaque plan &gt;2s = risque sortie. Couper avant que le cerveau s'ennuie. Exception : silence avant élimination (3-4s max).</div></div>
+            <div class="gc rv d3" style="padding:18px"><div class="sec-lbl">Dialogues</div><div class="vi-title">GEN Z ONLY</div><div class="vi-rule">Courtes phrases. "bro", "fr fr", "no way", "c'est over". Émotion directe. Écrits pour être <strong>lus</strong> (sous-titres) autant qu'entendus.</div></div>
+            <div class="gc rv d4" style="padding:18px"><div class="sec-lbl">Cliffhanger</div><div class="vi-title">SANS RÉSOLUTION</div><div class="vi-rule">Jamais résolu dans l'épisode. La réponse = raison de revenir demain 18h. Question ouverte : "Qui va survivre ?"</div></div>
+          </div>
+        </div>
+
+        <!-- ── RÉTENTION ── -->
+        <div class="tools-tab" id="ttab-retention">
+          <div class="ph" style="padding-left:0;padding-right:0">
+            <div class="ph-eye">Mécaniques algo</div>
+            <div class="ph-title">LEVIERS <em>RÉTENTION</em></div>
+            <div class="ph-sub">Ce qui fait rejouer, commenter et s'abonner — à intégrer dans chaque épisode.</div>
+          </div>
+          <div class="sec-lbl">Re-Watch Triggers</div>
+          <div class="ret-grid" style="margin-bottom:22px">
+            <div class="ret-card gc rv d1"><div class="ret-title">PARADOXE VISUEL</div><div class="ret-body">Fruits qui jouent à des jeux de survie = dissonance cognitive. Le cerveau ne sait pas catégoriser → rejouage pour "comprendre".</div></div>
+            <div class="ret-card gc rv d2"><div class="ret-title">ESTHÉTIQUE ABRUTISSANTE</div><div class="ret-body">Pixar hypersaturé, trop beau pour être ignoré. Qualité visuelle = le spectateur regarde une 2e fois pour le plaisir des yeux.</div></div>
+            <div class="ret-card gc rv d3"><div class="ret-title">RÉVÉLATION CACHÉE</div><div class="ret-body">Indices visuels dans le background que seul le 2e visionnage révèle. "Attend, Fraisio regardait déjà le couteau à 0:32..."</div></div>
+          </div>
+          <div class="sec-lbl">Comment Triggers</div>
+          <div class="ret-grid" style="margin-bottom:22px">
+            <div class="ret-card gc rv d1"><div class="ret-title">VOTE &amp; INJUSTICE</div><div class="ret-body">"C'est injuste !" = commentaire garanti. L'élimination d'un personnage aimé déclenche la réaction émotionnelle.</div></div>
+            <div class="ret-card gc rv d2"><div class="ret-title">QUESTION OUVERTE</div><div class="ret-body">CTA final : "Qui devrait être éliminé ?" / "Qui survivra la semaine prochaine ?" — Question = raison de commenter.</div></div>
+            <div class="ret-card gc rv d3"><div class="ret-title">SCÉNARIO PAR COMMENT</div><div class="ret-body">"Je lis vos commentaires pour écrire l'épisode 12." → investissement émotionnel → partage organique.</div></div>
+            <div class="ret-card gc rv d4"><div class="ret-title">VOCABULAIRE MAISON</div><div class="ret-body">Inventer des termes propres. "Les Fraiseurs" / "Game Over Bro" = culture propriétaire. Communauté = langage commun.</div></div>
+          </div>
+          <div class="sec-lbl">Subscribe Triggers</div>
+          <div class="ret-grid">
+            <div class="ret-card gc rv d1"><div class="ret-title">CLIFFHANGER CALIBRÉ</div><div class="ret-body">Fin d'épisode sans résolution. La réponse vient demain 18h. S'abonner = ne pas rater la suite.</div></div>
+            <div class="ret-card gc rv d2"><div class="ret-title">DROP QUOTIDIEN</div><div class="ret-body">Daily 18h. Le cerveau apprend le rituel → habitude. S'abonner = notification = rituel maintenu.</div></div>
+            <div class="ret-card gc rv d3"><div class="ret-title">CULTURE DES COUPLES</div><div class="ret-body">Ship Fraisita × Fraisio = attache émotionnelle. La communauté défend "son couple" → follow pour voir l'évolution.</div></div>
+          </div>
+        </div>
+
+        <!-- ── BOTS IA ── -->
+        <div class="tools-tab" id="ttab-bots">
+          <div class="ph" style="padding-left:0;padding-right:0">
+            <div class="ph-eye">Bastien — Build</div>
+            <div class="ph-title">BOTS <em>IA</em></div>
+            <div class="ph-sub">Automatisation de la production. P1 livré avant lancement.</div>
+          </div>
+          <div class="bot-grid">
+            <div class="bot-card gc rv d1"><div class="bot-status p1">● P1 — Sprint 1</div><div class="bot-name">BOT SCRIPT</div><div class="bot-desc">Input : prompt court (jeu + enjeu + persos). Output : script 60-90s complet (6 phases) + prompts Midjourney + prompts ElevenLabs.</div><div class="bot-tags"><span class="bot-tag">GPT-4o API</span><span class="bot-tag">Python</span><span class="bot-tag">Firebase</span></div></div>
+            <div class="bot-card gc rv d2"><div class="bot-status p1">● P1 — Sprint 1</div><div class="bot-name">PROMPT LIBRARY</div><div class="bot-desc">Base de prompts validés par catégorie : Midjourney persos, décors, ElevenLabs émotions, dialogues Gen Z.</div><div class="bot-tags"><span class="bot-tag">Notion</span><span class="bot-tag">Firestore</span><span class="bot-tag">JSON</span></div></div>
+            <div class="bot-card gc rv d3"><div class="bot-status p2">● P2 — Sprint 2</div><div class="bot-name">BOT COMMENTAIRES</div><div class="bot-desc">Scrape TikTok comments → NLP demandes audience → génère brief prochain épisode → feed dans Bot Script.</div><div class="bot-tags"><span class="bot-tag">TikTok API</span><span class="bot-tag">GPT-4o</span><span class="bot-tag">Cron</span></div></div>
+            <div class="bot-card gc rv d4"><div class="bot-status p2">● P2 — Sprint 2</div><div class="bot-name">MODULES FORMATION</div><div class="bot-desc">4 modules pédago sur Teachable : storytelling, structure épisode, personnages, funnel vente. Vidéo + templates.</div><div class="bot-tags"><span class="bot-tag">Teachable</span><span class="bot-tag">Vidéo</span><span class="bot-tag">PDF</span></div></div>
+            <div class="bot-card gc rv d5"><div class="bot-status p3">● P3 — Sprint 3</div><div class="bot-name">BOT PUBLISHER</div><div class="bot-desc">Cron 18h → upload auto vidéo TikTok + YouTube Shorts + description générée + hashtags optimisés.</div><div class="bot-tags"><span class="bot-tag">TikTok API</span><span class="bot-tag">YouTube API</span><span class="bot-tag">Railway</span></div></div>
+            <div class="bot-card gc rv d1"><div class="bot-status p3">● P3 — Sprint 3</div><div class="bot-name">ANALYTICS TRACKER</div><div class="bot-desc">Dashboard vues/rétention TikTok + YouTube → alertes si épisode sous-performe → feedback loop script.</div><div class="bot-tags"><span class="bot-tag">TikTok API</span><span class="bot-tag">Firebase</span><span class="bot-tag">Charts</span></div></div>
+          </div>
+          <div class="gc rv d2" style="padding:20px;margin-top:18px;border-color:rgba(155,89,182,.2)">
+            <div class="sec-lbl" style="color:#9B59B6">Coût estimé par épisode (Bot Script)</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;margin-top:10px">
+              <div><div style="font-family:'Bebas Neue';font-size:28px;color:#9B59B6">~0.85€</div><div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Coût API / épisode</div></div>
+              <div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--b2)">30/mois</div><div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Épisodes daily drop</div></div>
+              <div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--text)">~25€</div><div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Coût total API/mois</div></div>
+              <div><div style="font-family:'Bebas Neue';font-size:28px;color:#00C864">Inclus</div><div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Dans offre 1200€</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CONCURRENTS ── -->
+        <div class="tools-tab" id="ttab-concurrents">
+          <div class="ph" style="padding-left:0;padding-right:0">
+            <div class="ph-eye">Mapping marché</div>
+            <div class="ph-title">CONCURRENTS <em>&amp; GAP</em></div>
+            <div class="ph-sub">Analyse concurrentielle — où se positionne Underrated Game.</div>
+          </div>
+          <div class="gc rv d1" style="padding:18px;margin-bottom:20px;border-color:rgba(0,200,100,.2)">
+            <div class="sec-lbl" style="color:#00C864">Notre avantage clé</div>
+            <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.04em;margin-bottom:8px">SQUID GAME IA EN FRANÇAIS = ZÉRO CONCURRENT</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.7">Fruit Love Island et Skibidi Tentafruit dominent le format Romance/Drama. Le format Survie/Jeux en français est <strong style="color:var(--text)">inoccupé</strong>. C'est notre marché.</div>
+          </div>
+          <div class="comp-grid">
+            <div class="comp-card gc rv d1"><div class="comp-name">SKIBIDI TENTAFRUIT</div><div class="comp-stat">160M</div><div class="comp-sub">Vues · France · Love Island</div><div class="comp-body">Leader FR. Romance poulpes/fruits. Audience féminine 18-35. Zéro tension survie. Stack : Nano Banana + ElevenLabs + CapCut.</div></div>
+            <div class="comp-card gc rv d2"><div class="comp-name">FRUIT LOVE ISLAND</div><div class="comp-stat">300M</div><div class="comp-sub">Vues · US · Drama</div><div class="comp-body">Dominant US. Drama/romance fruits. Stack premium : Veo 3.1 + Kling 2.6 + Sora 2. Budget production plus élevé.</div></div>
+            <div class="comp-card gc rv d3"><div class="comp-name">PASCAL LE GRAND FRUIT</div><div class="comp-stat">40M</div><div class="comp-sub">Vues · France · Comédie</div><div class="comp-body">Format comédie sitcom. Personnage unique (pomme). Humour absurde. Pas de narration sérielle. Audience large mais peu engagée.</div></div>
+            <div class="comp-card gc rv d4"><div class="comp-name">SÉDUFRUIT HAUTE TENSION</div><div class="comp-stat">25M</div><div class="comp-sub">Vues · France · Drama</div><div class="comp-body">Format drama romantique. Production value faible. Audience fidèle mais petite. Croissance stagnante.</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:13px">
+            <div class="gc rv d2" style="padding:18px">
+              <div class="sec-lbl">Notre différenciation</div>
+              <div class="vi-title">UNDERRATED GAME</div>
+              <div class="vi-rule"><strong style="color:#00C864">✓</strong> Format Survie/Jeux mortels — inédit FR</div>
+              <div class="vi-rule"><strong style="color:#00C864">✓</strong> Meilleure narration (tension, cliffhangers)</div>
+              <div class="vi-rule"><strong style="color:#00C864">✓</strong> Audience 15-45 (non genrée)</div>
+              <div class="vi-rule"><strong style="color:#00C864">✓</strong> Funnel formation 99€ → 1200€</div>
+              <div class="vi-rule"><strong style="color:#00C864">✓</strong> Brand deal positionning type Oasis</div>
+            </div>
+            <div class="gc rv d3" style="padding:18px">
+              <div class="sec-lbl">Stack vs compétition</div>
+              <div class="vi-title">COÛT &lt;100€/MOIS</div>
+              <div class="vi-rule">Skibidi Tentafruit : Nano Banana + OpenArt + ElevenLabs + CapCut. <strong>&lt;100€/mois</strong> → 160M vues.</div>
+              <div class="vi-rule">Notre avantage : <strong style="color:#9B59B6">même stack + Bot Script Bastien</strong> = production 3× plus rapide.</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tools-content -->
+    </div><!-- /tools-layout -->
   </div>
 
   <!-- ════ AUDIT ════ -->
@@ -1906,6 +2180,14 @@ function closeAddTask() {
 }
 
 // ══ NAV ══
+function toolsTab(tab) {
+  document.querySelectorAll('.tools-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tools-sb-item').forEach(i => i.classList.remove('active'));
+  const el = document.getElementById('ttab-' + tab);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.tools-sb-item[data-ttab="' + tab + '"]').forEach(i => i.classList.add('active'));
+}
+
 function goto(page) {
   if (page === 'admin' && (!SESSION || !SESSION.isAdmin)) return;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
