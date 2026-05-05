@@ -1,8 +1,8 @@
 {
-  "commit": "a658738",
-  "message": "feat: reminders widget on home - public/private, due times, per-user filtering",
-  "commitDate": "2026-05-05T08:54:58+02:00",
-  "buildDate": "2026-05-05T06:55:09Z",
-  "buildDateFR": "05/05/2026 08:55",
+  "commit": "537f032",
+  "message": "feat: tasks linked equipe<->phases, checkable done state, progress bar per member",
+  "commitDate": "2026-05-05T09:01:08+02:00",
+  "buildDate": "2026-05-05T07:01:25Z",
+  "buildDateFR": "05/05/2026 09:01",
   "branch": "main"
 }
