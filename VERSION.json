@@ -1,8 +1,8 @@
 {
-  "commit": "fd0f7fd",
-  "message": "feat: equipe - member suggestion system, admin approve/reject",
-  "commitDate": "2026-05-05T08:10:31+02:00",
-  "buildDate": "2026-05-05T06:10:45Z",
-  "buildDateFR": "05/05/2026 08:10",
+  "commit": "b036181",
+  "message": "fix: bump CREDS_VERSION to 4 - force credential reset for all users",
+  "commitDate": "2026-05-05T08:12:04+02:00",
+  "buildDate": "2026-05-05T06:12:12Z",
+  "buildDateFR": "05/05/2026 08:12",
   "branch": "main"
 }

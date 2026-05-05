@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 08:12 — `b036181`
+fix: bump CREDS_VERSION to 4 - force credential reset for all users
+
 ## 05/05/2026 08:10 — `fd0f7fd`
 feat: equipe - member suggestion system, admin approve/reject
 
