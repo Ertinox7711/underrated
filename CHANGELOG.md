@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 08:20 — `dc52f42`
+feat: dynamic phases - create/delete custom phases, assign tasks to any member
+
 ## 05/05/2026 08:12 — `b036181`
 fix: bump CREDS_VERSION to 4 - force credential reset for all users
 
