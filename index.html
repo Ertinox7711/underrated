@@ -1741,6 +1741,7 @@ function getSuggestions() {
 }
 function saveSuggestions(arr) {
   localStorage.setItem('ur_suggestions', JSON.stringify(arr));
+  dbSet('suggestions', {items: arr});
 }
 function toggleSuggestInput(phaseId) {
   const wrap = document.getElementById('sg-input-' + phaseId);
@@ -2070,6 +2071,9 @@ function launchApp() {
     if(d.features) localStorage.setItem(HUB_F_KEY,JSON.stringify(d.features));
     if(d.meta)     localStorage.setItem(HUB_M_KEY,JSON.stringify(d.meta));
     if(document.getElementById('p-hub')?.classList.contains('active')) renderHub();
+  });
+  dbWatch('suggestions', d => {
+    if(d.items){ localStorage.setItem('ur_suggestions',JSON.stringify(d.items)); buildPhaseColumns(); }
   });
   dbWatch('marketing', d => {
     ['court','mid','long'].forEach(k => { if(d[k]!==undefined) localStorage.setItem('mkt-'+k, d[k]); });
