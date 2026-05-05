@@ -723,6 +723,16 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .esp-img-wrap{position:relative;border-radius:6px;overflow:hidden;border:1px solid var(--border)}
 .esp-img-wrap img{display:block;width:90px;height:70px;object-fit:cover}
 .esp-img-del{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.7);border:none;color:#fff;border-radius:3px;font-size:10px;cursor:pointer;padding:1px 5px;line-height:1.4}
+.esp-img-date{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);color:rgba(255,255,255,.6);font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.06em;text-align:center;padding:2px 4px}
+.esp-tab-badge{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;font-family:'Bebas Neue',sans-serif;font-size:9px;color:#fff;margin-left:4px;flex-shrink:0}
+.esp-task-meta{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.06em;color:var(--muted);margin-top:2px}
+.esp-note-meta{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.esp-log{display:flex;flex-direction:column;gap:5px;max-height:180px;overflow-y:auto}
+.esp-log-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid transparent;transition:border-color var(--ease)}
+.esp-log-item:hover{border-color:var(--border)}
+.esp-log-icon{font-size:12px;flex-shrink:0;width:18px;text-align:center}
+.esp-log-txt{flex:1;font-size:11.5px;color:var(--muted)}
+.esp-log-time{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.06em;color:rgba(255,255,255,.2);flex-shrink:0}
 @media(max-width:700px){.esp-panel.active{grid-template-columns:1fr}}
 
 /* ══ MOBILE ══ */
@@ -2324,61 +2334,112 @@ const ESP_MEMBERS = [
 ];
 let ESP_CUR = 'mathieu';
 
-function espKey(who, type) { return `esp-${who}-${type}`; }
+function espKey(who, t) { return `esp-${who}-${t}`; }
+function hexToRgb(hex) {
+  const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return r ? `${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}` : '30,144,255';
+}
+function espFmt(ts) {
+  if (!ts) return '';
+  const d = new Date(ts), now = Date.now(), diff = now - ts;
+  if (diff < 60000) return 'À l\'instant';
+  if (diff < 3600000) return `${Math.floor(diff/60000)}min`;
+  if (diff < 86400000) return `${d.getHours()}h${String(d.getMinutes()).padStart(2,'0')}`;
+  return d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+}
+function espFmtFull(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+}
 
-function espLoadTasks(who) {
-  return JSON.parse(localStorage.getItem(espKey(who,'tasks')) || '[]');
-}
-function espSaveTasks(who, tasks) {
-  localStorage.setItem(espKey(who,'tasks'), JSON.stringify(tasks));
-}
-function espLoadNote(who) {
-  return localStorage.getItem(espKey(who,'note')) || '';
-}
-function espSaveNote(who, txt) {
-  localStorage.setItem(espKey(who,'note'), txt);
-}
+// Storage helpers
+function espLoadTasks(who) { return JSON.parse(localStorage.getItem(espKey(who,'tasks'))||'[]'); }
+function espSaveTasks(who,t){ localStorage.setItem(espKey(who,'tasks'),JSON.stringify(t)); }
+function espLoadNoteObj(who){ return JSON.parse(localStorage.getItem(espKey(who,'noteobj'))||'{"txt":"","at":0}'); }
+function espSaveNoteObj(who,o){ localStorage.setItem(espKey(who,'noteobj'),JSON.stringify(o)); }
 function espLoadImgs(who) {
-  return JSON.parse(localStorage.getItem(espKey(who,'imgs')) || '[]');
+  const raw = JSON.parse(localStorage.getItem(espKey(who,'imgs'))||'[]');
+  return raw.map(x => typeof x === 'string' ? {src:x,at:0} : x);
 }
-function espSaveImgs(who, imgs) {
-  localStorage.setItem(espKey(who,'imgs'), JSON.stringify(imgs));
+function espSaveImgs(who,imgs){ localStorage.setItem(espKey(who,'imgs'),JSON.stringify(imgs)); }
+function espLoadLog(who) { return JSON.parse(localStorage.getItem(espKey(who,'log'))||'[]'); }
+function espSaveLog(who,log){ localStorage.setItem(espKey(who,'log'),JSON.stringify(log)); }
+function espPushLog(who, type, text) {
+  const log = espLoadLog(who);
+  log.unshift({type, text, at: Date.now()});
+  if (log.length > 50) log.length = 50;
+  espSaveLog(who, log);
+  espRefreshBadge(who);
 }
+
+// Badge on tab = count of events in last 24h
+function espRefreshBadge(who) {
+  const log = espLoadLog(who);
+  const since = Date.now() - 86400000;
+  const count = log.filter(e => e.at > since).length;
+  const tab = document.querySelector(`.esp-tab[data-who="${who}"]`);
+  if (!tab) return;
+  let badge = tab.querySelector('.esp-tab-badge');
+  if (count > 0) {
+    const m = ESP_MEMBERS.find(x => x.key === who);
+    if (!badge) { badge = document.createElement('span'); badge.className = 'esp-tab-badge'; tab.appendChild(badge); }
+    badge.textContent = count;
+    badge.style.background = m ? m.color : 'var(--b1)';
+  } else if (badge) badge.remove();
+}
+function espRefreshAllBadges() { ESP_MEMBERS.forEach(m => espRefreshBadge(m.key)); }
 
 function espRenderPanel(who) {
-  const tasks = espLoadTasks(who);
-  const note  = espLoadNote(who);
-  const imgs  = espLoadImgs(who);
+  const tasks   = espLoadTasks(who);
+  const noteObj = espLoadNoteObj(who);
+  const imgs    = espLoadImgs(who);
+  const log     = espLoadLog(who);
   const m = ESP_MEMBERS.find(x => x.key === who);
   const acc = m ? m.color : '#1E90FF';
+  const rgb = hexToRgb(acc);
 
-  const taskItems = tasks.map((t,i) => `
+  const taskItems = tasks.length ? tasks.map((t,i) => `
     <div class="esp-task-item">
       <input type="checkbox" class="esp-task-check" style="--acc:${acc}" ${t.done?'checked':''} onchange="espToggleTask('${who}',${i})">
-      <span class="esp-task-txt${t.done?' done':''}">${t.text}</span>
+      <div style="flex:1;min-width:0">
+        <div class="esp-task-txt${t.done?' done':''}">${t.text}</div>
+        <div class="esp-task-meta">${t.doneAt && t.done ? '✓ '+espFmt(t.doneAt) : espFmt(t.at)}</div>
+      </div>
       <button class="esp-task-del" onclick="espDelTask('${who}',${i})">×</button>
-    </div>`).join('');
+    </div>`).join('')
+  : '<div style="font-size:11px;color:var(--muted);padding:6px 0">Aucune tâche</div>';
 
-  const imgItems = imgs.map((src,i) => `
-    <div class="esp-img-wrap">
-      <img src="${src}" onclick="espOpenImg('${who}',${i})">
+  const imgItems = imgs.map((img,i) => `
+    <div class="esp-img-wrap" title="${espFmtFull(img.at)}">
+      <img src="${img.src}" onclick="espOpenImg('${who}',${i})">
+      ${img.at ? `<div class="esp-img-date">${espFmt(img.at)}</div>` : ''}
       <button class="esp-img-del" onclick="espDelImg('${who}',${i})">×</button>
     </div>`).join('');
 
+  const logItems = log.slice(0,15).map(e => {
+    const icon = {task_add:'＋',task_done:'✓',task_undone:'↩',note_edit:'✎',img_add:'📷'}[e.type]||'•';
+    return `<div class="esp-log-item"><span class="esp-log-icon">${icon}</span><span class="esp-log-txt">${e.text}</span><span class="esp-log-time">${espFmt(e.at)}</span></div>`;
+  }).join('') || '<div style="font-size:11px;color:var(--muted)">Aucune activité</div>';
+
   return `
     <div class="esp-panel active" id="esp-panel-${who}">
+      <!-- Col 1 : Tâches -->
       <div class="esp-block gc rv d1">
         <div class="esp-block-title">Tâches assignées</div>
         <div class="esp-task-input">
           <input class="esp-task-inp" id="esp-inp-${who}" placeholder="Nouvelle tâche…" onkeydown="if(event.key==='Enter')espAddTask('${who}')">
-          <button class="esp-task-add" onclick="espAddTask('${who}')" style="background:rgba(${hexToRgb(acc)},.12);border-color:rgba(${hexToRgb(acc)},.25);color:${acc}">+</button>
+          <button class="esp-task-add" onclick="espAddTask('${who}')" style="background:rgba(${rgb},.12);border-color:rgba(${rgb},.25);color:${acc}">+</button>
         </div>
-        <div class="esp-task-list" id="esp-tasks-${who}">${taskItems || '<div style="font-size:11px;color:var(--muted);padding:6px 0">Aucune tâche</div>'}</div>
+        <div class="esp-task-list" id="esp-tasks-${who}">${taskItems}</div>
       </div>
+      <!-- Col 2 : Notes + Screenshots -->
       <div style="display:flex;flex-direction:column;gap:18px">
-        <div class="esp-block gc rv d2" style="flex:1">
-          <div class="esp-block-title">Notes libres</div>
-          <textarea class="esp-notes" id="esp-note-${who}" placeholder="Écris ici…" oninput="espAutoSaveNote('${who}')">${note}</textarea>
+        <div class="esp-block gc rv d2">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="esp-block-title">Notes libres</div>
+            ${noteObj.at ? `<div class="esp-note-meta">Modifié ${espFmt(noteObj.at)}</div>` : ''}
+          </div>
+          <textarea class="esp-notes" id="esp-note-${who}" placeholder="Écris ici…" oninput="espAutoSaveNote('${who}')">${noteObj.txt}</textarea>
           <div class="esp-notes-saved" id="esp-note-saved-${who}">Sauvegardé ✓</div>
         </div>
         <div class="esp-block gc rv d3">
@@ -2387,26 +2448,26 @@ function espRenderPanel(who) {
             ondragover="espDragOver(event,'${who}')"
             ondragleave="espDragLeave('${who}')"
             ondrop="espDrop(event,'${who}')">
-            <svg class="esp-drop-ico" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <svg class="esp-drop-ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             <div class="esp-drop-txt">Glisse une image ici</div>
-            <div style="font-size:10px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.06em">ou clique pour choisir</div>
             <input type="file" accept="image/*" multiple class="esp-drop-input" onchange="espFileInput(event,'${who}')">
           </div>
-          ${imgs.length ? `<div class="esp-imgs" id="esp-imgs-${who}">${imgItems}</div>` : `<div class="esp-imgs" id="esp-imgs-${who}"></div>`}
+          <div class="esp-imgs" id="esp-imgs-${who}">${imgItems}</div>
         </div>
       </div>
+      <!-- Col 3 : Activité -->
+      <div class="esp-block gc rv d4" style="grid-column:1/-1">
+        <div class="esp-block-title" style="color:${acc}">Activité récente — ${m?m.label:who}</div>
+        <div class="esp-log">${logItems}</div>
+      </div>
     </div>`;
-}
-
-function hexToRgb(hex) {
-  const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return r ? `${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}` : '30,144,255';
 }
 
 function espGoto(who) {
   ESP_CUR = who;
   document.querySelectorAll('.esp-tab').forEach(t => t.classList.toggle('active', t.dataset.who === who));
   document.getElementById('esp-panels').innerHTML = espRenderPanel(who);
+  espRefreshAllBadges();
 }
 
 function espAddTask(who) {
@@ -2414,8 +2475,9 @@ function espAddTask(who) {
   const txt = inp?.value.trim();
   if (!txt) return;
   const tasks = espLoadTasks(who);
-  tasks.push({text: txt, done: false});
+  tasks.unshift({text:txt, done:false, at:Date.now()});
   espSaveTasks(who, tasks);
+  espPushLog(who, 'task_add', `Tâche ajoutée : ${txt}`);
   inp.value = '';
   espGoto(who);
 }
@@ -2423,13 +2485,16 @@ function espAddTask(who) {
 function espToggleTask(who, i) {
   const tasks = espLoadTasks(who);
   tasks[i].done = !tasks[i].done;
+  tasks[i].doneAt = tasks[i].done ? Date.now() : null;
   espSaveTasks(who, tasks);
-  const txt = document.querySelector(`#esp-tasks-${who} .esp-task-item:nth-child(${i+1}) .esp-task-txt`);
-  if (txt) txt.classList.toggle('done', tasks[i].done);
+  espPushLog(who, tasks[i].done ? 'task_done' : 'task_undone',
+    `${tasks[i].done ? 'Terminé' : 'Rouvert'} : ${tasks[i].text}`);
+  espGoto(who);
 }
 
 function espDelTask(who, i) {
   const tasks = espLoadTasks(who);
+  espPushLog(who, 'task_add', `Tâche supprimée : ${tasks[i].text}`);
   tasks.splice(i, 1);
   espSaveTasks(who, tasks);
   espGoto(who);
@@ -2440,38 +2505,36 @@ function espAutoSaveNote(who) {
   clearTimeout(_espNoteTimer);
   _espNoteTimer = setTimeout(() => {
     const val = document.getElementById('esp-note-' + who)?.value || '';
-    espSaveNote(who, val);
+    espSaveNoteObj(who, {txt:val, at:Date.now()});
+    espPushLog(who, 'note_edit', 'Note modifiée');
     const badge = document.getElementById('esp-note-saved-' + who);
     if (badge) { badge.classList.add('show'); setTimeout(() => badge.classList.remove('show'), 1800); }
-  }, 600);
+    // refresh meta date inline without full re-render
+    const meta = document.querySelector(`#esp-panel-${who} .esp-note-meta`);
+    if (meta) meta.textContent = 'Modifié à l\'instant';
+  }, 700);
 }
 
 function espProcessFiles(who, files) {
   Array.from(files).forEach(file => {
     if (!file.type.startsWith('image/')) return;
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = ev => {
       const imgs = espLoadImgs(who);
-      imgs.unshift(e.target.result);
+      imgs.unshift({src:ev.target.result, at:Date.now()});
       if (imgs.length > 20) imgs.length = 20;
       espSaveImgs(who, imgs);
-      const cont = document.getElementById('esp-imgs-' + who);
-      if (cont) {
-        const wrap = document.createElement('div');
-        wrap.className = 'esp-img-wrap';
-        wrap.innerHTML = `<img src="${e.target.result}" onclick="espOpenImg('${who}',0)"><button class="esp-img-del" onclick="espDelImg('${who}',0)">×</button>`;
-        cont.prepend(wrap);
-        espGoto(who);
-      }
+      espPushLog(who, 'img_add', 'Image ajoutée');
+      espGoto(who);
     };
     reader.readAsDataURL(file);
   });
 }
 
-function espDragOver(e, who) { e.preventDefault(); document.getElementById('esp-drop-'+who)?.classList.add('over'); }
-function espDragLeave(who)    { document.getElementById('esp-drop-'+who)?.classList.remove('over'); }
-function espDrop(e, who)      { e.preventDefault(); espDragLeave(who); espProcessFiles(who, e.dataTransfer.files); }
-function espFileInput(e, who) { espProcessFiles(who, e.target.files); }
+function espDragOver(e,who){ e.preventDefault(); document.getElementById('esp-drop-'+who)?.classList.add('over'); }
+function espDragLeave(who) { document.getElementById('esp-drop-'+who)?.classList.remove('over'); }
+function espDrop(e,who)    { e.preventDefault(); espDragLeave(who); espProcessFiles(who,e.dataTransfer.files); }
+function espFileInput(e,who){ espProcessFiles(who,e.target.files); }
 
 function espDelImg(who, i) {
   const imgs = espLoadImgs(who);
@@ -2484,7 +2547,7 @@ function espOpenImg(who, i) {
   const imgs = espLoadImgs(who);
   if (!imgs[i]) return;
   const w = window.open();
-  w.document.write(`<body style="margin:0;background:#000"><img src="${imgs[i]}" style="max-width:100%;max-height:100vh;display:block;margin:auto"></body>`);
+  w.document.write(`<body style="margin:0;background:#000;display:flex;flex-direction:column;align-items:center;padding:16px;font-family:sans-serif"><img src="${imgs[i].src}" style="max-width:100%;max-height:90vh;border-radius:6px"><p style="color:#888;font-size:12px;margin-top:10px">Ajouté ${espFmtFull(imgs[i].at)}</p></body>`);
 }
 
 // ══ HUB OFFRES ══
