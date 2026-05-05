@@ -764,6 +764,8 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
   .person-selector{grid-template-columns:1fr 1fr}
 }
 </style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <div id="top-bar"></div>
@@ -1459,6 +1461,31 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 </div>
 
 <script>
+// ══ FIREBASE ══
+const FB_CONFIG = {
+  apiKey:'AIzaSyCuW_zyfd47vDaqXYvRLifJStHcJ9icxuQ',
+  authDomain:'robot-validation-produit.firebaseapp.com',
+  projectId:'robot-validation-produit',
+  storageBucket:'robot-validation-produit.firebasestorage.app',
+  messagingSenderId:'286183181940',
+  appId:'1:286183181940:web:5f4a681c5c83274b5ecb21'
+};
+let DB = null;
+try { firebase.initializeApp(FB_CONFIG); DB = firebase.firestore(); } catch(e) {}
+const FB_COL = 'ur_data';
+function dbSet(docId, data) {
+  if (!DB) return;
+  DB.collection(FB_COL).doc(docId).set(data, {merge:true}).catch(()=>{});
+}
+function dbGet(docId, cb) {
+  if (!DB) { cb(null); return; }
+  DB.collection(FB_COL).doc(docId).get().then(s => cb(s.exists ? s.data() : null)).catch(()=>cb(null));
+}
+function dbWatch(docId, cb) {
+  if (!DB) return;
+  DB.collection(FB_COL).doc(docId).onSnapshot(s => { if (s.exists) cb(s.data()); }, ()=>{});
+}
+
 // ══════════════════════════════════
 // ACCOUNTS — métadonnées uniquement (pas de credentials ici)
 // Les email/password sont stockés dans localStorage 'ur_credentials'
@@ -1533,7 +1560,7 @@ function getPhases() {
   try { return JSON.parse(localStorage.getItem('ur_phases') || 'null') || JSON.parse(JSON.stringify(DEFAULT_PHASES)); }
   catch(e) { return JSON.parse(JSON.stringify(DEFAULT_PHASES)); }
 }
-function savePhases(phases) { localStorage.setItem('ur_phases', JSON.stringify(phases)); }
+function savePhases(phases) { localStorage.setItem('ur_phases', JSON.stringify(phases)); dbSet('phases',{items:phases}); }
 
 function buildPhaseColumns() {
   const grid = document.getElementById('phases-grid-dynamic');
@@ -1704,6 +1731,7 @@ function getMemberCards() {
 }
 function saveMemberCards(cards) {
   localStorage.setItem('ur_member_cards', JSON.stringify(cards));
+  dbSet('member_cards',{data:cards});
 }
 
 // ══ SUGGESTIONS ══
@@ -2020,6 +2048,32 @@ function launchApp() {
   renderReminders();
   fetchVersion();
   updateBellDot();
+
+  // ══ FIREBASE WATCHERS — sync temps réel ══
+  ESP_MEMBERS.forEach(m => {
+    dbWatch('esp_'+m.key, d => {
+      if (d.tasks !== undefined) localStorage.setItem(espKey(m.key,'tasks'), JSON.stringify(d.tasks));
+      if (d.note  !== undefined) localStorage.setItem(espKey(m.key,'noteobj'), JSON.stringify(d.note));
+      if (d.log   !== undefined) localStorage.setItem(espKey(m.key,'log'), JSON.stringify(d.log));
+      if (document.getElementById('p-espace')?.classList.contains('active') && ESP_CUR === m.key) espRenderPanel(m.key);
+      espRefreshBadge(m.key);
+      updateBellDot();
+    });
+  });
+  dbWatch('phases',     d => { if(d.items){ localStorage.setItem('ur_phases',JSON.stringify(d.items)); buildPhaseColumns(); }});
+  dbWatch('tasks',      d => { if(d.data){ localStorage.setItem('ur_tasks',JSON.stringify(d.data)); buildPhaseColumns(); }});
+  dbWatch('task_done',  d => { if(d.data) localStorage.setItem('ur_task_done',JSON.stringify(d.data)); });
+  dbWatch('reminders',  d => { if(d.items){ localStorage.setItem('ur_reminders',JSON.stringify(d.items)); renderReminders(); }});
+  dbWatch('member_cards',d=>{ if(d.data) localStorage.setItem('ur_member_cards',JSON.stringify(d.data)); });
+  dbWatch('hub', d => {
+    if(d.features) localStorage.setItem(HUB_F_KEY,JSON.stringify(d.features));
+    if(d.meta)     localStorage.setItem(HUB_M_KEY,JSON.stringify(d.meta));
+    if(document.getElementById('p-hub')?.classList.contains('active')) renderHub();
+  });
+  dbWatch('marketing', d => {
+    ['court','mid','long'].forEach(k => { if(d[k]!==undefined) localStorage.setItem('mkt-'+k, d[k]); });
+    if(document.getElementById('p-hub')?.classList.contains('active')) mktLoad();
+  });
 }
 
 // ══ MY TASKS WIDGET ══
@@ -2029,7 +2083,7 @@ function getReminders() {
   try { return JSON.parse(localStorage.getItem('ur_reminders') || '[]'); }
   catch(e) { return []; }
 }
-function saveReminders(arr) { localStorage.setItem('ur_reminders', JSON.stringify(arr)); }
+function saveReminders(arr) { localStorage.setItem('ur_reminders', JSON.stringify(arr)); dbSet('reminders',{items:arr}); }
 function getVisibleReminders() {
   if (!SESSION) return [];
   return getReminders().filter(r =>
@@ -2237,7 +2291,7 @@ function getTaskDoneMap() {
   try { return JSON.parse(localStorage.getItem('ur_task_done') || '{}'); }
   catch(e) { return {}; }
 }
-function saveTaskDoneMap(m) { localStorage.setItem('ur_task_done', JSON.stringify(m)); }
+function saveTaskDoneMap(m) { localStorage.setItem('ur_task_done', JSON.stringify(m)); dbSet('task_done',{data:m}); }
 function taskDoneKey(personKey, phaseId, taskText) { return `${personKey}|${phaseId}|${taskText}`; }
 function isTaskDone(personKey, phaseId, taskText) {
   return !!getTaskDoneMap()[taskDoneKey(personKey, phaseId, taskText)];
@@ -2264,6 +2318,7 @@ function getSavedTasks() {
 }
 function saveTasks(tasks) {
   localStorage.setItem('ur_tasks', JSON.stringify(tasks));
+  dbSet('tasks',{data:tasks});
 }
 function saveTaskEdit(el, person, phase) {
   if (!SESSION || !SESSION.isAdmin) return;
@@ -2424,16 +2479,16 @@ function espFmtFull(ts) {
 
 // Storage helpers
 function espLoadTasks(who) { return JSON.parse(localStorage.getItem(espKey(who,'tasks'))||'[]'); }
-function espSaveTasks(who,t){ localStorage.setItem(espKey(who,'tasks'),JSON.stringify(t)); }
+function espSaveTasks(who,t){ localStorage.setItem(espKey(who,'tasks'),JSON.stringify(t)); dbSet('esp_'+who,{tasks:t}); }
 function espLoadNoteObj(who){ return JSON.parse(localStorage.getItem(espKey(who,'noteobj'))||'{"txt":"","at":0}'); }
-function espSaveNoteObj(who,o){ localStorage.setItem(espKey(who,'noteobj'),JSON.stringify(o)); }
+function espSaveNoteObj(who,o){ localStorage.setItem(espKey(who,'noteobj'),JSON.stringify(o)); dbSet('esp_'+who,{note:o}); }
 function espLoadImgs(who) {
   const raw = JSON.parse(localStorage.getItem(espKey(who,'imgs'))||'[]');
   return raw.map(x => typeof x === 'string' ? {src:x,at:0} : x);
 }
 function espSaveImgs(who,imgs){ localStorage.setItem(espKey(who,'imgs'),JSON.stringify(imgs)); }
 function espLoadLog(who) { return JSON.parse(localStorage.getItem(espKey(who,'log'))||'[]'); }
-function espSaveLog(who,log){ localStorage.setItem(espKey(who,'log'),JSON.stringify(log)); }
+function espSaveLog(who,log){ localStorage.setItem(espKey(who,'log'),JSON.stringify(log)); dbSet('esp_'+who,{log}); }
 function espPushLog(who, type, text) {
   const log = espLoadLog(who);
   log.unshift({type, text, at: Date.now()});
@@ -2674,6 +2729,7 @@ function mktAutoSave(k) {
     const el = document.getElementById('mkt-' + k);
     if (!el) return;
     localStorage.setItem('mkt-' + k, el.innerText);
+    dbSet('marketing',{[k]: el.innerText});
     const badge = document.getElementById('mkt-saved-' + k);
     if (badge) {
       badge.textContent = 'Sauvegardé ✓';
@@ -2725,6 +2781,7 @@ function hubData() {
 function hubPersist(d) {
   localStorage.setItem(HUB_F_KEY, JSON.stringify(d.features));
   localStorage.setItem(HUB_M_KEY, JSON.stringify(d.meta));
+  dbSet('hub',{features:d.features, meta:d.meta});
 }
 function hubReadDOM() {
   const d = hubData();
