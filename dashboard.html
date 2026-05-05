@@ -7,58 +7,139 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;700;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#080b14; --bg2:#0b0f1c;
-  --b1:#1E90FF; --b2:#56CCF2; --b3:#4F6EF7; --b4:#8BA8FF;
-  --border:rgba(100,160,255,.10); --border-hi:rgba(100,160,255,.25);
-  --shine:rgba(100,160,255,.08);
-  --text:rgba(255,255,255,.85); --muted:rgba(255,255,255,.35);
-  --sb:228px; --r:10px; --ease:.35s cubic-bezier(.2,.8,.2,1);
+:root{
+  --bg:#080b14;--bg2:#0b0f1c;
+  --b1:#1E90FF;--b2:#56CCF2;--b3:#4F6EF7;--b4:#8BA8FF;
+  --border:rgba(100,160,255,.10);--border-hi:rgba(100,160,255,.25);--shine:rgba(100,160,255,.08);
+  --text:rgba(255,255,255,.85);--muted:rgba(255,255,255,.35);
+  --sb:228px;--r:10px;--ease:.35s cubic-bezier(.2,.8,.2,1);
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:'Manrope',sans-serif;
-  overflow:hidden;height:100vh;display:flex;
+body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;overflow:hidden;height:100vh;display:flex}
+
+/* ══════════════════════════════════
+   LOGIN SCREEN
+══════════════════════════════════ */
+#login-screen{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+}
+#login-screen::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(30,144,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(30,144,255,.03) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);
+}
+.login-box{
+  background:rgba(14,20,40,.85);
+  border:1px solid var(--border);
+  backdrop-filter:blur(32px);
+  border-radius:16px;
+  padding:44px 48px;
+  width:100%;max-width:420px;
+  position:relative;z-index:1;
+  box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 60px rgba(30,144,255,.05);
+}
+.login-logo{
+  font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.14em;color:#fff;
+  text-align:center;margin-bottom:4px;
+}
+.login-logo b{background:linear-gradient(90deg,var(--b1),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:36px}
+
+/* Person selector */
+.person-selector{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px}
+.ps-btn{
+  padding:12px 10px;border-radius:8px;cursor:pointer;text-align:center;
+  border:1px solid var(--border);background:rgba(255,255,255,.03);
+  transition:all var(--ease);
+}
+.ps-btn:hover{background:rgba(30,144,255,.06);border-color:var(--border-hi)}
+.ps-btn.selected{background:rgba(30,144,255,.12);border-color:rgba(30,144,255,.35)}
+.ps-btn[data-p="bastien"].selected{background:rgba(155,89,182,.12);border-color:rgba(155,89,182,.35)}
+.ps-btn[data-p="theo"].selected{background:rgba(79,110,247,.12);border-color:rgba(79,110,247,.35)}
+.ps-btn[data-p="ilame"].selected{background:rgba(39,174,96,.12);border-color:rgba(39,174,96,.35)}
+.ps-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.06em}
+.ps-role{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:2px;line-height:1.3}
+
+.login-field{margin-bottom:14px}
+.login-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block}
+.login-input{
+  width:100%;padding:11px 14px;border-radius:7px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--text);font-family:'Manrope',sans-serif;font-size:13px;
+  outline:none;transition:border-color var(--ease),box-shadow var(--ease);
+}
+.login-input:focus{border-color:rgba(30,144,255,.4);box-shadow:0 0 0 3px rgba(30,144,255,.08)}
+.login-btn{
+  width:100%;padding:13px;border-radius:8px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--b1),var(--b3));
+  color:#fff;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.1em;
+  margin-top:8px;transition:opacity var(--ease),transform var(--ease);
+}
+.login-btn:hover{opacity:.9;transform:translateY(-1px)}
+.login-btn:active{transform:translateY(0)}
+.login-err{
+  font-size:11px;color:#FF5E7D;text-align:center;margin-top:10px;
+  display:none;font-family:'Barlow Condensed';letter-spacing:.04em;
 }
 
-/* ══ SIDEBAR ══ */
+/* ══════════════════════════════════
+   SIDEBAR
+══════════════════════════════════ */
 .sidebar{
   width:var(--sb);flex-shrink:0;
-  background:rgba(6,9,18,.98);
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  position:relative;z-index:10;
+  background:rgba(6,9,18,.98);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;position:relative;z-index:10;
 }
-.sb-logo{padding:18px 18px 14px;border-bottom:1px solid var(--border)}
+.sb-logo{padding:16px 18px 12px;border-bottom:1px solid var(--border)}
 .sb-logo-t{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.14em;color:#fff}
 .sb-logo-t b{background:linear-gradient(90deg,var(--b1),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .sb-logo-s{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+/* User badge in sidebar */
+.sb-user{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 18px 10px;border-bottom:1px solid var(--border);
+}
+.sb-user-dot{width:8px;height:8px;border-radius:50%;background:var(--b1);flex-shrink:0;box-shadow:0 0 8px rgba(30,144,255,.6)}
+.sb-user-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.08em;color:var(--text)}
+.sb-user-role{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sb-logout{
+  margin-left:auto;padding:3px 8px;border-radius:4px;cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  border:1px solid rgba(255,255,255,.08);transition:all var(--ease);
+}
+.sb-logout:hover{color:var(--text);border-color:var(--border-hi)}
+
 .sb-nav{flex:1;padding:8px 0;overflow-y:auto}
 .sb-sec{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:10px 18px 4px}
 .sb-item{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 18px;cursor:pointer;
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   color:var(--muted);border-right:2px solid transparent;
   transition:background var(--ease),color var(--ease),border-color var(--ease);
   user-select:none;
 }
 .sb-item:hover{background:rgba(30,144,255,.05);color:var(--text)}
 .sb-item.active{background:rgba(30,144,255,.10);color:var(--b1);border-right-color:var(--b1)}
-.sb-item svg{flex-shrink:0;opacity:.5}
-.sb-item.active svg{opacity:1}
+.sb-item svg{flex-shrink:0;opacity:.5}.sb-item.active svg{opacity:1}
+/* Admin badge */
+.sb-item.admin-only{position:relative}
+.admin-badge{
+  margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;
+  letter-spacing:.1em;text-transform:uppercase;padding:1px 5px;border-radius:3px;
+  background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.25);color:#FFD700;
+}
 
-/* Sub-nav (persons under phases) */
 .sb-sub{display:none;flex-direction:column;background:rgba(30,144,255,.03)}
 .sb-sub.open{display:flex}
 .sb-sub-item{
-  display:flex;align-items:center;gap:8px;
-  padding:7px 18px 7px 38px;cursor:pointer;
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;padding:7px 18px 7px 38px;cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   color:var(--muted);border-right:2px solid transparent;
   transition:background var(--ease),color var(--ease),border-color var(--ease);
 }
@@ -67,14 +148,12 @@ body{
 .sb-sub-dot{width:7px;height:7px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0}
 
 .sb-footer{padding:12px 18px;border-top:1px solid var(--border)}
-.ver-badge{
-  display:inline-flex;align-items:center;gap:6px;width:100%;
-  background:rgba(30,144,255,.06);border:1px solid rgba(30,144,255,.12);
-  border-radius:5px;padding:5px 10px;cursor:pointer;
-}
+.ver-badge{display:inline-flex;align-items:center;gap:6px;width:100%;background:rgba(30,144,255,.06);border:1px solid rgba(30,144,255,.12);border-radius:5px;padding:5px 10px;cursor:pointer}
 .ver-txt{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.1em;color:rgba(30,144,255,.5)}
 
-/* ══ MAIN ══ */
+/* ══════════════════════════════════
+   MAIN / PAGES
+══════════════════════════════════ */
 .main{flex:1;overflow-y:auto;overflow-x:hidden;position:relative}
 .main::before{
   content:'';position:fixed;top:0;left:var(--sb);right:0;bottom:0;
@@ -83,81 +162,72 @@ body{
   background-size:60px 60px;
   mask-image:radial-gradient(ellipse 80% 80% at 50% 20%,black 30%,transparent 100%);
 }
-
-/* ══ PAGES (CSS-only show/hide, no opacity tricks) ══ */
 .page{display:none;min-height:100vh}
 .page.active{display:block}
 
-/* CSS animation on reveal — no JS dependency */
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .page.active .rv{animation:fadeUp .45s ease both}
-.page.active .rv.d1{animation-delay:.04s}
-.page.active .rv.d2{animation-delay:.09s}
-.page.active .rv.d3{animation-delay:.14s}
-.page.active .rv.d4{animation-delay:.19s}
-.page.active .rv.d5{animation-delay:.24s}
-.page.active .rv.d6{animation-delay:.29s}
+.page.active .rv.d1{animation-delay:.04s}.page.active .rv.d2{animation-delay:.09s}
+.page.active .rv.d3{animation-delay:.14s}.page.active .rv.d4{animation-delay:.19s}
+.page.active .rv.d5{animation-delay:.24s}.page.active .rv.d6{animation-delay:.29s}
 
-/* ══ LAYOUT HELPERS ══ */
-.ph{padding:36px 36px 0;position:relative;z-index:1}
+/* LAYOUT */
+.ph{padding:34px 36px 0;position:relative;z-index:1}
 .ph-eye{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--b1);opacity:.6;margin-bottom:6px}
-.ph-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,5vw,66px);line-height:.9;letter-spacing:.03em;margin-bottom:8px}
+.ph-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,64px);line-height:.9;letter-spacing:.03em;margin-bottom:8px}
 .ph-title em{background:linear-gradient(135deg,var(--b1),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-style:normal}
-.ph-sub{font-size:12px;color:var(--muted);max-width:480px;line-height:1.65;margin-bottom:32px}
+.ph-sub{font-size:12px;color:var(--muted);max-width:480px;line-height:1.65;margin-bottom:30px}
 .pc{padding:0 36px 60px;position:relative;z-index:1}
-
-/* Glass card */
-.gc{
-  background:rgba(20,28,50,.5);border:1px solid var(--border);
-  backdrop-filter:blur(20px);border-radius:var(--r);
-  box-shadow:inset 0 1px 0 var(--shine),0 8px 32px rgba(0,0,0,.5);
-  transition:transform var(--ease),box-shadow var(--ease),border-color var(--ease);
-}
+.gc{background:rgba(20,28,50,.5);border:1px solid var(--border);backdrop-filter:blur(20px);border-radius:var(--r);box-shadow:inset 0 1px 0 var(--shine),0 8px 32px rgba(0,0,0,.5);transition:transform var(--ease),box-shadow var(--ease),border-color var(--ease)}
 .gc:hover{transform:translateY(-4px);border-color:var(--border-hi);box-shadow:inset 0 1px 0 var(--shine),0 16px 48px rgba(0,0,0,.6),0 0 20px rgba(30,144,255,.12)}
-
-/* Section titles */
 .sec-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--b1);opacity:.6;margin-bottom:6px}
 .sec-h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,2.8vw,34px);letter-spacing:.04em;margin-bottom:16px}
 .sec-h2 em{background:linear-gradient(135deg,var(--b1),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-style:normal}
 
-/* Who tags */
+/* WHO / PHASE TAGS */
 .who{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;flex-shrink:0}
-.w-m{background:rgba(30,144,255,.15);color:var(--b1)}
-.w-b{background:rgba(155,89,182,.2);color:#B07FD4}
-.w-t{background:rgba(79,110,247,.18);color:var(--b4)}
-.w-i{background:rgba(39,174,96,.15);color:#5DC48A}
+.w-m{background:rgba(30,144,255,.15);color:var(--b1)}.w-b{background:rgba(155,89,182,.2);color:#B07FD4}
+.w-t{background:rgba(79,110,247,.18);color:var(--b4)}.w-i{background:rgba(39,174,96,.15);color:#5DC48A}
 .w-x{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5)}
-
-/* Phase badges */
 .mph{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;border:1px solid}
 .mph-1{background:rgba(30,144,255,.1);border-color:rgba(30,144,255,.3);color:var(--b1)}
 .mph-2{background:rgba(86,204,242,.08);border-color:rgba(86,204,242,.25);color:var(--b2)}
 
 /* ══ HOME ══ */
-.home-hero{padding:36px 36px 24px;position:relative;z-index:1}
-.home-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,8vw,108px);line-height:.88;letter-spacing:.03em;margin-bottom:8px}
+.home-hero{padding:34px 36px 22px;position:relative;z-index:1}
+.home-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(54px,8vw,106px);line-height:.88;letter-spacing:.03em;margin-bottom:8px}
 .home-title .gr{background:linear-gradient(135deg,var(--b1) 0%,var(--b2) 50%,var(--b3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.home-date{font-size:12px;color:var(--muted)}
-.home-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 36px 28px;position:relative;z-index:1}
+.home-welcome{font-size:13px;color:var(--muted)}
+.home-welcome b{color:var(--text)}
+.home-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 36px 26px;position:relative;z-index:1}
 .hs{padding:14px 18px;border-radius:var(--r);background:rgba(20,28,50,.5);border:1px solid var(--border)}
 .hs-v{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.04em;background:linear-gradient(135deg,var(--b1),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hs-l{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:2px}
-.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 36px 56px;position:relative;z-index:1}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 36px 52px;position:relative;z-index:1}
 .home-card{padding:20px 22px;cursor:pointer}
 .hc-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--b1);opacity:.6;margin-bottom:5px}
 .hc-title{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:.04em;margin-bottom:7px}
 .hc-body{font-size:11.5px;color:var(--muted);line-height:1.6}
+/* My tasks widget on home */
+.my-tasks-widget{padding:0 36px 36px;position:relative;z-index:1}
+.my-tasks-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mtask-col{padding:18px 20px;border-radius:var(--r);background:rgba(14,20,40,.55);border:1px solid var(--border)}
+.mtask-col-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.06em;margin-bottom:10px}
+.ph1c .mtask-col-title{color:var(--b1)}.ph2c .mtask-col-title{color:var(--b2)}
+.mtask{font-size:11px;color:rgba(255,255,255,.55);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:8px}
+.mtask:last-child{border-bottom:none}
+.mtask-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
 
 /* ══ ÉQUIPE ══ */
 .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
 .member{padding:22px;border-radius:var(--r);position:relative;overflow:hidden;background:rgba(14,20,40,.55);border:1px solid var(--border);backdrop-filter:blur(20px);transition:transform var(--ease),box-shadow var(--ease),border-color var(--ease)}
 .member::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);opacity:.8}
 .member:hover{transform:translateY(-5px);border-color:rgba(var(--acc-rgb),.3);box-shadow:0 16px 48px rgba(0,0,0,.5),0 0 20px rgba(var(--acc-rgb),.2)}
-.m-mathieu{--acc:var(--b1);--acc-rgb:30,144,255}
-.m-bastien{--acc:#9B59B6;--acc-rgb:155,89,182}
-.m-theo{--acc:var(--b3);--acc-rgb:79,110,247}
-.m-ilame{--acc:#27AE60;--acc-rgb:39,174,96}
+.member.me{border-color:rgba(var(--acc-rgb),.4);box-shadow:0 0 0 1px rgba(var(--acc-rgb),.2),0 8px 32px rgba(0,0,0,.5)}
+.m-mathieu{--acc:var(--b1);--acc-rgb:30,144,255}.m-bastien{--acc:#9B59B6;--acc-rgb:155,89,182}
+.m-theo{--acc:var(--b3);--acc-rgb:79,110,247}.m-ilame{--acc:#27AE60;--acc-rgb:39,174,96}
 .m-num{position:absolute;bottom:10px;right:14px;font-family:'Bebas Neue',sans-serif;font-size:70px;line-height:1;color:var(--acc);opacity:.04;pointer-events:none}
+.me-tag{position:absolute;top:14px;right:14px;font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:rgba(var(--acc-rgb),.2);color:var(--acc);border:1px solid rgba(var(--acc-rgb),.3)}
 .m-name{font-family:'Bebas Neue',sans-serif;font-size:23px;letter-spacing:.06em;color:var(--acc);margin-bottom:1px}
 .m-role{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:13px}
 .m-tasks{list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:13px}
@@ -165,22 +235,14 @@ body{
 .m-tasks li::before{content:'';position:absolute;left:0;top:6px;width:3px;height:3px;border-radius:50%;background:var(--acc);opacity:.7}
 .m-phases{display:flex;gap:5px;flex-wrap:wrap}
 
-/* ══ PHASES PAGE ══ */
-/* Person filter tabs */
-.person-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
-.ptab{
-  font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
-  padding:7px 16px;border-radius:6px;cursor:pointer;
-  border:1px solid var(--border);color:var(--muted);
-  transition:all var(--ease);
-}
+/* ══ PHASES ══ */
+.person-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.ptab{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:7px 16px;border-radius:6px;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all var(--ease)}
 .ptab:hover{color:var(--text);border-color:var(--border-hi)}
 .ptab.active{background:rgba(30,144,255,.12);border-color:rgba(30,144,255,.3);color:var(--b1)}
 .ptab[data-person="bastien"].active{background:rgba(155,89,182,.12);border-color:rgba(155,89,182,.3);color:#B07FD4}
 .ptab[data-person="theo"].active{background:rgba(79,110,247,.12);border-color:rgba(79,110,247,.3);color:var(--b4)}
 .ptab[data-person="ilame"].active{background:rgba(39,174,96,.12);border-color:rgba(39,174,96,.3);color:#5DC48A}
-
-/* Phase columns */
 .phases-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .phase-col{border-radius:var(--r);padding:26px;position:relative;overflow:hidden}
 .ph1{background:rgba(30,144,255,.05);border:1px solid rgba(30,144,255,.18)}
@@ -190,36 +252,34 @@ body{
 .ph2 .ph-badge{background:rgba(86,204,242,.08);color:var(--b2);border:1px solid rgba(86,204,242,.2)}
 .ph-bgnum{position:absolute;bottom:8px;right:16px;font-family:'Bebas Neue',sans-serif;font-size:96px;line-height:.9;opacity:.04;pointer-events:none}
 .ph1 .ph-bgnum{color:var(--b1)}.ph2 .ph-bgnum{color:var(--b2)}
-.ph-col-title{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.05em;margin-bottom:3px}
+.ph-col-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.05em;margin-bottom:3px}
 .ph1 .ph-col-title{color:var(--b1)}.ph2 .ph-col-title{color:var(--b2)}
-.ph-col-sub{font-size:11px;color:var(--muted);margin-bottom:18px;letter-spacing:.02em}
+.ph-col-sub{font-size:11px;color:var(--muted);margin-bottom:16px;letter-spacing:.02em}
 .ph-tasks{display:flex;flex-direction:column;gap:7px}
-.ph-task{display:flex;align-items:flex-start;gap:8px;padding:9px 11px;border-radius:7px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);transition:opacity .2s,height .2s}
+.ph-task{display:flex;align-items:flex-start;gap:8px;padding:9px 11px;border-radius:7px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);transition:opacity .2s}
 .ph-task.hidden{display:none}
-.ph-task-txt{font-size:11.5px;color:rgba(255,255,255,.58);line-height:1.4}
+.ph-task.mine{background:rgba(30,144,255,.06);border-color:rgba(30,144,255,.15)}
+.ph-task-txt{font-size:11.5px;color:rgba(255,255,255,.58);line-height:1.4;flex:1}
 .ph-empty{font-size:11px;color:rgba(255,255,255,.2);font-style:italic;padding:10px 0;display:none}
 .ph-empty.show{display:block}
+/* Admin: editable task text */
+.ph-task-txt[contenteditable="true"]{outline:none;border-bottom:1px dashed rgba(30,144,255,.3)}
+.add-task-btn{display:none;align-items:center;gap:6px;padding:8px 11px;border-radius:7px;background:rgba(30,144,255,.04);border:1px dashed rgba(30,144,255,.2);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(30,144,255,.5);margin-top:4px;transition:all var(--ease)}
+.add-task-btn:hover{background:rgba(30,144,255,.08);color:var(--b1)}
+.admin-view .add-task-btn{display:flex}
 
-/* Person view (single person = 2 cols side by side) */
-.person-view{display:none}
-.person-view.show{display:block}
-.person-header{
-  display:flex;align-items:center;gap:14px;
-  padding:18px 20px;border-radius:var(--r);
-  margin-bottom:20px;
-  border:1px solid var(--border);
-  background:rgba(14,20,40,.5);
-}
-.person-header-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.06em}
+/* person header in phases */
+.person-header{display:none;align-items:center;gap:14px;padding:16px 20px;border-radius:var(--r);margin-bottom:20px;border:1px solid var(--border);background:rgba(14,20,40,.5)}
+.person-header.show{display:flex}
+.person-header-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.06em}
 .person-header-role{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 
 /* ══ TOOLS ══ */
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:36px}
-.tool-card{padding:18px 16px}
-.tool-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:11px;background:rgba(30,144,255,.08);border:1px solid rgba(30,144,255,.15)}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:34px}
+.tool-card{padding:18px 16px}.tool-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:11px;background:rgba(30,144,255,.08);border:1px solid rgba(30,144,255,.15)}
 .tool-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.06em;color:var(--b1);margin-bottom:2px}
 .tool-use{font-size:11px;color:var(--muted);line-height:1.45}
-.chars-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:12px;margin-bottom:36px}
+.chars-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:34px}
 .char-card{padding:18px;text-align:center}
 .char-dot{width:42px;height:42px;border-radius:50%;margin:0 auto 11px;border:2px solid}
 .char-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.06em;margin-bottom:3px}
@@ -233,13 +293,26 @@ body{
 .ep-table th{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
 .ep-table td{font-size:12px;color:rgba(255,255,255,.6);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
 .ep-time{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--b1)}
-.funnel{display:flex;flex-direction:column;align-items:center;max-width:480px}
+.funnel{display:flex;flex-direction:column;align-items:center;max-width:460px}
 .f-tier{width:100%;padding:16px 20px;background:rgba(20,28,50,.5);border:1px solid var(--border);border-radius:var(--r);margin-bottom:6px}
 .f-tier-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .f-price{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.06em;color:var(--b1)}
 .f-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .f-desc{font-size:11px;color:rgba(255,255,255,.5);line-height:1.5}
 .f-arrow{font-size:16px;color:rgba(30,144,255,.35);text-align:center;margin-bottom:6px}
+
+/* ══ ADMIN PAGE ══ */
+.admin-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:32px}
+.admin-member-card{padding:20px;position:relative}
+.amc-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.06em;margin-bottom:4px}
+.amc-tasks{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.amc-task{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:6px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.04)}
+.amc-task-txt{font-size:11px;color:rgba(255,255,255,.55);line-height:1.4;flex:1;outline:none}
+.amc-task-txt[contenteditable="true"]{border-bottom:1px dashed rgba(255,255,255,.15)}
+.amc-del{cursor:pointer;color:rgba(255,80,80,.4);font-size:14px;flex-shrink:0;transition:color var(--ease)}
+.amc-del:hover{color:rgba(255,80,80,.8)}
+.amc-add{display:flex;align-items:center;gap:5px;padding:7px 10px;border-radius:6px;background:rgba(255,255,255,.025);border:1px dashed rgba(255,255,255,.1);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:4px;transition:all var(--ease)}
+.amc-add:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.6)}
 
 /* ══ STRAT ══ */
 .strat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
@@ -254,75 +327,118 @@ body{
 @media(max-width:700px){
   body{flex-direction:column;overflow:hidden}
   .sidebar{width:100%;height:54px;flex-direction:row;border-right:none;border-bottom:1px solid var(--border);position:fixed;bottom:0;left:0;z-index:100;order:2}
-  .sb-logo,.sb-footer,.sb-sec,.sb-sub{display:none!important}
+  .sb-logo,.sb-footer,.sb-sec,.sb-sub,.sb-user{display:none!important}
   .sb-nav{display:flex;flex-direction:row;padding:0;overflow-x:auto;overflow-y:hidden;width:100%}
   .sb-item{flex-direction:column;gap:2px;padding:7px 10px;font-size:8px;min-width:56px;text-align:center;border-right:none;border-top:2px solid transparent}
   .sb-item.active{border-right-color:transparent;border-top-color:var(--b1)}
   .main{order:1;height:calc(100vh - 54px);overflow-y:auto}
   .main::before{left:0}
-  .home-stats{grid-template-columns:repeat(2,1fr)}
-  .home-grid,.phases-grid{grid-template-columns:1fr}
-  .ph,.pc,.home-hero,.home-stats,.home-grid{padding-left:16px;padding-right:16px}
+  .home-stats,.home-grid,.phases-grid,.my-tasks-grid{grid-template-columns:1fr}
+  .ph,.pc,.home-hero,.home-stats,.home-grid,.my-tasks-widget{padding-left:16px;padding-right:16px}
+  .login-box{margin:16px;padding:28px 24px}
+  .person-selector{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ SIDEBAR ══ -->
-<aside class="sidebar">
+<!-- ══════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo"><b>UNDER</b>RATED</div>
+    <div class="login-sub">War Room — Connexion</div>
+
+    <!-- Person selector -->
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Qui es-tu ?</div>
+    <div class="person-selector" id="person-selector">
+      <div class="ps-btn" data-p="mathieu" onclick="selectPerson('mathieu')">
+        <div class="ps-name" style="color:var(--b1)">MATHIEU</div>
+        <div class="ps-role">CEO + COO</div>
+      </div>
+      <div class="ps-btn" data-p="bastien" onclick="selectPerson('bastien')">
+        <div class="ps-name" style="color:#B07FD4">BASTIEN</div>
+        <div class="ps-role">Content & Product</div>
+      </div>
+      <div class="ps-btn" data-p="theo" onclick="selectPerson('theo')">
+        <div class="ps-name" style="color:var(--b4)">THÉO</div>
+        <div class="ps-role">Infrastructure</div>
+      </div>
+      <div class="ps-btn" data-p="ilame" onclick="selectPerson('ilame')">
+        <div class="ps-name" style="color:#5DC48A">ILAME</div>
+        <div class="ps-role">Sales & Community</div>
+      </div>
+    </div>
+
+    <div class="login-field">
+      <label class="login-label">Email</label>
+      <input class="login-input" type="email" id="login-email" placeholder="ton@email.com" autocomplete="email">
+    </div>
+    <div class="login-field">
+      <label class="login-label">Mot de passe</label>
+      <input class="login-input" type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">CONNEXION</button>
+    <div class="login-err" id="login-err">Email ou mot de passe incorrect</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     APP (hidden until login)
+══════════════════════════════════ -->
+<aside class="sidebar" id="app-sidebar" style="display:none">
   <div class="sb-logo">
     <div class="sb-logo-t"><b>UNDER</b>RATED</div>
     <div class="sb-logo-s">War Room</div>
   </div>
+  <!-- User badge -->
+  <div class="sb-user">
+    <div class="sb-user-dot" id="sb-dot"></div>
+    <div>
+      <div class="sb-user-name" id="sb-name"></div>
+      <div class="sb-user-role" id="sb-role"></div>
+    </div>
+    <div class="sb-logout" onclick="doLogout()">Quitter</div>
+  </div>
   <nav class="sb-nav">
     <div class="sb-sec">Navigation</div>
-
     <div class="sb-item active" data-page="home" onclick="goto('home')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       Home
     </div>
-
     <div class="sb-item" data-page="equipe" onclick="goto('equipe')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Équipe
     </div>
-
-    <!-- PHASES + sous-menu personnes -->
     <div class="sb-item" data-page="phases" onclick="gotoPhase('all')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Phases
     </div>
     <div class="sb-sub" id="phases-sub">
-      <div class="sb-sub-item" data-person="all" onclick="gotoPhase('all')">
-        <div class="sb-sub-dot"></div>Tout voir
-      </div>
-      <div class="sb-sub-item" data-person="mathieu" onclick="gotoPhase('mathieu')">
-        <div class="sb-sub-dot" style="border-color:var(--b1)"></div>Mathieu
-      </div>
-      <div class="sb-sub-item" data-person="bastien" onclick="gotoPhase('bastien')">
-        <div class="sb-sub-dot" style="border-color:#9B59B6"></div>Bastien
-      </div>
-      <div class="sb-sub-item" data-person="theo" onclick="gotoPhase('theo')">
-        <div class="sb-sub-dot" style="border-color:var(--b3)"></div>Théo
-      </div>
-      <div class="sb-sub-item" data-person="ilame" onclick="gotoPhase('ilame')">
-        <div class="sb-sub-dot" style="border-color:#27AE60"></div>Ilame
-      </div>
+      <div class="sb-sub-item" data-person="all" onclick="gotoPhase('all')"><div class="sb-sub-dot"></div>Tout voir</div>
+      <div class="sb-sub-item" data-person="mathieu" onclick="gotoPhase('mathieu')"><div class="sb-sub-dot" style="border-color:var(--b1)"></div>Mathieu</div>
+      <div class="sb-sub-item" data-person="bastien" onclick="gotoPhase('bastien')"><div class="sb-sub-dot" style="border-color:#9B59B6"></div>Bastien</div>
+      <div class="sb-sub-item" data-person="theo" onclick="gotoPhase('theo')"><div class="sb-sub-dot" style="border-color:var(--b3)"></div>Théo</div>
+      <div class="sb-sub-item" data-person="ilame" onclick="gotoPhase('ilame')"><div class="sb-sub-dot" style="border-color:#27AE60"></div>Ilame</div>
     </div>
-
     <div class="sb-item" data-page="tools" onclick="goto('tools')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
       Tools &amp; Série
     </div>
-
     <div class="sb-item" data-page="audit" onclick="goto('audit')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       Audit
     </div>
-
     <div class="sb-item" data-page="strat" onclick="goto('strat')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
       Stratégie
+    </div>
+    <!-- Admin only -->
+    <div class="sb-item admin-only" id="sb-admin-btn" data-page="admin" onclick="goto('admin')" style="display:none">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Admin
+      <span class="admin-badge">CEO</span>
     </div>
   </nav>
   <div class="sb-footer">
@@ -333,14 +449,13 @@ body{
   </div>
 </aside>
 
-<!-- ══ MAIN ══ -->
-<main class="main">
+<main class="main" id="app-main" style="display:none">
 
   <!-- ════ HOME ════ -->
   <div class="page active" id="p-home">
     <div class="home-hero">
       <div class="home-title"><span class="gr">WAR<br>ROOM</span></div>
-      <div class="home-date" id="home-date"></div>
+      <div class="home-welcome">Connecté en tant que <b id="home-username"></b> · <span id="home-date"></span></div>
     </div>
     <div class="home-stats">
       <div class="hs rv d1"><div class="hs-v">4</div><div class="hs-l">Membres actifs</div></div>
@@ -348,22 +463,30 @@ body{
       <div class="hs rv d3"><div class="hs-v">99€</div><div class="hs-l">Entrée formation</div></div>
       <div class="hs rv d4"><div class="hs-v">18H</div><div class="hs-l">Drop daily série</div></div>
     </div>
+
+    <!-- My tasks widget (hidden for admin, shown for others) -->
+    <div class="my-tasks-widget" id="my-tasks-widget" style="display:none">
+      <div class="sec-lbl">Mes tâches</div>
+      <div class="sec-h2">MES <em>PHASES</em></div>
+      <div class="my-tasks-grid" id="my-tasks-grid"></div>
+    </div>
+
     <div class="home-grid">
       <div class="gc home-card rv d1" onclick="goto('equipe')">
         <div class="hc-lbl">Équipe</div><div class="hc-title">LES 4 MEMBRES</div>
-        <div class="hc-body">Mathieu, Bastien, Théo, Ilame — rôles, responsabilités et phases de chacun.</div>
+        <div class="hc-body">Mathieu, Bastien, Théo, Ilame — rôles, responsabilités et phases.</div>
       </div>
       <div class="gc home-card rv d2" onclick="gotoPhase('all')">
         <div class="hc-lbl">Roadmap</div><div class="hc-title">PHASES 1 &amp; 2</div>
-        <div class="hc-body">Phase 1 = tout construire. Phase 2 = lancer et scaler. Vue par personne disponible.</div>
+        <div class="hc-body">Phase 1 = tout construire. Phase 2 = lancer et scaler. Vue par personne.</div>
       </div>
       <div class="gc home-card rv d3" onclick="goto('tools')">
         <div class="hc-lbl">Production</div><div class="hc-title">TOOLS &amp; SÉRIE</div>
-        <div class="hc-body">Stack IA, personnages, format épisode 60–90s, funnel 99€ → 1200€.</div>
+        <div class="hc-body">Stack IA, personnages, format 60–90s, funnel 99€ → 1200€.</div>
       </div>
       <div class="gc home-card rv d4" onclick="goto('strat')">
         <div class="hc-lbl">Vision</div><div class="hc-title">STRATÉGIE</div>
-        <div class="hc-body">Positionnement, modèle revenus, avantages vs Skibidi Fruits, KPIs cibles.</div>
+        <div class="hc-body">Positionnement, modèle revenus, KPIs. Audit Skibidi Fruits.</div>
       </div>
     </div>
   </div>
@@ -377,7 +500,7 @@ body{
     </div>
     <div class="pc">
       <div class="team-grid">
-        <div class="member m-mathieu rv d1">
+        <div class="member m-mathieu rv d1" id="card-mathieu">
           <div class="m-num">01</div>
           <div class="m-name">MATHIEU</div>
           <div class="m-role">Fondateur / CEO + COO — SGRRBOOM</div>
@@ -389,7 +512,7 @@ body{
           </ul>
           <div class="m-phases"><span class="mph mph-1">P1</span><span class="mph mph-2">P2</span></div>
         </div>
-        <div class="member m-bastien rv d2">
+        <div class="member m-bastien rv d2" id="card-bastien">
           <div class="m-num">02</div>
           <div class="m-name">BASTIEN</div>
           <div class="m-role">Head of Content &amp; Product — @lussori</div>
@@ -401,7 +524,7 @@ body{
           </ul>
           <div class="m-phases"><span class="mph mph-1">P1</span><span class="mph mph-2">P2</span></div>
         </div>
-        <div class="member m-theo rv d3">
+        <div class="member m-theo rv d3" id="card-theo">
           <div class="m-num">03</div>
           <div class="m-name">THÉO</div>
           <div class="m-role">Infrastructure</div>
@@ -413,7 +536,7 @@ body{
           </ul>
           <div class="m-phases"><span class="mph mph-1">P1</span><span class="mph mph-2">P2</span></div>
         </div>
-        <div class="member m-ilame rv d4">
+        <div class="member m-ilame rv d4" id="card-ilame">
           <div class="m-num">04</div>
           <div class="m-name">ILAME</div>
           <div class="m-role">Head of Sales &amp; Community</div>
@@ -437,26 +560,21 @@ body{
       <div class="ph-sub" id="phases-sub-title">Phase 1 = tout construire. Phase 2 = tout lancer et scaler.</div>
     </div>
     <div class="pc">
-      <!-- Person filter tabs -->
-      <div class="person-tabs rv d1">
+      <div class="person-tabs rv d1" id="person-tabs-wrap">
         <div class="ptab active" data-person="all" onclick="filterPerson('all')">Tous</div>
         <div class="ptab" data-person="mathieu" onclick="filterPerson('mathieu')">Mathieu</div>
         <div class="ptab" data-person="bastien" onclick="filterPerson('bastien')">Bastien</div>
         <div class="ptab" data-person="theo" onclick="filterPerson('theo')">Théo</div>
         <div class="ptab" data-person="ilame" onclick="filterPerson('ilame')">Ilame</div>
       </div>
-
-      <!-- Person header (shows when filtering) -->
-      <div id="person-header" style="display:none" class="person-header rv">
+      <div class="person-header" id="person-header">
         <div>
           <div class="person-header-name" id="person-header-name"></div>
           <div class="person-header-role" id="person-header-role"></div>
         </div>
         <div id="person-header-phases" style="display:flex;gap:5px;margin-left:auto"></div>
       </div>
-
       <div class="phases-grid">
-        <!-- PHASE 1 -->
         <div class="phase-col ph1 rv d2">
           <span class="ph-badge">ACTIVE</span>
           <div class="ph-bgnum">1</div>
@@ -472,10 +590,12 @@ body{
             <div class="ph-task" data-who="mathieu"><span class="who w-m">Mathieu</span><span class="ph-task-txt">Formation créée sur Teachable</span></div>
             <div class="ph-task" data-who="mathieu"><span class="who w-m">Mathieu</span><span class="ph-task-txt">Schéma narration validé + VSL créée</span></div>
           </div>
-          <div class="ph-empty" id="empty-p1">Pas de tâches pour cette personne en Phase 1</div>
+          <div class="ph-empty" id="empty-p1">Pas de tâches en Phase 1</div>
+          <div class="add-task-btn" onclick="addTask('p1')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Ajouter une tâche
+          </div>
         </div>
-
-        <!-- PHASE 2 -->
         <div class="phase-col ph2 rv d3">
           <span class="ph-badge">NEXT</span>
           <div class="ph-bgnum">2</div>
@@ -491,7 +611,11 @@ body{
             <div class="ph-task" data-who="mathieu"><span class="who w-m">Mathieu</span><span class="ph-task-txt">Gestion pubs avec Ilame</span></div>
             <div class="ph-task" data-who="theo ilame"><span class="who w-x">Théo + Ilame</span><span class="ph-task-txt">Accompagnement perso 1200€</span></div>
           </div>
-          <div class="ph-empty" id="empty-p2">Pas de tâches pour cette personne en Phase 2</div>
+          <div class="ph-empty" id="empty-p2">Pas de tâches en Phase 2</div>
+          <div class="add-task-btn" onclick="addTask('p2')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Ajouter une tâche
+          </div>
         </div>
       </div>
     </div>
@@ -508,33 +632,12 @@ body{
       <div class="sec-lbl">Stack production</div>
       <div class="sec-h2">LES <em>OUTILS</em></div>
       <div class="tools-grid">
-        <div class="gc tool-card rv d1">
-          <div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-          <div class="tool-name">CHATGPT</div>
-          <div class="tool-use">Scripts, narration, dialogues</div>
-        </div>
-        <div class="gc tool-card rv d2">
-          <div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
-          <div class="tool-name">ELEVENLABS</div>
-          <div class="tool-use">Voix personnages (Pro)</div>
-        </div>
-        <div class="gc tool-card rv d3">
-          <div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
-          <div class="tool-name">RUNWAY / VEO3</div>
-          <div class="tool-use">Génération vidéo IA</div>
-        </div>
-        <div class="gc tool-card rv d4">
-          <div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-          <div class="tool-name">MIDJOURNEY V7</div>
-          <div class="tool-use">Visuels + décors</div>
-        </div>
-        <div class="gc tool-card rv d5">
-          <div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-          <div class="tool-name">CAPCUT PRO</div>
-          <div class="tool-use">Montage, sous-titres, effets</div>
-        </div>
+        <div class="gc tool-card rv d1"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="tool-name">CHATGPT</div><div class="tool-use">Scripts, narration, dialogues</div></div>
+        <div class="gc tool-card rv d2"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div class="tool-name">ELEVENLABS</div><div class="tool-use">Voix personnages (Pro)</div></div>
+        <div class="gc tool-card rv d3"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div><div class="tool-name">RUNWAY / VEO3</div><div class="tool-use">Génération vidéo IA</div></div>
+        <div class="gc tool-card rv d4"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><div class="tool-name">MIDJOURNEY V7</div><div class="tool-use">Visuels + décors</div></div>
+        <div class="gc tool-card rv d5"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="tool-name">CAPCUT PRO</div><div class="tool-use">Montage, sous-titres, effets</div></div>
       </div>
-
       <div class="sec-lbl" style="margin-top:4px">Série — Personnages</div>
       <div class="sec-h2">LES <em>PERSOS</em></div>
       <div class="chars-grid">
@@ -544,39 +647,29 @@ body{
         <div class="gc char-card rv d4"><div class="char-dot c-bananello"></div><div class="char-name" style="color:#FFD700">BANANELLO</div><div class="char-desc">Masculin · Banane · Naif attachant</div></div>
         <div class="gc char-card rv d5"><div class="char-dot c-tbd"></div><div class="char-name" style="color:var(--muted)">TBD 5–8</div><div class="char-desc">4 personnages à définir</div></div>
       </div>
-
       <div class="sec-lbl" style="margin-top:4px">Format épisode</div>
       <div class="sec-h2">60–90 <em>SECONDES</em></div>
-      <div class="gc" style="overflow:hidden;margin-bottom:36px">
-        <table class="ep-table">
-          <thead><tr><th>Timing</th><th>Phase</th><th>Objectif</th></tr></thead>
-          <tbody>
-            <tr><td><span class="ep-time">0–3s</span></td><td>Accroche</td><td>Extrait du moment intense</td></tr>
-            <tr><td><span class="ep-time">3–8s</span></td><td>Intro</td><td>Logo + "Épisode X — Underrated Game"</td></tr>
-            <tr><td><span class="ep-time">8–25s</span></td><td>Setup</td><td>Récap ou annonce du jeu</td></tr>
-            <tr><td><span class="ep-time">25–50s</span></td><td>Action</td><td>Déroulement — coupes &lt;2s, dialogues Gen Z</td></tr>
-            <tr><td><span class="ep-time">50–55s</span></td><td>Choc</td><td>Élimination ou révélation</td></tr>
-            <tr><td><span class="ep-time">55–60s</span></td><td>CTA</td><td>Cliffhanger + appel commentaire</td></tr>
-          </tbody>
-        </table>
+      <div class="gc" style="overflow:hidden;margin-bottom:34px">
+        <table class="ep-table"><thead><tr><th>Timing</th><th>Phase</th><th>Objectif</th></tr></thead>
+        <tbody>
+          <tr><td><span class="ep-time">0–3s</span></td><td>Accroche</td><td>Extrait du moment intense</td></tr>
+          <tr><td><span class="ep-time">3–8s</span></td><td>Intro</td><td>Logo + "Épisode X — Underrated Game"</td></tr>
+          <tr><td><span class="ep-time">8–25s</span></td><td>Setup</td><td>Récap ou annonce du jeu</td></tr>
+          <tr><td><span class="ep-time">25–50s</span></td><td>Action</td><td>Déroulement — coupes &lt;2s, dialogues Gen Z</td></tr>
+          <tr><td><span class="ep-time">50–55s</span></td><td>Choc</td><td>Élimination ou révélation</td></tr>
+          <tr><td><span class="ep-time">55–60s</span></td><td>CTA</td><td>Cliffhanger + appel commentaire</td></tr>
+        </tbody></table>
       </div>
-
       <div class="sec-lbl">Funnel de vente</div>
       <div class="sec-h2">99€ → <em>1200€</em></div>
       <div class="funnel rv d1">
         <div class="f-tier">
-          <div class="f-tier-top">
-            <div><div class="f-label">Entrée</div><div class="f-price">99€</div></div>
-            <div style="text-align:right"><div class="f-label">Plateforme</div><div style="font-family:'Barlow Condensed';font-size:13px;color:var(--b2)">TEACHABLE</div></div>
-          </div>
+          <div class="f-tier-top"><div><div class="f-label">Entrée</div><div class="f-price">99€</div></div><div style="text-align:right"><div class="f-label">Plateforme</div><div style="font-family:'Barlow Condensed';font-size:13px;color:var(--b2)">TEACHABLE</div></div></div>
           <div class="f-desc">Formation "Comment créer une série IA virale"<br><span style="font-size:10px;color:rgba(255,255,255,.25)">Géré par Mathieu</span></div>
         </div>
         <div class="f-arrow">↓</div>
         <div class="f-tier" style="border-color:rgba(86,204,242,.22)">
-          <div class="f-tier-top">
-            <div><div class="f-label">Upsell</div><div class="f-price" style="color:var(--b2)">1200€</div></div>
-            <div style="text-align:right"><div class="f-label">Type</div><div style="font-family:'Barlow Condensed';font-size:13px;color:var(--b2)">COACHING 1-TO-1</div></div>
-          </div>
+          <div class="f-tier-top"><div><div class="f-label">Upsell</div><div class="f-price" style="color:var(--b2)">1200€</div></div><div style="text-align:right"><div class="f-label">Type</div><div style="font-family:'Barlow Condensed';font-size:13px;color:var(--b2)">COACHING 1-TO-1</div></div></div>
           <div class="f-desc">Accompagnement perso — scalable après 99€<br><span style="font-size:10px;color:rgba(255,255,255,.25)">Géré par Théo + Ilame</span></div>
         </div>
       </div>
@@ -597,42 +690,43 @@ body{
     </div>
     <div class="pc">
       <div class="strat-grid">
-        <div class="gc strat-card rv d1">
-          <div class="sec-lbl">Concept</div>
-          <div class="strat-title">SÉRIE IA QUOTIDIENNE</div>
-          <div class="strat-body">Style Squid Game. Personnages fruits IA. TikTok/Shorts 60–90s. Drop daily 18h. Tension max, cliffhangers, dialogues Gen Z.</div>
-        </div>
-        <div class="gc strat-card rv d2">
-          <div class="sec-lbl">Avantage vs Skibidi Fruits</div>
-          <div class="strat-title">CE QU'ON FAIT MIEUX</div>
-          <div class="strat-body">Meilleure narration (rétention validée). Conversion directe via formation 99€. Accompagnement 1200€. Équipe ops dédiée.</div>
-        </div>
+        <div class="gc strat-card rv d1"><div class="sec-lbl">Concept</div><div class="strat-title">SÉRIE IA QUOTIDIENNE</div><div class="strat-body">Style Squid Game. Personnages fruits IA. TikTok/Shorts 60–90s. Drop daily 18h. Tension max, cliffhangers, dialogues Gen Z.</div></div>
+        <div class="gc strat-card rv d2"><div class="sec-lbl">Avantage vs Skibidi Fruits</div><div class="strat-title">CE QU'ON FAIT MIEUX</div><div class="strat-body">Meilleure narration (rétention validée). Conversion directe via 99€. Accompagnement 1200€. Équipe ops dédiée.</div></div>
         <div class="gc strat-card rv d3">
-          <div class="sec-lbl">Modèle revenus</div>
-          <div class="strat-title">3 FLUX</div>
+          <div class="sec-lbl">Modèle revenus</div><div class="strat-title">3 FLUX</div>
           <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
-            <div><div style="font-family:'Bebas Neue';font-size:14px;color:var(--b1)">1. BRAND DEALS</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">30–70k€ deal type Oasis. Priorité long terme.</div></div>
+            <div><div style="font-family:'Bebas Neue';font-size:14px;color:var(--b1)">1. BRAND DEALS</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">30–70k€ type Oasis. Priorité long terme.</div></div>
             <div><div style="font-family:'Bebas Neue';font-size:14px;color:var(--b2)">2. FORMATION</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">99€ Teachable. Cible trim 1 : 30 ventes = 3000€.</div></div>
             <div><div style="font-family:'Bebas Neue';font-size:14px;color:rgba(255,255,255,.35)">3. CREATOR FUND</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">Secondaire. ~0.05–0.10€ / 1000 vues TikTok.</div></div>
           </div>
         </div>
         <div class="gc strat-card rv d4">
-          <div class="sec-lbl">KPIs cibles</div>
-          <div class="strat-title">OBJECTIFS TRIM 1</div>
+          <div class="sec-lbl">KPIs</div><div class="strat-title">OBJECTIFS TRIM 1</div>
           <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
             <div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--b1)">30</div><div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Ventes formation</div></div>
             <div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--b2)">3 000€</div><div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Revenu formation</div></div>
-            <div><div style="font-family:'Bebas Neue';font-size:28px;color:rgba(255,255,255,.4)">DAILY</div><div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Fréquence drop série</div></div>
+            <div><div style="font-family:'Bebas Neue';font-size:28px;color:rgba(255,255,255,.4)">DAILY</div><div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Fréquence drop</div></div>
           </div>
         </div>
         <div class="gc strat-card rv d5" style="grid-column:1/-1">
-          <div class="sec-lbl">Référence stratégique</div>
-          <div class="strat-title">AUDIT COMPLET — SKIBIDI FRUITS</div>
+          <div class="sec-lbl">Référence</div><div class="strat-title">AUDIT COMPLET — SKIBIDI FRUITS</div>
           <div class="strat-body" style="margin-bottom:16px">10 leviers analysés. Clones morts documentés. Concurrents mappés. Direction visuelle définie.</div>
-          <button onclick="goto('audit')" style="background:rgba(30,144,255,.12);border:1px solid rgba(30,144,255,.3);color:var(--b1);font-family:'Barlow Condensed';font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;padding:8px 18px;border-radius:5px;cursor:pointer">
-            VOIR L'AUDIT COMPLET
-          </button>
+          <button onclick="goto('audit')" style="background:rgba(30,144,255,.12);border:1px solid rgba(30,144,255,.3);color:var(--b1);font-family:'Barlow Condensed';font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;padding:8px 18px;border-radius:5px;cursor:pointer">VOIR L'AUDIT</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ ADMIN ════ -->
+  <div class="page" id="p-admin">
+    <div class="ph">
+      <div class="ph-eye">Admin — Vue CEO</div>
+      <div class="ph-title">GESTION <em>ÉQUIPE</em></div>
+      <div class="ph-sub">Vue globale sur toutes les tâches. Clique sur n'importe quelle tâche pour la modifier. Les changements sont sauvegardés localement.</div>
+    </div>
+    <div class="pc">
+      <div class="admin-overview" id="admin-overview">
+        <!-- Généré par JS -->
       </div>
     </div>
   </div>
@@ -640,15 +734,288 @@ body{
 </main>
 
 <script>
-// ── PERSON DATA ──
-const PERSONS = {
-  mathieu: { name:'MATHIEU', role:'Fondateur / CEO + COO', color:'var(--b1)', phases:['mph-1','mph-2'] },
-  bastien: { name:'BASTIEN', role:'Head of Content & Product', color:'#B07FD4', phases:['mph-1','mph-2'] },
-  theo:    { name:'THÉO',    role:'Infrastructure',           color:'var(--b4)', phases:['mph-1','mph-2'] },
-  ilame:   { name:'ILAME',   role:'Head of Sales & Community',color:'#5DC48A', phases:['mph-2'] }
+// ══════════════════════════════════
+// ACCOUNTS (email / password par personne)
+// Remplace les mots de passe par ce que tu veux
+// ══════════════════════════════════
+const ACCOUNTS = {
+  mathieu: {
+    email: 'mathieu@underrated.com',
+    password: 'mathieu2024',
+    name: 'MATHIEU',
+    role: 'CEO + COO',
+    color: 'var(--b1)',
+    dotColor: '#1E90FF',
+    isAdmin: true
+  },
+  bastien: {
+    email: 'bastien@underrated.com',
+    password: 'bastien2024',
+    name: 'BASTIEN',
+    role: 'Content & Product',
+    color: '#B07FD4',
+    dotColor: '#9B59B6',
+    isAdmin: false
+  },
+  theo: {
+    email: 'theo@underrated.com',
+    password: 'theo2024',
+    name: 'THÉO',
+    role: 'Infrastructure',
+    color: 'var(--b4)',
+    dotColor: '#4F6EF7',
+    isAdmin: false
+  },
+  ilame: {
+    email: 'ilame@underrated.com',
+    password: 'ilame2024',
+    name: 'ILAME',
+    role: 'Sales & Community',
+    color: '#5DC48A',
+    dotColor: '#27AE60',
+    isAdmin: false
+  }
 };
 
-// ── NAV ──
+const PERSONS_DATA = {
+  mathieu: { name:'MATHIEU', role:'Fondateur / CEO + COO', color:'var(--b1)', phases:['P1','P2'], whoClass:'w-m' },
+  bastien: { name:'BASTIEN', role:'Head of Content & Product', color:'#B07FD4', phases:['P1','P2'], whoClass:'w-b' },
+  theo:    { name:'THÉO',    role:'Infrastructure',           color:'var(--b4)', phases:['P1','P2'], whoClass:'w-t' },
+  ilame:   { name:'ILAME',   role:'Head of Sales & Community',color:'#5DC48A', phases:['P2'], whoClass:'w-i' }
+};
+
+// Tasks data (for admin edit, stored in localStorage)
+const DEFAULT_TASKS = {
+  mathieu: {
+    p1: ['Formation créée sur Teachable','Schéma narration validé + VSL créée'],
+    p2: ['Marketing court terme + contenu conversion','Gestion pubs avec Ilame']
+  },
+  bastien: {
+    p1: ['CRM complet + tools exclusifs formation','Bots de relance + automatisations','Workflows de base création vidéo'],
+    p2: ['Vidéos daily drop 18h (schéma Mathieu)','Qualité production Gen Z garantie']
+  },
+  theo: {
+    p1: ['BDD + emails automatiques','Discord — canaux, rôles, structure','Comptes TikTok/Instagram + clippers'],
+    p2: ['Surveillance infra + alertes si ça casse','Accompagnement perso 1200€']
+  },
+  ilame: {
+    p1: [],
+    p2: ['Closing leads froids + Discord chauds','Lives Q&A + mentorat élèves','Accompagnement perso 1200€']
+  }
+};
+
+let SESSION = null;
+let selectedPerson = null;
+
+// ══ LOGIN ══
+function selectPerson(p) {
+  selectedPerson = p;
+  document.querySelectorAll('.ps-btn').forEach(b => b.classList.toggle('selected', b.dataset.p === p));
+  // Pre-fill email
+  document.getElementById('login-email').value = ACCOUNTS[p] ? ACCOUNTS[p].email : '';
+  document.getElementById('login-email').focus();
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pwd = document.getElementById('login-pwd').value;
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
+
+  let found = null;
+  for (const [key, acc] of Object.entries(ACCOUNTS)) {
+    if (acc.email.toLowerCase() === email && acc.password === pwd) {
+      found = { key, ...acc };
+      break;
+    }
+  }
+
+  if (!found) {
+    err.style.display = 'block';
+    document.getElementById('login-pwd').value = '';
+    return;
+  }
+
+  SESSION = found;
+  localStorage.setItem('ur_session', JSON.stringify({ key: found.key }));
+  launchApp();
+}
+
+function doLogout() {
+  localStorage.removeItem('ur_session');
+  SESSION = null;
+  document.getElementById('app-sidebar').style.display = 'none';
+  document.getElementById('app-main').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-pwd').value = '';
+  document.querySelectorAll('.ps-btn').forEach(b => b.classList.remove('selected'));
+  selectedPerson = null;
+}
+
+function launchApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-sidebar').style.display = 'flex';
+  document.getElementById('app-main').style.display = 'block';
+
+  // Sidebar user badge
+  document.getElementById('sb-name').textContent = SESSION.name;
+  document.getElementById('sb-role').textContent = SESSION.role;
+  document.getElementById('sb-dot').style.background = SESSION.dotColor;
+  document.getElementById('sb-dot').style.boxShadow = '0 0 8px ' + SESSION.dotColor;
+
+  // Admin-only elements
+  document.getElementById('sb-admin-btn').style.display = SESSION.isAdmin ? 'flex' : 'none';
+  if (SESSION.isAdmin) {
+    document.body.classList.add('admin-view');
+    buildAdminOverview();
+  }
+
+  // Home setup
+  document.getElementById('home-username').textContent = SESSION.name;
+  setDate();
+
+  // My tasks widget (non-admin only)
+  if (!SESSION.isAdmin) {
+    buildMyTasks();
+  }
+
+  // Highlight my card in team page
+  document.querySelectorAll('.member').forEach(c => c.classList.remove('me'));
+  document.querySelectorAll('.me-tag').forEach(t => t.remove());
+  const myCard = document.getElementById('card-' + SESSION.key);
+  if (myCard) {
+    myCard.classList.add('me');
+    const tag = document.createElement('div');
+    tag.className = 'me-tag';
+    tag.textContent = 'MOI';
+    myCard.appendChild(tag);
+  }
+
+  // If non-admin, open phases filtered to self
+  if (!SESSION.isAdmin) {
+    goto('home');
+  } else {
+    goto('home');
+  }
+
+  fetchVersion();
+}
+
+// ══ MY TASKS WIDGET ══
+function buildMyTasks() {
+  const widget = document.getElementById('my-tasks-widget');
+  const grid = document.getElementById('my-tasks-grid');
+  widget.style.display = 'block';
+  const tasks = getSavedTasks();
+  const myTasks = tasks[SESSION.key] || DEFAULT_TASKS[SESSION.key];
+  const person = PERSONS_DATA[SESSION.key];
+  const colors = { mathieu:'#1E90FF', bastien:'#9B59B6', theo:'#4F6EF7', ilame:'#27AE60' };
+  const col = colors[SESSION.key] || '#1E90FF';
+
+  grid.innerHTML = `
+    <div class="mtask-col ph1c">
+      <div class="mtask-col-title">PHASE 1</div>
+      ${(myTasks.p1||[]).length ? (myTasks.p1||[]).map(t=>`<div class="mtask"><div class="mtask-dot" style="background:${col}"></div>${t}</div>`).join('') : '<div style="font-size:11px;color:rgba(255,255,255,.2);font-style:italic">Pas de tâches en Phase 1</div>'}
+    </div>
+    <div class="mtask-col ph2c">
+      <div class="mtask-col-title">PHASE 2</div>
+      ${(myTasks.p2||[]).length ? (myTasks.p2||[]).map(t=>`<div class="mtask"><div class="mtask-dot" style="background:${col}"></div>${t}</div>`).join('') : '<div style="font-size:11px;color:rgba(255,255,255,.2);font-style:italic">Pas de tâches en Phase 2</div>'}
+    </div>
+  `;
+}
+
+// ══ ADMIN OVERVIEW ══
+function buildAdminOverview() {
+  const container = document.getElementById('admin-overview');
+  const tasks = getSavedTasks();
+  const colors = { mathieu:'var(--b1)', bastien:'#B07FD4', theo:'var(--b4)', ilame:'#5DC48A' };
+  const whoClass = { mathieu:'w-m', bastien:'w-b', theo:'w-t', ilame:'w-i' };
+  const bgColors = { mathieu:'rgba(30,144,255,.08)', bastien:'rgba(155,89,182,.08)', theo:'rgba(79,110,247,.08)', ilame:'rgba(39,174,96,.08)' };
+  const borderColors = { mathieu:'rgba(30,144,255,.2)', bastien:'rgba(155,89,182,.2)', theo:'rgba(79,110,247,.2)', ilame:'rgba(39,174,96,.2)' };
+
+  container.innerHTML = Object.entries(PERSONS_DATA).map(([key, p]) => {
+    const saved = tasks[key] || DEFAULT_TASKS[key];
+    const renderPhase = (phase, label) => `
+      <div style="margin-bottom:12px">
+        <div style="font-family:'Barlow Condensed';font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">${label}</div>
+        <div id="admin-tasks-${key}-${phase}">
+          ${(saved[phase]||[]).map((t,i) => `
+            <div class="amc-task" data-person="${key}" data-phase="${phase}" data-idx="${i}">
+              <span class="who ${whoClass[key]}" style="flex-shrink:0">${p.name.charAt(0)+p.name.slice(1).toLowerCase()}</span>
+              <span class="amc-task-txt" contenteditable="true" onblur="saveTaskEdit(this,'${key}','${phase}',${i})">${t}</span>
+              <span class="amc-del" onclick="deleteTask('${key}','${phase}',${i})">✕</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="amc-add" onclick="adminAddTask('${key}','${phase}')">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter
+        </div>
+      </div>
+    `;
+    return `
+      <div class="gc admin-member-card rv d${Object.keys(PERSONS_DATA).indexOf(key)+1}" style="background:${bgColors[key]};border-color:${borderColors[key]}">
+        <div class="amc-name" style="color:${colors[key]}">${p.name}</div>
+        <div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px">${p.role}</div>
+        ${renderPhase('p1','Phase 1')}
+        ${renderPhase('p2','Phase 2')}
+      </div>
+    `;
+  }).join('');
+}
+
+// ══ TASK STORAGE ══
+function getSavedTasks() {
+  try { return JSON.parse(localStorage.getItem('ur_tasks') || '{}'); } catch(e) { return {}; }
+}
+function saveTasks(tasks) {
+  localStorage.setItem('ur_tasks', JSON.stringify(tasks));
+}
+function saveTaskEdit(el, person, phase, idx) {
+  const tasks = getSavedTasks();
+  if (!tasks[person]) tasks[person] = JSON.parse(JSON.stringify(DEFAULT_TASKS[person]));
+  if (tasks[person][phase]) tasks[person][phase][idx] = el.textContent.trim();
+  saveTasks(tasks);
+}
+function deleteTask(person, phase, idx) {
+  const tasks = getSavedTasks();
+  if (!tasks[person]) tasks[person] = JSON.parse(JSON.stringify(DEFAULT_TASKS[person]));
+  if (tasks[person][phase]) { tasks[person][phase].splice(idx, 1); saveTasks(tasks); }
+  buildAdminOverview();
+}
+function adminAddTask(person, phase) {
+  const tasks = getSavedTasks();
+  if (!tasks[person]) tasks[person] = JSON.parse(JSON.stringify(DEFAULT_TASKS[person]));
+  if (!tasks[person][phase]) tasks[person][phase] = [];
+  tasks[person][phase].push('Nouvelle tâche');
+  saveTasks(tasks);
+  buildAdminOverview();
+  // Focus last added
+  setTimeout(() => {
+    const container = document.getElementById(`admin-tasks-${person}-${phase}`);
+    if (container) {
+      const last = container.querySelectorAll('.amc-task-txt');
+      if (last.length) { const el = last[last.length-1]; el.focus(); document.execCommand('selectAll',false,null); }
+    }
+  }, 50);
+}
+// Phases page: add task (admin)
+function addTask(phase) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const who = prompt('Pour qui ? (mathieu / bastien / theo / ilame)');
+  if (!who || !PERSONS_DATA[who]) return;
+  const tasks = getSavedTasks();
+  if (!tasks[who]) tasks[who] = JSON.parse(JSON.stringify(DEFAULT_TASKS[who]));
+  const txt = prompt('Tâche ?');
+  if (!txt) return;
+  tasks[who][phase].push(txt);
+  saveTasks(tasks);
+  buildAdminOverview();
+  buildMyTasks();
+}
+
+// ══ NAV ══
 function goto(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
@@ -656,12 +1023,8 @@ function goto(page) {
   const nav = document.querySelector('.sb-item[data-page="' + page + '"]');
   if (nav) nav.classList.add('active');
   document.querySelector('.main').scrollTop = 0;
-
-  // Show/hide phases sub-menu
   const sub = document.getElementById('phases-sub');
   sub.classList.toggle('open', page === 'phases');
-
-  // Lazy load audit iframe
   if (page === 'audit') {
     const iframe = document.getElementById('audit-iframe');
     if (!iframe.src || iframe.src === 'about:blank') iframe.src = 'audit-underrated.html';
@@ -671,76 +1034,79 @@ function goto(page) {
 function gotoPhase(person) {
   goto('phases');
   filterPerson(person);
-  // Sync sidebar sub
-  document.querySelectorAll('.sb-sub-item').forEach(i => {
-    i.classList.toggle('active', i.dataset.person === person);
-  });
+  document.querySelectorAll('.sb-sub-item').forEach(i => i.classList.toggle('active', i.dataset.person === person));
 }
 
-// ── PERSON FILTER ──
+// ══ PERSON FILTER ══
 function filterPerson(person) {
-  // Update tab UI
   document.querySelectorAll('.ptab').forEach(t => t.classList.toggle('active', t.dataset.person === person));
-
   const tasks1 = document.querySelectorAll('#tasks-p1 .ph-task');
   const tasks2 = document.querySelectorAll('#tasks-p2 .ph-task');
   const empty1 = document.getElementById('empty-p1');
   const empty2 = document.getElementById('empty-p2');
   const header = document.getElementById('person-header');
 
+  // Highlight my tasks
+  const me = SESSION ? SESSION.key : null;
+  tasks1.forEach(t => t.classList.toggle('mine', me && t.dataset.who === me));
+  tasks2.forEach(t => t.classList.toggle('mine', me && t.dataset.who === me));
+
   if (person === 'all') {
     tasks1.forEach(t => t.classList.remove('hidden'));
     tasks2.forEach(t => t.classList.remove('hidden'));
-    empty1.classList.remove('show');
-    empty2.classList.remove('show');
-    header.style.display = 'none';
+    empty1.classList.remove('show'); empty2.classList.remove('show');
+    header.classList.remove('show');
     document.getElementById('phases-sub-title').textContent = 'Phase 1 = tout construire. Phase 2 = tout lancer et scaler.';
     return;
   }
 
-  // Filter tasks
   let vis1 = 0, vis2 = 0;
-  tasks1.forEach(t => {
-    const show = t.dataset.who && t.dataset.who.includes(person);
-    t.classList.toggle('hidden', !show);
-    if (show) vis1++;
-  });
-  tasks2.forEach(t => {
-    const show = t.dataset.who && t.dataset.who.includes(person);
-    t.classList.toggle('hidden', !show);
-    if (show) vis2++;
-  });
+  tasks1.forEach(t => { const s = t.dataset.who && t.dataset.who.includes(person); t.classList.toggle('hidden', !s); if(s)vis1++; });
+  tasks2.forEach(t => { const s = t.dataset.who && t.dataset.who.includes(person); t.classList.toggle('hidden', !s); if(s)vis2++; });
   empty1.classList.toggle('show', vis1 === 0);
   empty2.classList.toggle('show', vis2 === 0);
 
-  // Show person header
-  const p = PERSONS[person];
+  const p = PERSONS_DATA[person];
   if (p) {
     document.getElementById('person-header-name').textContent = p.name;
     document.getElementById('person-header-name').style.color = p.color;
     document.getElementById('person-header-role').textContent = p.role;
-    document.getElementById('person-header-phases').innerHTML =
-      p.phases.map(cls => `<span class="mph ${cls}">${cls === 'mph-1' ? 'P1' : 'P2'}</span>`).join('');
-    header.style.display = 'flex';
-    document.getElementById('phases-sub-title').textContent =
-      'Tâches de ' + p.name.charAt(0) + p.name.slice(1).toLowerCase() + ' — Phase 1 et Phase 2.';
+    document.getElementById('person-header-phases').innerHTML = p.phases.map(ph => `<span class="mph mph-${ph === 'P1' ? '1':'2'}">${ph}</span>`).join('');
+    header.classList.add('show');
+    document.getElementById('phases-sub-title').textContent = 'Tâches de ' + p.name.charAt(0) + p.name.slice(1).toLowerCase() + ' — Phase 1 et Phase 2.';
   }
 }
 
-// ── DATE ──
-(function(){
+// ══ DATE ══
+function setDate() {
   const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
   const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
   const now = new Date();
   const el = document.getElementById('home-date');
   if (el) el.textContent = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
-})();
+}
 
-// ── VERSION ──
-fetch('VERSION.json?t=' + Date.now())
-  .then(r => r.json())
-  .then(d => { const el = document.getElementById('ver-txt'); if (el) el.textContent = d.version || (d.commit ? d.commit.slice(0,7) : '—'); })
-  .catch(() => {});
+// ══ VERSION ══
+function fetchVersion() {
+  fetch('VERSION.json?t=' + Date.now())
+    .then(r => r.json())
+    .then(d => { const el = document.getElementById('ver-txt'); if(el) el.textContent = d.version || (d.commit ? d.commit.slice(0,7) : '—'); })
+    .catch(() => {});
+}
+
+// ══ INIT — check existing session ══
+(function init() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('ur_session') || 'null');
+    if (saved && saved.key && ACCOUNTS[saved.key]) {
+      SESSION = { key: saved.key, ...ACCOUNTS[saved.key] };
+      launchApp();
+      return;
+    }
+  } catch(e) {}
+  // Show login
+  document.getElementById('login-screen').style.display = 'flex';
+})();
 </script>
 </body>
 </html>
