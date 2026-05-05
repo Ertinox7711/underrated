@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 08:33 — `f9ed720`
+feat: merge dashboard into index.html, add Notes section (public/private), delete old index
+
 ## 05/05/2026 08:26 — `ca69860`
 feat: move suggestions to phases page, simplify equipe cards
 

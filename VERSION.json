@@ -1,8 +1,8 @@
 {
-  "commit": "ca69860",
-  "message": "feat: move suggestions to phases page, simplify equipe cards",
-  "commitDate": "2026-05-05T08:25:58+02:00",
-  "buildDate": "2026-05-05T06:26:15Z",
-  "buildDateFR": "05/05/2026 08:26",
+  "commit": "f9ed720",
+  "message": "feat: merge dashboard into index.html, add Notes section (public/private), delete old index",
+  "commitDate": "2026-05-05T08:32:45+02:00",
+  "buildDate": "2026-05-05T06:33:01Z",
+  "buildDateFR": "05/05/2026 08:33",
   "branch": "main"
 }
