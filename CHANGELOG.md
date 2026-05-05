@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 23:06 — `95f5b30`
+fix: sync suggestions via Firebase so admin sees them in real-time
+
 ## 05/05/2026 23:01 — `03e00d2`
 fix: suggestions only visible to author, delete own suggestion button
 
