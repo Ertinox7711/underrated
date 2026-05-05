@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:38 — `38ac84e`
+feat: admin - tabs par membre, member preview éditable, sous-menu sidebar
+
 ## 05/05/2026 07:34 — `81edae9`
 fix: code review - admin guard, dead CSS, type=password, saveTaskEdit live idx
 
