@@ -779,8 +779,8 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
     <div class="login-sub">War Room — Connexion</div>
 
     <div class="login-field">
-      <label class="login-label">Pseudo</label>
-      <input class="login-input" type="text" id="login-pseudo" placeholder="ton pseudo" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pwd').focus()">
+      <label class="login-label">Email</label>
+      <input class="login-input" type="email" id="login-pseudo" placeholder="ton@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('login-pwd').focus()">
     </div>
     <div class="login-field">
       <label class="login-label">Mot de passe</label>
@@ -1491,10 +1491,10 @@ function dbWatch(docId, cb) {
 // Les email/password sont stockés dans localStorage 'ur_credentials'
 // ══════════════════════════════════
 const ACCOUNTS = {
-  mathieu: { name:'MATHIEU', role:'CEO + COO',              color:'var(--b1)', dotColor:'#1E90FF', isAdmin:true  },
-  bastien: { name:'BASTIEN', role:'Content & Product',      color:'#B07FD4',   dotColor:'#9B59B6', isAdmin:false },
-  theo:    { name:'THÉO',    role:'Infrastructure',         color:'var(--b4)', dotColor:'#4F6EF7', isAdmin:false },
-  ilame:   { name:'ILAME',   role:'Sales & Community',      color:'#5DC48A',   dotColor:'#27AE60', isAdmin:false }
+  mathieu: { name:'MATHIEU', role:'CEO + COO',              email:'ertidiscord@gmail.com', color:'var(--b1)', dotColor:'#1E90FF', isAdmin:true  },
+  bastien: { name:'BASTIEN', role:'Content & Product',      email:'bastlusso@gmail.com',   color:'#B07FD4',   dotColor:'#9B59B6', isAdmin:false },
+  theo:    { name:'THÉO',    role:'Infrastructure',         email:'wawa22500@gmail.com',   color:'var(--b4)', dotColor:'#4F6EF7', isAdmin:false },
+  ilame:   { name:'ILAME',   role:'Sales & Community',      email:'ilame@underrated.fr',   color:'#5DC48A',   dotColor:'#27AE60', isAdmin:false }
 };
 
 // ══ CREDENTIAL STORAGE ══
@@ -1521,7 +1521,7 @@ function forceReset() {
   localStorage.setItem('ur_credentials', JSON.stringify(defaults));
   localStorage.setItem('ur_creds_v', '5');
   const err = document.getElementById('login-err');
-  err.textContent = 'Accès réinitialisés — connecte-toi avec ton prénom';
+  err.textContent = 'Accès réinitialisés — connecte-toi avec ton email';
   err.style.color = '#5DC48A';
   err.style.display = 'block';
 }
@@ -1966,8 +1966,8 @@ function doLogin(pseudoVal, pwdVal) {
 
   if (!pseudo || !pwd) { err.textContent = 'Pseudo et mot de passe requis'; err.style.display = 'block'; return; }
 
-  const key = Object.keys(ACCOUNTS).find(k => k === pseudo || ACCOUNTS[k].name.toLowerCase() === pseudo);
-  if (!key) { err.textContent = 'Pseudo inconnu'; err.style.display = 'block'; return; }
+  const key = Object.keys(ACCOUNTS).find(k => ACCOUNTS[k].email === pseudo);
+  if (!key) { err.textContent = 'Email inconnu'; err.style.display = 'block'; return; }
 
   const creds = getCredentials();
   if (creds[key] !== pwd) {
