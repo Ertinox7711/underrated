@@ -330,18 +330,46 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ptab[data-person="bastien"].active{background:rgba(155,89,182,.12);border-color:rgba(155,89,182,.3);color:#B07FD4}
 .ptab[data-person="theo"].active{background:rgba(79,110,247,.12);border-color:rgba(79,110,247,.3);color:var(--b4)}
 .ptab[data-person="ilame"].active{background:rgba(39,174,96,.12);border-color:rgba(39,174,96,.3);color:#5DC48A}
-.phases-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.phases-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
 .phase-col{border-radius:var(--r);padding:26px;position:relative;overflow:hidden}
 .ph1{background:rgba(30,144,255,.05);border:1px solid rgba(30,144,255,.18)}
 .ph2{background:rgba(86,204,242,.03);border:1px solid rgba(86,204,242,.12)}
 .ph-badge{position:absolute;top:16px;right:16px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:.14em;padding:3px 8px;border-radius:3px}
 .ph1 .ph-badge{background:rgba(30,144,255,.15);color:var(--b1);border:1px solid rgba(30,144,255,.3)}
 .ph2 .ph-badge{background:rgba(86,204,242,.08);color:var(--b2);border:1px solid rgba(86,204,242,.2)}
+.ph-custom .ph-badge{background:rgba(var(--ph-rgb),.15);color:rgb(var(--ph-rgb));border:1px solid rgba(var(--ph-rgb),.3)}
 .ph-bgnum{position:absolute;bottom:8px;right:16px;font-family:'Bebas Neue',sans-serif;font-size:96px;line-height:.9;opacity:.04;pointer-events:none}
 .ph1 .ph-bgnum{color:var(--b1)}.ph2 .ph-bgnum{color:var(--b2)}
+.ph-custom .ph-bgnum{color:rgb(var(--ph-rgb))}
 .ph-col-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.05em;margin-bottom:3px}
 .ph1 .ph-col-title{color:var(--b1)}.ph2 .ph-col-title{color:var(--b2)}
+.ph-custom .ph-col-title{color:rgb(var(--ph-rgb))}
 .ph-col-sub{font-size:11px;color:var(--muted);margin-bottom:16px;letter-spacing:.02em}
+.ph-col-del{position:absolute;top:14px;left:16px;font-size:10px;color:rgba(255,255,255,.15);cursor:pointer;background:none;border:none;padding:3px 6px;border-radius:4px;transition:all .2s;display:none}
+.ph-col-del:hover{color:#E74C3C;background:rgba(231,76,60,.1)}
+.admin-view .ph-col-del{display:block}
+/* new phase button */
+.new-phase-btn{display:none;align-items:center;gap:8px;padding:20px;border-radius:var(--r);border:2px dashed rgba(255,255,255,.1);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.2);transition:all .3s;justify-content:center;min-height:100px}
+.new-phase-btn:hover{border-color:rgba(30,144,255,.35);color:var(--b1);background:rgba(30,144,255,.04)}
+.admin-view .new-phase-btn{display:flex}
+/* add phase modal */
+#add-phase-modal{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center}
+#add-phase-modal.open{display:flex}
+.apm-box{background:#0e1428;border:1px solid var(--border-hi);border-radius:14px;padding:32px 36px;width:100%;max-width:420px}
+.apm-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;color:#fff;margin-bottom:4px}
+.apm-sub{font-size:11px;color:var(--muted);margin-bottom:24px}
+.apm-field{margin-bottom:14px}
+.apm-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block}
+.apm-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:rgba(255,255,255,.85);font-family:'Manrope',sans-serif;font-size:13px;padding:10px 13px;outline:none;transition:border-color .2s}
+.apm-input:focus{border-color:var(--b1)}
+.apm-colors{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.apm-col-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;transition:transform .15s,outline .15s}
+.apm-col-swatch:hover{transform:scale(1.15)}
+.apm-col-swatch.sel{outline:2px solid #fff;outline-offset:2px}
+.apm-actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end}
+.apm-cancel{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:none;background:none;cursor:pointer;padding:8px 14px}
+.apm-confirm{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.08em;background:linear-gradient(135deg,var(--b1),var(--b3));color:#fff;border:none;border-radius:8px;padding:9px 22px;cursor:pointer;transition:opacity .2s}
+.apm-confirm:hover{opacity:.85}
 .ph-tasks{display:flex;flex-direction:column;gap:7px}
 .ph-task{display:flex;align-items:flex-start;gap:8px;padding:9px 11px;border-radius:7px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);transition:opacity .2s}
 .ph-task.hidden{display:none}
@@ -663,31 +691,10 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
         </div>
         <div id="person-header-phases" style="display:flex;gap:5px;margin-left:auto"></div>
       </div>
-      <div class="phases-grid">
-        <div class="phase-col ph1 rv d2">
-          <span class="ph-badge">ACTIVE</span>
-          <div class="ph-bgnum">1</div>
-          <div class="ph-col-title">PHASE 1</div>
-          <div class="ph-col-sub">Setup — Infrastructure, outils, bases</div>
-          <div class="ph-tasks" id="tasks-p1"></div>
-          <div class="ph-empty" id="empty-p1">Pas de tâches en Phase 1</div>
-          <div class="add-task-btn" onclick="addTask('p1')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Ajouter une tâche
-          </div>
-        </div>
-        <div class="phase-col ph2 rv d3">
-          <span class="ph-badge">NEXT</span>
-          <div class="ph-bgnum">2</div>
-          <div class="ph-col-title">PHASE 2</div>
-          <div class="ph-col-sub">Production — Daily content, funnel, scale</div>
-          <div class="ph-tasks" id="tasks-p2"></div>
-          <div class="ph-empty" id="empty-p2">Pas de tâches en Phase 2</div>
-          <div class="add-task-btn" onclick="addTask('p2')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Ajouter une tâche
-          </div>
-        </div>
+      <div class="phases-grid" id="phases-grid-dynamic"></div>
+      <div class="new-phase-btn" onclick="openAddPhaseModal()" style="margin-top:20px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouvelle phase
       </div>
     </div>
   </div>
@@ -853,6 +860,34 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
   </div>
 </div>
 
+<!-- ADD PHASE MODAL -->
+<div id="add-phase-modal" onclick="if(event.target===this)closeAddPhaseModal()">
+  <div class="apm-box">
+    <div class="apm-title">NOUVELLE PHASE</div>
+    <div class="apm-sub">Définir une nouvelle étape du projet</div>
+    <div class="apm-field">
+      <label class="apm-label">Nom de la phase</label>
+      <input class="apm-input" id="apm-name" placeholder="Ex: PHASE 3 — Scale international" onkeydown="if(event.key==='Enter')document.getElementById('apm-badge').focus()">
+    </div>
+    <div class="apm-field">
+      <label class="apm-label">Badge statut</label>
+      <input class="apm-input" id="apm-badge" placeholder="Ex: FUTURE, EN COURS, DONE…" onkeydown="if(event.key==='Enter')document.getElementById('apm-sub').focus()">
+    </div>
+    <div class="apm-field">
+      <label class="apm-label">Description courte</label>
+      <input class="apm-input" id="apm-sub" placeholder="Ex: Expansion internationale + partenariats" onkeydown="if(event.key==='Enter')confirmAddPhase()">
+    </div>
+    <div class="apm-field">
+      <label class="apm-label">Couleur accent</label>
+      <div class="apm-colors" id="apm-colors"></div>
+    </div>
+    <div class="apm-actions">
+      <button class="apm-cancel" onclick="closeAddPhaseModal()">Annuler</button>
+      <button class="apm-confirm" onclick="confirmAddPhase()">CRÉER</button>
+    </div>
+  </div>
+</div>
+
 <!-- CHANGELOG PANEL -->
 <div class="cl-overlay" id="cl-overlay" onclick="closeChangelog()"></div>
 <div id="changelog-panel">
@@ -913,6 +948,95 @@ function seedAdmin() {
     if (!creds[k]) { creds[k] = v; changed = true; }
   }
   if (changed) localStorage.setItem('ur_credentials', JSON.stringify(creds));
+}
+
+// ══ PHASES DATA ══
+const DEFAULT_PHASES = [
+  { id:'p1', name:'PHASE 1', badge:'ACTIVE', sub:'Setup — Infrastructure, outils, bases', color:'30,144,255' },
+  { id:'p2', name:'PHASE 2', badge:'NEXT',   sub:'Production — Daily content, funnel, scale', color:'86,204,242' }
+];
+const PHASE_COLORS = [
+  '30,144,255','86,204,242','79,110,247','155,89,182','231,76,60','255,107,53','255,215,0','39,174,96','93,196,138'
+];
+let _apmColor = '79,110,247';
+
+function getPhases() {
+  try { return JSON.parse(localStorage.getItem('ur_phases') || 'null') || JSON.parse(JSON.stringify(DEFAULT_PHASES)); }
+  catch(e) { return JSON.parse(JSON.stringify(DEFAULT_PHASES)); }
+}
+function savePhases(phases) { localStorage.setItem('ur_phases', JSON.stringify(phases)); }
+
+function buildPhaseColumns() {
+  const grid = document.getElementById('phases-grid-dynamic');
+  if (!grid) return;
+  const phases = getPhases();
+  const isAdmin = SESSION && SESSION.isAdmin;
+  grid.innerHTML = phases.map((ph, i) => {
+    const isP1 = ph.id === 'p1', isP2 = ph.id === 'p2';
+    const colCls = isP1 ? 'ph1' : isP2 ? 'ph2' : 'ph-custom';
+    const delBtn = isAdmin && !isP1 && !isP2
+      ? `<button class="ph-col-del" onclick="deletePhase('${ph.id}')" title="Supprimer cette phase">✕</button>` : '';
+    const styleAttr = colCls === 'ph-custom' ? ` style="--ph-rgb:${ph.color};background:rgba(${ph.color},.04);border:1px solid rgba(${ph.color},.2)"` : '';
+    return `<div class="phase-col ${colCls} rv d${i+2}"${styleAttr}>
+      ${delBtn}
+      <span class="ph-badge">${ph.badge}</span>
+      <div class="ph-bgnum">${i+1}</div>
+      <div class="ph-col-title">${ph.name}</div>
+      <div class="ph-col-sub">${ph.sub}</div>
+      <div class="ph-tasks" id="tasks-${ph.id}"></div>
+      <div class="ph-empty" id="empty-${ph.id}">Pas de tâches</div>
+      <div class="add-task-btn" onclick="addTask('${ph.id}')">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Ajouter une tâche
+      </div>
+    </div>`;
+  }).join('');
+  buildPhaseTasks();
+}
+
+function openAddPhaseModal() {
+  if (!SESSION || !SESSION.isAdmin) return;
+  _apmColor = '79,110,247';
+  document.getElementById('apm-name').value = '';
+  document.getElementById('apm-badge').value = '';
+  document.getElementById('apm-sub').value = '';
+  // Build color swatches
+  document.getElementById('apm-colors').innerHTML = PHASE_COLORS.map(c =>
+    `<div class="apm-col-swatch${c === _apmColor ? ' sel' : ''}"
+      style="background:rgb(${c})"
+      onclick="apmSelectColor('${c}',this)"></div>`
+  ).join('');
+  document.getElementById('add-phase-modal').classList.add('open');
+  setTimeout(() => document.getElementById('apm-name').focus(), 80);
+}
+function closeAddPhaseModal() { document.getElementById('add-phase-modal').classList.remove('open'); }
+function apmSelectColor(c, el) {
+  _apmColor = c;
+  document.querySelectorAll('.apm-col-swatch').forEach(s => s.classList.toggle('sel', s === el));
+}
+function confirmAddPhase() {
+  const name = document.getElementById('apm-name').value.trim();
+  if (!name) { document.getElementById('apm-name').focus(); return; }
+  const badge = document.getElementById('apm-badge').value.trim() || 'SOON';
+  const sub   = document.getElementById('apm-sub').value.trim() || '';
+  const phases = getPhases();
+  const id = 'p_' + Date.now();
+  phases.push({ id, name: name.toUpperCase(), badge: badge.toUpperCase(), sub, color: _apmColor });
+  savePhases(phases);
+  closeAddPhaseModal();
+  buildPhaseColumns();
+}
+function deletePhase(id) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  if (!confirm('Supprimer cette phase et toutes ses tâches ?')) return;
+  const phases = getPhases().filter(p => p.id !== id);
+  savePhases(phases);
+  // also wipe tasks for this phase
+  const tasks = getSavedTasks();
+  Object.keys(tasks).forEach(k => { if (tasks[k][id]) delete tasks[k][id]; });
+  saveTasks(tasks);
+  buildPhaseColumns();
+  buildAdminOverview();
 }
 
 const PERSONS_DATA = {
@@ -1263,7 +1387,7 @@ function launchApp() {
   }
 
   applyColors();
-  buildPhaseTasks();
+  buildPhaseColumns();
   fetchVersion();
 }
 
@@ -1330,8 +1454,7 @@ function buildAdminOverview() {
       <div class="gc admin-member-card rv d${Object.keys(PERSONS_DATA).indexOf(key)+1}" style="background:${bgColors[key]};border-color:${borderColors[key]}">
         <div class="amc-name" style="color:${colors[key]}">${p.name}</div>
         <div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px">${p.role}</div>
-        ${renderPhase('p1','Phase 1')}
-        ${renderPhase('p2','Phase 2')}
+        ${getPhases().map(ph => renderPhase(ph.id, ph.name)).join('')}
       </div>
     `;
   }).join('');
@@ -1407,17 +1530,17 @@ function buildPhaseTasks() {
   const me = SESSION ? SESSION.key : null;
   const isAdmin = SESSION && SESSION.isAdmin;
 
-  ['p1','p2'].forEach(phase => {
-    const container = document.getElementById('tasks-' + phase);
+  getPhases().forEach(ph => {
+    const container = document.getElementById('tasks-' + ph.id);
     if (!container) return;
     const rows = Object.keys(PERSONS_DATA).flatMap(key => {
       const saved = tasks[key] || DEFAULT_TASKS[key] || {};
-      return (saved[phase] || []).map((t, i) => {
+      return (saved[ph.id] || []).map((t, i) => {
         const col = colors[key];
         const mine = me === key;
         const editAttr = isAdmin ? `contenteditable="true" onblur="phSaveTask(this)"` : '';
         const delBtn = isAdmin ? `<span class="amc-del" onclick="phDeleteTask(this)" style="flex-shrink:0">✕</span>` : '';
-        return `<div class="ph-task${mine ? ' mine' : ''}" data-who="${key}" data-key="${key}" data-phase="${phase}" data-idx="${i}" style="${mine ? `background:${col}11;border-color:${col}33` : ''}">
+        return `<div class="ph-task${mine ? ' mine' : ''}" data-who="${key}" data-key="${key}" data-phase="${ph.id}" data-idx="${i}" style="${mine ? `background:${col}11;border-color:${col}33` : ''}">
           <span class="who" style="background:${col}22;color:${col};border-radius:3px;padding:2px 7px;font-family:'Barlow Condensed';font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0">${names[key]}</span>
           <span class="ph-task-txt" ${editAttr}>${t}</span>
           ${delBtn}
@@ -1456,7 +1579,8 @@ function addTask(phase) {
   if (!SESSION || !SESSION.isAdmin) return;
   _atPhase = phase;
   _atWho = currentPersonFilter !== 'all' ? currentPersonFilter : null;
-  document.getElementById('atm-phase-lbl').textContent = phase === 'p1' ? 'Phase 1 — Setup' : 'Phase 2 — Launch';
+  const phData = getPhases().find(p => p.id === phase);
+  document.getElementById('atm-phase-lbl').textContent = phData ? `${phData.name} — ${phData.sub || phData.badge}` : phase;
   document.querySelectorAll('.atm-btn').forEach(b => b.classList.remove('sel'));
   if (_atWho) {
     const btn = document.querySelector(`.atm-btn[data-key="${_atWho}"]`);
@@ -1626,40 +1750,45 @@ function gotoPhase(person) {
 function filterPerson(person) {
   currentPersonFilter = person;
   document.querySelectorAll('.ptab').forEach(t => t.classList.toggle('active', t.dataset.person === person));
-  const tasks1 = document.querySelectorAll('#tasks-p1 .ph-task');
-  const tasks2 = document.querySelectorAll('#tasks-p2 .ph-task');
-  const empty1 = document.getElementById('empty-p1');
-  const empty2 = document.getElementById('empty-p2');
+  const phases = getPhases();
   const header = document.getElementById('person-header');
-
-  // Highlight my tasks
   const me = SESSION ? SESSION.key : null;
-  tasks1.forEach(t => t.classList.toggle('mine', me && t.dataset.who === me));
-  tasks2.forEach(t => t.classList.toggle('mine', me && t.dataset.who === me));
 
   if (person === 'all') {
-    tasks1.forEach(t => t.classList.remove('hidden'));
-    tasks2.forEach(t => t.classList.remove('hidden'));
-    empty1.classList.remove('show'); empty2.classList.remove('show');
+    phases.forEach(ph => {
+      document.querySelectorAll(`#tasks-${ph.id} .ph-task`).forEach(t => {
+        t.classList.remove('hidden');
+        t.classList.toggle('mine', !!(me && t.dataset.who === me));
+      });
+      const empty = document.getElementById('empty-' + ph.id);
+      if (empty) empty.classList.remove('show');
+    });
     header.classList.remove('show');
-    document.getElementById('phases-sub-title').textContent = 'Phase 1 = tout construire. Phase 2 = tout lancer et scaler.';
+    document.getElementById('phases-sub-title').textContent = phases.map(p => p.name).join(' · ');
     return;
   }
 
-  let vis1 = 0, vis2 = 0;
-  tasks1.forEach(t => { const s = t.dataset.who && t.dataset.who.includes(person); t.classList.toggle('hidden', !s); if(s)vis1++; });
-  tasks2.forEach(t => { const s = t.dataset.who && t.dataset.who.includes(person); t.classList.toggle('hidden', !s); if(s)vis2++; });
-  empty1.classList.toggle('show', vis1 === 0);
-  empty2.classList.toggle('show', vis2 === 0);
+  phases.forEach(ph => {
+    const allTasks = document.querySelectorAll(`#tasks-${ph.id} .ph-task`);
+    let vis = 0;
+    allTasks.forEach(t => {
+      t.classList.toggle('mine', !!(me && t.dataset.who === me));
+      const show = !!(t.dataset.who && t.dataset.who === person);
+      t.classList.toggle('hidden', !show);
+      if (show) vis++;
+    });
+    const empty = document.getElementById('empty-' + ph.id);
+    if (empty) empty.classList.toggle('show', vis === 0);
+  });
 
   const p = PERSONS_DATA[person];
   if (p) {
     document.getElementById('person-header-name').textContent = p.name;
     document.getElementById('person-header-name').style.color = p.color;
     document.getElementById('person-header-role').textContent = p.role;
-    document.getElementById('person-header-phases').innerHTML = p.phases.map(ph => `<span class="mph mph-${ph === 'P1' ? '1':'2'}">${ph}</span>`).join('');
+    document.getElementById('person-header-phases').innerHTML = p.phases.map(ph => `<span class="mph">${ph}</span>`).join('');
     header.classList.add('show');
-    document.getElementById('phases-sub-title').textContent = 'Tâches de ' + p.name.charAt(0) + p.name.slice(1).toLowerCase() + ' — Phase 1 et Phase 2.';
+    document.getElementById('phases-sub-title').textContent = 'Tâches de ' + p.name.charAt(0) + p.name.slice(1).toLowerCase();
   }
 }
 
