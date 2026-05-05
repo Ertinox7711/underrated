@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 19:42 — `c550b71`
+feat: tools page restructured with Bastien inner sidebar (6 tabs: hub, visual, episode, retention, bots, concurrents)
+
 ## 05/05/2026 09:01 — `537f032`
 feat: tasks linked equipe<->phases, checkable done state, progress bar per member
 
