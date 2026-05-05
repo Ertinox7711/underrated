@@ -1599,11 +1599,11 @@ function buildPhaseColumns() {
 
     // Non-admin: suggest input + their pending suggestions
     const myKey = SESSION ? SESSION.key : null;
-    const myPending = !isAdmin ? phaseSuggestions.filter(s => s.authorKey === myKey) : [];
+    const myPending = !isAdmin ? phaseSuggestions.filter(s => s.authorKey === myKey && (s.targetKey === myKey || !s.targetKey)) : [];
     const myPendingHtml = myPending.length ? `
       <div class="mc-pending" style="margin-top:10px">
         <div class="mc-pending-title">Tes suggestions en attente</div>
-        ${myPending.map(sg => `<div class="mc-suggestion" style="cursor:default">${sg.text}</div>`).join('')}
+        ${myPending.map(sg => `<div class="mc-suggestion" style="cursor:default">${sg.text}<div class="sg-actions"><button class="sg-reject" onclick="rejectSuggestion(${sg.id})">Annuler</button></div></div>`).join('')}
       </div>` : '';
 
     const suggestBtn = !isAdmin ? `
@@ -1759,7 +1759,7 @@ function submitSuggestion(phaseId) {
   const text = ta.value.trim();
   if (!text) return;
   const suggestions = getSuggestions();
-  suggestions.push({ id: Date.now() + Math.random(), phaseId, authorKey: SESSION.key, text, ts: Date.now() });
+  suggestions.push({ id: Date.now() + Math.random(), phaseId, authorKey: SESSION.key, targetKey: SESSION.key, text, ts: Date.now() });
   saveSuggestions(suggestions);
   wrap.classList.remove('open');
   buildPhaseColumns();
@@ -1769,9 +1769,10 @@ function approveSuggestion(id) {
   const sg = suggestions.find(s => s.id == id);
   if (!sg) return;
   const tasks = getSavedTasks();
-  if (!tasks[sg.authorKey]) tasks[sg.authorKey] = JSON.parse(JSON.stringify(DEFAULT_TASKS[sg.authorKey] || {}));
-  if (!tasks[sg.authorKey][sg.phaseId]) tasks[sg.authorKey][sg.phaseId] = [];
-  tasks[sg.authorKey][sg.phaseId].push(sg.text);
+  const tgt = sg.targetKey || sg.authorKey;
+  if (!tasks[tgt]) tasks[tgt] = JSON.parse(JSON.stringify(DEFAULT_TASKS[tgt] || {}));
+  if (!tasks[tgt][sg.phaseId]) tasks[tgt][sg.phaseId] = [];
+  tasks[tgt][sg.phaseId].push(sg.text);
   saveTasks(tasks);
   saveSuggestions(suggestions.filter(s => s.id != id));
   buildPhaseColumns();
