@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 22:23 — `1fd0d5f`
+fix: bump CREDS_VERSION to force credential reset
+
 ## 05/05/2026 22:20 — `2e5a663`
 feat: marketing plan section in hub offres - court/moyen/long terme, auto-save localStorage
 
