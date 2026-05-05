@@ -19,8 +19,7 @@ Inspiration : Skibidi Tentafruit/Fruit Love Island — mais meilleure histoire +
 - **Ilame** — Head of Sales & Community : closing, community, mentorat, accompagnement 1200€
 
 ## Fichiers clés
-- `index.html` — app collaborative complète (login, éditeur de blocs, mobile-first)
-- `dashboard.html` — war room interne équipe (membres, phases, funnel, série) — déployé sur GitHub Pages avec versioning
+- `index.html` — app complète (war room équipe + notes collab + éditeur blocs) — déployé sur GitHub Pages avec versioning
 - `audit-underrated.html` — audit stratégique pourquoi Skibidi Fruits marche
 - `.claude/settings.json` — permissions projet
 
