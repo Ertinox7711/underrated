@@ -748,6 +748,39 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .esp-log-time{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.06em;color:rgba(255,255,255,.2);flex-shrink:0}
 @media(max-width:700px){.esp-panel.active{grid-template-columns:1fr}}
 
+/* ══ MKT DOC EDITOR ══ */
+#mkt-doc-overlay{position:fixed;inset:0;z-index:500;background:#080c14;display:none;flex-direction:column}
+.mkt-doc-hdr{display:flex;align-items:center;gap:14px;padding:14px 24px;border-bottom:1px solid var(--border);flex-shrink:0}
+.mkt-doc-back{display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;background:none;border:none;transition:color .2s}
+.mkt-doc-back:hover{color:var(--text)}
+.mkt-doc-saved-lbl{font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);opacity:0;transition:opacity .4s;margin-left:auto}
+.mkt-doc-saved-lbl.show{opacity:1}
+.mkt-doc-body{flex:1;overflow-y:auto;padding:40px max(20px,calc(50% - 400px)) 80px}
+.mkt-doc-title-h{font-family:'Bebas Neue';font-size:52px;letter-spacing:.04em;margin-bottom:32px;line-height:.9}
+.mkt-block-row{position:relative;padding:1px 0}
+.mkt-editable{min-height:26px;outline:none;font-size:14px;line-height:1.75;color:var(--text);caret-color:var(--b1);white-space:pre-wrap;word-break:break-word}
+.mkt-editable:empty::before{content:attr(data-ph);color:rgba(255,255,255,.18);pointer-events:none}
+.mkt-editable[data-type="h1"]{font-family:'Bebas Neue';font-size:34px;letter-spacing:.04em;padding:6px 0 2px;margin-top:8px}
+.mkt-editable[data-type="h2"]{font-family:'Barlow Condensed';font-size:20px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 0 2px;margin-top:4px;color:rgba(255,255,255,.75)}
+.mkt-editable[data-type="bullet"]{padding-left:20px}
+.mkt-bullet-dot{position:absolute;left:4px;top:2px;color:var(--muted);font-size:14px}
+.mkt-editable[data-type="quote"]{border-left:3px solid var(--b1);padding-left:16px;color:rgba(255,255,255,.55);font-style:italic}
+.mkt-editable[data-type="callout"]{background:rgba(30,144,255,.06);border:1px solid rgba(30,144,255,.15);border-radius:8px;padding:12px 16px;margin:4px 0}
+.mkt-todo-row{display:flex;align-items:flex-start;gap:10px;padding:2px 0}
+.mkt-todo-cb{width:16px;height:16px;border-radius:4px;border:1.5px solid rgba(255,255,255,.25);flex-shrink:0;margin-top:4px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.mkt-todo-cb.checked{background:var(--b1);border-color:var(--b1)}
+.mkt-todo-cb.checked::after{content:'✓';font-size:9px;color:#fff}
+#mkt-slash-menu{display:none;position:fixed;z-index:600;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:6px;box-shadow:0 12px 40px rgba(0,0,0,.6);min-width:220px}
+.mkt-slash-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:6px;cursor:pointer;transition:background .1s}
+.mkt-slash-item.active,.mkt-slash-item:hover{background:rgba(30,144,255,.1)}
+.mkt-slash-icon{width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'Bebas Neue';flex-shrink:0}
+.mkt-slash-name{font-size:12px;font-weight:600;color:var(--text)}
+.mkt-slash-desc{font-size:10px;color:var(--muted)}
+.mkt-card-preview{flex:1;padding:12px 14px;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,.02);cursor:pointer;transition:all .2s;min-height:70px;font-size:12px;color:rgba(255,255,255,.4);line-height:1.6;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+.mkt-card-preview:hover{border-color:rgba(30,144,255,.35);background:rgba(30,144,255,.04);color:rgba(255,255,255,.65)}
+.mkt-open-btn{display:flex;align-items:center;gap:5px;font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);cursor:pointer;border:none;background:none;padding:0;margin-top:8px;transition:color .2s}
+.mkt-open-btn:hover{color:var(--b1)}
+
 /* ══ MOBILE ══ */
 @media(max-width:700px){
   body{flex-direction:column;overflow:hidden}
@@ -1013,35 +1046,29 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
       <div class="sec-lbl" style="margin-bottom:6px">Stratégie</div>
       <div class="sec-h2" style="margin-bottom:20px">MARKETING <em>PLAN</em></div>
       <div class="mkt-grid">
-        <div class="mkt-card gc rv d1" id="mkt-card-court">
-          <div class="mkt-head">
-            <div>
-              <div class="mkt-badge" style="color:#FF5E7D;border-color:rgba(255,94,125,.3)">COURT TERME</div>
-              <div class="mkt-title">0 — 3 mois</div>
-            </div>
-            <div class="mkt-saved" id="mkt-saved-court"></div>
-          </div>
-          <div class="mkt-body" id="mkt-court" contenteditable="true" data-mkt="court" oninput="mktAutoSave('court')" placeholder="Lance, teste, valide. Écris ici ta stratégie court terme…"></div>
+        <div class="mkt-card gc rv d1" onclick="openMktDoc('court')" style="cursor:pointer">
+          <div class="mkt-head"><div>
+            <div class="mkt-badge" style="color:#FF5E7D;border-color:rgba(255,94,125,.3)">COURT TERME</div>
+            <div class="mkt-title">0 — 3 mois</div>
+          </div></div>
+          <div class="mkt-card-preview" id="mkt-preview-court">Vide — cliquer pour écrire</div>
+          <button class="mkt-open-btn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Ouvrir</button>
         </div>
-        <div class="mkt-card gc rv d2" id="mkt-card-mid">
-          <div class="mkt-head">
-            <div>
-              <div class="mkt-badge" style="color:var(--b2);border-color:rgba(86,204,242,.3)">MOYEN TERME</div>
-              <div class="mkt-title">3 — 6 mois</div>
-            </div>
-            <div class="mkt-saved" id="mkt-saved-mid"></div>
-          </div>
-          <div class="mkt-body" id="mkt-mid" contenteditable="true" data-mkt="mid" oninput="mktAutoSave('mid')" placeholder="Scale, optimise, systématise. Écris ici ta stratégie moyen terme…"></div>
+        <div class="mkt-card gc rv d2" onclick="openMktDoc('mid')" style="cursor:pointer">
+          <div class="mkt-head"><div>
+            <div class="mkt-badge" style="color:var(--b2);border-color:rgba(86,204,242,.3)">MOYEN TERME</div>
+            <div class="mkt-title">3 — 6 mois</div>
+          </div></div>
+          <div class="mkt-card-preview" id="mkt-preview-mid">Vide — cliquer pour écrire</div>
+          <button class="mkt-open-btn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Ouvrir</button>
         </div>
-        <div class="mkt-card gc rv d3" id="mkt-card-long">
-          <div class="mkt-head">
-            <div>
-              <div class="mkt-badge" style="color:#9B59B6;border-color:rgba(155,89,182,.3)">LONG TERME</div>
-              <div class="mkt-title">6 — 12 mois+</div>
-            </div>
-            <div class="mkt-saved" id="mkt-saved-long"></div>
-          </div>
-          <div class="mkt-body" id="mkt-long" contenteditable="true" data-mkt="long" oninput="mktAutoSave('long')" placeholder="Brand deals, expansion, empire. Écris ici ta stratégie long terme…"></div>
+        <div class="mkt-card gc rv d3" onclick="openMktDoc('long')" style="cursor:pointer">
+          <div class="mkt-head"><div>
+            <div class="mkt-badge" style="color:#9B59B6;border-color:rgba(155,89,182,.3)">LONG TERME</div>
+            <div class="mkt-title">6 — 12 mois+</div>
+          </div></div>
+          <div class="mkt-card-preview" id="mkt-preview-long">Vide — cliquer pour écrire</div>
+          <button class="mkt-open-btn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Ouvrir</button>
         </div>
       </div>
     </div>
@@ -2076,8 +2103,10 @@ function launchApp() {
     if(d.items){ localStorage.setItem('ur_suggestions',JSON.stringify(d.items)); buildPhaseColumns(); }
   });
   dbWatch('marketing', d => {
-    ['court','mid','long'].forEach(k => { if(d[k]!==undefined) localStorage.setItem('mkt-'+k, d[k]); });
-    if(document.getElementById('p-hub')?.classList.contains('active')) mktLoad();
+    ['court','mid','long'].forEach(k => {
+      if(d[k+'_blocks']!==undefined) localStorage.setItem('mkt-blocks-'+k, JSON.stringify(d[k+'_blocks']));
+    });
+    if(document.getElementById('p-hub')?.classList.contains('active')) mktUpdatePreviews();
   });
 }
 
@@ -2717,32 +2746,163 @@ function espOpenImg(who, i) {
 
 // ══ MARKETING PLAN ══
 const MKT_KEYS = ['court','mid','long'];
-const _mktTimers = {};
+// ══ MARKETING BLOCK EDITOR ══
+let _mktDocKey = null;
+let _mktSaveTimer = null;
+const MKT_TITLES = {court:'Court Terme — 0 à 3 mois', mid:'Moyen Terme — 3 à 12 mois', long:'Long Terme — 12 mois+'};
 
-function mktLoad() {
-  MKT_KEYS.forEach(k => {
-    const el = document.getElementById('mkt-' + k);
-    if (!el) return;
-    const saved = localStorage.getItem('mkt-' + k);
-    if (saved) el.innerText = saved;
-  });
+function getMktBlocks(k) {
+  try { return JSON.parse(localStorage.getItem('mkt-blocks-'+k)||'[]'); } catch(e) { return []; }
 }
-
-function mktAutoSave(k) {
-  clearTimeout(_mktTimers[k]);
-  _mktTimers[k] = setTimeout(() => {
-    const el = document.getElementById('mkt-' + k);
-    if (!el) return;
-    localStorage.setItem('mkt-' + k, el.innerText);
-    dbSet('marketing',{[k]: el.innerText});
-    const badge = document.getElementById('mkt-saved-' + k);
-    if (badge) {
-      badge.textContent = 'Sauvegardé ✓';
-      badge.classList.add('show');
-      setTimeout(() => badge.classList.remove('show'), 2000);
-    }
+function saveMktBlocks(k, blocks) {
+  localStorage.setItem('mkt-blocks-'+k, JSON.stringify(blocks));
+  clearTimeout(_mktSaveTimer);
+  _mktSaveTimer = setTimeout(() => {
+    dbSet('marketing', {[k+'_blocks']: blocks});
+    const lbl = document.getElementById('mkt-doc-saved');
+    if(lbl){ lbl.textContent='Sauvegardé ✓'; lbl.classList.add('show'); setTimeout(()=>lbl.classList.remove('show'),2000); }
   }, 600);
 }
+function openMktDoc(k) {
+  _mktDocKey = k;
+  document.getElementById('mkt-doc-title').textContent = MKT_TITLES[k]||k;
+  const ov = document.getElementById('mkt-doc-overlay');
+  ov.style.display='flex';
+  renderMktBlocks(getMktBlocks(k));
+  setTimeout(()=>{ const rows=document.querySelectorAll('.mkt-block-row'); if(rows.length){ const last=rows[rows.length-1]; const ed=last.querySelector('.mkt-editable'); if(ed) { ed.focus(); placeCaretAtEnd(ed); } } },80);
+}
+function closeMktDoc() {
+  _mktDocKey=null;
+  document.getElementById('mkt-doc-overlay').style.display='none';
+  mktUpdatePreviews();
+}
+function mktUpdatePreviews() {
+  ['court','mid','long'].forEach(k=>{
+    const blocks=getMktBlocks(k);
+    const el=document.getElementById('mkt-preview-'+k);
+    if(!el) return;
+    const text=blocks.filter(b=>b.type!=='divider').map(b=>b.content||'').join(' ').trim();
+    el.textContent = text ? (text.length>120?text.slice(0,120)+'…':text) : 'Vide — cliquer pour écrire';
+  });
+}
+function renderMktBlocks(blocks) {
+  const container = document.getElementById('mkt-doc-blocks');
+  if(!blocks.length) blocks=[{id:_mktNewId(),type:'text',content:'',checked:false}];
+  container.innerHTML = blocks.map((b,i)=>mktBlockHTML(b,i)).join('');
+  container.querySelectorAll('.mkt-editable').forEach(el=>{
+    el.addEventListener('keydown', mktKeydown);
+    el.addEventListener('input', mktInput);
+  });
+  container.querySelectorAll('.mkt-todo-cb').forEach(cb=>{
+    cb.addEventListener('click', function(){ mktToggleTodo(this.closest('.mkt-block-row').dataset.id); });
+  });
+}
+function _mktNewId() { return Date.now()+Math.random(); }
+function mktBlockHTML(b, idx) {
+  if(b.type==='divider') return `<div class="mkt-block-row" data-id="${b.id}" data-type="divider"><hr style="border:none;border-top:1px solid var(--border);margin:8px 0;width:100%"></div>`;
+  const cls = 'mkt-editable mkt-type-'+b.type + (b.type==='todo'?' mkt-todo-text':'');
+  if(b.type==='todo') return `<div class="mkt-block-row mkt-todo-row" data-id="${b.id}" data-type="todo"><div class="mkt-todo-cb${b.checked?' checked':''}" tabindex="-1"></div><div class="${cls}" contenteditable="true" data-id="${b.id}" data-placeholder="Todo...">${escHtml(b.content||'')}</div></div>`;
+  const ph = b.type==='h1'?'Titre 1':b.type==='h2'?'Titre 2':b.type==='bullet'?'Liste':b.type==='quote'?'Citation':b.type==='callout'?'Callout':'Écrire quelque chose…';
+  return `<div class="mkt-block-row" data-id="${b.id}" data-type="${b.type}"><div class="${cls}" contenteditable="true" data-id="${b.id}" data-placeholder="${ph}">${escHtml(b.content||'')}</div></div>`;
+}
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function mktGetBlocks() {
+  const rows = document.querySelectorAll('#mkt-doc-blocks .mkt-block-row');
+  return Array.from(rows).map(row=>{
+    const id=row.dataset.id; const type=row.dataset.type;
+    if(type==='divider') return {id,type,content:'',checked:false};
+    const el=row.querySelector('.mkt-editable');
+    const cb=row.querySelector('.mkt-todo-cb');
+    return {id, type, content:el?el.innerText:'', checked:cb?cb.classList.contains('checked'):false};
+  });
+}
+function mktInput(e) {
+  const el=e.target; const text=el.innerText;
+  if(text.endsWith('/')) { showSlashMenu(el); return; }
+  hideSlashMenu();
+  if(_mktDocKey) saveMktBlocks(_mktDocKey, mktGetBlocks());
+}
+function mktKeydown(e) {
+  const el=e.target;
+  const menu=document.getElementById('mkt-slash-menu');
+  if(menu.style.display==='block') {
+    const items=menu.querySelectorAll('.mkt-slash-item');
+    let idx=Array.from(items).findIndex(i=>i.classList.contains('active'));
+    if(e.key==='ArrowDown'){e.preventDefault();idx=Math.min(idx+1,items.length-1);items.forEach((i,n)=>i.classList.toggle('active',n===idx));return;}
+    if(e.key==='ArrowUp'){e.preventDefault();idx=Math.max(idx-1,0);items.forEach((i,n)=>i.classList.toggle('active',n===idx));return;}
+    if(e.key==='Enter'){e.preventDefault();const active=menu.querySelector('.mkt-slash-item.active');if(active)mktSlashApply(el,active.dataset.type);return;}
+    if(e.key==='Escape'){hideSlashMenu();return;}
+  }
+  if(e.key==='Enter' && !e.shiftKey) {
+    e.preventDefault();
+    hideSlashMenu();
+    const blocks=mktGetBlocks();
+    const id=el.dataset.id;
+    const idx=blocks.findIndex(b=>String(b.id)===String(id));
+    const newBlock={id:_mktNewId(),type:'text',content:'',checked:false};
+    blocks.splice(idx+1,0,newBlock);
+    saveMktBlocks(_mktDocKey,blocks);
+    renderMktBlocks(blocks);
+    const newEl=document.querySelector(`.mkt-editable[data-id="${newBlock.id}"]`);
+    if(newEl){newEl.focus();placeCaretAtStart(newEl);}
+    return;
+  }
+  if(e.key==='Backspace' && el.innerText==='') {
+    const blocks=mktGetBlocks();
+    if(blocks.length<=1) return;
+    const id=el.dataset.id;
+    const idx=blocks.findIndex(b=>String(b.id)===String(id));
+    if(idx===0) return;
+    blocks.splice(idx,1);
+    saveMktBlocks(_mktDocKey,blocks);
+    renderMktBlocks(blocks);
+    const prev=document.querySelectorAll('.mkt-editable')[idx-1];
+    if(prev){prev.focus();placeCaretAtEnd(prev);}
+    e.preventDefault();
+  }
+}
+function showSlashMenu(el) {
+  const menu=document.getElementById('mkt-slash-menu');
+  const rect=el.getBoundingClientRect();
+  menu.style.top=(rect.bottom+4)+'px';
+  menu.style.left=rect.left+'px';
+  menu.style.display='block';
+  menu.querySelectorAll('.mkt-slash-item').forEach((i,n)=>i.classList.toggle('active',n===0));
+  menu.querySelectorAll('.mkt-slash-item').forEach(item=>{
+    item.onmousedown=function(e){e.preventDefault();mktSlashApply(el,item.dataset.type);};
+  });
+}
+function hideSlashMenu() { document.getElementById('mkt-slash-menu').style.display='none'; }
+function mktSlashApply(el, type) {
+  hideSlashMenu();
+  const blocks=mktGetBlocks();
+  const id=el.dataset.id;
+  const idx=blocks.findIndex(b=>String(b.id)===String(id));
+  const block=blocks[idx];
+  block.type=type;
+  block.content=block.content.replace(/\/$/, '');
+  if(type==='divider') block.content='';
+  saveMktBlocks(_mktDocKey,blocks);
+  renderMktBlocks(blocks);
+  const newEl=document.querySelector(`.mkt-editable[data-id="${block.id}"]`);
+  if(newEl){newEl.focus();placeCaretAtEnd(newEl);}
+}
+function mktToggleTodo(id) {
+  const blocks=mktGetBlocks();
+  const b=blocks.find(b=>String(b.id)===String(id));
+  if(b){b.checked=!b.checked; saveMktBlocks(_mktDocKey,blocks); renderMktBlocks(blocks);}
+}
+function placeCaretAtEnd(el) {
+  el.focus();
+  const range=document.createRange(); range.selectNodeContents(el); range.collapse(false);
+  const sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+}
+function placeCaretAtStart(el) {
+  el.focus();
+  const range=document.createRange(); range.selectNodeContents(el); range.collapse(true);
+  const sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+}
+document.addEventListener('click', e=>{ if(!e.target.closest('#mkt-slash-menu')&&!e.target.closest('.mkt-editable')) hideSlashMenu(); });
 
 // ══ HUB OFFRES ══
 let HUB_EDIT = false;
@@ -2932,7 +3092,7 @@ function goto(page) {
     const iframe = document.getElementById('audit-iframe');
     if (!iframe.src || iframe.src === 'about:blank') iframe.src = 'audit-underrated.html';
   }
-  if (page === 'hub') { renderHub(); mktLoad(); }
+  if (page === 'hub') { renderHub(); mktUpdatePreviews(); }
   if (page === 'espace') espGoto(ESP_CUR);
 }
 
@@ -3180,6 +3340,27 @@ function fetchVersion() {
 })();
 </script>
 <!-- BELL MODAL -->
+<!-- ══ MARKETING DOC OVERLAY ══ -->
+<div id="mkt-doc-overlay">
+  <div class="mkt-doc-hdr">
+    <button class="mkt-doc-back" onclick="closeMktDoc()">← Retour</button>
+    <div id="mkt-doc-title" style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.06em;color:var(--text)"></div>
+    <div id="mkt-doc-saved" class="mkt-doc-saved-lbl"></div>
+  </div>
+  <div class="mkt-doc-body">
+    <div id="mkt-doc-blocks"></div>
+  </div>
+</div>
+<div id="mkt-slash-menu">
+  <div class="mkt-slash-item" data-type="text">📝 Texte</div>
+  <div class="mkt-slash-item" data-type="h1">H1 Titre 1</div>
+  <div class="mkt-slash-item" data-type="h2">H2 Titre 2</div>
+  <div class="mkt-slash-item" data-type="bullet">• Liste</div>
+  <div class="mkt-slash-item" data-type="todo">☐ Todo</div>
+  <div class="mkt-slash-item" data-type="quote">❝ Citation</div>
+  <div class="mkt-slash-item" data-type="callout">💡 Callout</div>
+  <div class="mkt-slash-item" data-type="divider">— Séparateur</div>
+</div>
 <div id="bell-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:flex-start;justify-content:flex-end;padding:20px" onclick="if(event.target===this)closeBell()">
   <div style="width:360px;max-height:80vh;background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border)">
