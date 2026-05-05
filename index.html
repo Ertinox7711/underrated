@@ -679,6 +679,52 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .hub-desc-txt{font-size:11.5px;color:var(--muted);line-height:1.7;padding-left:23px}
 @media(max-width:700px){.hub-tiers{grid-template-columns:1fr}}
 
+/* ══ ESPACE MEMBRE ══ */
+.esp-tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.esp-tab{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,.03);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);transition:all var(--ease)}
+.esp-tab:hover{border-color:var(--border-hi);color:var(--text)}
+.esp-tab.active{color:#fff}
+.esp-tab[data-who="mathieu"].active{background:rgba(30,144,255,.15);border-color:rgba(30,144,255,.4);color:var(--b1)}
+.esp-tab[data-who="bastien"].active{background:rgba(155,89,182,.15);border-color:rgba(155,89,182,.4);color:#B07FD4}
+.esp-tab[data-who="theo"].active{background:rgba(79,110,247,.15);border-color:rgba(79,110,247,.4);color:var(--b4)}
+.esp-tab[data-who="ilame"].active{background:rgba(39,174,96,.15);border-color:rgba(39,174,96,.4);color:#5DC48A}
+.esp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.esp-panel{display:none}.esp-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.esp-block{background:rgba(14,20,40,.7);border:1px solid var(--border);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.esp-block-title{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+/* Tasks */
+.esp-task-input{display:flex;gap:8px}
+.esp-task-inp{flex:1;padding:8px 12px;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-family:'Manrope',sans-serif;font-size:12px;outline:none;transition:border-color var(--ease)}
+.esp-task-inp:focus{border-color:rgba(100,160,255,.3)}
+.esp-task-add{padding:8px 14px;border-radius:7px;border:none;cursor:pointer;background:rgba(30,144,255,.12);border:1px solid rgba(30,144,255,.2);color:var(--b1);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.06em;transition:opacity var(--ease)}
+.esp-task-add:hover{opacity:.8}
+.esp-task-list{display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto}
+.esp-task-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:7px;background:rgba(255,255,255,.03);border:1px solid transparent;transition:border-color var(--ease)}
+.esp-task-item:hover{border-color:var(--border)}
+.esp-task-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border-hi);background:none;cursor:pointer;flex-shrink:0;appearance:none;-webkit-appearance:none;position:relative;transition:all var(--ease)}
+.esp-task-check:checked{background:var(--acc,var(--b1));border-color:var(--acc,var(--b1))}
+.esp-task-check:checked::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:900}
+.esp-task-txt{flex:1;font-size:12px;color:var(--text);line-height:1.4;transition:color var(--ease)}
+.esp-task-txt.done{color:var(--muted);text-decoration:line-through}
+.esp-task-del{background:none;border:none;color:rgba(255,94,125,.3);cursor:pointer;font-size:14px;padding:0 3px;transition:color var(--ease)}
+.esp-task-del:hover{color:#FF5E7D}
+/* Notes */
+.esp-notes{flex:1;min-height:180px;padding:12px;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);font-family:'Manrope',sans-serif;font-size:12px;line-height:1.7;outline:none;resize:none;transition:border-color var(--ease)}
+.esp-notes:focus{border-color:rgba(100,160,255,.25)}
+.esp-notes-saved{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right;opacity:0;transition:opacity .5s}
+.esp-notes-saved.show{opacity:1}
+/* Drop zone */
+.esp-drop{flex:1;min-height:160px;border:1.5px dashed var(--border);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:border-color var(--ease),background var(--ease);position:relative}
+.esp-drop:hover,.esp-drop.over{border-color:rgba(30,144,255,.4);background:rgba(30,144,255,.04)}
+.esp-drop-ico{opacity:.3}
+.esp-drop-txt{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.esp-drop-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.esp-imgs{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.esp-img-wrap{position:relative;border-radius:6px;overflow:hidden;border:1px solid var(--border)}
+.esp-img-wrap img{display:block;width:90px;height:70px;object-fit:cover}
+.esp-img-del{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.7);border:none;color:#fff;border-radius:3px;font-size:10px;cursor:pointer;padding:1px 5px;line-height:1.4}
+@media(max-width:700px){.esp-panel.active{grid-template-columns:1fr}}
+
 /* ══ MOBILE ══ */
 @media(max-width:700px){
   body{flex-direction:column;overflow:hidden}
@@ -765,6 +811,10 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
     <div class="sb-item" data-page="hub" onclick="goto('hub')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       Hub Offres
+    </div>
+    <div class="sb-item" data-page="espace" onclick="goto('espace')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+      Espace Équipe
     </div>
     <div class="sb-item" data-page="tools" onclick="goto('tools')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
@@ -888,6 +938,32 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
   <!-- ════ NOTES (full editor in iframe) ════ -->
   <div class="page" id="p-notes" style="padding:0;height:100vh;overflow:hidden">
     <iframe id="notes-iframe" src="about:blank" style="width:100%;height:100vh;border:none;background:var(--bg);display:block"></iframe>
+  </div>
+
+  <!-- ════ ESPACE ÉQUIPE ════ -->
+  <div class="page" id="p-espace">
+    <div class="ph">
+      <div class="ph-eye">Workspace</div>
+      <div class="ph-title">ESPACE <em>ÉQUIPE</em></div>
+      <div class="ph-sub">Tâches, notes et captures par membre — tout persiste dans le navigateur.</div>
+    </div>
+    <div class="pc">
+      <div class="esp-tabs">
+        <div class="esp-tab active" data-who="mathieu" onclick="espGoto('mathieu')">
+          <div class="esp-dot" style="background:var(--b1)"></div>Mathieu
+        </div>
+        <div class="esp-tab" data-who="bastien" onclick="espGoto('bastien')">
+          <div class="esp-dot" style="background:#9B59B6"></div>Bastien
+        </div>
+        <div class="esp-tab" data-who="theo" onclick="espGoto('theo')">
+          <div class="esp-dot" style="background:var(--b3)"></div>Théo
+        </div>
+        <div class="esp-tab" data-who="ilame" onclick="espGoto('ilame')">
+          <div class="esp-dot" style="background:#27AE60"></div>Ilame
+        </div>
+      </div>
+      <div id="esp-panels"></div>
+    </div>
   </div>
 
   <!-- ════ HUB OFFRES ════ -->
@@ -2239,6 +2315,178 @@ function closeAddTask() {
 }
 
 // ══ NAV ══
+// ══ ESPACE ÉQUIPE ══
+const ESP_MEMBERS = [
+  {key:'mathieu', label:'Mathieu', color:'#1E90FF'},
+  {key:'bastien', label:'Bastien', color:'#9B59B6'},
+  {key:'theo',    label:'Théo',    color:'#4F6EF7'},
+  {key:'ilame',   label:'Ilame',   color:'#27AE60'},
+];
+let ESP_CUR = 'mathieu';
+
+function espKey(who, type) { return `esp-${who}-${type}`; }
+
+function espLoadTasks(who) {
+  return JSON.parse(localStorage.getItem(espKey(who,'tasks')) || '[]');
+}
+function espSaveTasks(who, tasks) {
+  localStorage.setItem(espKey(who,'tasks'), JSON.stringify(tasks));
+}
+function espLoadNote(who) {
+  return localStorage.getItem(espKey(who,'note')) || '';
+}
+function espSaveNote(who, txt) {
+  localStorage.setItem(espKey(who,'note'), txt);
+}
+function espLoadImgs(who) {
+  return JSON.parse(localStorage.getItem(espKey(who,'imgs')) || '[]');
+}
+function espSaveImgs(who, imgs) {
+  localStorage.setItem(espKey(who,'imgs'), JSON.stringify(imgs));
+}
+
+function espRenderPanel(who) {
+  const tasks = espLoadTasks(who);
+  const note  = espLoadNote(who);
+  const imgs  = espLoadImgs(who);
+  const m = ESP_MEMBERS.find(x => x.key === who);
+  const acc = m ? m.color : '#1E90FF';
+
+  const taskItems = tasks.map((t,i) => `
+    <div class="esp-task-item">
+      <input type="checkbox" class="esp-task-check" style="--acc:${acc}" ${t.done?'checked':''} onchange="espToggleTask('${who}',${i})">
+      <span class="esp-task-txt${t.done?' done':''}">${t.text}</span>
+      <button class="esp-task-del" onclick="espDelTask('${who}',${i})">×</button>
+    </div>`).join('');
+
+  const imgItems = imgs.map((src,i) => `
+    <div class="esp-img-wrap">
+      <img src="${src}" onclick="espOpenImg('${who}',${i})">
+      <button class="esp-img-del" onclick="espDelImg('${who}',${i})">×</button>
+    </div>`).join('');
+
+  return `
+    <div class="esp-panel active" id="esp-panel-${who}">
+      <div class="esp-block gc rv d1">
+        <div class="esp-block-title">Tâches assignées</div>
+        <div class="esp-task-input">
+          <input class="esp-task-inp" id="esp-inp-${who}" placeholder="Nouvelle tâche…" onkeydown="if(event.key==='Enter')espAddTask('${who}')">
+          <button class="esp-task-add" onclick="espAddTask('${who}')" style="background:rgba(${hexToRgb(acc)},.12);border-color:rgba(${hexToRgb(acc)},.25);color:${acc}">+</button>
+        </div>
+        <div class="esp-task-list" id="esp-tasks-${who}">${taskItems || '<div style="font-size:11px;color:var(--muted);padding:6px 0">Aucune tâche</div>'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div class="esp-block gc rv d2" style="flex:1">
+          <div class="esp-block-title">Notes libres</div>
+          <textarea class="esp-notes" id="esp-note-${who}" placeholder="Écris ici…" oninput="espAutoSaveNote('${who}')">${note}</textarea>
+          <div class="esp-notes-saved" id="esp-note-saved-${who}">Sauvegardé ✓</div>
+        </div>
+        <div class="esp-block gc rv d3">
+          <div class="esp-block-title">Screenshots &amp; fichiers</div>
+          <div class="esp-drop" id="esp-drop-${who}"
+            ondragover="espDragOver(event,'${who}')"
+            ondragleave="espDragLeave('${who}')"
+            ondrop="espDrop(event,'${who}')">
+            <svg class="esp-drop-ico" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <div class="esp-drop-txt">Glisse une image ici</div>
+            <div style="font-size:10px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.06em">ou clique pour choisir</div>
+            <input type="file" accept="image/*" multiple class="esp-drop-input" onchange="espFileInput(event,'${who}')">
+          </div>
+          ${imgs.length ? `<div class="esp-imgs" id="esp-imgs-${who}">${imgItems}</div>` : `<div class="esp-imgs" id="esp-imgs-${who}"></div>`}
+        </div>
+      </div>
+    </div>`;
+}
+
+function hexToRgb(hex) {
+  const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return r ? `${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}` : '30,144,255';
+}
+
+function espGoto(who) {
+  ESP_CUR = who;
+  document.querySelectorAll('.esp-tab').forEach(t => t.classList.toggle('active', t.dataset.who === who));
+  document.getElementById('esp-panels').innerHTML = espRenderPanel(who);
+}
+
+function espAddTask(who) {
+  const inp = document.getElementById('esp-inp-' + who);
+  const txt = inp?.value.trim();
+  if (!txt) return;
+  const tasks = espLoadTasks(who);
+  tasks.push({text: txt, done: false});
+  espSaveTasks(who, tasks);
+  inp.value = '';
+  espGoto(who);
+}
+
+function espToggleTask(who, i) {
+  const tasks = espLoadTasks(who);
+  tasks[i].done = !tasks[i].done;
+  espSaveTasks(who, tasks);
+  const txt = document.querySelector(`#esp-tasks-${who} .esp-task-item:nth-child(${i+1}) .esp-task-txt`);
+  if (txt) txt.classList.toggle('done', tasks[i].done);
+}
+
+function espDelTask(who, i) {
+  const tasks = espLoadTasks(who);
+  tasks.splice(i, 1);
+  espSaveTasks(who, tasks);
+  espGoto(who);
+}
+
+let _espNoteTimer = null;
+function espAutoSaveNote(who) {
+  clearTimeout(_espNoteTimer);
+  _espNoteTimer = setTimeout(() => {
+    const val = document.getElementById('esp-note-' + who)?.value || '';
+    espSaveNote(who, val);
+    const badge = document.getElementById('esp-note-saved-' + who);
+    if (badge) { badge.classList.add('show'); setTimeout(() => badge.classList.remove('show'), 1800); }
+  }, 600);
+}
+
+function espProcessFiles(who, files) {
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const imgs = espLoadImgs(who);
+      imgs.unshift(e.target.result);
+      if (imgs.length > 20) imgs.length = 20;
+      espSaveImgs(who, imgs);
+      const cont = document.getElementById('esp-imgs-' + who);
+      if (cont) {
+        const wrap = document.createElement('div');
+        wrap.className = 'esp-img-wrap';
+        wrap.innerHTML = `<img src="${e.target.result}" onclick="espOpenImg('${who}',0)"><button class="esp-img-del" onclick="espDelImg('${who}',0)">×</button>`;
+        cont.prepend(wrap);
+        espGoto(who);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function espDragOver(e, who) { e.preventDefault(); document.getElementById('esp-drop-'+who)?.classList.add('over'); }
+function espDragLeave(who)    { document.getElementById('esp-drop-'+who)?.classList.remove('over'); }
+function espDrop(e, who)      { e.preventDefault(); espDragLeave(who); espProcessFiles(who, e.dataTransfer.files); }
+function espFileInput(e, who) { espProcessFiles(who, e.target.files); }
+
+function espDelImg(who, i) {
+  const imgs = espLoadImgs(who);
+  imgs.splice(i, 1);
+  espSaveImgs(who, imgs);
+  espGoto(who);
+}
+
+function espOpenImg(who, i) {
+  const imgs = espLoadImgs(who);
+  if (!imgs[i]) return;
+  const w = window.open();
+  w.document.write(`<body style="margin:0;background:#000"><img src="${imgs[i]}" style="max-width:100%;max-height:100vh;display:block;margin:auto"></body>`);
+}
+
 // ══ HUB OFFRES ══
 let HUB_EDIT = false;
 const HUB_F_KEY = 'hub-features';
@@ -2427,6 +2675,7 @@ function goto(page) {
     if (!iframe.src || iframe.src === 'about:blank') iframe.src = 'audit-underrated.html';
   }
   if (page === 'hub') renderHub();
+  if (page === 'espace') espGoto(ESP_CUR);
 }
 
 function gotoAdmin(who) {
