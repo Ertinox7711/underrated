@@ -1,8 +1,8 @@
 {
-  "commit": "b7567cf",
-  "message": "feat: changelog panel slide-in, plus de window.open",
-  "commitDate": "2026-05-05T07:49:17+02:00",
-  "buildDate": "2026-05-05T05:49:25Z",
-  "buildDateFR": "05/05/2026 07:49",
+  "commit": "e5c5eb6",
+  "message": "feat: add task modal - plus de prompt, sélecteur personne inline",
+  "commitDate": "2026-05-05T07:53:19+02:00",
+  "buildDate": "2026-05-05T05:53:28Z",
+  "buildDateFR": "05/05/2026 07:53",
   "branch": "main"
 }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:53 — `e5c5eb6`
+feat: add task modal - plus de prompt, sélecteur personne inline
+
 ## 05/05/2026 07:49 — `b7567cf`
 feat: changelog panel slide-in, plus de window.open
 
