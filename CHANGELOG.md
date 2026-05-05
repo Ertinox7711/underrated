@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:57 — `ae00e82`
+style: animations plus lentes, shimmer sur item sidebar actif
+
 ## 05/05/2026 07:55 — `95446fd`
 feat: top bar shimmer + animations ambiantes (float, pulse, dot breathe)
 

@@ -1,8 +1,8 @@
 {
-  "commit": "95446fd",
-  "message": "feat: top bar shimmer + animations ambiantes (float, pulse, dot breathe)",
-  "commitDate": "2026-05-05T07:55:13+02:00",
-  "buildDate": "2026-05-05T05:55:23Z",
-  "buildDateFR": "05/05/2026 07:55",
+  "commit": "ae00e82",
+  "message": "style: animations plus lentes, shimmer sur item sidebar actif",
+  "commitDate": "2026-05-05T07:57:34+02:00",
+  "buildDate": "2026-05-05T05:57:48Z",
+  "buildDateFR": "05/05/2026 07:57",
   "branch": "main"
 }
