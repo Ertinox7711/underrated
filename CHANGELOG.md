@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:45 — `19c6495`
+feat: phases dynamiques, couleur perso par membre, addTask auto-personne
+
 ## 05/05/2026 07:38 — `38ac84e`
 feat: admin - tabs par membre, member preview éditable, sous-menu sidebar
 
