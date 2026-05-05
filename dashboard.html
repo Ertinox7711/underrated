@@ -49,20 +49,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .login-logo b{background:linear-gradient(90deg,var(--b1),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .login-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:36px}
 
-/* Person selector */
-.person-selector{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px}
-.ps-btn{
-  padding:12px 10px;border-radius:8px;cursor:pointer;text-align:center;
-  border:1px solid var(--border);background:rgba(255,255,255,.03);
-  transition:all var(--ease);
-}
-.ps-btn:hover{background:rgba(30,144,255,.06);border-color:var(--border-hi)}
-.ps-btn.selected{background:rgba(30,144,255,.12);border-color:rgba(30,144,255,.35)}
-.ps-btn[data-p="bastien"].selected{background:rgba(155,89,182,.12);border-color:rgba(155,89,182,.35)}
-.ps-btn[data-p="theo"].selected{background:rgba(79,110,247,.12);border-color:rgba(79,110,247,.35)}
-.ps-btn[data-p="ilame"].selected{background:rgba(39,174,96,.12);border-color:rgba(39,174,96,.35)}
-.ps-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.06em}
-.ps-role{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:2px;line-height:1.3}
 
 .login-field{margin-bottom:14px}
 .login-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block}
@@ -85,15 +71,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
   font-size:11px;color:#FF5E7D;text-align:center;margin-top:10px;
   display:none;font-family:'Barlow Condensed';letter-spacing:.04em;
 }
-.login-ok{
-  font-size:11px;color:#5DC48A;text-align:center;margin-top:10px;
-  display:none;font-family:'Barlow Condensed';letter-spacing:.04em;
-}
-/* Mode toggle */
-.login-toggle{display:flex;border-radius:7px;border:1px solid var(--border);overflow:hidden;margin-bottom:28px}
-.ltab{flex:1;padding:9px;text-align:center;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:all var(--ease)}
-.ltab.active{background:rgba(30,144,255,.14);color:var(--b1)}
-.ltab:first-child{border-right:1px solid var(--border)}
 
 /* ══════════════════════════════════
    SIDEBAR
@@ -939,7 +916,7 @@ function buildAdminOverview() {
           ${(saved[phase]||[]).map((t,i) => `
             <div class="amc-task" data-person="${key}" data-phase="${phase}" data-idx="${i}">
               <span class="who ${whoClass[key]}" style="flex-shrink:0">${p.name.charAt(0)+p.name.slice(1).toLowerCase()}</span>
-              <span class="amc-task-txt" contenteditable="true" onblur="saveTaskEdit(this,'${key}','${phase}',${i})">${t}</span>
+              <span class="amc-task-txt" contenteditable="true" onblur="saveTaskEdit(this,'${key}','${phase}')">${t}</span>
               <span class="amc-del" onclick="deleteTask('${key}','${phase}',${i})">✕</span>
             </div>
           `).join('')}
@@ -971,7 +948,7 @@ function buildAdminPwdGrid() {
       <div style="font-family:'Bebas Neue';font-size:15px;letter-spacing:.06em;color:${colors[key]};margin-bottom:2px">${acc.name}</div>
       <div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">${acc.role}</div>
       <div style="display:flex;gap:6px">
-        <input id="admin-pwd-${key}" type="text" placeholder="••••••••"
+        <input id="admin-pwd-${key}" type="password" placeholder="nouveau mdp"
           style="flex:1;padding:7px 10px;border-radius:5px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-family:'Manrope';font-size:12px;outline:none"
           onkeydown="if(event.key==='Enter')adminSetPassword('${key}')">
         <button onclick="adminSetPassword('${key}')"
@@ -990,19 +967,24 @@ function getSavedTasks() {
 function saveTasks(tasks) {
   localStorage.setItem('ur_tasks', JSON.stringify(tasks));
 }
-function saveTaskEdit(el, person, phase, idx) {
+function saveTaskEdit(el, person, phase) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const idx = parseInt(el.closest('.amc-task')?.dataset.idx ?? '-1');
+  if (idx < 0) return;
   const tasks = getSavedTasks();
   if (!tasks[person]) tasks[person] = JSON.parse(JSON.stringify(DEFAULT_TASKS[person]));
   if (tasks[person][phase]) tasks[person][phase][idx] = el.textContent.trim();
   saveTasks(tasks);
 }
 function deleteTask(person, phase, idx) {
+  if (!SESSION || !SESSION.isAdmin) return;
   const tasks = getSavedTasks();
   if (!tasks[person]) tasks[person] = JSON.parse(JSON.stringify(DEFAULT_TASKS[person]));
   if (tasks[person][phase]) { tasks[person][phase].splice(idx, 1); saveTasks(tasks); }
   buildAdminOverview();
 }
 function adminAddTask(person, phase) {
+  if (!SESSION || !SESSION.isAdmin) return;
   const tasks = getSavedTasks();
   if (!tasks[person]) tasks[person] = JSON.parse(JSON.stringify(DEFAULT_TASKS[person]));
   if (!tasks[person][phase]) tasks[person][phase] = [];
@@ -1035,6 +1017,7 @@ function addTask(phase) {
 
 // ══ NAV ══
 function goto(page) {
+  if (page === 'admin' && (!SESSION || !SESSION.isAdmin)) return;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
   document.getElementById('p-' + page).classList.add('active');
