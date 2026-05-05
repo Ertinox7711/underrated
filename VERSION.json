@@ -1,8 +1,8 @@
 {
-  "commit": "95f5b30",
-  "message": "fix: sync suggestions via Firebase so admin sees them in real-time",
-  "commitDate": "2026-05-05T23:05:57+02:00",
-  "buildDate": "2026-05-05T21:06:17Z",
-  "buildDateFR": "05/05/2026 23:06",
+  "commit": "1fd1103",
+  "message": "feat: marketing plan — full block editor with slash commands",
+  "commitDate": "2026-05-05T23:41:57+02:00",
+  "buildDate": "2026-05-05T21:42:08Z",
+  "buildDateFR": "05/05/2026 23:42",
   "branch": "main"
 }

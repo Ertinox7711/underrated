@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 23:42 — `1fd1103`
+feat: marketing plan — full block editor with slash commands
+
 ## 05/05/2026 23:06 — `95f5b30`
 fix: sync suggestions via Firebase so admin sees them in real-time
 
