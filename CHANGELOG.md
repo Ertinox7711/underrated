@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 22:33 — `48731c4`
+fix: pass input values directly to doLogin to fix sandbox iframe issue
+
 ## 05/05/2026 22:29 — `75db62a`
 fix: add force reset link on login page for credential cache issues
 
