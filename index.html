@@ -362,6 +362,24 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .sg-reject{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1px solid rgba(255,255,255,.1);background:none;border-radius:4px;padding:3px 8px;cursor:pointer;transition:all .2s}
 .sg-reject:hover{color:#E74C3C;border-color:rgba(231,76,60,.3)}
 .m-phases{display:flex;gap:5px;flex-wrap:wrap}
+/* Member phase tasks (checkable, linked to Phases page) */
+.mpt-wrap{margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,.06)}
+.mpt-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.mpt-head-lbl{font-family:'Barlow Condensed',sans-serif;font-size:8.5px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.mpt-progress{flex:1;height:3px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden}
+.mpt-progress-bar{height:100%;border-radius:2px;transition:width .35s ease}
+.mpt-count{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.08em;color:rgba(255,255,255,.5);min-width:30px;text-align:right}
+.mpt-phase{margin-bottom:8px}
+.mpt-phase:last-child{margin-bottom:0}
+.mpt-phase-lbl{font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px;opacity:.75}
+.mpt-item{display:flex;align-items:flex-start;gap:7px;padding:4px 0;transition:opacity .2s}
+.mpt-item.done{opacity:.42}
+.mpt-cb{width:13px;height:13px;border:1.5px solid rgba(255,255,255,.25);border-radius:3px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:2px}
+.mpt-cb:hover{border-color:var(--acc)}
+.mpt-cb.checked{background:var(--acc);border-color:var(--acc)}
+.mpt-cb.checked::after{content:'✓';color:#fff;font-size:9px;font-weight:900;line-height:1}
+.mpt-txt{font-size:11px;color:rgba(255,255,255,.62);line-height:1.4;flex:1}
+.mpt-item.done .mpt-txt{text-decoration:line-through;color:rgba(255,255,255,.35)}
 
 /* ══ PHASES ══ */
 .person-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
@@ -424,6 +442,12 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ph-empty.show{display:block}
 /* Admin: editable task text */
 .ph-task-txt[contenteditable="true"]{outline:none;border-bottom:1px dashed rgba(30,144,255,.3)}
+.ph-task.done{opacity:.42}
+.ph-task.done .ph-task-txt{text-decoration:line-through;color:rgba(255,255,255,.35)}
+.ph-cb{width:14px;height:14px;border:1.5px solid rgba(255,255,255,.25);border-radius:3px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px}
+.ph-cb:hover{border-color:var(--b1)}
+.ph-cb.checked{background:var(--b1);border-color:var(--b1)}
+.ph-cb.checked::after{content:'✓';color:#fff;font-size:9px;font-weight:900;line-height:1}
 .add-task-btn{display:none;align-items:center;gap:6px;padding:8px 11px;border-radius:7px;background:rgba(30,144,255,.04);border:1px dashed rgba(30,144,255,.2);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(30,144,255,.5);margin-top:4px;transition:all var(--ease)}
 .add-task-btn:hover{background:rgba(30,144,255,.08);color:var(--b1)}
 .admin-view .add-task-btn{display:flex}
@@ -686,30 +710,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
       <div class="my-tasks-grid" id="my-tasks-grid"></div>
     </div>
 
-    <!-- Reminders widget -->
-    <div class="rem-widget" id="rem-widget">
-      <div class="sec-lbl">Rappels</div>
-      <div class="sec-h2">LES <em>REMINDERS</em></div>
-      <div class="rem-add">
-        <input class="rem-input" id="rem-text" placeholder="Ex: Drop épisode 4 à 18h" onkeydown="if(event.key==='Enter')addReminder()">
-        <input class="rem-date" id="rem-when" type="datetime-local">
-        <div class="rem-vis-grp" role="group">
-          <button class="rem-vis-btn sel" id="rem-vis-priv" data-vis="private" onclick="setReminderVis('private')" title="Toi seul vois">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Privé
-          </button>
-          <button class="rem-vis-btn" id="rem-vis-pub" data-vis="public" onclick="setReminderVis('public')" title="Visible par toute l'équipe">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>
-            Public
-          </button>
-        </div>
-        <button class="rem-submit" onclick="addReminder()">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Ajouter
-        </button>
-      </div>
-      <div class="rem-list" id="rem-list"></div>
-    </div>
 
     <div class="home-grid">
       <div class="gc home-card rv d1" onclick="goto('equipe')">
@@ -1347,6 +1347,51 @@ function buildEquipe() {
           >${d.role}</div>`
       : `<div class="m-role">${d.role}</div>`;
 
+    // Phase tasks (linked to Phases page) — checkable by member or admin
+    const savedTasks = getSavedTasks();
+    const memberTasks = savedTasks[key] || DEFAULT_TASKS[key] || {};
+    const phases = (typeof getPhases === 'function') ? getPhases() : [];
+    const canToggle = isMe || isAdmin;
+    const colors = getColors();
+    const memberCol = colors[key] || '#1E90FF';
+
+    let phaseTasksHtml = '';
+    let totalTasks = 0, doneTasks = 0;
+    const phaseSections = phases.map(ph => {
+      const list = memberTasks[ph.id] || [];
+      if (!list.length) return '';
+      const items = list.map(t => {
+        const done = isTaskDone(key, ph.id, t);
+        if (done) doneTasks++;
+        totalTasks++;
+        const cbAttrs = canToggle
+          ? `onclick="event.stopPropagation();toggleTaskDone('${key}','${ph.id}',${JSON.stringify(t).replace(/"/g,'&quot;')})"`
+          : 'style="cursor:default"';
+        return `<div class="mpt-item${done ? ' done' : ''}">
+          <div class="mpt-cb${done ? ' checked' : ''}" ${cbAttrs}></div>
+          <div class="mpt-txt">${t.replace(/[<>&]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</div>
+        </div>`;
+      }).join('');
+      return `<div class="mpt-phase">
+        <div class="mpt-phase-lbl" style="color:${memberCol}">${ph.name}</div>
+        ${items}
+      </div>`;
+    }).filter(Boolean).join('');
+
+    if (totalTasks > 0) {
+      const pct = Math.round((doneTasks/totalTasks)*100);
+      phaseTasksHtml = `<div class="mpt-wrap">
+        <div class="mpt-head">
+          <div class="mpt-head-lbl">Tâches</div>
+          <div class="mpt-progress">
+            <div class="mpt-progress-bar" style="width:${pct}%;background:${memberCol}"></div>
+          </div>
+          <div class="mpt-count">${doneTasks}/${totalTasks}</div>
+        </div>
+        ${phaseSections}
+      </div>`;
+    }
+
     return `<div class="${cls}" id="card-${key}">
       ${meTag}
       <div class="m-num">${nums[key]}</div>
@@ -1354,6 +1399,7 @@ function buildEquipe() {
       ${roleEl}
       <ul class="m-tasks">${taskItems}</ul>
       ${bottomContent}
+      ${phaseTasksHtml}
       <div class="m-phases" style="margin-top:10px">${phaseBadges}</div>
     </div>`;
   }).join('');
@@ -1697,6 +1743,33 @@ function buildAdminPwdGrid() {
 }
 
 // ══ TASK STORAGE ══
+// ══ TASK DONE STATE ══ (composite key: personKey|phaseId|taskText)
+function getTaskDoneMap() {
+  try { return JSON.parse(localStorage.getItem('ur_task_done') || '{}'); }
+  catch(e) { return {}; }
+}
+function saveTaskDoneMap(m) { localStorage.setItem('ur_task_done', JSON.stringify(m)); }
+function taskDoneKey(personKey, phaseId, taskText) { return `${personKey}|${phaseId}|${taskText}`; }
+function isTaskDone(personKey, phaseId, taskText) {
+  return !!getTaskDoneMap()[taskDoneKey(personKey, phaseId, taskText)];
+}
+function setTaskDone(personKey, phaseId, taskText, done) {
+  const m = getTaskDoneMap();
+  const k = taskDoneKey(personKey, phaseId, taskText);
+  if (done) m[k] = true; else delete m[k];
+  saveTaskDoneMap(m);
+}
+function toggleTaskDone(personKey, phaseId, taskText) {
+  if (!SESSION) return;
+  // Member can toggle their own. Admin can toggle anyone.
+  if (personKey !== SESSION.key && !SESSION.isAdmin) return;
+  const cur = isTaskDone(personKey, phaseId, taskText);
+  setTaskDone(personKey, phaseId, taskText, !cur);
+  buildEquipe();
+  buildPhaseTasks();
+  if (!SESSION.isAdmin) buildMyTasks();
+}
+
 function getSavedTasks() {
   try { return JSON.parse(localStorage.getItem('ur_tasks') || '{}'); } catch(e) { return {}; }
 }
@@ -1752,9 +1825,15 @@ function buildPhaseTasks() {
       return (saved[ph.id] || []).map((t, i) => {
         const col = colors[key];
         const mine = me === key;
+        const done = isTaskDone(key, ph.id, t);
+        const canToggle = mine || isAdmin;
         const editAttr = isAdmin ? `contenteditable="true" onblur="phSaveTask(this)"` : '';
         const delBtn = isAdmin ? `<span class="amc-del" onclick="phDeleteTask(this)" style="flex-shrink:0">✕</span>` : '';
-        return `<div class="ph-task${mine ? ' mine' : ''}" data-who="${key}" data-key="${key}" data-phase="${ph.id}" data-idx="${i}" style="${mine ? `background:${col}11;border-color:${col}33` : ''}">
+        const cbAttrs = canToggle
+          ? `onclick="event.stopPropagation();toggleTaskDone('${key}','${ph.id}',${JSON.stringify(t).replace(/"/g,'&quot;')})"`
+          : 'style="cursor:default;opacity:.5"';
+        return `<div class="ph-task${mine ? ' mine' : ''}${done ? ' done' : ''}" data-who="${key}" data-key="${key}" data-phase="${ph.id}" data-idx="${i}" style="${mine ? `background:${col}11;border-color:${col}33` : ''}">
+          <div class="ph-cb${done ? ' checked' : ''}" ${cbAttrs}></div>
           <span class="who" style="background:${col}22;color:${col};border-radius:3px;padding:2px 7px;font-family:'Barlow Condensed';font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0">${names[key]}</span>
           <span class="ph-task-txt" ${editAttr}>${t}</span>
           ${delBtn}

@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNDERRATED — Comment j'ai gagné de l'argent avec TikTok sans montrer mon visage</title>
+<meta name="description" content="Découvre comment Mathieu a généré des revenus réels avec TikTok en recréant du contenu Skibidi-type grâce à l'IA — et comment toi tu peux faire pareil.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700;900&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & ROOT ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:#050508;
+  color:#EDF2F4;
+  font-family:'Manrope',sans-serif;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+
+:root{
+  --g:#00B140;
+  --g2:#00FF5E;
+  --pk:#FF0F7B;
+  --gold:#FFD700;
+  --red:#E63946;
+  --bg:#050508;
+  --bg2:#08090f;
+  --bg3:#0d0f1a;
+  --w:#EDF2F4;
+  --dim:rgba(255,255,255,0.45);
+  --muted:rgba(255,255,255,0.22);
+  --glass-bg:rgba(255,255,255,0.028);
+  --glass-border:rgba(255,255,255,0.07);
+  --glass-shine:rgba(255,255,255,0.12);
+  --glow-g:0 0 18px rgba(0,177,64,.55),0 0 60px rgba(0,177,64,.18);
+  --glow-pk:0 0 18px rgba(255,15,123,.55),0 0 60px rgba(255,15,123,.15);
+  --glow-go:0 0 18px rgba(255,215,0,.55),0 0 60px rgba(255,215,0,.15);
+}
+
+/* ── NOISE OVERLAY ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9990;opacity:.7;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--g);border-radius:2px}
+
+/* ── TYPOGRAPHY UTILS ── */
+.bb{font-family:'Bebas Neue',sans-serif;letter-spacing:.04em}
+.bc{font-family:'Barlow Condensed',sans-serif}
+.upper{text-transform:uppercase;letter-spacing:.14em;font-size:11px;font-weight:700}
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+.container-wide{max-width:1100px;margin:0 auto;padding:0 24px}
+
+/* ── REVEAL ── */
+.rv{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}
+.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+.d5{transition-delay:.40s}.d6{transition-delay:.48s}
+
+/* ── MESH BG ── */
+.mesh{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.mesh-orb{position:absolute;border-radius:50%;filter:blur(140px);opacity:.35}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:0 28px;height:58px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(5,5,8,.85);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--glass-border);
+}
+.nav-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;letter-spacing:.1em;
+  color:var(--w);
+}
+.nav-logo span{color:var(--g)}
+.nav-cta{
+  padding:8px 20px;
+  background:var(--g);
+  color:#000;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:13px;
+  text-transform:uppercase;letter-spacing:.1em;
+  border:none;cursor:pointer;
+  text-decoration:none;
+  transition:background .2s,box-shadow .2s;
+}
+.nav-cta:hover{background:var(--g2);box-shadow:var(--glow-g)}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:120px 24px 80px;
+  position:relative;z-index:1;
+  text-align:center;
+}
+.hero-label{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;
+  border:1px solid var(--g);
+  color:var(--g);
+  font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.15em;
+  margin-bottom:32px;
+}
+.hero-label::before{content:'';display:block;width:6px;height:6px;background:var(--g);border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+
+.hero h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(44px,8vw,90px);
+  line-height:.95;
+  letter-spacing:.02em;
+  max-width:820px;
+  margin:0 auto 24px;
+}
+.hero h1 .accent{color:var(--g)}
+.hero h1 .accent-pk{color:var(--pk)}
+
+.hero-sub{
+  font-size:clamp(16px,2.5vw,20px);
+  color:var(--dim);
+  max-width:600px;
+  margin:0 auto 48px;
+  line-height:1.55;
+}
+.hero-sub strong{color:var(--w);font-weight:700}
+
+/* ── VIDEO WRAPPER ── */
+.video-wrap{
+  position:relative;
+  width:100%;max-width:780px;
+  margin:0 auto 56px;
+  aspect-ratio:16/9;
+  background:var(--bg3);
+  border:1px solid var(--glass-border);
+  overflow:hidden;
+}
+.video-wrap::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,177,64,.08),rgba(255,15,123,.05));
+  pointer-events:none;
+}
+.video-placeholder{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;
+  cursor:pointer;
+}
+.video-placeholder .play-btn{
+  width:72px;height:72px;
+  background:var(--g);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .2s,box-shadow .2s;
+}
+.video-placeholder:hover .play-btn{transform:scale(1.1);box-shadow:var(--glow-g)}
+.video-placeholder .play-btn::after{
+  content:'';
+  border-top:14px solid transparent;
+  border-bottom:14px solid transparent;
+  border-left:22px solid #000;
+  margin-left:4px;
+}
+.video-label{font-size:13px;color:var(--dim);letter-spacing:.05em}
+/* Real embed: replace .video-placeholder with <iframe src="..."> */
+.video-wrap iframe{width:100%;height:100%;border:none}
+
+/* ── HERO STATS ── */
+.hero-stats{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:12px 40px;
+  margin-bottom:40px;
+}
+.hero-stat{text-align:center}
+.hero-stat .num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(28px,5vw,42px);
+  color:var(--g);
+  line-height:1;
+}
+.hero-stat .lbl{
+  font-size:11px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.12em;
+  margin-top:2px;
+}
+
+/* ── TICKER ── */
+.ticker-wrap{
+  overflow:hidden;
+  background:var(--g);
+  padding:10px 0;
+  position:relative;z-index:1;
+}
+.ticker-track{
+  display:flex;align-items:center;gap:0;
+  white-space:nowrap;
+  animation:ticker 28s linear infinite;
+}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:0 32px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:14px;
+  text-transform:uppercase;letter-spacing:.1em;
+  color:#000;
+}
+.ticker-sep{color:rgba(0,0,0,.3);font-size:18px}
+
+/* ── SECTION BASE ── */
+section{position:relative;z-index:1}
+.section-label{
+  display:inline-block;
+  color:var(--g);
+  font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.18em;
+  margin-bottom:16px;
+}
+.section-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,6vw,64px);
+  line-height:1;
+  letter-spacing:.02em;
+  margin-bottom:24px;
+}
+.section-title .accent{color:var(--g)}
+.section-title .accent-pk{color:var(--pk)}
+
+/* ── HOOK SECTION ── */
+.hook{
+  padding:80px 0;
+  background:var(--bg2);
+  border-top:1px solid var(--glass-border);
+  border-bottom:1px solid var(--glass-border);
+}
+.hook-inner{
+  max-width:780px;margin:0 auto;padding:0 24px;
+  text-align:center;
+}
+.hook blockquote{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(28px,4.5vw,52px);
+  line-height:1.1;
+  letter-spacing:.02em;
+  color:var(--w);
+  margin-bottom:32px;
+}
+.hook blockquote em{
+  font-style:normal;
+  color:var(--pk);
+}
+.hook p{
+  font-size:clamp(15px,2vw,18px);
+  color:var(--dim);
+  max-width:620px;margin:0 auto;
+}
+
+/* ── STORY ── */
+.story{padding:100px 0}
+.story-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+  align-items:center;
+}
+@media(max-width:720px){.story-grid{grid-template-columns:1fr;gap:40px}}
+
+.story-avatar{
+  position:relative;
+  aspect-ratio:1;
+  max-width:420px;
+}
+.avatar-frame{
+  width:100%;height:100%;
+  background:var(--bg3);
+  border:1px solid var(--glass-border);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;
+  gap:12px;
+  position:relative;
+  overflow:hidden;
+}
+.avatar-frame::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,177,64,.12),transparent,rgba(255,15,123,.08));
+  pointer-events:none;
+}
+.avatar-emoji{font-size:80px;line-height:1}
+.avatar-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:24px;letter-spacing:.08em;
+  color:var(--g);
+}
+.avatar-handle{font-size:13px;color:var(--muted)}
+
+.story-tag{
+  display:inline-block;
+  padding:4px 12px;
+  background:rgba(0,177,64,.12);
+  border:1px solid rgba(0,177,64,.3);
+  color:var(--g);
+  font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.12em;
+  margin-bottom:20px;
+}
+
+.story-text h2{margin-bottom:20px}
+.story-text p{
+  color:var(--dim);
+  font-size:16px;
+  line-height:1.7;
+  margin-bottom:16px;
+}
+.story-text p strong{color:var(--w);font-weight:700}
+.story-text .highlight{
+  color:var(--g);font-weight:700;font-size:17px;
+}
+
+/* ── METHOD ── */
+.method{
+  padding:100px 0;
+  background:var(--bg2);
+  border-top:1px solid var(--glass-border);
+  border-bottom:1px solid var(--glass-border);
+}
+.method-header{text-align:center;margin-bottom:64px}
+.method-steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+}
+@media(max-width:720px){.method-steps{grid-template-columns:1fr;gap:16px}}
+
+.step-card{
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  padding:36px 28px;
+  position:relative;
+  overflow:hidden;
+  transition:border-color .3s,transform .3s;
+}
+.step-card:hover{
+  border-color:rgba(0,177,64,.4);
+  transform:translateY(-4px);
+}
+.step-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--g);
+  opacity:0;
+  transition:opacity .3s;
+}
+.step-card:hover::before{opacity:1}
+.step-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:56px;
+  color:rgba(0,177,64,.18);
+  line-height:1;
+  margin-bottom:8px;
+}
+.step-icon{font-size:32px;margin-bottom:16px}
+.step-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:22px;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:var(--w);
+  margin-bottom:12px;
+}
+.step-desc{font-size:15px;color:var(--dim);line-height:1.6}
+.step-desc strong{color:var(--g)}
+
+/* ── NUMBERS BAR ── */
+.numbers-bar{
+  padding:60px 0;
+  text-align:center;
+}
+.numbers-grid{
+  display:flex;flex-wrap:wrap;justify-content:center;
+  gap:0;
+  border:1px solid var(--glass-border);
+}
+.number-item{
+  flex:1;min-width:160px;
+  padding:36px 24px;
+  border-right:1px solid var(--glass-border);
+  text-align:center;
+}
+.number-item:last-child{border-right:none}
+.number-item .big-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,5vw,56px);
+  color:var(--g);
+  line-height:1;
+  margin-bottom:6px;
+}
+.number-item .big-lbl{
+  font-size:12px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.12em;
+}
+@media(max-width:600px){
+  .numbers-grid{flex-direction:column}
+  .number-item{border-right:none;border-bottom:1px solid var(--glass-border)}
+  .number-item:last-child{border-bottom:none}
+}
+
+/* ── QUIZ ── */
+.quiz-section{
+  padding:100px 0;
+}
+.quiz-header{text-align:center;margin-bottom:56px}
+.quiz-wrap{
+  max-width:680px;
+  margin:0 auto;
+}
+.quiz-box{
+  background:var(--bg3);
+  border:1px solid var(--glass-border);
+  padding:40px;
+}
+@media(max-width:600px){.quiz-box{padding:24px 20px}}
+
+.quiz-progress{
+  display:flex;gap:6px;
+  margin-bottom:32px;
+}
+.qp-bar{
+  flex:1;height:3px;
+  background:rgba(255,255,255,.08);
+  transition:background .4s;
+}
+.qp-bar.done{background:var(--g)}
+.qp-bar.active{background:rgba(0,177,64,.5)}
+
+.quiz-q-num{
+  font-size:11px;color:var(--g);
+  text-transform:uppercase;letter-spacing:.15em;
+  font-weight:700;margin-bottom:12px;
+}
+.quiz-question{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;
+  font-size:clamp(20px,3.5vw,26px);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--w);
+  margin-bottom:28px;
+  line-height:1.2;
+}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-option{
+  padding:16px 20px;
+  border:1px solid var(--glass-border);
+  background:var(--glass-bg);
+  color:var(--dim);
+  font-family:'Manrope',sans-serif;
+  font-size:15px;
+  text-align:left;
+  cursor:pointer;
+  transition:all .2s;
+  position:relative;
+  overflow:hidden;
+}
+.quiz-option:hover{
+  border-color:rgba(0,177,64,.4);
+  color:var(--w);
+  background:rgba(0,177,64,.06);
+}
+.quiz-option.selected{
+  border-color:var(--g);
+  color:var(--w);
+  background:rgba(0,177,64,.1);
+}
+.quiz-option.selected::before{
+  content:'✓';
+  position:absolute;right:16px;top:50%;
+  transform:translateY(-50%);
+  color:var(--g);font-weight:700;
+}
+
+/* Quiz result */
+.quiz-result{display:none;text-align:center;padding:16px 0}
+.quiz-result.show{display:block}
+.quiz-result-icon{font-size:56px;margin-bottom:16px}
+.quiz-result-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(28px,5vw,44px);
+  color:var(--g);
+  margin-bottom:12px;
+  letter-spacing:.04em;
+}
+.quiz-result-text{
+  color:var(--dim);
+  font-size:16px;
+  max-width:480px;margin:0 auto 32px;
+  line-height:1.6;
+}
+.quiz-result-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:18px 44px;
+  background:var(--g);
+  color:#000;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;letter-spacing:.06em;
+  text-decoration:none;
+  transition:all .25s;
+  border:none;cursor:pointer;
+}
+.quiz-result-cta:hover{
+  background:var(--g2);
+  box-shadow:var(--glow-g);
+  transform:translateY(-2px);
+}
+
+/* ── FORMATION ── */
+.formation{
+  padding:100px 0;
+  background:var(--bg2);
+  border-top:1px solid var(--glass-border);
+  border-bottom:1px solid var(--glass-border);
+}
+.formation-header{text-align:center;margin-bottom:64px}
+.formation-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:start;
+}
+@media(max-width:720px){.formation-grid{grid-template-columns:1fr;gap:24px}}
+
+.formation-modules h3{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:18px;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:var(--g);
+  margin-bottom:20px;
+}
+.module-list{display:flex;flex-direction:column;gap:12px}
+.module-item{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:18px 20px;
+  border:1px solid var(--glass-border);
+  background:var(--glass-bg);
+  transition:border-color .2s;
+}
+.module-item:hover{border-color:rgba(0,177,64,.3)}
+.module-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;
+  color:var(--g);
+  line-height:1;
+  min-width:24px;
+}
+.module-info h4{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:16px;
+  text-transform:uppercase;letter-spacing:.06em;
+  margin-bottom:4px;
+  color:var(--w);
+}
+.module-info p{font-size:13px;color:var(--muted);line-height:1.5}
+
+.formation-perks h3{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:18px;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:var(--pk);
+  margin-bottom:20px;
+}
+.perk-list{display:flex;flex-direction:column;gap:10px;margin-bottom:36px}
+.perk-item{
+  display:flex;align-items:center;gap:12px;
+  font-size:15px;color:var(--dim);
+}
+.perk-item::before{
+  content:'';
+  width:20px;height:20px;
+  background:var(--g);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-size:12px;
+  background-repeat:no-repeat;
+  background-position:center;
+}
+.perk-item strong{color:var(--w)}
+
+.price-box{
+  border:1px solid var(--glass-border);
+  padding:28px;
+  background:rgba(0,177,64,.04);
+  text-align:center;
+  margin-top:auto;
+}
+.price-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
+.price-amount{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:64px;
+  color:var(--g);
+  line-height:1;
+  margin-bottom:4px;
+}
+.price-note{font-size:13px;color:var(--muted);margin-bottom:20px}
+.price-cta{
+  display:block;
+  padding:16px 32px;
+  background:var(--g);
+  color:#000;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px;letter-spacing:.06em;
+  text-align:center;
+  text-decoration:none;
+  transition:all .25s;
+  border:none;cursor:pointer;width:100%;
+}
+.price-cta:hover{background:var(--g2);box-shadow:var(--glow-g)}
+.price-guarantee{
+  margin-top:12px;
+  font-size:12px;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+
+/* ── TESTIMONIALS ── */
+.testimonials{padding:100px 0}
+.testimonials-header{text-align:center;margin-bottom:56px}
+.testi-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+@media(max-width:860px){.testi-grid{grid-template-columns:1fr 1fr;gap:16px}}
+@media(max-width:540px){.testi-grid{grid-template-columns:1fr;gap:12px}}
+
+.testi-card{
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  padding:24px;
+  transition:border-color .2s,transform .2s;
+}
+.testi-card:hover{
+  border-color:rgba(0,177,64,.25);
+  transform:translateY(-3px);
+}
+.testi-stars{
+  display:flex;gap:2px;
+  margin-bottom:14px;
+}
+.testi-stars span{color:var(--gold);font-size:13px}
+.testi-text{
+  font-size:14px;
+  color:var(--dim);
+  line-height:1.65;
+  margin-bottom:18px;
+  font-style:italic;
+}
+.testi-text strong{color:var(--g);font-style:normal}
+.testi-author{
+  display:flex;align-items:center;gap:10px;
+}
+.testi-avi{
+  width:36px;height:36px;
+  border-radius:50%;
+  background:var(--bg3);
+  border:1px solid var(--glass-border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+}
+.testi-name{
+  font-weight:700;font-size:13px;
+  color:var(--w);
+}
+.testi-handle{font-size:11px;color:var(--muted)}
+.testi-earned{
+  display:inline-block;
+  padding:2px 10px;
+  background:rgba(0,177,64,.12);
+  border:1px solid rgba(0,177,64,.25);
+  color:var(--g);
+  font-size:11px;font-weight:700;
+  letter-spacing:.08em;
+  margin-top:8px;
+  text-transform:uppercase;
+}
+
+/* ── FAQ ── */
+.faq{
+  padding:100px 0;
+  background:var(--bg2);
+  border-top:1px solid var(--glass-border);
+  border-bottom:1px solid var(--glass-border);
+}
+.faq-header{text-align:center;margin-bottom:56px}
+.faq-list{
+  max-width:740px;
+  margin:0 auto;
+  display:flex;flex-direction:column;gap:1px;
+}
+.faq-item{
+  border:1px solid var(--glass-border);
+  overflow:hidden;
+  margin-bottom:8px;
+}
+.faq-q{
+  width:100%;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;
+  background:var(--glass-bg);
+  cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:18px;
+  text-transform:uppercase;letter-spacing:.05em;
+  color:var(--w);
+  text-align:left;
+  border:none;
+  transition:background .2s;
+}
+.faq-q:hover{background:rgba(0,177,64,.04)}
+.faq-q .faq-icon{
+  font-size:20px;color:var(--g);
+  transition:transform .3s;
+  flex-shrink:0;margin-left:16px;
+}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-a{
+  max-height:0;overflow:hidden;
+  transition:max-height .35s ease,padding .25s;
+  padding:0 24px;
+  color:var(--dim);
+  font-size:15px;line-height:1.65;
+}
+.faq-item.open .faq-a{
+  max-height:300px;
+  padding:0 24px 20px;
+}
+
+/* ── FINAL CTA ── */
+.final-cta{
+  padding:120px 24px;
+  text-align:center;
+  background:var(--bg);
+  position:relative;
+  overflow:hidden;
+}
+.final-cta::before{
+  content:'';
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(0,177,64,.12),transparent 70%);
+  pointer-events:none;
+}
+.final-cta-label{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;
+  border:1px solid var(--g);
+  color:var(--g);
+  font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.15em;
+  margin-bottom:28px;
+}
+.final-cta h2{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(40px,7vw,80px);
+  line-height:1;
+  letter-spacing:.02em;
+  max-width:700px;margin:0 auto 20px;
+}
+.final-cta h2 .accent{color:var(--g)}
+.final-cta-sub{
+  color:var(--dim);font-size:17px;
+  max-width:500px;margin:0 auto 40px;
+  line-height:1.55;
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:20px 52px;
+  background:var(--g);
+  color:#000;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:24px;letter-spacing:.08em;
+  text-decoration:none;
+  border:none;cursor:pointer;
+  transition:all .25s;
+  position:relative;z-index:1;
+}
+.btn-primary:hover{background:var(--g2);box-shadow:var(--glow-g);transform:translateY(-3px)}
+.btn-primary .arrow{font-size:20px;transition:transform .2s}
+.btn-primary:hover .arrow{transform:translateX(4px)}
+
+.urgency-note{
+  margin-top:20px;
+  font-size:13px;
+  color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+  gap:8px;
+}
+.urgency-dot{
+  width:8px;height:8px;
+  background:var(--pk);
+  border-radius:50%;
+  animation:pulse 1.5s infinite;
+}
+
+/* ── DISCLAIMER ── */
+footer{
+  padding:48px 24px;
+  border-top:1px solid var(--glass-border);
+  text-align:center;
+}
+footer p{
+  font-size:12px;
+  color:rgba(255,255,255,.2);
+  max-width:700px;margin:0 auto 8px;
+  line-height:1.7;
+}
+footer .footer-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px;
+  color:rgba(255,255,255,.15);
+  letter-spacing:.1em;
+  margin-bottom:16px;
+}
+
+/* ── MEDIA ── */
+@media(max-width:480px){
+  nav{padding:0 16px}
+  .hero{padding:100px 16px 60px}
+}
+</style>
+</head>
+<body>
+
+<!-- MESH BACKGROUND -->
+<div class="mesh">
+  <div class="mesh-orb" style="width:600px;height:600px;top:-200px;left:-200px;background:radial-gradient(circle,rgba(0,177,64,.15),transparent 70%)"></div>
+  <div class="mesh-orb" style="width:500px;height:500px;bottom:-150px;right:-150px;background:radial-gradient(circle,rgba(255,15,123,.10),transparent 70%)"></div>
+  <div class="mesh-orb" style="width:400px;height:400px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(0,177,64,.05),transparent 70%)"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">UNDER<span>RATED</span></div>
+  <a href="#acces" class="nav-cta">Accéder →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label rv in">
+    <span></span> Méthode validée — TikTok / YouTube Shorts
+  </div>
+
+  <h1 class="rv d1">
+    J'ai gagné de l'argent<br>
+    <span class="accent">avec TikTok</span><br>
+    sans montrer<br>
+    <span class="accent-pk">mon visage</span>
+  </h1>
+
+  <p class="hero-sub rv d2">
+    En recréant du contenu <strong>Skibidi-type</strong> avec l'IA.<br>
+    Voici exactement comment j'ai fait — et comment <strong>toi tu peux répliquer ça</strong> dès cette semaine.
+  </p>
+
+  <!-- VIDEO -->
+  <div class="video-wrap rv d3" style="max-width:780px;width:100%">
+    <!-- REMPLACE CE BLOC PAR <iframe src="TON_LIEN_WISTIA_OU_YOUTUBE"> -->
+    <div class="video-placeholder" onclick="this.innerHTML='<p style=\'padding:40px;color:var(--muted);font-size:14px\'>Colle ton lien vidéo ici</p>'">
+      <div class="play-btn"></div>
+      <span class="video-label">REGARDE CETTE VIDÉO AVANT TOUT</span>
+    </div>
+  </div>
+
+  <!-- HERO STATS -->
+  <div class="hero-stats rv d4">
+    <div class="hero-stat">
+      <div class="num" data-count="4200000">0</div>
+      <div class="lbl">Vues générées</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num" data-count="12000" data-prefix="+" data-suffix="€">0</div>
+      <div class="lbl">Générés en 90 jours</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num" data-count="1" data-suffix=" épisode/jour">0</div>
+      <div class="lbl">Rythme de publication</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num" data-count="0" data-prefix="" data-suffix="% face cam">0</div>
+      <div class="lbl">Anonyme total</div>
+    </div>
+  </div>
+
+  <a href="#quiz" class="btn-primary rv d5">
+    DÉCOUVRIR LA MÉTHODE <span class="arrow">→</span>
+  </a>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="ticker">
+    <span class="ticker-item">🎬 Contenu IA viral <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🤖 Skibidi-type Series <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">💰 Monétisation TikTok <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🔥 Brand deals 30-70K€ <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">⚡ 1 épisode par jour <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🎯 Zéro face cam nécessaire <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🛠 Tools : ChatGPT + Gemini + IA image/vidéo <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">📈 Algo TikTok = ton moteur de croissance <span class="ticker-sep">·</span></span>
+    <!-- Duplicate for seamless loop -->
+    <span class="ticker-item">🎬 Contenu IA viral <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🤖 Skibidi-type Series <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">💰 Monétisation TikTok <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🔥 Brand deals 30-70K€ <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">⚡ 1 épisode par jour <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🎯 Zéro face cam nécessaire <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">🛠 Tools : ChatGPT + Gemini + IA image/vidéo <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">📈 Algo TikTok = ton moteur de croissance <span class="ticker-sep">·</span></span>
+  </div>
+</div>
+
+<!-- HOOK -->
+<section class="hook">
+  <div class="hook-inner">
+    <div class="section-label rv">La vérité que personne ne dit</div>
+    <blockquote class="rv d1">
+      Pendant que tout le monde essaie de devenir <em>influenceur</em>, les meilleurs bâtissent des <em>machines à contenu</em>.
+    </blockquote>
+    <p class="rv d2">
+      Skibidi Toilet. Fruit Love Island. Tentafruit. Ces séries ont généré des millions de vues — et leurs créateurs ne montrent <strong>jamais leur tête</strong>. Juste des persos IA, une histoire, un rythme. J'ai décrypté ça, je l'ai répliqué, et j'ai commencé à générer des revenus réels. Cette page t'explique exactement comment.
+    </p>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="story">
+  <div class="container">
+    <div class="story-grid">
+      <div class="story-avatar rv">
+        <div class="avatar-frame" style="aspect-ratio:1;max-width:400px">
+          <div class="avatar-emoji">🎯</div>
+          <div class="avatar-name">SGRRBOOM</div>
+          <div class="avatar-handle">@mathieu · Fondateur Underrated</div>
+        </div>
+      </div>
+      <div class="story-text rv d2">
+        <div class="story-tag">Mon histoire</div>
+        <h2 class="section-title">
+          J'ai essayé drop, crypto, NFT.<br>
+          <span class="accent">Puis j'ai compris</span>
+        </h2>
+        <p>
+          En 2023, j'avais essayé tout ce que la communauté "make money online" conseille. Dropshipping — marges à 10%. Crypto — portefeuille vidé. NFT — bulle éclatée.
+        </p>
+        <p>
+          Puis j'ai vu exploser les séries IA sur TikTok. <strong>Des chaînes à 500K abonnés</strong> créées par des gens anonymes avec des outils accessibles à tous. J'ai analysé leur process. J'ai compris le pattern. J'ai répliqué.
+        </p>
+        <p>
+          <span class="highlight">En 90 jours : 4,2M de vues, premiers brand deals, formation lancée.</span>
+        </p>
+        <p>
+          Aujourd'hui j'enseigne ce système à ceux qui veulent <strong>construire une vraie audience et des revenus réels</strong> sur TikTok — sans montrer leur tête, sans investissement massif, avec des outils que tu peux utiliser dès ce soir.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METHOD -->
+<section class="method">
+  <div class="container-wide">
+    <div class="method-header">
+      <div class="section-label rv">Le système en 3 étapes</div>
+      <h2 class="section-title rv d1">
+        Créer. Publier. <span class="accent">Monétiser.</span>
+      </h2>
+      <p class="rv d2" style="color:var(--dim);max-width:520px;margin:0 auto;font-size:16px">
+        C'est le seul loop qui compte. Répété chaque jour, il devient une machine.
+      </p>
+    </div>
+    <div class="method-steps">
+      <div class="step-card rv d1">
+        <div class="step-num">01</div>
+        <div class="step-icon">🤖</div>
+        <div class="step-title">Créer avec l'IA</div>
+        <p class="step-desc">
+          Scénario via <strong>ChatGPT</strong>. Visuels via Midjourney / Kling / Runway. Voix via ElevenLabs.
+          1 épisode = ~2-3h de travail. Coût réel : quelques euros.
+        </p>
+      </div>
+      <div class="step-card rv d2">
+        <div class="step-num">02</div>
+        <div class="step-icon">📱</div>
+        <div class="step-title">Publier chaque jour</div>
+        <p class="step-desc">
+          L'algo TikTok récompense la <strong>régularité</strong>. 1 épisode/jour = momentum constant.
+          Shorts YouTube en bonus. En 3 semaines tu passes de 0 à ton premier viral.
+        </p>
+      </div>
+      <div class="step-card rv d3">
+        <div class="step-num">03</div>
+        <div class="step-icon">💰</div>
+        <div class="step-title">Monétiser le tout</div>
+        <p class="step-desc">
+          <strong>Brand deals</strong> (30-70K€ deal type Oasis). <strong>Formation/méthode</strong> (97-300€, bio TikTok).
+          Creator Fund (secondaire). 3 sources, 1 contenu.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<section class="numbers-bar">
+  <div class="container-wide">
+    <div class="numbers-grid rv">
+      <div class="number-item">
+        <div class="big-num" data-count="4200000" data-suffix="M" data-divide="1000000">0</div>
+        <div class="big-lbl">Vues totales</div>
+      </div>
+      <div class="number-item">
+        <div class="big-num" data-count="90" data-suffix=" jours">0</div>
+        <div class="big-lbl">Pour atteindre 1er viral</div>
+      </div>
+      <div class="number-item">
+        <div class="big-num" data-count="3" data-suffix="€ coût/épisode">~</div>
+        <div class="big-lbl">Coût de production</div>
+      </div>
+      <div class="number-item">
+        <div class="big-num" data-count="300" data-prefix="" data-suffix="€ formation">0</div>
+        <div class="big-lbl">Prix max formation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section class="quiz-section" id="quiz">
+  <div class="container">
+    <div class="quiz-header">
+      <div class="section-label rv">Test rapide</div>
+      <h2 class="section-title rv d1">
+        Es-tu fait pour<br>
+        <span class="accent">cette méthode ?</span>
+      </h2>
+      <p class="rv d2" style="color:var(--dim);max-width:480px;margin:0 auto;font-size:16px">
+        4 questions. 60 secondes. Tu sais si ce système est fait pour toi.
+      </p>
+    </div>
+
+    <div class="quiz-wrap rv d3">
+      <div class="quiz-box" id="quiz-box">
+        <!-- Progress bars -->
+        <div class="quiz-progress" id="quiz-progress">
+          <div class="qp-bar active" id="qp-0"></div>
+          <div class="qp-bar" id="qp-1"></div>
+          <div class="qp-bar" id="qp-2"></div>
+          <div class="qp-bar" id="qp-3"></div>
+        </div>
+
+        <!-- Question display -->
+        <div id="quiz-q-display">
+          <div class="quiz-q-num" id="qnum">Question 1 / 4</div>
+          <div class="quiz-question" id="qtext"></div>
+          <div class="quiz-options" id="qopts"></div>
+        </div>
+
+        <!-- Result -->
+        <div class="quiz-result" id="quiz-result">
+          <div class="quiz-result-icon">🔥</div>
+          <div class="quiz-result-title">TU ES PRÊT(E)</div>
+          <p class="quiz-result-text">
+            Ton profil correspond exactement à ceux qui progressent avec ce système.
+            La prochaine étape : accéder à la formation et suivre le programme étape par étape.
+          </p>
+          <a href="#acces" class="quiz-result-cta">
+            ACCÉDER À LA FORMATION →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMATION -->
+<section class="formation" id="formation">
+  <div class="container-wide">
+    <div class="formation-header">
+      <div class="section-label rv">Ce que tu obtiens</div>
+      <h2 class="section-title rv d1">
+        La formation<br>
+        <span class="accent">Underrated</span>
+      </h2>
+      <p class="rv d2" style="color:var(--dim);max-width:520px;margin:0 auto;font-size:16px">
+        Tout le système. De la création du premier épisode au premier brand deal.
+      </p>
+    </div>
+
+    <div class="formation-grid">
+      <div class="formation-modules rv">
+        <h3>6 Modules complets</h3>
+        <div class="module-list">
+          <div class="module-item">
+            <div class="module-num">1</div>
+            <div class="module-info">
+              <h4>Choisir son genre viral</h4>
+              <p>Survie, romance, thriller, fantasy — comment identifier le genre qui va exploser sur ton marché cible</p>
+            </div>
+          </div>
+          <div class="module-item">
+            <div class="module-num">2</div>
+            <div class="module-info">
+              <h4>Production IA de A à Z</h4>
+              <p>ChatGPT pour le scénario, Midjourney/Kling pour les visuels, ElevenLabs pour la voix — workflow complet</p>
+            </div>
+          </div>
+          <div class="module-item">
+            <div class="module-num">3</div>
+            <div class="module-info">
+              <h4>Montage & hooks viral</h4>
+              <p>CapCut / DaVinci workflow, captions auto, structures de hook qui retiennent 95% des viewers</p>
+            </div>
+          </div>
+          <div class="module-item">
+            <div class="module-num">4</div>
+            <div class="module-info">
+              <h4>Stratégie de publication</h4>
+              <p>Horaires, hashtags, algorithme TikTok décrypté, batch recording pour tenir le rythme 1/jour</p>
+            </div>
+          </div>
+          <div class="module-item">
+            <div class="module-num">5</div>
+            <div class="module-info">
+              <h4>Monétisation directe</h4>
+              <p>Brand deals : comment trouver et closer. Formation : comment packager ta méthode et la vendre en bio</p>
+            </div>
+          </div>
+          <div class="module-item">
+            <div class="module-num">6</div>
+            <div class="module-info">
+              <h4>Scaler : équipe & automatisation</h4>
+              <p>Clippers, monteurs IA, bots Discord, systèmes CRM — comment passer de solo à machine</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="formation-perks rv d2">
+        <h3>Inclus dans la formation</h3>
+        <div class="perk-list">
+          <div class="perk-item"><span>Accès illimité à vie aux 6 modules + mises à jour</span></div>
+          <div class="perk-item"><span><strong>Prompts ChatGPT prêts à l'emploi</strong> (scénarios, titres, hooks)</span></div>
+          <div class="perk-item"><span>Templates CapCut pour montage viral</span></div>
+          <div class="perk-item"><span><strong>Communauté Discord privée</strong> — feedback + networking</span></div>
+          <div class="perk-item"><span>Analyse des séries virales qui marchent maintenant</span></div>
+          <div class="perk-item"><span><strong>Checklist 1 épisode/jour</strong> — rien à oublier</span></div>
+          <div class="perk-item"><span>Templates de DM pour approcher les brands</span></div>
+          <div class="perk-item"><span><strong>Mises à jour gratuites</strong> — les tools IA évoluent, la formation aussi</span></div>
+        </div>
+
+        <div class="price-box" id="acces">
+          <div class="price-label">Accès complet</div>
+          <div class="price-amount">297€</div>
+          <div class="price-note">Paiement unique — accès à vie</div>
+          <a href="#" class="price-cta">ACCÉDER MAINTENANT →</a>
+          <div class="price-guarantee">
+            <span>🔒</span> Paiement sécurisé
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="container-wide">
+    <div class="testimonials-header">
+      <div class="section-label rv">Ils ont appliqué la méthode</div>
+      <h2 class="section-title rv d1">
+        Résultats <span class="accent">réels</span>
+      </h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card rv d1">
+        <div class="testi-stars"><span>★★★★★</span></div>
+        <p class="testi-text">
+          "Première vidéo à <strong>800K vues</strong> en 6 jours. J'avais jamais fait de contenu de ma vie. La checklist + les prompts m'ont évité 3 mois de tâtonnement."
+        </p>
+        <div class="testi-author">
+          <div class="testi-avi">👦</div>
+          <div>
+            <div class="testi-name">Lucas R.</div>
+            <div class="testi-handle">@lucasrbt · Lyon</div>
+          </div>
+        </div>
+        <div class="testi-earned">+800K vues — semaine 1</div>
+      </div>
+      <div class="testi-card rv d2">
+        <div class="testi-stars"><span>★★★★★</span></div>
+        <p class="testi-text">
+          "J'avais peur que ça marche pas sans montrer ma tête. Maintenant ma chaîne fait <strong>2,1M vues</strong> et j'ai signé mon premier brand deal à 4 chiffres."
+        </p>
+        <div class="testi-author">
+          <div class="testi-avi">👩</div>
+          <div>
+            <div class="testi-name">Sarah M.</div>
+            <div class="testi-handle">@sarahmk · Paris</div>
+          </div>
+        </div>
+        <div class="testi-earned">1er brand deal — 2.100€</div>
+      </div>
+      <div class="testi-card rv d3">
+        <div class="testi-stars"><span>★★★★★</span></div>
+        <p class="testi-text">
+          "Module 5 sur les brand deals seul vaut 10x le prix de la formation. J'ai closé un deal <strong>Oasis</strong> grâce au template de DM exactement comme décrit."
+        </p>
+        <div class="testi-author">
+          <div class="testi-avi">🧑</div>
+          <div>
+            <div class="testi-name">Thomas B.</div>
+            <div class="testi-handle">@thomasb.create · Bordeaux</div>
+          </div>
+        </div>
+        <div class="testi-earned">Brand deal closé — 8.000€</div>
+      </div>
+      <div class="testi-card rv d1">
+        <div class="testi-stars"><span>★★★★★</span></div>
+        <p class="testi-text">
+          "Je faisais du dropshipping depuis 2 ans sans résultat. En 45 jours de série IA j'ai déjà dépassé tout ce que j'avais gagné en e-com. <strong>Le ROI est insane.</strong>"
+        </p>
+        <div class="testi-author">
+          <div class="testi-avi">🙋</div>
+          <div>
+            <div class="testi-name">Nathan V.</div>
+            <div class="testi-handle">@nathancreates · Toulouse</div>
+          </div>
+        </div>
+        <div class="testi-earned">+3.200€ / mois — jour 45</div>
+      </div>
+      <div class="testi-card rv d2">
+        <div class="testi-stars"><span>★★★★☆</span></div>
+        <p class="testi-text">
+          "J'avais 0 abonné au départ. La structure narrative skibidi-type + les hooks du module 3, c'est vraiment le secret. <strong>40K abonnés</strong> en 2 mois."
+        </p>
+        <div class="testi-author">
+          <div class="testi-avi">👨</div>
+          <div>
+            <div class="testi-name">Kilian D.</div>
+            <div class="testi-handle">@kiliand · Strasbourg</div>
+          </div>
+        </div>
+        <div class="testi-earned">40K abonnés — 60 jours</div>
+      </div>
+      <div class="testi-card rv d3">
+        <div class="testi-stars"><span>★★★★★</span></div>
+        <p class="testi-text">
+          "La communauté Discord vaut à elle seule l'investissement. Chaque jour des membres partagent leurs stats, leurs erreurs, leurs victoires. <strong>Vraie dynamique de groupe.</strong>"
+        </p>
+        <div class="testi-author">
+          <div class="testi-avi">👩</div>
+          <div>
+            <div class="testi-name">Emma F.</div>
+            <div class="testi-handle">@emmaf.stories · Nantes</div>
+          </div>
+        </div>
+        <div class="testi-earned">Community member actif</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <div class="faq-header">
+      <div class="section-label rv">Questions fréquentes</div>
+      <h2 class="section-title rv d1">
+        Tu te poses<br>
+        <span class="accent">ces questions</span>
+      </h2>
+    </div>
+    <div class="faq-list rv d2">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          J'ai zéro expérience en vidéo — c'est faisable ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Oui. La formation part de zéro. Les outils IA font 80% du travail — tu n'as pas besoin de savoir monter une vidéo, dessiner, ni avoir une belle voix. Le module 2 couvre exactement le workflow pour un débutant complet.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Combien de temps ça prend par jour ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          1 épisode par jour = environ 2-3h de travail une fois que tu maîtrises le workflow. Les 2 premières semaines peuvent prendre un peu plus le temps de s'installer. Certains membres font ça en parallèle d'un job.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Quel est le coût des outils IA ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          ChatGPT Plus : 20€/mois. Midjourney : 10€/mois. ElevenLabs : 5€/mois. Kling ou Runway selon usage. Budget total : 50-80€/mois maxi pour démarrer sérieusement. Rentabilisé dès le premier brand deal ou vente de formation.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          C'est légal de recréer ce type de contenu ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Oui. Tu ne copies pas du contenu existant — tu crées ta propre série dans un genre populaire. Skibidi-type = format narratif avec personnages IA. Tes personnages sont originaux, ton scénario est original. Comme un auteur de roman s'inspire d'un genre sans plagier.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Ça marche aussi sur YouTube Shorts / Instagram ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Oui. La stratégie principale est TikTok (algo le plus favorable pour démarrer de zéro), mais le même contenu est publié en repurposing sur YouTube Shorts et Instagram Reels. Ça multiplie la portée sans travail supplémentaire.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Quand est-ce que j'accède à la formation après paiement ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Accès immédiat après paiement. Email de confirmation + lien de connexion en moins de 2 minutes. Tu peux commencer le module 1 dans les 5 minutes suivant ton achat.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="final-cta-label rv">
+    <span class="urgency-dot"></span> Places limitées cette semaine
+  </div>
+  <h2 class="rv d1">
+    C'EST MAINTENANT<br>
+    QUE ÇA <span class="accent">COMMENCE</span>
+  </h2>
+  <p class="final-cta-sub rv d2">
+    La série que tu vas créer cette semaine sera en ligne dans 7 jours. Le premier viral peut arriver n'importe quand. La seule chose qui te sépare de ça, c'est de commencer.
+  </p>
+  <a href="#acces" class="btn-primary rv d3">
+    ACCÉDER À LA FORMATION <span class="arrow">→</span>
+  </a>
+  <div class="urgency-note rv d4">
+    <span class="urgency-dot"></span>
+    297€ · Accès à vie · Mises à jour incluses
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">UNDERRATED</div>
+  <p>
+    <strong style="color:rgba(255,255,255,.35)">Mentions légales & Avertissement sur les résultats</strong><br>
+    Les résultats présentés sur cette page sont des résultats réels obtenus par Mathieu et des membres de la formation. Ils ne sont pas représentatifs des résultats moyens. Certains membres n'obtiennent aucun résultat, d'autres en obtiennent bien davantage. Les performances dépendent entièrement de l'effort personnel, de la régularité, du contexte de marché et de la mise en application des enseignements. Aucune garantie de revenus n'est faite.
+  </p>
+  <p style="margin-top:12px">
+    © 2025 Underrated — Formation TikTok IA · Tous droits réservés
+  </p>
+</footer>
+
+<!-- SCRIPTS -->
+<script>
+// ── REVEAL ON SCROLL ──
+(function(){
+  const els = document.querySelectorAll('.rv');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  },{threshold:.12});
+  els.forEach(el => io.observe(el));
+})();
+
+// ── COUNT UP ──
+function countUp(el, target, duration, prefix, suffix, divide){
+  let start = 0;
+  const step = target / (duration / 16);
+  const timer = setInterval(() => {
+    start += step;
+    if(start >= target){ start = target; clearInterval(timer); }
+    let val = Math.floor(start);
+    if(divide){ val = (start / divide).toFixed(1); }
+    el.textContent = (prefix || '') + val + (suffix || '');
+  }, 16);
+}
+
+// Trigger count-up when element enters viewport
+const nums = document.querySelectorAll('[data-count]');
+const countObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      const el = e.target;
+      const target = parseInt(el.dataset.count);
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      const divide = el.dataset.divide ? parseFloat(el.dataset.divide) : null;
+      countUp(el, target, 1800, prefix, suffix, divide);
+      countObserver.unobserve(el);
+    }
+  });
+},{threshold:.5});
+nums.forEach(n => countObserver.observe(n));
+
+// ── QUIZ LOGIC ──
+const questions = [
+  {
+    q: "Combien de temps tu peux mettre par jour sur ce projet ?",
+    opts: [
+      "Moins d'1h — je suis très occupé",
+      "1 à 2h — je peux m'organiser",
+      "2 à 4h — je suis motivé",
+      "Plus de 4h — je veux aller vite"
+    ]
+  },
+  {
+    q: "Tu as déjà créé du contenu vidéo ?",
+    opts: [
+      "Jamais — c'est tout nouveau pour moi",
+      "Quelques essais, sans résultat",
+      "Oui régulièrement, mais sans succès viral",
+      "J'ai déjà des bases en montage / outils IA"
+    ]
+  },
+  {
+    q: "Quel est ton objectif principal avec TikTok ?",
+    opts: [
+      "Un revenu complémentaire (500-2000€/mois)",
+      "Remplacer mon salaire et quitter mon job",
+      "Construire une audience et une marque personnelle",
+      "Générer des brand deals et partenariats"
+    ]
+  },
+  {
+    q: "Tu es prêt(e) à investir dans ta formation ?",
+    opts: [
+      "Oui, si ça m'apporte un vrai retour sur investissement",
+      "Oui, j'ai compris que se former est la clé",
+      "Je veux d'abord en savoir plus sur le contenu",
+      "Oui, j'ai déjà décidé"
+    ]
+  }
+];
+
+let currentQ = 0;
+let answers = [];
+
+function renderQ(idx){
+  const q = questions[idx];
+  document.getElementById('qnum').textContent = `Question ${idx+1} / ${questions.length}`;
+  document.getElementById('qtext').textContent = q.q;
+  const optsEl = document.getElementById('qopts');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = opt;
+    btn.onclick = () => selectOpt(i, btn);
+    optsEl.appendChild(btn);
+  });
+  // Update progress bars
+  for(let j=0;j<questions.length;j++){
+    const bar = document.getElementById('qp-'+j);
+    if(j < idx) bar.className = 'qp-bar done';
+    else if(j === idx) bar.className = 'qp-bar active';
+    else bar.className = 'qp-bar';
+  }
+}
+
+function selectOpt(i, btn){
+  // Highlight selection
+  document.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[currentQ] = i;
+  // Auto-advance after short delay
+  setTimeout(() => {
+    currentQ++;
+    if(currentQ < questions.length){
+      renderQ(currentQ);
+    } else {
+      // Mark all bars done
+      for(let j=0;j<questions.length;j++){
+        document.getElementById('qp-'+j).className = 'qp-bar done';
+      }
+      document.getElementById('quiz-q-display').style.display='none';
+      const result = document.getElementById('quiz-result');
+      result.classList.add('show');
+    }
+  }, 380);
+}
+
+// Init quiz
+renderQ(0);
+
+// ── FAQ ACCORDION ──
+function toggleFaq(btn){
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  // Toggle current
+  if(!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>
