@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 08:39 — `574aaa3`
+feat: notes - load full Notion clone via iframe (notes.html), pass user context
+
 ## 05/05/2026 08:33 — `f9ed720`
 feat: merge dashboard into index.html, add Notes section (public/private), delete old index
 
