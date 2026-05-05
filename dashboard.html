@@ -976,13 +976,61 @@ function buildPhaseColumns() {
   const grid = document.getElementById('phases-grid-dynamic');
   if (!grid) return;
   const phases = getPhases();
+  const allSuggestions = getSuggestions();
   const isAdmin = SESSION && SESSION.isAdmin;
+  const names = { mathieu:'MATHIEU', bastien:'BASTIEN', theo:'THÉO', ilame:'ILAME' };
+
   grid.innerHTML = phases.map((ph, i) => {
     const isP1 = ph.id === 'p1', isP2 = ph.id === 'p2';
     const colCls = isP1 ? 'ph1' : isP2 ? 'ph2' : 'ph-custom';
     const delBtn = isAdmin && !isP1 && !isP2
       ? `<button class="ph-col-del" onclick="deletePhase('${ph.id}')" title="Supprimer cette phase">✕</button>` : '';
     const styleAttr = colCls === 'ph-custom' ? ` style="--ph-rgb:${ph.color};background:rgba(${ph.color},.04);border:1px solid rgba(${ph.color},.2)"` : '';
+
+    const phaseSuggestions = allSuggestions.filter(s => s.phaseId === ph.id);
+
+    // Admin: review pending suggestions
+    const adminSgHtml = isAdmin && phaseSuggestions.length ? `
+      <div class="mc-pending" style="margin-top:14px">
+        <div class="mc-pending-title">
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          ${phaseSuggestions.length} suggestion${phaseSuggestions.length > 1 ? 's' : ''}
+        </div>
+        ${phaseSuggestions.map(sg => `
+          <div class="mc-suggestion">
+            <div class="sg-meta">${names[sg.authorKey] || sg.authorKey}</div>
+            ${sg.text}
+            <div class="sg-actions">
+              <button class="sg-approve" onclick="approveSuggestion(${sg.id})">Approuver</button>
+              <button class="sg-reject" onclick="rejectSuggestion(${sg.id})">Refuser</button>
+            </div>
+          </div>`).join('')}
+      </div>` : '';
+
+    // Non-admin: suggest input + their pending suggestions
+    const myKey = SESSION ? SESSION.key : null;
+    const myPending = !isAdmin ? phaseSuggestions.filter(s => s.authorKey === myKey) : [];
+    const myPendingHtml = myPending.length ? `
+      <div class="mc-pending" style="margin-top:10px">
+        <div class="mc-pending-title">Tes suggestions en attente</div>
+        ${myPending.map(sg => `<div class="mc-suggestion" style="cursor:default">${sg.text}</div>`).join('')}
+      </div>` : '';
+
+    const suggestBtn = !isAdmin ? `
+      <button class="mc-suggest-btn" onclick="toggleSuggestInput('${ph.id}')" style="margin-top:10px;width:100%;justify-content:center">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Suggérer une tâche
+      </button>
+      <div class="mc-suggest-input-wrap" id="sg-input-${ph.id}">
+        <textarea class="mc-suggest-input" rows="2" placeholder="Décris la tâche à ajouter…"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitSuggestion('${ph.id}')}"></textarea>
+        <div class="mc-suggest-actions">
+          <button class="mc-suggest-submit" onclick="submitSuggestion('${ph.id}')">Envoyer</button>
+          <button class="mc-suggest-cancel" onclick="toggleSuggestInput('${ph.id}')">Annuler</button>
+        </div>
+      </div>
+      ${myPendingHtml}` : '';
+
     return `<div class="phase-col ${colCls} rv d${i+2}"${styleAttr}>
       ${delBtn}
       <span class="ph-badge">${ph.badge}</span>
@@ -995,6 +1043,7 @@ function buildPhaseColumns() {
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Ajouter une tâche
       </div>
+      ${adminSgHtml}${suggestBtn}
     </div>`;
   }).join('');
   buildPhaseTasks();
@@ -1102,8 +1151,8 @@ function getSuggestions() {
 function saveSuggestions(arr) {
   localStorage.setItem('ur_suggestions', JSON.stringify(arr));
 }
-function toggleSuggestInput(key) {
-  const wrap = document.getElementById('sg-input-' + key);
+function toggleSuggestInput(phaseId) {
+  const wrap = document.getElementById('sg-input-' + phaseId);
   if (!wrap) return;
   const isOpen = wrap.classList.contains('open');
   wrap.classList.toggle('open', !isOpen);
@@ -1112,31 +1161,34 @@ function toggleSuggestInput(key) {
     if (ta) { ta.value = ''; ta.focus(); }
   }
 }
-function submitSuggestion(key) {
-  const wrap = document.getElementById('sg-input-' + key);
+function submitSuggestion(phaseId) {
+  const wrap = document.getElementById('sg-input-' + phaseId);
   const ta = wrap ? wrap.querySelector('.mc-suggest-input') : null;
   if (!ta) return;
   const text = ta.value.trim();
   if (!text) return;
   const suggestions = getSuggestions();
-  suggestions.push({ id: Date.now() + Math.random(), personKey: key, authorKey: SESSION.key, text, ts: Date.now() });
+  suggestions.push({ id: Date.now() + Math.random(), phaseId, authorKey: SESSION.key, text, ts: Date.now() });
   saveSuggestions(suggestions);
   wrap.classList.remove('open');
-  buildEquipe();
+  buildPhaseColumns();
 }
 function approveSuggestion(id) {
   const suggestions = getSuggestions();
   const sg = suggestions.find(s => s.id == id);
   if (!sg) return;
-  const cards = getMemberCards();
-  cards[sg.personKey].tasks.push(sg.text);
-  saveMemberCards(cards);
+  const tasks = getSavedTasks();
+  if (!tasks[sg.authorKey]) tasks[sg.authorKey] = JSON.parse(JSON.stringify(DEFAULT_TASKS[sg.authorKey] || {}));
+  if (!tasks[sg.authorKey][sg.phaseId]) tasks[sg.authorKey][sg.phaseId] = [];
+  tasks[sg.authorKey][sg.phaseId].push(sg.text);
+  saveTasks(tasks);
   saveSuggestions(suggestions.filter(s => s.id != id));
-  buildEquipe();
+  buildPhaseColumns();
+  buildAdminOverview();
 }
 function rejectSuggestion(id) {
   saveSuggestions(getSuggestions().filter(s => s.id != id));
-  buildEquipe();
+  buildPhaseColumns();
 }
 function mcSaveRole(key, el) {
   const cards = getMemberCards();
@@ -1205,57 +1257,12 @@ function buildEquipe() {
       return `<li><span class="mc-txt">${t}</span></li>`;
     }).join('');
 
-    // Admin: add button + pending suggestions to review
-    let bottomContent = '';
-    if (isAdmin) {
-      const sgHtml = cardSuggestions.length ? `
-        <div class="mc-pending">
-          <div class="mc-pending-title">
-            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            ${cardSuggestions.length} suggestion${cardSuggestions.length > 1 ? 's' : ''} en attente
-          </div>
-          ${cardSuggestions.map(sg => `
-            <div class="mc-suggestion">
-              <div class="sg-meta">${names[sg.authorKey] || sg.authorKey}</div>
-              ${sg.text}
-              <div class="sg-actions">
-                <button class="sg-approve" onclick="approveSuggestion(${sg.id})">Approuver</button>
-                <button class="sg-reject" onclick="rejectSuggestion(${sg.id})">Refuser</button>
-              </div>
-            </div>`).join('')}
-        </div>` : '';
-      bottomContent = `
-        <div class="mc-add-btn" onclick="mcAddTask('${key}')">
-          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Ajouter
-        </div>
-        ${sgHtml}`;
-    } else if (isMe) {
-      // Non-admin on their own card: suggest button + pending their suggestions (read-only)
-      const mySuggestions = cardSuggestions.filter(s => s.authorKey === myKey);
-      const pendingHtml = mySuggestions.length ? `
-        <div class="mc-pending" style="margin-top:8px">
-          <div class="mc-pending-title">Tes suggestions (en attente)</div>
-          ${mySuggestions.map(sg => `
-            <div class="mc-suggestion" style="cursor:default">
-              ${sg.text}
-            </div>`).join('')}
-        </div>` : '';
-      bottomContent = `
-        <button class="mc-suggest-btn" onclick="toggleSuggestInput('${key}')">
-          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Suggérer une tâche
-        </button>
-        <div class="mc-suggest-input-wrap" id="sg-input-${key}">
-          <textarea class="mc-suggest-input" rows="2" placeholder="Ex: Créer les sous-titres auto pour chaque épisode…"
-            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitSuggestion('${key}')}"></textarea>
-          <div class="mc-suggest-actions">
-            <button class="mc-suggest-submit" onclick="submitSuggestion('${key}')">Envoyer</button>
-            <button class="mc-suggest-cancel" onclick="toggleSuggestInput('${key}')">Annuler</button>
-          </div>
-        </div>
-        ${pendingHtml}`;
-    }
+    // Admin only: add button
+    const bottomContent = isAdmin ? `
+      <div class="mc-add-btn" onclick="mcAddTask('${key}')">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Ajouter
+      </div>` : '';
 
     const meTag = isMe ? `<div class="me-tag">MOI</div>` : '';
     const roleEl = isAdmin
