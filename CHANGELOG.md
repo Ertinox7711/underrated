@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:34 — `81edae9`
+fix: code review - admin guard, dead CSS, type=password, saveTaskEdit live idx
+
 ## 05/05/2026 07:30 — `d4d234b`
 feat: login simplifié - pseudo + mdp, admin gère les mots de passe
 

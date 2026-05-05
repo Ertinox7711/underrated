@@ -1,8 +1,8 @@
 {
-  "commit": "d4d234b",
-  "message": "feat: login simplifié - pseudo + mdp, admin gère les mots de passe",
-  "commitDate": "2026-05-05T07:30:23+02:00",
-  "buildDate": "2026-05-05T05:30:39Z",
-  "buildDateFR": "05/05/2026 07:30",
+  "commit": "81edae9",
+  "message": "fix: code review - admin guard, dead CSS, type=password, saveTaskEdit live idx",
+  "commitDate": "2026-05-05T07:33:55+02:00",
+  "buildDate": "2026-05-05T05:34:10Z",
+  "buildDateFR": "05/05/2026 07:34",
   "branch": "main"
 }
