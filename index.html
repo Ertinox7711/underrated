@@ -784,7 +784,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
       <label class="login-label">Mot de passe</label>
       <input class="login-input" type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
-    <button class="login-btn" onclick="doLogin()">CONNEXION</button>
+    <button class="login-btn" onclick="doLogin(document.getElementById('login-pseudo').value,document.getElementById('login-pwd').value)">CONNEXION</button>
     <div class="login-err" id="login-err"></div>
     <div style="text-align:center;margin-top:16px"><span onclick="forceReset()" style="font-size:10px;color:var(--muted);cursor:pointer;opacity:.45;font-family:'Barlow Condensed';letter-spacing:.05em">réinitialiser les accès</span></div>
   </div>
@@ -1923,9 +1923,9 @@ function colorPickerHTML(key) {
 }
 
 // ══ LOGIN ══
-function doLogin() {
-  const pseudo = document.getElementById('login-pseudo').value.trim().toLowerCase();
-  const pwd = document.getElementById('login-pwd').value;
+function doLogin(pseudoVal, pwdVal) {
+  const pseudo = (pseudoVal !== undefined ? pseudoVal : document.getElementById('login-pseudo').value).trim().toLowerCase();
+  const pwd = pwdVal !== undefined ? pwdVal : document.getElementById('login-pwd').value;
   const err = document.getElementById('login-err');
   err.style.display = 'none';
 
