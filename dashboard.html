@@ -362,6 +362,10 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .apm-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block}
 .apm-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:rgba(255,255,255,.85);font-family:'Manrope',sans-serif;font-size:13px;padding:10px 13px;outline:none;transition:border-color .2s}
 .apm-input:focus{border-color:var(--b1)}
+.apm-badge-grid{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.apm-badge-opt{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border-radius:5px;border:1px solid rgba(255,255,255,.12);color:var(--muted);cursor:pointer;transition:all .18s;background:rgba(255,255,255,.03)}
+.apm-badge-opt:hover{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.7)}
+.apm-badge-opt.sel{background:rgba(30,144,255,.15);border-color:rgba(30,144,255,.4);color:var(--b1)}
 .apm-colors{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
 .apm-col-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;transition:transform .15s,outline .15s}
 .apm-col-swatch:hover{transform:scale(1.15)}
@@ -871,7 +875,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
     </div>
     <div class="apm-field">
       <label class="apm-label">Badge statut</label>
-      <input class="apm-input" id="apm-badge" placeholder="Ex: FUTURE, EN COURS, DONE…" onkeydown="if(event.key==='Enter')document.getElementById('apm-sub').focus()">
+      <div class="apm-badge-grid" id="apm-badge-grid"></div>
     </div>
     <div class="apm-field">
       <label class="apm-label">Description courte</label>
@@ -959,6 +963,8 @@ const PHASE_COLORS = [
   '30,144,255','86,204,242','79,110,247','155,89,182','231,76,60','255,107,53','255,215,0','39,174,96','93,196,138'
 ];
 let _apmColor = '79,110,247';
+let _apmBadge = 'NEXT';
+const PHASE_BADGES = ['ACTIVE','EN COURS','NEXT','FUTURE','PAUSE','DONE','URGENT','BLOQUÉ'];
 
 function getPhases() {
   try { return JSON.parse(localStorage.getItem('ur_phases') || 'null') || JSON.parse(JSON.stringify(DEFAULT_PHASES)); }
@@ -997,9 +1003,12 @@ function buildPhaseColumns() {
 function openAddPhaseModal() {
   if (!SESSION || !SESSION.isAdmin) return;
   _apmColor = '79,110,247';
+  _apmBadge = 'NEXT';
   document.getElementById('apm-name').value = '';
-  document.getElementById('apm-badge').value = '';
   document.getElementById('apm-sub').value = '';
+  document.getElementById('apm-badge-grid').innerHTML = PHASE_BADGES.map(b =>
+    `<div class="apm-badge-opt${b === _apmBadge ? ' sel' : ''}" onclick="apmSelectBadge('${b}',this)">${b}</div>`
+  ).join('');
   // Build color swatches
   document.getElementById('apm-colors').innerHTML = PHASE_COLORS.map(c =>
     `<div class="apm-col-swatch${c === _apmColor ? ' sel' : ''}"
@@ -1010,6 +1019,10 @@ function openAddPhaseModal() {
   setTimeout(() => document.getElementById('apm-name').focus(), 80);
 }
 function closeAddPhaseModal() { document.getElementById('add-phase-modal').classList.remove('open'); }
+function apmSelectBadge(b, el) {
+  _apmBadge = b;
+  document.querySelectorAll('.apm-badge-opt').forEach(s => s.classList.toggle('sel', s === el));
+}
 function apmSelectColor(c, el) {
   _apmColor = c;
   document.querySelectorAll('.apm-col-swatch').forEach(s => s.classList.toggle('sel', s === el));
@@ -1017,7 +1030,7 @@ function apmSelectColor(c, el) {
 function confirmAddPhase() {
   const name = document.getElementById('apm-name').value.trim();
   if (!name) { document.getElementById('apm-name').focus(); return; }
-  const badge = document.getElementById('apm-badge').value.trim() || 'SOON';
+  const badge = _apmBadge || 'NEXT';
   const sub   = document.getElementById('apm-sub').value.trim() || '';
   const phases = getPhases();
   const id = 'p_' + Date.now();
