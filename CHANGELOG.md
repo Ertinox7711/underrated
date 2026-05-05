@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 23:01 — `03e00d2`
+fix: suggestions only visible to author, delete own suggestion button
+
 ## 05/05/2026 22:54 — `c59ee9c`
 feat: email-based login (ertidiscord, bastlusso, wawa22500)
 
