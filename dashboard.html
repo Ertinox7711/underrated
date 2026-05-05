@@ -287,6 +287,35 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .f-desc{font-size:11px;color:rgba(255,255,255,.5);line-height:1.5}
 .f-arrow{font-size:16px;color:rgba(30,144,255,.35);text-align:center;margin-bottom:6px}
 
+/* ══ ADMIN TABS ══ */
+.admin-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.atab{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:6px;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all var(--ease)}
+.atab:hover{color:var(--text);border-color:var(--border-hi)}
+.atab.active{background:rgba(30,144,255,.12);border-color:rgba(30,144,255,.3);color:var(--b1)}
+.atab[data-who="mathieu"].active{background:rgba(30,144,255,.12);border-color:rgba(30,144,255,.3);color:var(--b1)}
+.atab[data-who="bastien"].active{background:rgba(155,89,182,.12);border-color:rgba(155,89,182,.3);color:#B07FD4}
+.atab[data-who="theo"].active{background:rgba(79,110,247,.12);border-color:rgba(79,110,247,.3);color:var(--b4)}
+.atab[data-who="ilame"].active{background:rgba(39,174,96,.12);border-color:rgba(39,174,96,.3);color:#5DC48A}
+/* Member preview */
+.member-preview{display:none}
+.member-preview.active{display:block}
+.mp-header{display:flex;align-items:center;gap:16px;padding:20px 24px;border-radius:var(--r);margin-bottom:20px}
+.mp-name{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.06em}
+.mp-role{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.mp-badge{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:3px;margin-left:auto}
+.mp-phases{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mp-phase{border-radius:var(--r);padding:22px}
+.mp-phase-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.05em;margin-bottom:14px}
+.mp-tasks{display:flex;flex-direction:column;gap:6px}
+.mp-task{display:flex;align-items:flex-start;gap:8px;padding:9px 11px;border-radius:7px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}
+.mp-task-txt{font-size:11.5px;color:rgba(255,255,255,.6);line-height:1.4;flex:1;outline:none}
+.mp-task-txt[contenteditable="true"]{border-bottom:1px dashed rgba(255,255,255,.2)}
+.mp-del{cursor:pointer;color:rgba(255,80,80,.4);font-size:14px;flex-shrink:0;transition:color var(--ease)}
+.mp-del:hover{color:rgba(255,80,80,.8)}
+.mp-add{display:flex;align-items:center;gap:6px;padding:8px 11px;border-radius:7px;background:rgba(255,255,255,.025);border:1px dashed rgba(255,255,255,.1);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:4px;transition:all var(--ease)}
+.mp-add:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.6)}
+@media(max-width:700px){.mp-phases{grid-template-columns:1fr}}
+
 /* ══ ADMIN PAGE ══ */
 .admin-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:32px}
 .admin-member-card{padding:20px;position:relative}
@@ -400,10 +429,17 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
       Stratégie
     </div>
     <!-- Admin only -->
-    <div class="sb-item admin-only" id="sb-admin-btn" data-page="admin" onclick="goto('admin')" style="display:none">
+    <div class="sb-item admin-only" id="sb-admin-btn" data-page="admin" onclick="gotoAdmin('global')" style="display:none">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       Admin
       <span class="admin-badge">CEO</span>
+    </div>
+    <div class="sb-sub" id="admin-sub">
+      <div class="sb-sub-item" data-amember="global" onclick="gotoAdmin('global')"><div class="sb-sub-dot"></div>Vue globale</div>
+      <div class="sb-sub-item" data-amember="mathieu" onclick="gotoAdmin('mathieu')"><div class="sb-sub-dot" style="border-color:var(--b1)"></div>Mathieu</div>
+      <div class="sb-sub-item" data-amember="bastien" onclick="gotoAdmin('bastien')"><div class="sb-sub-dot" style="border-color:#9B59B6"></div>Bastien</div>
+      <div class="sb-sub-item" data-amember="theo" onclick="gotoAdmin('theo')"><div class="sb-sub-dot" style="border-color:var(--b3)"></div>Théo</div>
+      <div class="sb-sub-item" data-amember="ilame" onclick="gotoAdmin('ilame')"><div class="sb-sub-dot" style="border-color:#27AE60"></div>Ilame</div>
     </div>
   </nav>
   <div class="sb-footer">
@@ -686,21 +722,31 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
   <div class="page" id="p-admin">
     <div class="ph">
       <div class="ph-eye">Admin — Vue CEO</div>
-      <div class="ph-title">GESTION <em>ÉQUIPE</em></div>
-      <div class="ph-sub">Vue globale sur toutes les tâches. Clique sur n'importe quelle tâche pour la modifier. Les changements sont sauvegardés localement.</div>
+      <div class="ph-title" id="admin-page-title">GESTION <em>ÉQUIPE</em></div>
+      <div class="ph-sub" id="admin-page-sub">Tâches éditables, mots de passe, preview des vues membres.</div>
     </div>
     <div class="pc">
-      <!-- Gestion accès -->
-      <div class="gc rv d1" style="padding:22px;margin-bottom:24px">
-        <div class="sec-lbl">Accès équipe</div>
-        <div class="sec-h2" style="font-size:20px;margin-bottom:16px">MOTS DE PASSE</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px" id="admin-pwd-grid">
-          <!-- Généré par JS -->
+      <!-- Tab bar -->
+      <div class="admin-tabs rv d1">
+        <div class="atab active" data-who="global" onclick="gotoAdmin('global')">Vue globale</div>
+        <div class="atab" data-who="mathieu" onclick="gotoAdmin('mathieu')">Mathieu</div>
+        <div class="atab" data-who="bastien" onclick="gotoAdmin('bastien')">Bastien</div>
+        <div class="atab" data-who="theo" onclick="gotoAdmin('theo')">Théo</div>
+        <div class="atab" data-who="ilame" onclick="gotoAdmin('ilame')">Ilame</div>
+      </div>
+
+      <!-- Vue globale -->
+      <div id="admin-tab-global">
+        <div class="gc rv d2" style="padding:22px;margin-bottom:24px">
+          <div class="sec-lbl">Accès équipe</div>
+          <div class="sec-h2" style="font-size:20px;margin-bottom:16px">MOTS DE PASSE</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px" id="admin-pwd-grid"></div>
         </div>
+        <div class="admin-overview" id="admin-overview"></div>
       </div>
-      <div class="admin-overview" id="admin-overview">
-        <!-- Généré par JS -->
-      </div>
+
+      <!-- Member previews (generated by JS) -->
+      <div id="admin-tab-member" style="display:none"></div>
     </div>
   </div>
 
@@ -1024,12 +1070,120 @@ function goto(page) {
   const nav = document.querySelector('.sb-item[data-page="' + page + '"]');
   if (nav) nav.classList.add('active');
   document.querySelector('.main').scrollTop = 0;
-  const sub = document.getElementById('phases-sub');
-  sub.classList.toggle('open', page === 'phases');
+  document.getElementById('phases-sub').classList.toggle('open', page === 'phases');
+  document.getElementById('admin-sub').classList.toggle('open', page === 'admin');
   if (page === 'audit') {
     const iframe = document.getElementById('audit-iframe');
     if (!iframe.src || iframe.src === 'about:blank') iframe.src = 'audit-underrated.html';
   }
+}
+
+function gotoAdmin(who) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  goto('admin');
+  // Sync sidebar sub-items
+  document.querySelectorAll('#admin-sub .sb-sub-item').forEach(i =>
+    i.classList.toggle('active', i.dataset.amember === who));
+  // Sync tab bar
+  document.querySelectorAll('.admin-tabs .atab').forEach(t =>
+    t.classList.toggle('active', t.dataset.who === who));
+  // Show/hide sections
+  const isGlobal = who === 'global';
+  document.getElementById('admin-tab-global').style.display = isGlobal ? '' : 'none';
+  document.getElementById('admin-tab-member').style.display = isGlobal ? 'none' : '';
+  if (!isGlobal) buildMemberPreview(who);
+  // Update header
+  const acc = ACCOUNTS[who];
+  document.getElementById('admin-page-title').innerHTML = isGlobal
+    ? 'GESTION <em>ÉQUIPE</em>'
+    : `PREVIEW — <em>${acc ? acc.name : who.toUpperCase()}</em>`;
+  document.getElementById('admin-page-sub').textContent = isGlobal
+    ? 'Tâches éditables, mots de passe, preview des vues membres.'
+    : `Vue de ${acc ? acc.name : who} — modifie ses tâches directement, il verra les changements à sa prochaine connexion.`;
+}
+
+function buildMemberPreview(key) {
+  const acc = ACCOUNTS[key];
+  if (!acc) return;
+  const tasks = getSavedTasks();
+  const myTasks = tasks[key] || DEFAULT_TASKS[key] || { p1:[], p2:[] };
+  const colors = { mathieu:'#1E90FF', bastien:'#9B59B6', theo:'#4F6EF7', ilame:'#27AE60' };
+  const bgColors = { mathieu:'rgba(30,144,255,.06)', bastien:'rgba(155,89,182,.06)', theo:'rgba(79,110,247,.06)', ilame:'rgba(39,174,96,.06)' };
+  const borderColors = { mathieu:'rgba(30,144,255,.2)', bastien:'rgba(155,89,182,.2)', theo:'rgba(79,110,247,.2)', ilame:'rgba(39,174,96,.2)' };
+  const col = colors[key] || '#1E90FF';
+
+  const renderPhase = (phase, label) => {
+    const list = myTasks[phase] || [];
+    return `
+      <div class="mp-phase gc" style="background:${bgColors[key]};border-color:${borderColors[key]}">
+        <div class="mp-phase-title" style="color:${col}">${label}</div>
+        <div class="mp-tasks" id="mp-tasks-${key}-${phase}">
+          ${list.length
+            ? list.map((t, i) => `
+              <div class="mp-task" data-mpkey="${key}" data-mpphase="${phase}" data-idx="${i}">
+                <span class="mp-task-txt" contenteditable="true"
+                  onblur="mpSaveTask(this,'${key}','${phase}')">${t}</span>
+                <span class="mp-del" onclick="mpDeleteTask('${key}','${phase}',${i})">✕</span>
+              </div>`).join('')
+            : `<div style="font-size:11px;color:rgba(255,255,255,.2);font-style:italic;padding:8px 0">Aucune tâche</div>`
+          }
+        </div>
+        <div class="mp-add" onclick="mpAddTask('${key}','${phase}')">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter une tâche
+        </div>
+      </div>`;
+  };
+
+  document.getElementById('admin-tab-member').innerHTML = `
+    <div class="mp-header gc rv d1" style="background:${bgColors[key]};border-color:${borderColors[key]}">
+      <div style="width:44px;height:44px;border-radius:50%;background:${col}22;border:2px solid ${col};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="font-family:'Bebas Neue';font-size:18px;color:${col}">${acc.name.charAt(0)}</span>
+      </div>
+      <div>
+        <div class="mp-name" style="color:${col}">${acc.name}</div>
+        <div class="mp-role">${acc.role}</div>
+      </div>
+      <div class="mp-badge" style="background:${col}22;border:1px solid ${col}55;color:${col}">Preview Admin</div>
+    </div>
+    <div class="mp-phases rv d2">
+      ${renderPhase('p1','PHASE 1 — SETUP')}
+      ${renderPhase('p2','PHASE 2 — LAUNCH')}
+    </div>`;
+}
+
+// ══ MEMBER PREVIEW TASK OPS ══
+function mpSaveTask(el, key, phase) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const idx = parseInt(el.closest('.mp-task')?.dataset.idx ?? '-1');
+  if (idx < 0) return;
+  const tasks = getSavedTasks();
+  if (!tasks[key]) tasks[key] = JSON.parse(JSON.stringify(DEFAULT_TASKS[key] || {p1:[],p2:[]}));
+  if (tasks[key][phase]) tasks[key][phase][idx] = el.textContent.trim();
+  saveTasks(tasks);
+}
+function mpDeleteTask(key, phase, idx) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const tasks = getSavedTasks();
+  if (!tasks[key]) tasks[key] = JSON.parse(JSON.stringify(DEFAULT_TASKS[key] || {p1:[],p2:[]}));
+  if (tasks[key][phase]) { tasks[key][phase].splice(idx, 1); saveTasks(tasks); }
+  buildMemberPreview(key);
+}
+function mpAddTask(key, phase) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const tasks = getSavedTasks();
+  if (!tasks[key]) tasks[key] = JSON.parse(JSON.stringify(DEFAULT_TASKS[key] || {p1:[],p2:[]}));
+  if (!tasks[key][phase]) tasks[key][phase] = [];
+  tasks[key][phase].push('Nouvelle tâche');
+  saveTasks(tasks);
+  buildMemberPreview(key);
+  setTimeout(() => {
+    const container = document.getElementById(`mp-tasks-${key}-${phase}`);
+    if (container) {
+      const last = container.querySelectorAll('.mp-task-txt');
+      if (last.length) { const el = last[last.length-1]; el.focus(); document.execCommand('selectAll',false,null); }
+    }
+  }, 50);
 }
 
 function gotoPhase(person) {
