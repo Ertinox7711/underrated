@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 08:03 — `75c51b7`
+feat: equipe page - admin can edit member card role + tasks inline
+
 ## 05/05/2026 07:57 — `ae00e82`
 style: animations plus lentes, shimmer sur item sidebar actif
 

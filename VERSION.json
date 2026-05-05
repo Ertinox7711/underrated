@@ -1,8 +1,8 @@
 {
-  "commit": "ae00e82",
-  "message": "style: animations plus lentes, shimmer sur item sidebar actif",
-  "commitDate": "2026-05-05T07:57:34+02:00",
-  "buildDate": "2026-05-05T05:57:48Z",
-  "buildDateFR": "05/05/2026 07:57",
+  "commit": "75c51b7",
+  "message": "feat: equipe page - admin can edit member card role + tasks inline",
+  "commitDate": "2026-05-05T08:03:24+02:00",
+  "buildDate": "2026-05-05T06:03:41Z",
+  "buildDateFR": "05/05/2026 08:03",
   "branch": "main"
 }
