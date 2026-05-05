@@ -1,8 +1,8 @@
 {
-  "commit": "0fa7484",
-  "message": "feat: hub offres - SVG icons per feature + expandable description rows + desc editable in admin mode",
-  "commitDate": "2026-05-05T20:14:48+02:00",
-  "buildDate": "2026-05-05T18:14:59Z",
-  "buildDateFR": "05/05/2026 20:14",
+  "commit": "ecfcac5",
+  "message": "feat: espace equipe - tasks, notes auto-save, drag-drop screenshots per member",
+  "commitDate": "2026-05-05T21:45:48+02:00",
+  "buildDate": "2026-05-05T19:46:07Z",
+  "buildDateFR": "05/05/2026 21:46",
   "branch": "main"
 }

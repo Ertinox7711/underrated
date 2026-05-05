@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 21:46 — `ecfcac5`
+feat: espace equipe - tasks, notes auto-save, drag-drop screenshots per member
+
 ## 05/05/2026 20:14 — `0fa7484`
 feat: hub offres - SVG icons per feature + expandable description rows + desc editable in admin mode
 
