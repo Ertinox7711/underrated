@@ -2606,6 +2606,10 @@ function addStarterBlocks() {
 }
 
 onAuthStateChanged(auth, (firebaseUser) => {
+  // Team-mode guard: when loaded as iframe with ?user=… params, the team-mode IIFE
+  // owns state.user. Don't let Firebase auth (which never resolves to a user in team mode)
+  // null it out and force back to the login screen.
+  if (window.__TEAM) return;
   if (firebaseUser) {
     state.user = { email: firebaseUser.email, id: firebaseUser.uid };
     showApp();
@@ -10853,6 +10857,197 @@ window.renderPages = renderPages;
 // ============ LUCIDE ICON REFRESH HOOKS ============
 // Simple: hydrate once on load, then again after auth state settles. Specific renders also call refreshIcons.
 window.addEventListener('load', () => { refreshIcons(); setTimeout(refreshIcons, 500); });
+
+// ════════════════════════════════════════════════
+// TEAM MODE INTEGRATION (when loaded in iframe with ?user=… params)
+// ════════════════════════════════════════════════
+(() => {
+  const params = new URLSearchParams(location.search);
+  const teamUser = params.get('user');
+  if (!teamUser) return; // standalone mode — keep original behaviour
+
+  const teamName = decodeURIComponent(params.get('name') || teamUser);
+  const teamAdmin = params.get('admin') === '1';
+  const SHARED_WS = 'ws_team_underrated';
+  window.__TEAM = { user: teamUser, name: teamName, admin: teamAdmin };
+
+  // Inject CSS to hide login + user widget + style visibility toggle
+  const style = document.createElement('style');
+  style.textContent = `
+    body.team-mode #login-screen { display:none !important; }
+    body.team-mode .sidebar-header { display:none !important; }
+    body.team-mode .sidebar > :first-child { padding-top: 12px; }
+    .vis-toggle-btn {
+      position:absolute; top:14px; right:14px; z-index:60;
+      display:inline-flex; align-items:center; gap:5px;
+      padding:5px 11px; border-radius:6px; font-size:10.5px; font-weight:700;
+      cursor:pointer; border:1px solid; transition:all .2s;
+      letter-spacing:.06em; text-transform:uppercase;
+      font-family:'Inter','Manrope',sans-serif;
+    }
+    .vis-toggle-btn.public { background:rgba(30,144,255,.14); border-color:rgba(30,144,255,.35); color:#1E90FF; }
+    .vis-toggle-btn.public:hover { background:rgba(30,144,255,.22); }
+    .vis-toggle-btn.private { background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.15); color:rgba(255,255,255,.6); }
+    .vis-toggle-btn.private:hover { background:rgba(255,255,255,.08); color:rgba(255,255,255,.9); }
+    .vis-toggle-btn[disabled] { cursor:default; opacity:.7; }
+    .page-vis-tag { font-size:8.5px; font-weight:800; letter-spacing:.1em; color:rgba(30,144,255,.55); margin-left:4px; text-transform:uppercase; vertical-align:1px; }
+    .page-vis-tag.priv { color:rgba(255,255,255,.25); }
+  `;
+  document.head.appendChild(style);
+  document.body.classList.add('team-mode');
+
+  function waitForState(cb, tries=0) {
+    if (typeof state !== 'undefined' && typeof Storage !== 'undefined' && typeof renderPages === 'function') return cb();
+    if (tries < 120) return setTimeout(() => waitForState(cb, tries+1), 60);
+    console.error('[team-mode] state/Storage/renderPages never became available after 7.2s — integration aborted');
+  }
+
+  waitForState(() => {
+    // ── Auto-login as team member ──
+    state.user = { email: teamUser + '@team.underrated.local', id: 'team-' + teamUser };
+    state.profile = { avatar:'', displayName: teamName, email: state.user.email, createdAt: Date.now() };
+
+    // Shared workspace for the whole team
+    if (!state.workspaces) state.workspaces = [];
+    if (!state.workspaces.find(w => w.id === SHARED_WS)) {
+      state.workspaces.unshift({
+        id: SHARED_WS, name:'UNDERRATED', icon:'⚡',
+        ownerId:'team-mathieu',
+        members: [{ uid: 'team-' + teamUser, email: state.user.email, role: teamAdmin ? 'owner' : 'member' }],
+        createdAt: Date.now()
+      });
+    }
+    state.currentWorkspaceId = SHARED_WS;
+    if (!state.folders) state.folders = [];
+
+    // Load any existing local data
+    try { Storage.load(); } catch(e){ console.warn('Storage.load failed:', e); }
+    if (!state.pages) state.pages = [];
+    if (!state.blocks) state.blocks = {};
+    state.currentWorkspaceId = SHARED_WS; // ensure shared after load
+
+    // Track pages we've already seen at app startup — those are "legacy" and
+    // we must NOT silently claim ownership of them (another teammate may own them).
+    const _legacyPageIds = new Set((state.pages || []).map(p => p.id));
+
+    // Override Storage.save: localStorage only (no Firebase auth in team mode).
+    // Tag NEW pages (not in legacy set) with current user's authorKey + private visibility.
+    // Legacy pages keep their existing authorKey (or stay untagged → wsMatchPage treats as public).
+    if (Storage && Storage.save) {
+      Storage.save = function() {
+        try {
+          (state.pages || []).forEach(p => {
+            if (!_legacyPageIds.has(p.id)) {
+              if (!p.authorKey) p.authorKey = teamUser;
+              if (!p.visibility) p.visibility = 'private';
+            }
+            if (!p.workspaceId) p.workspaceId = SHARED_WS;
+          });
+          localStorage.setItem('underrated-data', JSON.stringify({
+            pages: state.pages, blocks: state.blocks, expanded: state.expanded,
+            recent: state.recent, favorites: state.favorites,
+            workspaces: state.workspaces, currentWorkspaceId: state.currentWorkspaceId,
+            folders: state.folders, profile: state.profile
+          }));
+        } catch(e){ console.warn('Save failed:', e); }
+      };
+    }
+
+    // Show app, hide login
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+
+    // ── Visibility filter ──
+    const _origMatch = window.wsMatchPage;
+    window.wsMatchPage = function(p) {
+      if (!_origMatch(p)) return false;
+      if (!p.visibility || p.visibility === 'public') return true; // legacy = public
+      return p.authorKey === teamUser; // private only for author
+    };
+
+    // ── Render ──
+    renderPages();
+    const firstVisible = state.pages.find(p => window.wsMatchPage(p));
+    if (firstVisible && typeof openPage === 'function') openPage(firstVisible.id);
+    if (typeof refreshIcons === 'function') refreshIcons();
+
+    // ── Visibility toggle button on opened page ──
+    let _paintingToggle = false;
+    function paintVisToggle() {
+      if (_paintingToggle) return; // re-entrancy guard (MutationObserver may fire from our own DOM edit)
+      _paintingToggle = true;
+      try {
+        const page = (typeof currentPage === 'function') ? currentPage() : null;
+        if (!page) { _paintingToggle = false; return; }
+        const canToggle = !page.authorKey || page.authorKey === teamUser;
+        const vis = page.visibility || 'private';
+        const editor = document.querySelector('.editor') || document.querySelector('main') || document.body;
+        if (editor && getComputedStyle(editor).position === 'static') editor.style.position = 'relative';
+
+        // If a button for the current page+vis is already present, no-op (prevents observer loop)
+        const existing = document.querySelector('.vis-toggle-btn');
+        if (existing && existing.dataset.pageId === page.id && existing.dataset.vis === vis) {
+          _paintingToggle = false; return;
+        }
+        document.querySelectorAll('.vis-toggle-btn').forEach(b => b.remove());
+
+        const btn = document.createElement('button');
+        btn.className = 'vis-toggle-btn ' + vis;
+        btn.dataset.pageId = page.id;
+        btn.dataset.vis = vis;
+        btn.innerHTML = vis === 'public'
+          ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>Public'
+          : '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Privé';
+        btn.title = canToggle ? 'Cliquer pour changer la visibilité' : 'Visibilité fixée par l\'auteur';
+        if (!canToggle) btn.disabled = true;
+        if (canToggle) {
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            const newVis = (page.visibility || 'private') === 'public' ? 'private' : 'public';
+            page.visibility = newVis;
+            if (!page.authorKey) page.authorKey = teamUser;
+            Storage.save();
+            renderPages();
+            paintVisToggle();
+          };
+        }
+        editor.appendChild(btn);
+      } catch(e){ console.warn('paintVisToggle failed:', e); }
+      finally { _paintingToggle = false; }
+    }
+    // Module-scope `openPage` cannot be patched via window.openPage (internal callers
+    // reference the bare identifier, not window.openPage). Use a MutationObserver
+    // on the editor area to repaint the visibility toggle whenever the page changes.
+    setTimeout(() => {
+      const editor = document.querySelector('.editor') || document.querySelector('main');
+      if (!editor) { setTimeout(paintVisToggle, 250); return; }
+      let _repaintTimer = null;
+      const obs = new MutationObserver(() => {
+        clearTimeout(_repaintTimer);
+        _repaintTimer = setTimeout(paintVisToggle, 80);
+      });
+      obs.observe(editor, { childList:true, subtree:true });
+      paintVisToggle();
+    }, 200);
+
+    // postMessage from parent: new note request
+    window.addEventListener('message', (e) => {
+      const m = e.data;
+      if (m && m.type === 'new-note' && typeof createPage === 'function') {
+        const id = createPage();
+        const page = state.pages.find(p => p.id === id);
+        if (page) {
+          page.visibility = m.visibility === 'public' ? 'public' : 'private';
+          page.authorKey = teamUser;
+          page.workspaceId = SHARED_WS;
+          Storage.save();
+          renderPages();
+          setTimeout(paintVisToggle, 80);
+        }
+      }
+    });
+  });
+})();
 </script>
 </body>
 </html>
