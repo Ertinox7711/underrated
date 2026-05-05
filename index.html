@@ -634,6 +634,42 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
   .tools-tab.active{padding:16px 15px}
 }
 
+/* ══ HUB OFFRES ══ */
+.hub-tiers{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+.hub-tier{border-radius:10px;padding:24px;position:relative}
+.hub-tier.studio{background:rgba(14,20,40,.7);border:1px solid var(--border)}
+.hub-tier.elite{background:rgba(14,20,40,.7);border:1px solid rgba(155,89,182,.35);box-shadow:0 0 30px rgba(155,89,182,.06)}
+.hub-tier-badge{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px}
+.hub-tier.studio .hub-tier-badge{color:var(--b1)}
+.hub-tier.elite .hub-tier-badge{color:#9B59B6}
+.hub-tier-name{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.06em;margin-bottom:2px}
+.hub-tier-price{font-family:'Bebas Neue',sans-serif;font-size:46px;letter-spacing:.04em;line-height:1;margin-bottom:10px}
+.hub-tier.studio .hub-tier-price{color:var(--b1)}
+.hub-tier.elite .hub-tier-price{color:#9B59B6}
+.hub-tier-desc{font-size:12px;color:var(--muted);line-height:1.65}
+.hub-ft{width:100%;border-collapse:collapse;margin-bottom:8px}
+.hub-ft th{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted)}
+.hub-ft th:nth-child(2){color:var(--b1)}
+.hub-ft th:nth-child(3){color:#9B59B6}
+.hub-ft td{padding:11px 14px;font-size:12px;border-bottom:1px solid rgba(100,160,255,.05);vertical-align:middle;color:var(--muted)}
+.hub-ft td:first-child{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text)}
+.hub-ft tr:hover td{background:rgba(255,255,255,.015)}
+.hub-locked{display:inline-flex;align-items:center;gap:4px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.25)}
+.hub-edit-bar{display:flex;align-items:center;gap:10px;margin-bottom:22px;padding:12px 16px;border-radius:8px;border:1px solid rgba(30,144,255,.15);background:rgba(30,144,255,.04)}
+.hub-edit-bar.active{border-color:rgba(255,165,0,.2);background:rgba(255,165,0,.04)}
+.hub-edit-txt{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;flex:1}
+.hub-btn{padding:6px 14px;border-radius:6px;border:1px solid;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.08em;transition:opacity var(--ease);background:none}
+.hub-btn.edit{border-color:rgba(30,144,255,.3);color:var(--b1)}
+.hub-btn.save{border-color:rgba(0,200,100,.3);color:#00C864}
+.hub-btn.add{border-color:rgba(30,144,255,.2);color:var(--b2)}
+.hub-btn:hover{opacity:.75}
+.hub-del{background:none;border:none;color:rgba(255,94,125,.3);cursor:pointer;font-size:16px;line-height:1;padding:0 4px;transition:color var(--ease)}
+.hub-del:hover{color:#FF5E7D}
+[contenteditable]{outline:1px dashed rgba(255,165,0,.35);border-radius:3px;padding:1px 3px;cursor:text}
+[contenteditable]:focus{outline:1px solid rgba(255,165,0,.7);background:rgba(255,165,0,.05)}
+.hub-add-row{text-align:center;padding:14px 0}
+@media(max-width:700px){.hub-tiers{grid-template-columns:1fr}}
+
 /* ══ MOBILE ══ */
 @media(max-width:700px){
   body{flex-direction:column;overflow:hidden}
@@ -716,6 +752,10 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
     <div class="sb-item" data-page="notes" onclick="gotoNotes()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       Notes
+    </div>
+    <div class="sb-item" data-page="hub" onclick="goto('hub')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Hub Offres
     </div>
     <div class="sb-item" data-page="tools" onclick="goto('tools')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
@@ -839,6 +879,16 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
   <!-- ════ NOTES (full editor in iframe) ════ -->
   <div class="page" id="p-notes" style="padding:0;height:100vh;overflow:hidden">
     <iframe id="notes-iframe" src="about:blank" style="width:100%;height:100vh;border:none;background:var(--bg);display:block"></iframe>
+  </div>
+
+  <!-- ════ HUB OFFRES ════ -->
+  <div class="page" id="p-hub">
+    <div class="ph">
+      <div class="ph-eye">Produit</div>
+      <div class="ph-title">HUB <em>OFFRES</em></div>
+      <div class="ph-sub">STUDIO 97€ vs ELITE 1200€ — éditez directement en mode admin.</div>
+    </div>
+    <div class="pc" id="hub-content"></div>
   </div>
 
   <!-- ════ TOOLS & SÉRIE ════ -->
@@ -2180,6 +2230,135 @@ function closeAddTask() {
 }
 
 // ══ NAV ══
+// ══ HUB OFFRES ══
+let HUB_EDIT = false;
+const HUB_F_KEY = 'hub-features';
+const HUB_M_KEY = 'hub-meta';
+
+const HUB_DEFAULT_FEATURES = [
+  {name:'Création vidéo épisode', studio:'5 épisodes/mois → pay as you go', elite:'30 épisodes/mois → pay as you go', sL:false, eL:false},
+  {name:'Script gen',             studio:'🔒 Blurred',                       elite:'30 req/mois → pay as you go',         sL:true,  eL:false},
+  {name:'Comment scraper',        studio:'🔒 Blurred',                       elite:'30 req/mois → pay as you go',         sL:true,  eL:false},
+  {name:'Description + hashtags', studio:'🔒 Blurred',                       elite:'30 req/mois → pay as you go',         sL:true,  eL:false},
+  {name:'Analytics tracker',      studio:'🔒 Blurred',                       elite:'Full accès',                          sL:true,  eL:false},
+  {name:'Stats dashboard',        studio:'🔒 Blurred',                       elite:'Full accès',                          sL:true,  eL:false},
+  {name:'Marketplace TikTok',     studio:'Prix normal',                      elite:'-20% réduction',                      sL:false, eL:false},
+  {name:'Formation (modules)',    studio:'Accès complet',                    elite:'Accès complet',                       sL:false, eL:false},
+  {name:'Coaching Ilame',         studio:'—',                                elite:'Inclus',                              sL:false, eL:false},
+];
+const HUB_DEFAULT_META = {
+  sName:'STUDIO', sPrice:'97€', sDesc:'Formation complète + hub outils. Création vidéo incluse. Reste des outils verrouillés.',
+  eName:'ELITE',  ePrice:'1200€', eDesc:'Tout débloqué. Bots full, analytics, coaching Ilame, marketplace -20%.'
+};
+
+function hubData() {
+  return {
+    features: JSON.parse(localStorage.getItem(HUB_F_KEY) || 'null') || HUB_DEFAULT_FEATURES,
+    meta:     JSON.parse(localStorage.getItem(HUB_M_KEY) || 'null') || HUB_DEFAULT_META
+  };
+}
+function hubPersist(d) {
+  localStorage.setItem(HUB_F_KEY, JSON.stringify(d.features));
+  localStorage.setItem(HUB_M_KEY, JSON.stringify(d.meta));
+}
+function hubReadDOM() {
+  const d = hubData();
+  const g = (id, fb) => (document.getElementById(id)||{}).innerText || fb;
+  d.meta.sName  = g('hm-sn', d.meta.sName);
+  d.meta.sPrice = g('hm-sp', d.meta.sPrice);
+  d.meta.sDesc  = g('hm-sd', d.meta.sDesc);
+  d.meta.eName  = g('hm-en', d.meta.eName);
+  d.meta.ePrice = g('hm-ep', d.meta.ePrice);
+  d.meta.eDesc  = g('hm-ed', d.meta.eDesc);
+  d.features = [];
+  document.querySelectorAll('#hub-tbody tr[data-i]').forEach(r => {
+    d.features.push({
+      name:  (r.querySelector('[data-f="name"]') ||{}).innerText || '',
+      studio:(r.querySelector('[data-f="studio"]')||{}).innerText || '',
+      elite: (r.querySelector('[data-f="elite"]') ||{}).innerText || '',
+      sL: r.dataset.sl === '1',
+      eL: r.dataset.el === '1'
+    });
+  });
+  return d;
+}
+
+function renderHub() {
+  const cont = document.getElementById('hub-content');
+  if (!cont) return;
+  const {features, meta: m} = hubData();
+  const isAdmin = SESSION && SESSION.isAdmin;
+  const e = HUB_EDIT;
+  const ce = e ? 'contenteditable="true"' : '';
+
+  const editBar = isAdmin ? `
+    <div class="hub-edit-bar${e?' active':''}">
+      <span class="hub-edit-txt" style="color:${e?'orange':'var(--b1)'}">
+        ${e ? '✏️ Mode édition — cliquez sur n\'importe quel texte pour modifier' : '⚙️ Admin — vous pouvez modifier ce hub'}
+      </span>
+      ${e
+        ? `<button class="hub-btn add" onclick="hubAddRow()">+ Ligne</button>
+           <button class="hub-btn save" onclick="hubSaveEdit()">💾 Sauvegarder</button>`
+        : `<button class="hub-btn edit" onclick="hubToggleEdit()">✏️ Éditer</button>`}
+    </div>` : '';
+
+  const tiers = `
+    <div class="hub-tiers">
+      <div class="hub-tier studio gc rv d1">
+        <div class="hub-tier-badge">Offre 1</div>
+        <div class="hub-tier-name" id="hm-sn" ${ce}>${m.sName}</div>
+        <div class="hub-tier-price" id="hm-sp" ${ce}>${m.sPrice}</div>
+        <div class="hub-tier-desc"  id="hm-sd" ${ce}>${m.sDesc}</div>
+      </div>
+      <div class="hub-tier elite gc rv d2">
+        <div class="hub-tier-badge">Offre 2</div>
+        <div class="hub-tier-name" id="hm-en" ${ce}>${m.eName}</div>
+        <div class="hub-tier-price" id="hm-ep" ${ce}>${m.ePrice}</div>
+        <div class="hub-tier-desc"  id="hm-ed" ${ce}>${m.eDesc}</div>
+      </div>
+    </div>`;
+
+  const rows = features.map((f, i) => {
+    const sCell = (f.sL && !e)
+      ? `<td><span class="hub-locked">🔒 Blurred</span></td>`
+      : `<td data-f="studio" ${ce}>${f.studio}</td>`;
+    const eCell = (f.eL && !e)
+      ? `<td><span class="hub-locked">🔒 Blurred</span></td>`
+      : `<td data-f="elite" ${ce}>${f.elite}</td>`;
+    const del = e ? `<td style="width:28px"><button class="hub-del" onclick="hubDelRow(${i})">×</button></td>` : '';
+    return `<tr data-i="${i}" data-sl="${f.sL?1:0}" data-el="${f.eL?1:0}">
+      <td data-f="name" ${ce}>${f.name}</td>${sCell}${eCell}${del}
+    </tr>`;
+  }).join('');
+
+  const table = `
+    <div class="gc rv d3" style="overflow:hidden;padding:0;margin-bottom:${e?'0':'28px'}">
+      <table class="hub-ft">
+        <thead><tr>
+          <th>Feature</th><th>STUDIO 97€</th><th>ELITE 1200€</th>${e?'<th></th>':''}
+        </tr></thead>
+        <tbody id="hub-tbody">${rows}</tbody>
+      </table>
+    </div>
+    ${e?`<div class="hub-add-row"><button class="hub-btn add" onclick="hubAddRow()">+ Ajouter une ligne</button></div>`:''}`;
+
+  cont.innerHTML = editBar + tiers + table;
+}
+
+function hubToggleEdit() { HUB_EDIT = true; renderHub(); }
+function hubSaveEdit()   { hubPersist(hubReadDOM()); HUB_EDIT = false; renderHub(); }
+function hubDelRow(i)    { const d = hubReadDOM(); d.features.splice(i,1); hubPersist(d); renderHub(); }
+function hubAddRow() {
+  const d = hubReadDOM();
+  d.features.push({name:'Nouvelle feature', studio:'—', elite:'—', sL:false, eL:false});
+  hubPersist(d);
+  renderHub();
+  setTimeout(() => {
+    const rows = document.querySelectorAll('#hub-tbody tr[data-i]');
+    if (rows.length) rows[rows.length-1].querySelector('[data-f="name"]')?.focus();
+  }, 40);
+}
+
 function toolsTab(tab) {
   document.querySelectorAll('.tools-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tools-sb-item').forEach(i => i.classList.remove('active'));
@@ -2209,6 +2388,7 @@ function goto(page) {
     const iframe = document.getElementById('audit-iframe');
     if (!iframe.src || iframe.src === 'about:blank') iframe.src = 'audit-underrated.html';
   }
+  if (page === 'hub') renderHub();
 }
 
 function gotoAdmin(who) {
