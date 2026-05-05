@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 22:49 — `9fe3f78`
+feat: Firebase Firestore sync - real-time collaboration for all shared data
+
 ## 05/05/2026 22:39 — `d4f97d1`
 feat: bell activity feed + task-only tab badges in Espace Equipe
 

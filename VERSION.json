@@ -1,8 +1,8 @@
 {
-  "commit": "d4f97d1",
-  "message": "feat: bell activity feed + task-only tab badges in Espace Equipe",
-  "commitDate": "2026-05-05T22:38:52+02:00",
-  "buildDate": "2026-05-05T20:39:03Z",
-  "buildDateFR": "05/05/2026 22:39",
+  "commit": "9fe3f78",
+  "message": "feat: Firebase Firestore sync - real-time collaboration for all shared data",
+  "commitDate": "2026-05-05T22:49:04+02:00",
+  "buildDate": "2026-05-05T20:49:24Z",
+  "buildDateFR": "05/05/2026 22:49",
   "branch": "main"
 }
