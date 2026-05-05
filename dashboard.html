@@ -357,50 +357,18 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo"><b>UNDER</b>RATED</div>
-    <div class="login-sub" id="login-sub">War Room — Connexion</div>
-
-    <!-- Mode toggle -->
-    <div class="login-toggle">
-      <div class="ltab active" id="ltab-login" onclick="toggleMode('login')">Connexion</div>
-      <div class="ltab" id="ltab-register" onclick="toggleMode('register')">Créer un compte</div>
-    </div>
-
-    <!-- Person selector -->
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Qui es-tu ?</div>
-    <div class="person-selector" id="person-selector">
-      <div class="ps-btn" data-p="mathieu" onclick="selectPerson('mathieu')">
-        <div class="ps-name" style="color:var(--b1)">MATHIEU</div>
-        <div class="ps-role">CEO + COO</div>
-      </div>
-      <div class="ps-btn" data-p="bastien" onclick="selectPerson('bastien')">
-        <div class="ps-name" style="color:#B07FD4">BASTIEN</div>
-        <div class="ps-role">Content & Product</div>
-      </div>
-      <div class="ps-btn" data-p="theo" onclick="selectPerson('theo')">
-        <div class="ps-name" style="color:var(--b4)">THÉO</div>
-        <div class="ps-role">Infrastructure</div>
-      </div>
-      <div class="ps-btn" data-p="ilame" onclick="selectPerson('ilame')">
-        <div class="ps-name" style="color:#5DC48A">ILAME</div>
-        <div class="ps-role">Sales & Community</div>
-      </div>
-    </div>
+    <div class="login-sub">War Room — Connexion</div>
 
     <div class="login-field">
-      <label class="login-label">Email</label>
-      <input class="login-input" type="email" id="login-email" placeholder="ton@email.com" autocomplete="email">
+      <label class="login-label">Pseudo</label>
+      <input class="login-input" type="text" id="login-pseudo" placeholder="ton pseudo" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pwd').focus()">
     </div>
     <div class="login-field">
       <label class="login-label">Mot de passe</label>
-      <input class="login-input" type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')handleSubmit()">
+      <input class="login-input" type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
-    <div class="login-field" id="field-confirm" style="display:none">
-      <label class="login-label">Confirmer le mot de passe</label>
-      <input class="login-input" type="password" id="login-pwd2" placeholder="••••••••" onkeydown="if(event.key==='Enter')handleSubmit()">
-    </div>
-    <button class="login-btn" id="login-submit-btn" onclick="handleSubmit()">CONNEXION</button>
+    <button class="login-btn" onclick="doLogin()">CONNEXION</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-ok" id="login-ok"></div>
   </div>
 </div>
 
@@ -745,6 +713,14 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
       <div class="ph-sub">Vue globale sur toutes les tâches. Clique sur n'importe quelle tâche pour la modifier. Les changements sont sauvegardés localement.</div>
     </div>
     <div class="pc">
+      <!-- Gestion accès -->
+      <div class="gc rv d1" style="padding:22px;margin-bottom:24px">
+        <div class="sec-lbl">Accès équipe</div>
+        <div class="sec-h2" style="font-size:20px;margin-bottom:16px">MOTS DE PASSE</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px" id="admin-pwd-grid">
+          <!-- Généré par JS -->
+        </div>
+      </div>
       <div class="admin-overview" id="admin-overview">
         <!-- Généré par JS -->
       </div>
@@ -766,22 +742,33 @@ const ACCOUNTS = {
 };
 
 // ══ CREDENTIAL STORAGE ══
+// Format: { mathieu: 'monmdp', bastien: 'autremdp', ... }
 function getCredentials() {
-  try { return JSON.parse(localStorage.getItem('ur_credentials') || '{}'); } catch(e) { return {}; }
+  try {
+    const raw = JSON.parse(localStorage.getItem('ur_credentials') || '{}');
+    // Migrate old format { email, password } → string
+    const out = {};
+    for (const [k, v] of Object.entries(raw)) { out[k] = typeof v === 'object' ? v.password : v; }
+    return out;
+  } catch(e) { return {}; }
 }
-function saveCredential(key, email, password) {
+function saveCredential(key, password) {
   const creds = getCredentials();
-  creds[key] = { email: email.toLowerCase().trim(), password };
+  creds[key] = password;
   localStorage.setItem('ur_credentials', JSON.stringify(creds));
 }
 function hasAccount(key) {
   return !!getCredentials()[key];
 }
-// Seed Mathieu's account on first load if not present
+// Seed tous les comptes par défaut (pseudo = leur prénom)
 function seedAdmin() {
-  if (!hasAccount('mathieu')) {
-    saveCredential('mathieu', 'mathieu@underrated.com', 'mathieu2024');
+  const defaults = { mathieu:'mathieu', bastien:'bastien', theo:'theo', ilame:'ilame' };
+  const creds = getCredentials();
+  let changed = false;
+  for (const [k, v] of Object.entries(defaults)) {
+    if (!creds[k]) { creds[k] = v; changed = true; }
   }
+  if (changed) localStorage.setItem('ur_credentials', JSON.stringify(creds));
 }
 
 const PERSONS_DATA = {
@@ -812,104 +799,30 @@ const DEFAULT_TASKS = {
 };
 
 let SESSION = null;
-let selectedPerson = null;
-let loginMode = 'login'; // 'login' | 'register'
-
-// ══ MODE TOGGLE ══
-function toggleMode(mode) {
-  loginMode = mode;
-  const isReg = mode === 'register';
-  document.getElementById('ltab-login').classList.toggle('active', !isReg);
-  document.getElementById('ltab-register').classList.toggle('active', isReg);
-  document.getElementById('login-sub').textContent = isReg ? 'War Room — Créer un compte' : 'War Room — Connexion';
-  document.getElementById('field-confirm').style.display = isReg ? 'block' : 'none';
-  document.getElementById('login-submit-btn').textContent = isReg ? 'CRÉER MON COMPTE' : 'CONNEXION';
-  document.getElementById('login-err').style.display = 'none';
-  document.getElementById('login-ok').style.display = 'none';
-  document.getElementById('login-pwd').value = '';
-  document.getElementById('login-pwd2').value = '';
-  // Re-fill email hint if person selected
-  if (selectedPerson) selectPerson(selectedPerson);
-}
-
-// ══ PERSON SELECT ══
-function selectPerson(p) {
-  selectedPerson = p;
-  document.querySelectorAll('.ps-btn').forEach(b => b.classList.toggle('selected', b.dataset.p === p));
-  const creds = getCredentials();
-  if (loginMode === 'login' && creds[p]) {
-    document.getElementById('login-email').value = creds[p].email;
-  } else if (loginMode === 'register' && !creds[p]) {
-    document.getElementById('login-email').value = '';
-  } else if (loginMode === 'register' && creds[p]) {
-    document.getElementById('login-email').value = creds[p].email;
-  }
-  document.getElementById('login-err').style.display = 'none';
-  document.getElementById('login-ok').style.display = 'none';
-}
-
-function showErr(msg) {
-  const e = document.getElementById('login-err');
-  e.textContent = msg; e.style.display = 'block';
-  document.getElementById('login-ok').style.display = 'none';
-}
-function showOk(msg) {
-  const o = document.getElementById('login-ok');
-  o.textContent = msg; o.style.display = 'block';
-  document.getElementById('login-err').style.display = 'none';
-}
-
-function handleSubmit() {
-  if (loginMode === 'register') doRegister(); else doLogin();
-}
 
 // ══ LOGIN ══
 function doLogin() {
-  if (!selectedPerson) { showErr('Sélectionne ton profil'); return; }
-  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pseudo = document.getElementById('login-pseudo').value.trim().toLowerCase();
   const pwd = document.getElementById('login-pwd').value;
-  if (!email || !pwd) { showErr('Email et mot de passe requis'); return; }
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
+
+  if (!pseudo || !pwd) { err.textContent = 'Pseudo et mot de passe requis'; err.style.display = 'block'; return; }
+
+  const key = Object.keys(ACCOUNTS).find(k => k === pseudo || ACCOUNTS[k].name.toLowerCase() === pseudo);
+  if (!key) { err.textContent = 'Pseudo inconnu'; err.style.display = 'block'; return; }
 
   const creds = getCredentials();
-  const c = creds[selectedPerson];
-  if (!c) {
-    showErr('Aucun compte créé pour ce profil — clique sur "Créer un compte"');
-    return;
-  }
-  if (c.email !== email || c.password !== pwd) {
-    showErr('Email ou mot de passe incorrect');
+  if (creds[key] !== pwd) {
+    err.textContent = 'Mot de passe incorrect';
+    err.style.display = 'block';
     document.getElementById('login-pwd').value = '';
     return;
   }
 
-  SESSION = { key: selectedPerson, ...ACCOUNTS[selectedPerson] };
-  localStorage.setItem('ur_session', JSON.stringify({ key: selectedPerson }));
+  SESSION = { key, ...ACCOUNTS[key] };
+  localStorage.setItem('ur_session', JSON.stringify({ key }));
   launchApp();
-}
-
-// ══ REGISTER ══
-function doRegister() {
-  if (!selectedPerson) { showErr('Sélectionne ton profil'); return; }
-  const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const pwd = document.getElementById('login-pwd').value;
-  const pwd2 = document.getElementById('login-pwd2').value;
-  if (!email || !pwd) { showErr('Email et mot de passe requis'); return; }
-  if (pwd !== pwd2) { showErr('Les mots de passe ne correspondent pas'); return; }
-  if (pwd.length < 6) { showErr('Mot de passe trop court (6 caractères min)'); return; }
-
-  const creds = getCredentials();
-  if (creds[selectedPerson]) {
-    showErr('Compte déjà créé — connecte-toi directement');
-    return;
-  }
-
-  saveCredential(selectedPerson, email, pwd);
-  showOk('Compte créé ! Connexion en cours…');
-  setTimeout(() => {
-    SESSION = { key: selectedPerson, ...ACCOUNTS[selectedPerson] };
-    localStorage.setItem('ur_session', JSON.stringify({ key: selectedPerson }));
-    launchApp();
-  }, 900);
 }
 
 // ══ LOGOUT ══
@@ -919,15 +832,20 @@ function doLogout() {
   document.getElementById('app-sidebar').style.display = 'none';
   document.getElementById('app-main').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('login-email').value = '';
+  document.getElementById('login-pseudo').value = '';
   document.getElementById('login-pwd').value = '';
-  document.getElementById('login-pwd2').value = '';
   document.getElementById('login-err').style.display = 'none';
-  document.getElementById('login-ok').style.display = 'none';
-  document.querySelectorAll('.ps-btn').forEach(b => b.classList.remove('selected'));
-  selectedPerson = null;
-  loginMode = 'login';
-  toggleMode('login');
+}
+
+// ══ ADMIN: change password ══
+function adminSetPassword(key) {
+  const input = document.getElementById('admin-pwd-' + key);
+  const val = input.value.trim();
+  if (!val || val.length < 3) { alert('Mot de passe trop court'); return; }
+  saveCredential(key, val);
+  input.value = '';
+  input.placeholder = 'Modifié ✓';
+  setTimeout(() => { input.placeholder = '••••••••'; }, 2000);
 }
 
 function launchApp() {
@@ -946,6 +864,7 @@ function launchApp() {
   if (SESSION.isAdmin) {
     document.body.classList.add('admin-view');
     buildAdminOverview();
+    buildAdminPwdGrid();
   }
 
   // Home setup
@@ -1040,6 +959,28 @@ function buildAdminOverview() {
       </div>
     `;
   }).join('');
+}
+
+// ══ ADMIN: pwd grid ══
+function buildAdminPwdGrid() {
+  const colors = { mathieu:'var(--b1)', bastien:'#B07FD4', theo:'var(--b4)', ilame:'#5DC48A' };
+  const grid = document.getElementById('admin-pwd-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(ACCOUNTS).map(([key, acc]) => `
+    <div style="padding:14px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)">
+      <div style="font-family:'Bebas Neue';font-size:15px;letter-spacing:.06em;color:${colors[key]};margin-bottom:2px">${acc.name}</div>
+      <div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">${acc.role}</div>
+      <div style="display:flex;gap:6px">
+        <input id="admin-pwd-${key}" type="text" placeholder="••••••••"
+          style="flex:1;padding:7px 10px;border-radius:5px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-family:'Manrope';font-size:12px;outline:none"
+          onkeydown="if(event.key==='Enter')adminSetPassword('${key}')">
+        <button onclick="adminSetPassword('${key}')"
+          style="padding:7px 12px;border-radius:5px;border:none;background:rgba(30,144,255,.14);color:var(--b1);font-family:'Barlow Condensed';font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">
+          OK
+        </button>
+      </div>
+    </div>
+  `).join('');
 }
 
 // ══ TASK STORAGE ══
