@@ -151,6 +151,31 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .page{display:none;min-height:100vh}
 .page.active{display:block}
 
+/* ══ CHANGELOG PANEL ══ */
+#changelog-panel{
+  position:fixed;top:0;right:-480px;width:460px;height:100vh;z-index:9998;
+  background:rgba(8,11,20,.97);border-left:1px solid var(--border);
+  backdrop-filter:blur(32px);display:flex;flex-direction:column;
+  transition:right .35s cubic-bezier(.2,.8,.2,1);
+  box-shadow:-16px 0 60px rgba(0,0,0,.6);
+}
+#changelog-panel.open{right:0}
+.cl-header{display:flex;align-items:center;gap:10px;padding:18px 22px;border-bottom:1px solid var(--border);flex-shrink:0}
+.cl-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.08em;flex:1}
+.cl-close{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all var(--ease)}
+.cl-close:hover{border-color:var(--border-hi);color:var(--text)}
+.cl-body{flex:1;overflow-y:auto;padding:20px 22px;font-family:'Manrope',sans-serif;font-size:12px;line-height:1.7;color:rgba(255,255,255,.6)}
+.cl-body h1{font-family:'Bebas Neue';font-size:22px;letter-spacing:.06em;color:var(--text);margin:0 0 16px}
+.cl-body h2{font-family:'Bebas Neue';font-size:16px;letter-spacing:.06em;color:var(--b1);margin:20px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.cl-body h3{font-family:'Barlow Condensed';font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px}
+.cl-body p{margin:0 0 8px}
+.cl-body ul{margin:0 0 10px;padding-left:16px}
+.cl-body li{margin-bottom:3px}
+.cl-body code{font-size:11px;background:rgba(30,144,255,.08);border:1px solid rgba(30,144,255,.15);border-radius:3px;padding:1px 5px;color:var(--b2)}
+.cl-overlay{position:fixed;inset:0;z-index:9997;background:rgba(0,0,0,.4);display:none;backdrop-filter:blur(2px)}
+.cl-overlay.open{display:block}
+@media(max-width:700px){#changelog-panel{width:100%;right:-100%}}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .page.active .rv{animation:fadeUp .45s ease both}
 .page.active .rv.d1{animation-delay:.04s}.page.active .rv.d2{animation-delay:.09s}
@@ -450,7 +475,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
     </div>
   </nav>
   <div class="sb-footer">
-    <div class="ver-badge" onclick="window.open('CHANGELOG.md','_blank')">
+    <div class="ver-badge" onclick="openChangelog()">
       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(30,144,255,.5)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
       <span class="ver-txt" id="ver-txt">—</span>
     </div>
@@ -740,6 +765,19 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
   </div>
 
 </main>
+
+<!-- CHANGELOG PANEL -->
+<div class="cl-overlay" id="cl-overlay" onclick="closeChangelog()"></div>
+<div id="changelog-panel">
+  <div class="cl-header">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    <div class="cl-title">CHANGELOG</div>
+    <button class="cl-close" onclick="closeChangelog()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="cl-body" id="cl-body">Chargement…</div>
+</div>
 
 <script>
 // ══════════════════════════════════
@@ -1333,6 +1371,35 @@ function setDate() {
 }
 
 // ══ VERSION ══
+// ══ CHANGELOG PANEL ══
+function openChangelog() {
+  document.getElementById('changelog-panel').classList.add('open');
+  document.getElementById('cl-overlay').classList.add('open');
+  const body = document.getElementById('cl-body');
+  if (body.dataset.loaded) return;
+  fetch('CHANGELOG.md?t=' + Date.now())
+    .then(r => { if (!r.ok) throw new Error('404'); return r.text(); })
+    .then(md => { body.innerHTML = mdToHtml(md); body.dataset.loaded = '1'; })
+    .catch(() => { body.innerHTML = '<p style="color:var(--muted)">Impossible de charger le changelog.</p>'; });
+}
+function closeChangelog() {
+  document.getElementById('changelog-panel').classList.remove('open');
+  document.getElementById('cl-overlay').classList.remove('open');
+}
+function mdToHtml(md) {
+  return md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^\- (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, s => '<ul>' + s + '</ul>')
+    .replace(/\n\n/g,'</p><p>')
+    .replace(/^(?!<[hup])/gm, '<p>').replace(/(?<![>])$/gm, '</p>')
+    .replace(/<p><\/p>/g,'');
+}
+
 function fetchVersion() {
   fetch('VERSION.json?t=' + Date.now())
     .then(r => r.json())
