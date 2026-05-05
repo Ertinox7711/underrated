@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:55 — `95446fd`
+feat: top bar shimmer + animations ambiantes (float, pulse, dot breathe)
+
 ## 05/05/2026 07:54 — `8f02423`
 fix: reset credentials v3 - force pseudo=mdp pour tout le monde
 
