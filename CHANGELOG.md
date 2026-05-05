@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 22:29 — `75db62a`
+fix: add force reset link on login page for credential cache issues
+
 ## 05/05/2026 22:23 — `1fd0d5f`
 fix: bump CREDS_VERSION to force credential reset
 
