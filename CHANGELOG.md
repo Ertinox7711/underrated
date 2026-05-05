@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 08:49 — `119b9eb`
+feat(notes): team-mode integration - auto-login, visibility (public/private), no Firebase race, no ownership theft
+
 ## 05/05/2026 08:39 — `574aaa3`
 feat: notes - load full Notion clone via iframe (notes.html), pass user context
 

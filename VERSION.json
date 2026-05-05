@@ -1,8 +1,8 @@
 {
-  "commit": "574aaa3",
-  "message": "feat: notes - load full Notion clone via iframe (notes.html), pass user context",
-  "commitDate": "2026-05-05T08:39:35+02:00",
-  "buildDate": "2026-05-05T06:39:45Z",
-  "buildDateFR": "05/05/2026 08:39",
+  "commit": "119b9eb",
+  "message": "feat(notes): team-mode integration - auto-login, visibility (public/private), no Firebase race, no ownership theft",
+  "commitDate": "2026-05-05T08:49:27+02:00",
+  "buildDate": "2026-05-05T06:49:42Z",
+  "buildDateFR": "05/05/2026 08:49",
   "branch": "main"
 }
