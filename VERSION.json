@@ -1,8 +1,8 @@
 {
-  "commit": "3c083e4",
-  "message": "feat: login system - person selector, email/password auth, admin panel, personalized views",
-  "commitDate": "2026-05-05T07:23:23+02:00",
-  "buildDate": "2026-05-05T05:23:34Z",
-  "buildDateFR": "05/05/2026 07:23",
+  "commit": "3a0408f",
+  "message": "feat: login - toggle connexion/créer un compte, credentials en localStorage",
+  "commitDate": "2026-05-05T07:27:05+02:00",
+  "buildDate": "2026-05-05T05:27:13Z",
+  "buildDateFR": "05/05/2026 07:27",
   "branch": "main"
 }

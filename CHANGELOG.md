@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:27 — `3a0408f`
+feat: login - toggle connexion/créer un compte, credentials en localStorage
+
 ## 05/05/2026 07:23 — `3c083e4`
 feat: login system - person selector, email/password auth, admin panel, personalized views
 
