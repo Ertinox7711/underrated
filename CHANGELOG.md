@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 08:22 — `58110a4`
+feat: phase modal - badge selector instead of free text input
+
 ## 05/05/2026 08:20 — `dc52f42`
 feat: dynamic phases - create/delete custom phases, assign tasks to any member
 

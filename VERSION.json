@@ -1,8 +1,8 @@
 {
-  "commit": "dc52f42",
-  "message": "feat: dynamic phases - create/delete custom phases, assign tasks to any member",
-  "commitDate": "2026-05-05T08:19:53+02:00",
-  "buildDate": "2026-05-05T06:20:08Z",
-  "buildDateFR": "05/05/2026 08:20",
+  "commit": "58110a4",
+  "message": "feat: phase modal - badge selector instead of free text input",
+  "commitDate": "2026-05-05T08:22:36+02:00",
+  "buildDate": "2026-05-05T06:22:45Z",
+  "buildDateFR": "05/05/2026 08:22",
   "branch": "main"
 }
