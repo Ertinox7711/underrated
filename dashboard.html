@@ -329,6 +329,13 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .amc-add{display:flex;align-items:center;gap:5px;padding:7px 10px;border-radius:6px;background:rgba(255,255,255,.025);border:1px dashed rgba(255,255,255,.1);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:4px;transition:all var(--ease)}
 .amc-add:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.6)}
 
+/* ══ COLOR PICKER ══ */
+.color-picker{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.color-picker-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);width:100%}
+.cp-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all var(--ease);flex-shrink:0}
+.cp-swatch:hover{transform:scale(1.2)}
+.cp-swatch.active{border-color:#fff;transform:scale(1.15)}
+
 /* ══ STRAT ══ */
 .strat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .strat-card{padding:22px}
@@ -581,16 +588,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
           <div class="ph-bgnum">1</div>
           <div class="ph-col-title">PHASE 1</div>
           <div class="ph-col-sub">Setup — Infrastructure, outils, bases</div>
-          <div class="ph-tasks" id="tasks-p1">
-            <div class="ph-task" data-who="bastien"><span class="who w-b">Bastien</span><span class="ph-task-txt">CRM complet + tools exclusifs formation</span></div>
-            <div class="ph-task" data-who="bastien"><span class="who w-b">Bastien</span><span class="ph-task-txt">Bots de relance + automatisations</span></div>
-            <div class="ph-task" data-who="bastien"><span class="who w-b">Bastien</span><span class="ph-task-txt">Workflows de base création vidéo</span></div>
-            <div class="ph-task" data-who="theo"><span class="who w-t">Théo</span><span class="ph-task-txt">BDD + emails automatiques</span></div>
-            <div class="ph-task" data-who="theo"><span class="who w-t">Théo</span><span class="ph-task-txt">Discord — canaux, rôles, structure</span></div>
-            <div class="ph-task" data-who="theo"><span class="who w-t">Théo</span><span class="ph-task-txt">Comptes TikTok/Instagram + clippers</span></div>
-            <div class="ph-task" data-who="mathieu"><span class="who w-m">Mathieu</span><span class="ph-task-txt">Formation créée sur Teachable</span></div>
-            <div class="ph-task" data-who="mathieu"><span class="who w-m">Mathieu</span><span class="ph-task-txt">Schéma narration validé + VSL créée</span></div>
-          </div>
+          <div class="ph-tasks" id="tasks-p1"></div>
           <div class="ph-empty" id="empty-p1">Pas de tâches en Phase 1</div>
           <div class="add-task-btn" onclick="addTask('p1')">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -602,16 +600,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
           <div class="ph-bgnum">2</div>
           <div class="ph-col-title">PHASE 2</div>
           <div class="ph-col-sub">Production — Daily content, funnel, scale</div>
-          <div class="ph-tasks" id="tasks-p2">
-            <div class="ph-task" data-who="bastien"><span class="who w-b">Bastien</span><span class="ph-task-txt">Vidéos daily drop 18h (schéma Mathieu)</span></div>
-            <div class="ph-task" data-who="bastien"><span class="who w-b">Bastien</span><span class="ph-task-txt">Qualité production Gen Z garantie</span></div>
-            <div class="ph-task" data-who="mathieu"><span class="who w-m">Mathieu</span><span class="ph-task-txt">Marketing court terme + contenu conversion</span></div>
-            <div class="ph-task" data-who="ilame"><span class="who w-i">Ilame</span><span class="ph-task-txt">Closing leads froids + Discord chauds</span></div>
-            <div class="ph-task" data-who="ilame"><span class="who w-i">Ilame</span><span class="ph-task-txt">Lives Q&amp;A + mentorat élèves</span></div>
-            <div class="ph-task" data-who="theo"><span class="who w-t">Théo</span><span class="ph-task-txt">Surveillance infra + alertes si ça casse</span></div>
-            <div class="ph-task" data-who="mathieu"><span class="who w-m">Mathieu</span><span class="ph-task-txt">Gestion pubs avec Ilame</span></div>
-            <div class="ph-task" data-who="theo ilame"><span class="who w-x">Théo + Ilame</span><span class="ph-task-txt">Accompagnement perso 1200€</span></div>
-          </div>
+          <div class="ph-tasks" id="tasks-p2"></div>
           <div class="ph-empty" id="empty-p2">Pas de tâches en Phase 2</div>
           <div class="add-task-btn" onclick="addTask('p2')">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -822,6 +811,40 @@ const DEFAULT_TASKS = {
 };
 
 let SESSION = null;
+let currentPersonFilter = 'all';
+
+// ══ COLORS ══
+const DEFAULT_COLORS = { mathieu:'#1E90FF', bastien:'#9B59B6', theo:'#4F6EF7', ilame:'#27AE60' };
+const COLOR_PALETTE = ['#1E90FF','#56CCF2','#4F6EF7','#8BA8FF','#9B59B6','#E91E8C','#FF6B35','#FFD700','#27AE60','#5DC48A','#E74C3C','#AAAAAA'];
+
+function getColors() {
+  try { return { ...DEFAULT_COLORS, ...JSON.parse(localStorage.getItem('ur_colors') || '{}') }; }
+  catch(e) { return { ...DEFAULT_COLORS }; }
+}
+function saveColor(key, color) {
+  const c = getColors(); c[key] = color;
+  localStorage.setItem('ur_colors', JSON.stringify(c));
+  applyColors();
+  buildPhaseTasks();
+  if (SESSION && SESSION.isAdmin) { buildAdminOverview(); buildMemberPreview(key); }
+  else buildMyTasks();
+}
+function applyColors() {
+  const c = getColors();
+  Object.entries(c).forEach(([k, v]) => document.documentElement.style.setProperty('--c-' + k, v));
+}
+function colorPickerHTML(key) {
+  const current = getColors()[key];
+  return `<div class="color-picker">
+    <div class="color-picker-lbl">Couleur du profil</div>
+    ${COLOR_PALETTE.map(col => `
+      <div class="cp-swatch${col === current ? ' active' : ''}"
+        style="background:${col}"
+        title="${col}"
+        onclick="saveColor('${key}','${col}');document.querySelectorAll('#cp-${key} .cp-swatch').forEach(s=>s.classList.toggle('active',s.style.background==='${col}'))">
+      </div>`).join('')}
+  </div>`;
+}
 
 // ══ LOGIN ══
 function doLogin() {
@@ -918,6 +941,8 @@ function launchApp() {
     goto('home');
   }
 
+  applyColors();
+  buildPhaseTasks();
   fetchVersion();
 }
 
@@ -928,30 +953,37 @@ function buildMyTasks() {
   widget.style.display = 'block';
   const tasks = getSavedTasks();
   const myTasks = tasks[SESSION.key] || DEFAULT_TASKS[SESSION.key];
-  const person = PERSONS_DATA[SESSION.key];
-  const colors = { mathieu:'#1E90FF', bastien:'#9B59B6', theo:'#4F6EF7', ilame:'#27AE60' };
-  const col = colors[SESSION.key] || '#1E90FF';
+  const col = getColors()[SESSION.key] || '#1E90FF';
 
   grid.innerHTML = `
     <div class="mtask-col ph1c">
-      <div class="mtask-col-title">PHASE 1</div>
+      <div class="mtask-col-title" style="color:${col}">PHASE 1</div>
       ${(myTasks.p1||[]).length ? (myTasks.p1||[]).map(t=>`<div class="mtask"><div class="mtask-dot" style="background:${col}"></div>${t}</div>`).join('') : '<div style="font-size:11px;color:rgba(255,255,255,.2);font-style:italic">Pas de tâches en Phase 1</div>'}
     </div>
     <div class="mtask-col ph2c">
-      <div class="mtask-col-title">PHASE 2</div>
+      <div class="mtask-col-title" style="color:${col}">PHASE 2</div>
       ${(myTasks.p2||[]).length ? (myTasks.p2||[]).map(t=>`<div class="mtask"><div class="mtask-dot" style="background:${col}"></div>${t}</div>`).join('') : '<div style="font-size:11px;color:rgba(255,255,255,.2);font-style:italic">Pas de tâches en Phase 2</div>'}
     </div>
   `;
+  // Color picker for non-admin (change own color)
+  let cpDiv = document.getElementById('my-color-picker');
+  if (!cpDiv) {
+    cpDiv = document.createElement('div');
+    cpDiv.id = 'my-color-picker';
+    cpDiv.style.cssText = 'padding:0 36px 36px;position:relative;z-index:1';
+    widget.after(cpDiv);
+  }
+  cpDiv.innerHTML = `<div id="cp-${SESSION.key}">${colorPickerHTML(SESSION.key)}</div>`;
 }
 
 // ══ ADMIN OVERVIEW ══
 function buildAdminOverview() {
   const container = document.getElementById('admin-overview');
   const tasks = getSavedTasks();
-  const colors = { mathieu:'var(--b1)', bastien:'#B07FD4', theo:'var(--b4)', ilame:'#5DC48A' };
+  const colors = getColors();
   const whoClass = { mathieu:'w-m', bastien:'w-b', theo:'w-t', ilame:'w-i' };
-  const bgColors = { mathieu:'rgba(30,144,255,.08)', bastien:'rgba(155,89,182,.08)', theo:'rgba(79,110,247,.08)', ilame:'rgba(39,174,96,.08)' };
-  const borderColors = { mathieu:'rgba(30,144,255,.2)', bastien:'rgba(155,89,182,.2)', theo:'rgba(79,110,247,.2)', ilame:'rgba(39,174,96,.2)' };
+  const bgColors = Object.fromEntries(Object.entries(colors).map(([k,v])=>[k,v+'14']));
+  const borderColors = Object.fromEntries(Object.entries(colors).map(([k,v])=>[k,v+'44']));
 
   container.innerHTML = Object.entries(PERSONS_DATA).map(([key, p]) => {
     const saved = tasks[key] || DEFAULT_TASKS[key];
@@ -1046,19 +1078,74 @@ function adminAddTask(person, phase) {
     }
   }, 50);
 }
-// Phases page: add task (admin)
+// ══ PHASES PAGE — DYNAMIC BUILD ══
+function buildPhaseTasks() {
+  const tasks = getSavedTasks();
+  const colors = getColors();
+  const names = { mathieu:'Mathieu', bastien:'Bastien', theo:'Théo', ilame:'Ilame' };
+  const me = SESSION ? SESSION.key : null;
+  const isAdmin = SESSION && SESSION.isAdmin;
+
+  ['p1','p2'].forEach(phase => {
+    const container = document.getElementById('tasks-' + phase);
+    if (!container) return;
+    const rows = Object.keys(PERSONS_DATA).flatMap(key => {
+      const saved = tasks[key] || DEFAULT_TASKS[key] || {};
+      return (saved[phase] || []).map((t, i) => {
+        const col = colors[key];
+        const mine = me === key;
+        const editAttr = isAdmin ? `contenteditable="true" onblur="phSaveTask(this)"` : '';
+        const delBtn = isAdmin ? `<span class="amc-del" onclick="phDeleteTask(this)" style="flex-shrink:0">✕</span>` : '';
+        return `<div class="ph-task${mine ? ' mine' : ''}" data-who="${key}" data-key="${key}" data-phase="${phase}" data-idx="${i}" style="${mine ? `background:${col}11;border-color:${col}33` : ''}">
+          <span class="who" style="background:${col}22;color:${col};border-radius:3px;padding:2px 7px;font-family:'Barlow Condensed';font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0">${names[key]}</span>
+          <span class="ph-task-txt" ${editAttr}>${t}</span>
+          ${delBtn}
+        </div>`;
+      });
+    });
+    container.innerHTML = rows.join('') || `<div style="font-size:11px;color:rgba(255,255,255,.2);font-style:italic;padding:8px 0">Aucune tâche</div>`;
+  });
+  filterPerson(currentPersonFilter);
+}
+
+function phSaveTask(el) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const row = el.closest('.ph-task');
+  const { key, phase, idx } = row.dataset;
+  const tasks = getSavedTasks();
+  if (!tasks[key]) tasks[key] = JSON.parse(JSON.stringify(DEFAULT_TASKS[key] || {p1:[],p2:[]}));
+  if (tasks[key][phase]) tasks[key][phase][parseInt(idx)] = el.textContent.trim();
+  saveTasks(tasks);
+}
+
+function phDeleteTask(btn) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const row = btn.closest('.ph-task');
+  const { key, phase, idx } = row.dataset;
+  const tasks = getSavedTasks();
+  if (!tasks[key]) tasks[key] = JSON.parse(JSON.stringify(DEFAULT_TASKS[key] || {p1:[],p2:[]}));
+  tasks[key][phase].splice(parseInt(idx), 1);
+  saveTasks(tasks); buildPhaseTasks(); buildAdminOverview();
+}
+
+// Phases page: add task (admin) — auto-use active person filter
 function addTask(phase) {
   if (!SESSION || !SESSION.isAdmin) return;
-  const who = prompt('Pour qui ? (mathieu / bastien / theo / ilame)');
-  if (!who || !PERSONS_DATA[who]) return;
+  let who = currentPersonFilter;
+  if (who === 'all') {
+    who = window.prompt('Pour qui ? (mathieu / bastien / theo / ilame)');
+    if (!who || !PERSONS_DATA[who.toLowerCase()]) return;
+    who = who.toLowerCase();
+  }
   const tasks = getSavedTasks();
-  if (!tasks[who]) tasks[who] = JSON.parse(JSON.stringify(DEFAULT_TASKS[who]));
-  const txt = prompt('Tâche ?');
-  if (!txt) return;
-  tasks[who][phase].push(txt);
-  saveTasks(tasks);
-  buildAdminOverview();
-  buildMyTasks();
+  if (!tasks[who]) tasks[who] = JSON.parse(JSON.stringify(DEFAULT_TASKS[who] || {p1:[],p2:[]}));
+  if (!tasks[who][phase]) tasks[who][phase] = [];
+  tasks[who][phase].push('Nouvelle tâche');
+  saveTasks(tasks); buildPhaseTasks(); buildAdminOverview();
+  setTimeout(() => {
+    const c = document.getElementById('tasks-' + phase);
+    if (c) { const els = [...c.querySelectorAll(`.ph-task[data-key="${who}"] .ph-task-txt`)]; if (els.length) { els[els.length-1].focus(); document.execCommand('selectAll',false,null); } }
+  }, 50);
 }
 
 // ══ NAV ══
@@ -1146,6 +1233,9 @@ function buildMemberPreview(key) {
       </div>
       <div class="mp-badge" style="background:${col}22;border:1px solid ${col}55;color:${col}">Preview Admin</div>
     </div>
+    <div class="gc rv d1b" style="padding:16px 20px;margin-bottom:16px" id="cp-${key}">
+      ${colorPickerHTML(key)}
+    </div>
     <div class="mp-phases rv d2">
       ${renderPhase('p1','PHASE 1 — SETUP')}
       ${renderPhase('p2','PHASE 2 — LAUNCH')}
@@ -1167,7 +1257,7 @@ function mpDeleteTask(key, phase, idx) {
   const tasks = getSavedTasks();
   if (!tasks[key]) tasks[key] = JSON.parse(JSON.stringify(DEFAULT_TASKS[key] || {p1:[],p2:[]}));
   if (tasks[key][phase]) { tasks[key][phase].splice(idx, 1); saveTasks(tasks); }
-  buildMemberPreview(key);
+  buildMemberPreview(key); buildPhaseTasks(); buildAdminOverview();
 }
 function mpAddTask(key, phase) {
   if (!SESSION || !SESSION.isAdmin) return;
@@ -1176,7 +1266,7 @@ function mpAddTask(key, phase) {
   if (!tasks[key][phase]) tasks[key][phase] = [];
   tasks[key][phase].push('Nouvelle tâche');
   saveTasks(tasks);
-  buildMemberPreview(key);
+  buildMemberPreview(key); buildPhaseTasks(); buildAdminOverview();
   setTimeout(() => {
     const container = document.getElementById(`mp-tasks-${key}-${phase}`);
     if (container) {
@@ -1194,6 +1284,7 @@ function gotoPhase(person) {
 
 // ══ PERSON FILTER ══
 function filterPerson(person) {
+  currentPersonFilter = person;
   document.querySelectorAll('.ptab').forEach(t => t.classList.toggle('active', t.dataset.person === person));
   const tasks1 = document.querySelectorAll('#tasks-p1 .ph-task');
   const tasks2 = document.querySelectorAll('#tasks-p2 .ph-task');
