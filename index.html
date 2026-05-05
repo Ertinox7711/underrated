@@ -267,6 +267,47 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 /* My tasks widget on home */
 .my-tasks-widget{padding:0 36px 36px;position:relative;z-index:1}
 .my-tasks-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* ══ REMINDERS ══ */
+.rem-widget{padding:0 36px 40px;position:relative;z-index:1}
+.rem-add{display:grid;grid-template-columns:1fr 200px auto auto;gap:8px;margin-bottom:16px;align-items:stretch}
+.rem-input,.rem-date{background:rgba(14,20,40,.55);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Manrope',sans-serif;font-size:13px;padding:10px 13px;outline:none;transition:border-color .2s}
+.rem-input:focus,.rem-date:focus{border-color:rgba(30,144,255,.4)}
+.rem-date{font-size:12px;color:rgba(255,255,255,.65);color-scheme:dark}
+.rem-vis-grp{display:flex;background:rgba(14,20,40,.55);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.rem-vis-btn{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:0 12px;border:none;background:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;border-right:1px solid var(--border)}
+.rem-vis-btn:last-child{border-right:none}
+.rem-vis-btn:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.rem-vis-btn.sel{background:rgba(30,144,255,.15);color:var(--b1)}
+.rem-submit{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.08em;background:linear-gradient(135deg,var(--b1),var(--b3));color:#fff;border:none;border-radius:8px;padding:0 18px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+.rem-submit:hover{opacity:.85}
+.rem-list{display:flex;flex-direction:column;gap:8px}
+.rem-empty{padding:24px;text-align:center;color:rgba(255,255,255,.25);font-style:italic;font-size:13px;border:1px dashed rgba(255,255,255,.08);border-radius:8px}
+.rem-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(14,20,40,.5);border:1px solid var(--border);border-radius:8px;transition:all .2s}
+.rem-item:hover{border-color:rgba(30,144,255,.25)}
+.rem-item.done{opacity:.45}
+.rem-item.due{border-color:rgba(255,107,53,.4);background:rgba(255,107,53,.06)}
+.rem-item.due-soon{border-color:rgba(255,215,0,.35);background:rgba(255,215,0,.04)}
+.rem-cb{width:18px;height:18px;border:1.5px solid rgba(255,255,255,.25);border-radius:4px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;background:none}
+.rem-cb:hover{border-color:var(--b1)}
+.rem-cb.checked{background:var(--b1);border-color:var(--b1)}
+.rem-cb.checked::after{content:'✓';color:#fff;font-size:12px;font-weight:900}
+.rem-body{flex:1;min-width:0}
+.rem-text{font-size:13px;color:rgba(255,255,255,.85);line-height:1.4;margin-bottom:3px;word-break:break-word}
+.rem-item.done .rem-text{text-decoration:line-through;color:rgba(255,255,255,.4)}
+.rem-meta{display:flex;align-items:center;gap:8px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.rem-due{color:var(--b1)}
+.rem-item.due .rem-due{color:#FF6B35}
+.rem-item.due-soon .rem-due{color:#FFD700}
+.rem-vis-tag{padding:2px 6px;border-radius:3px;border:1px solid}
+.rem-vis-tag.public{background:rgba(30,144,255,.12);border-color:rgba(30,144,255,.28);color:var(--b1)}
+.rem-vis-tag.private{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12);color:var(--muted)}
+.rem-author{color:rgba(255,255,255,.4)}
+.rem-del{background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;padding:4px 6px;border-radius:4px;font-size:13px;transition:all .15s;flex-shrink:0}
+.rem-del:hover{color:#E74C3C;background:rgba(231,76,60,.08)}
+@media(max-width:880px){
+  .rem-add{grid-template-columns:1fr;gap:6px}
+  .rem-vis-grp,.rem-submit{justify-content:center}
+}
 .mtask-col{padding:18px 20px;border-radius:var(--r);background:rgba(14,20,40,.55);border:1px solid var(--border)}
 .mtask-col-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.06em;margin-bottom:10px}
 .ph1c .mtask-col-title{color:var(--b1)}.ph2c .mtask-col-title{color:var(--b2)}
@@ -643,6 +684,31 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
       <div class="sec-lbl">Mes tâches</div>
       <div class="sec-h2">MES <em>PHASES</em></div>
       <div class="my-tasks-grid" id="my-tasks-grid"></div>
+    </div>
+
+    <!-- Reminders widget -->
+    <div class="rem-widget" id="rem-widget">
+      <div class="sec-lbl">Rappels</div>
+      <div class="sec-h2">LES <em>REMINDERS</em></div>
+      <div class="rem-add">
+        <input class="rem-input" id="rem-text" placeholder="Ex: Drop épisode 4 à 18h" onkeydown="if(event.key==='Enter')addReminder()">
+        <input class="rem-date" id="rem-when" type="datetime-local">
+        <div class="rem-vis-grp" role="group">
+          <button class="rem-vis-btn sel" id="rem-vis-priv" data-vis="private" onclick="setReminderVis('private')" title="Toi seul vois">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Privé
+          </button>
+          <button class="rem-vis-btn" id="rem-vis-pub" data-vis="public" onclick="setReminderVis('public')" title="Visible par toute l'équipe">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>
+            Public
+          </button>
+        </div>
+        <button class="rem-submit" onclick="addReminder()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter
+        </button>
+      </div>
+      <div class="rem-list" id="rem-list"></div>
     </div>
 
     <div class="home-grid">
@@ -1417,10 +1483,129 @@ function launchApp() {
 
   applyColors();
   buildPhaseColumns();
+  renderReminders();
   fetchVersion();
 }
 
 // ══ MY TASKS WIDGET ══
+// ══ REMINDERS ══
+let _remVis = 'private';
+function getReminders() {
+  try { return JSON.parse(localStorage.getItem('ur_reminders') || '[]'); }
+  catch(e) { return []; }
+}
+function saveReminders(arr) { localStorage.setItem('ur_reminders', JSON.stringify(arr)); }
+function getVisibleReminders() {
+  if (!SESSION) return [];
+  return getReminders().filter(r =>
+    r.visibility === 'public' || r.authorKey === SESSION.key
+  );
+}
+function setReminderVis(v) {
+  _remVis = v;
+  document.getElementById('rem-vis-priv').classList.toggle('sel', v === 'private');
+  document.getElementById('rem-vis-pub').classList.toggle('sel', v === 'public');
+}
+function addReminder() {
+  if (!SESSION) return;
+  const text = document.getElementById('rem-text').value.trim();
+  if (!text) { document.getElementById('rem-text').focus(); return; }
+  const whenVal = document.getElementById('rem-when').value;
+  const dueAt = whenVal ? new Date(whenVal).getTime() : null;
+  const arr = getReminders();
+  arr.push({
+    id: 'r_' + Date.now() + Math.floor(Math.random()*999),
+    text, dueAt,
+    visibility: _remVis,
+    authorKey: SESSION.key,
+    done: false,
+    createdAt: Date.now()
+  });
+  saveReminders(arr);
+  document.getElementById('rem-text').value = '';
+  document.getElementById('rem-when').value = '';
+  renderReminders();
+}
+function toggleReminder(id) {
+  if (!SESSION) return;
+  const arr = getReminders();
+  const r = arr.find(x => x.id === id);
+  if (!r) return;
+  // Only author or admin can toggle
+  if (r.authorKey !== SESSION.key && !SESSION.isAdmin) return;
+  r.done = !r.done;
+  saveReminders(arr);
+  renderReminders();
+}
+function deleteReminder(id) {
+  if (!SESSION) return;
+  const arr = getReminders();
+  const r = arr.find(x => x.id === id);
+  if (!r) return;
+  if (r.authorKey !== SESSION.key && !SESSION.isAdmin) return;
+  if (!confirm('Supprimer ce rappel ?')) return;
+  saveReminders(arr.filter(x => x.id !== id));
+  renderReminders();
+}
+function formatRemDue(ts) {
+  if (!ts) return 'Sans échéance';
+  const d = new Date(ts), now = new Date();
+  const diff = ts - now.getTime();
+  const past = diff < 0;
+  const abs = Math.abs(diff);
+  const mins = Math.round(abs/60000), hours = Math.round(abs/3600000), days = Math.round(abs/86400000);
+  let rel;
+  if (mins < 1) rel = past ? 'à l\'instant' : 'maintenant';
+  else if (mins < 60) rel = (past ? 'il y a ' : 'dans ') + mins + 'min';
+  else if (hours < 24) rel = (past ? 'il y a ' : 'dans ') + hours + 'h';
+  else if (days < 7) rel = (past ? 'il y a ' : 'dans ') + days + 'j';
+  else rel = d.toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+  const time = d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+  return rel + ' · ' + time;
+}
+function renderReminders() {
+  const list = document.getElementById('rem-list');
+  if (!list) return;
+  const items = getVisibleReminders().sort((a,b) => {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    if (a.dueAt && b.dueAt) return a.dueAt - b.dueAt;
+    if (a.dueAt) return -1;
+    if (b.dueAt) return 1;
+    return b.createdAt - a.createdAt;
+  });
+  if (!items.length) {
+    list.innerHTML = `<div class="rem-empty">Aucun rappel. Crée-en un ci-dessus.</div>`;
+    return;
+  }
+  const names = { mathieu:'Mathieu', bastien:'Bastien', theo:'Théo', ilame:'Ilame' };
+  const now = Date.now();
+  list.innerHTML = items.map(r => {
+    let stateCls = '';
+    if (!r.done && r.dueAt) {
+      if (r.dueAt < now) stateCls = ' due';
+      else if (r.dueAt - now < 3600000) stateCls = ' due-soon';
+    }
+    const canEdit = r.authorKey === SESSION.key || SESSION.isAdmin;
+    return `<div class="rem-item${r.done ? ' done' : ''}${stateCls}">
+      <button class="rem-cb${r.done ? ' checked' : ''}" onclick="toggleReminder('${r.id}')" ${canEdit ? '' : 'disabled style="cursor:default"'}></button>
+      <div class="rem-body">
+        <div class="rem-text">${(r.text||'').replace(/[<>&"]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]))}</div>
+        <div class="rem-meta">
+          <span class="rem-due">${formatRemDue(r.dueAt)}</span>
+          <span class="rem-vis-tag ${r.visibility}">${r.visibility === 'public' ? 'PUBLIC' : 'PRIVÉ'}</span>
+          ${r.authorKey !== SESSION.key ? `<span class="rem-author">par ${names[r.authorKey] || r.authorKey}</span>` : ''}
+        </div>
+      </div>
+      ${canEdit ? `<button class="rem-del" onclick="deleteReminder('${r.id}')" title="Supprimer">✕</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// Auto-refresh reminders every 60s for due-state recompute
+setInterval(() => {
+  if (SESSION && document.getElementById('p-home')?.classList.contains('active')) renderReminders();
+}, 60000);
+
 function buildMyTasks() {
   const widget = document.getElementById('my-tasks-widget');
   const grid = document.getElementById('my-tasks-grid');
