@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:09 — `b5b32c3`
+feat: dashboard SPA 6 pages - Home, Equipe, Phases, Tools+Serie, Audit, Strategie
+
 ## 05/05/2026 06:56 — `bf0c2f6`
 feat: add dashboard war room + audit stratégique
 

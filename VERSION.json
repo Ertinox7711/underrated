@@ -1,8 +1,8 @@
 {
-  "commit": "bf0c2f6",
-  "message": "feat: add dashboard war room + audit stratégique",
-  "commitDate": "2026-05-05T06:56:16+02:00",
-  "buildDate": "2026-05-05T04:56:32Z",
-  "buildDateFR": "05/05/2026 06:56",
+  "commit": "b5b32c3",
+  "message": "feat: dashboard SPA 6 pages - Home, Equipe, Phases, Tools+Serie, Audit, Strategie",
+  "commitDate": "2026-05-05T07:09:46+02:00",
+  "buildDate": "2026-05-05T05:09:56Z",
+  "buildDateFR": "05/05/2026 07:09",
   "branch": "main"
 }
