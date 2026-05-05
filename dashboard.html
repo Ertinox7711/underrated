@@ -286,9 +286,20 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .me-tag{position:absolute;top:14px;right:14px;font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:rgba(var(--acc-rgb),.2);color:var(--acc);border:1px solid rgba(var(--acc-rgb),.3)}
 .m-name{font-family:'Bebas Neue',sans-serif;font-size:23px;letter-spacing:.06em;color:var(--acc);margin-bottom:1px}
 .m-role{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:13px}
+.m-role[contenteditable="true"]{outline:none;border-bottom:1px dashed rgba(255,255,255,.18);padding-bottom:2px;cursor:text;min-width:40px}
+.m-role[contenteditable="true"]:focus{border-bottom-color:var(--acc);color:rgba(255,255,255,.6)}
 .m-tasks{list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:13px}
-.m-tasks li{font-size:11px;color:rgba(255,255,255,.55);line-height:1.4;padding-left:11px;position:relative}
-.m-tasks li::before{content:'';position:absolute;left:0;top:6px;width:3px;height:3px;border-radius:50%;background:var(--acc);opacity:.7}
+.m-tasks li{font-size:11px;color:rgba(255,255,255,.55);line-height:1.4;padding-left:11px;position:relative;display:flex;align-items:flex-start;gap:5px}
+.m-tasks li::before{content:'';position:absolute;left:0;top:6px;width:3px;height:3px;border-radius:50%;background:var(--acc);opacity:.7;flex-shrink:0}
+.m-tasks li span.mc-txt{flex:1}
+.m-tasks li span.mc-txt[contenteditable="true"]{outline:none;cursor:text}
+.m-tasks li span.mc-txt[contenteditable="true"]:focus{color:rgba(255,255,255,.8)}
+.m-tasks li .mc-del{opacity:0;font-size:9px;color:rgba(255,255,255,.25);cursor:pointer;transition:opacity .2s,color .2s;flex-shrink:0;padding:0 2px;line-height:1.4}
+.m-tasks li:hover .mc-del{opacity:1}
+.m-tasks li .mc-del:hover{color:#E74C3C}
+.mc-add-btn{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;margin-top:4px;opacity:0;transition:opacity .2s}
+.mc-add-btn:hover{color:var(--acc)}
+.member:hover .mc-add-btn{opacity:1}
 .m-phases{display:flex;gap:5px;flex-wrap:wrap}
 
 /* ══ PHASES ══ */
@@ -606,56 +617,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
       <div class="ph-sub">Chaque rôle est défini. Chaque phase est attribuée.</div>
     </div>
     <div class="pc">
-      <div class="team-grid">
-        <div class="member m-mathieu rv d1" id="card-mathieu">
-          <div class="m-num">01</div>
-          <div class="m-name">MATHIEU</div>
-          <div class="m-role">Fondateur / CEO + COO — SGRRBOOM</div>
-          <ul class="m-tasks">
-            <li>Schéma narration — structure et rétention TikTok</li>
-            <li>VSL de vente + contenu marketing</li>
-            <li>Décision finale sur tout</li>
-            <li>Coordination équipe + Teachable + pubs</li>
-          </ul>
-          <div class="m-phases"><span class="mph mph-1">P1</span><span class="mph mph-2">P2</span></div>
-        </div>
-        <div class="member m-bastien rv d2" id="card-bastien">
-          <div class="m-num">02</div>
-          <div class="m-name">BASTIEN</div>
-          <div class="m-role">Head of Content &amp; Product — @lussori</div>
-          <ul class="m-tasks">
-            <li>P1 — CRM, tools, bots, workflows</li>
-            <li>P2 — Crée les vidéos Gen Z quotidiennes</li>
-            <li>Qualité prod (couleurs, formats, codes visuels)</li>
-            <li>Scale outils selon retours clients</li>
-          </ul>
-          <div class="m-phases"><span class="mph mph-1">P1</span><span class="mph mph-2">P2</span></div>
-        </div>
-        <div class="member m-theo rv d3" id="card-theo">
-          <div class="m-num">03</div>
-          <div class="m-name">THÉO</div>
-          <div class="m-role">Infrastructure</div>
-          <ul class="m-tasks">
-            <li>BDD, emails auto, bots IG/TikTok, comptes pub</li>
-            <li>Discord — canaux, rôles, structure</li>
-            <li>Clippers — recrutement et gestion</li>
-            <li>Accompagnement perso clients 1200€</li>
-          </ul>
-          <div class="m-phases"><span class="mph mph-1">P1</span><span class="mph mph-2">P2</span></div>
-        </div>
-        <div class="member m-ilame rv d4" id="card-ilame">
-          <div class="m-num">04</div>
-          <div class="m-name">ILAME</div>
-          <div class="m-role">Head of Sales &amp; Community</div>
-          <ul class="m-tasks">
-            <li>Closing leads froids + membres Discord chauds</li>
-            <li>Community management</li>
-            <li>Mentorat élèves — lives, Q&amp;A</li>
-            <li>Accompagnement perso clients 1200€</li>
-          </ul>
-          <div class="m-phases"><span class="mph mph-2">P2</span></div>
-        </div>
-      </div>
+      <div class="team-grid" id="team-grid-dynamic"></div>
     </div>
   </div>
 
@@ -960,6 +922,105 @@ const DEFAULT_TASKS = {
   }
 };
 
+const MEMBER_CARDS_DEFAULT = {
+  mathieu: { role:'Fondateur / CEO + COO — SGRRBOOM', tasks:['Schéma narration — structure et rétention TikTok','VSL de vente + contenu marketing','Décision finale sur tout','Coordination équipe + Teachable + pubs'], phases:['P1','P2'] },
+  bastien: { role:'Head of Content & Product — @lussori', tasks:['P1 — CRM, tools, bots, workflows','P2 — Crée les vidéos Gen Z quotidiennes','Qualité prod (couleurs, formats, codes visuels)','Scale outils selon retours clients'], phases:['P1','P2'] },
+  theo:    { role:'Infrastructure', tasks:['BDD, emails auto, bots IG/TikTok, comptes pub','Discord — canaux, rôles, structure','Clippers — recrutement et gestion','Accompagnement perso clients 1200€'], phases:['P1','P2'] },
+  ilame:   { role:'Head of Sales & Community', tasks:['Closing leads froids + membres Discord chauds','Community management','Mentorat élèves — lives, Q&A','Accompagnement perso clients 1200€'], phases:['P2'] }
+};
+
+function getMemberCards() {
+  try { return JSON.parse(localStorage.getItem('ur_member_cards') || 'null') || JSON.parse(JSON.stringify(MEMBER_CARDS_DEFAULT)); }
+  catch(e) { return JSON.parse(JSON.stringify(MEMBER_CARDS_DEFAULT)); }
+}
+function saveMemberCards(cards) {
+  localStorage.setItem('ur_member_cards', JSON.stringify(cards));
+}
+function mcSaveRole(key, el) {
+  const cards = getMemberCards();
+  cards[key].role = el.textContent.trim() || MEMBER_CARDS_DEFAULT[key].role;
+  if (!el.textContent.trim()) el.textContent = MEMBER_CARDS_DEFAULT[key].role;
+  saveMemberCards(cards);
+}
+function mcSaveTask(key, idx, el) {
+  const cards = getMemberCards();
+  const val = el.textContent.trim();
+  if (!val) { mcDeleteTask(key, idx); return; }
+  cards[key].tasks[idx] = val;
+  saveMemberCards(cards);
+}
+function mcDeleteTask(key, idx) {
+  const cards = getMemberCards();
+  cards[key].tasks.splice(idx, 1);
+  saveMemberCards(cards);
+  buildEquipe();
+}
+function mcAddTask(key) {
+  const cards = getMemberCards();
+  cards[key].tasks.push('Nouvelle tâche');
+  saveMemberCards(cards);
+  buildEquipe();
+  // Focus the new task
+  setTimeout(() => {
+    const card = document.getElementById('card-' + key);
+    if (!card) return;
+    const items = card.querySelectorAll('.mc-txt[contenteditable]');
+    const last = items[items.length - 1];
+    if (last) { last.focus(); document.execCommand('selectAll', false, null); }
+  }, 30);
+}
+
+function buildEquipe() {
+  const container = document.getElementById('team-grid-dynamic');
+  if (!container) return;
+  const cards = getMemberCards();
+  const nums = { mathieu:'01', bastien:'02', theo:'03', ilame:'04' };
+  const isAdmin = SESSION && SESSION.isAdmin;
+  const myKey = SESSION ? SESSION.key : null;
+
+  container.innerHTML = Object.keys(MEMBER_CARDS_DEFAULT).map((key, i) => {
+    const d = cards[key] || MEMBER_CARDS_DEFAULT[key];
+    const isMe = myKey === key;
+    const cls = `member m-${key} rv d${i+1}${isMe ? ' me' : ''}`;
+    const phaseBadges = (d.phases || []).map(p =>
+      `<span class="mph mph-${p === 'P1' ? '1' : '2'}">${p}</span>`
+    ).join('');
+    const taskItems = d.tasks.map((t, idx) => {
+      if (isAdmin) {
+        return `<li>
+          <span class="mc-txt" contenteditable="true"
+            onblur="mcSaveTask('${key}',${idx},this)"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
+          >${t}</span>
+          <span class="mc-del" onclick="mcDeleteTask('${key}',${idx})">✕</span>
+        </li>`;
+      }
+      return `<li><span class="mc-txt">${t}</span></li>`;
+    }).join('');
+    const addBtn = isAdmin
+      ? `<div class="mc-add-btn" onclick="mcAddTask('${key}')">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter
+        </div>` : '';
+    const meTag = isMe ? `<div class="me-tag">MOI</div>` : '';
+    const roleEl = isAdmin
+      ? `<div class="m-role" contenteditable="true"
+            onblur="mcSaveRole('${key}',this)"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
+          >${d.role}</div>`
+      : `<div class="m-role">${d.role}</div>`;
+    return `<div class="${cls}" id="card-${key}">
+      ${meTag}
+      <div class="m-num">${nums[key]}</div>
+      <div class="m-name">${{mathieu:'MATHIEU',bastien:'BASTIEN',theo:'THÉO',ilame:'ILAME'}[key]||key.toUpperCase()}</div>
+      ${roleEl}
+      <ul class="m-tasks">${taskItems}</ul>
+      ${addBtn}
+      <div class="m-phases">${phaseBadges}</div>
+    </div>`;
+  }).join('');
+}
+
 let SESSION = null;
 let currentPersonFilter = 'all';
 
@@ -1072,17 +1133,8 @@ function launchApp() {
     buildMyTasks();
   }
 
-  // Highlight my card in team page
-  document.querySelectorAll('.member').forEach(c => c.classList.remove('me'));
-  document.querySelectorAll('.me-tag').forEach(t => t.remove());
-  const myCard = document.getElementById('card-' + SESSION.key);
-  if (myCard) {
-    myCard.classList.add('me');
-    const tag = document.createElement('div');
-    tag.className = 'me-tag';
-    tag.textContent = 'MOI';
-    myCard.appendChild(tag);
-  }
+  // Build équipe page (dynamic, handles "me" highlight + admin editable)
+  buildEquipe();
 
   // If non-admin, open phases filtered to self
   if (!SESSION.isAdmin) {
