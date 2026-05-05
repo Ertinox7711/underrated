@@ -393,99 +393,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .person-header-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.06em}
 .person-header-role{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 
-/* ══ NOTES ══ */
-.notes-toolbar{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
-.nt-new-btn{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;background:linear-gradient(135deg,rgba(30,144,255,.18),rgba(79,110,247,.14));border:1px solid rgba(30,144,255,.3);color:var(--b1);padding:10px 16px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .2s}
-.nt-new-btn:hover{background:linear-gradient(135deg,rgba(30,144,255,.28),rgba(79,110,247,.2));border-color:rgba(30,144,255,.5);transform:translateY(-1px)}
-.nt-new-btn.nt-priv{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12);color:var(--muted)}
-.nt-new-btn.nt-priv:hover{border-color:rgba(255,255,255,.25);color:var(--text);background:rgba(255,255,255,.06)}
-
-.notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.note-card{background:rgba(14,20,40,.55);border:1px solid var(--border);backdrop-filter:blur(20px);border-radius:var(--r);padding:18px 20px;cursor:pointer;transition:all var(--ease);position:relative;overflow:hidden;min-height:140px;display:flex;flex-direction:column}
-.note-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--b1);opacity:.5;transition:opacity .25s}
-.note-card.private::before{background:rgba(255,255,255,.2)}
-.note-card:hover{transform:translateY(-3px);border-color:rgba(30,144,255,.3);box-shadow:0 12px 36px rgba(0,0,0,.5),0 0 16px rgba(30,144,255,.12)}
-.note-card:hover::before{opacity:1}
-.note-card.private:hover{border-color:rgba(255,255,255,.18)}
-.nc-head{display:flex;align-items:center;gap:9px;margin-bottom:8px}
-.nc-icon{font-size:20px;line-height:1}
-.nc-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.04em;color:#fff;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.nc-vis{font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.14em;padding:2px 6px;border-radius:3px;text-transform:uppercase}
-.nc-vis.public{background:rgba(30,144,255,.15);color:var(--b1);border:1px solid rgba(30,144,255,.3)}
-.nc-vis.private{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.12)}
-.nc-preview{font-size:11.5px;color:rgba(255,255,255,.5);line-height:1.5;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
-.nc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.04);font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3)}
-.nc-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:rgba(255,255,255,.25);font-style:italic;font-size:13px}
-
-/* Note editor */
-.ne-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:24px;padding:12px 16px;background:rgba(14,20,40,.5);border:1px solid var(--border);border-radius:8px}
-.ne-back{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:5px;transition:all .2s}
-.ne-back:hover{color:var(--b1);background:rgba(30,144,255,.06)}
-.ne-meta{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3)}
-.ne-vis-toggle{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:.14em;padding:6px 12px;border-radius:5px;cursor:pointer;border:1px solid;text-transform:uppercase;transition:all .2s;background:none;display:flex;align-items:center;gap:5px}
-.ne-vis-toggle.public{color:var(--b1);border-color:rgba(30,144,255,.4);background:rgba(30,144,255,.08)}
-.ne-vis-toggle.public:hover{background:rgba(30,144,255,.15)}
-.ne-vis-toggle.private{color:var(--muted);border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.03)}
-.ne-vis-toggle.private:hover{background:rgba(255,255,255,.08);color:var(--text)}
-.ne-del{background:none;border:1px solid rgba(255,80,80,.18);color:rgba(255,80,80,.6);padding:6px 9px;border-radius:5px;cursor:pointer;display:flex;align-items:center;transition:all .2s}
-.ne-del:hover{background:rgba(231,76,60,.12);color:#E74C3C;border-color:rgba(231,76,60,.4)}
-
-.ne-content{max-width:780px;margin:0 auto;padding:0 16px}
-.ne-icon-row{margin-bottom:10px}
-.ne-icon{font-size:54px;line-height:1;cursor:pointer;display:inline-block;padding:6px;border-radius:8px;transition:background .2s}
-.ne-icon:hover{background:rgba(255,255,255,.05)}
-.ne-title{width:100%;background:none;border:none;outline:none;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:.04em;line-height:1.1;margin-bottom:24px;padding:6px 0}
-.ne-title::placeholder{color:rgba(255,255,255,.15)}
-
-.ne-blocks{display:flex;flex-direction:column;gap:3px}
-.nb{position:relative;padding:5px 0;display:flex;align-items:flex-start;gap:8px;border-radius:4px;transition:background .15s}
-.nb:hover{background:rgba(255,255,255,.015)}
-.nb-handle{opacity:0;color:rgba(255,255,255,.2);cursor:grab;flex-shrink:0;padding:6px 4px;font-size:13px;line-height:1;align-self:flex-start}
-.nb:hover .nb-handle{opacity:1}
-.nb-handle:hover{color:var(--b1)}
-.nb-content{flex:1;outline:none;color:rgba(255,255,255,.85);font-size:15px;line-height:1.6;min-height:1.6em;padding:2px 0}
-.nb-content:empty::before{content:attr(data-placeholder);color:rgba(255,255,255,.18);pointer-events:none}
-.nb-h1 .nb-content{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.03em;color:#fff;line-height:1.2;padding:8px 0 4px}
-.nb-h2 .nb-content{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.03em;color:#fff;line-height:1.25;padding:6px 0 3px}
-.nb-h3 .nb-content{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--b1);padding:5px 0 2px}
-.nb-quote{padding-left:16px;border-left:3px solid var(--b1)}
-.nb-quote .nb-content{color:rgba(255,255,255,.65);font-style:italic}
-.nb-callout{background:rgba(30,144,255,.05);border:1px solid rgba(30,144,255,.18);border-radius:6px;padding:11px 14px;align-items:center;gap:10px}
-.nb-callout .nb-content{color:rgba(255,255,255,.78);font-size:14px}
-.nb-callout::before{content:'💡';font-size:18px;flex-shrink:0}
-.nb-divider{padding:14px 0}
-.nb-divider .nb-content{height:1px;background:linear-gradient(90deg,transparent,rgba(30,144,255,.3),transparent);min-height:1px;padding:0;pointer-events:none}
-.nb-todo{align-items:center}
-.nb-cb{width:16px;height:16px;border:1.5px solid rgba(255,255,255,.25);border-radius:3px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:2px}
-.nb-cb:hover{border-color:var(--b1)}
-.nb-cb.done{background:var(--b1);border-color:var(--b1)}
-.nb-cb.done::after{content:'✓';color:#fff;font-size:11px;font-weight:900}
-.nb-todo.done .nb-content{color:rgba(255,255,255,.3);text-decoration:line-through}
-.nb-list{align-items:flex-start}
-.nb-list::before{content:'•';color:var(--b1);font-size:18px;line-height:1.4;flex-shrink:0;padding-left:4px}
-.nb-numbered{align-items:flex-start;counter-increment:nb-counter}
-.nb-numbered::before{content:counter(nb-counter) '.';color:var(--b1);font-family:'Barlow Condensed';font-weight:900;font-size:14px;line-height:1.6;flex-shrink:0;min-width:18px;text-align:right}
-.ne-blocks{counter-reset:nb-counter}
-
-.nb-add{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.25);cursor:pointer;padding:8px 10px;margin-top:8px;border-radius:5px;display:flex;align-items:center;gap:6px;transition:all .2s;width:fit-content}
-.nb-add:hover{color:var(--b1);background:rgba(30,144,255,.05)}
-
-/* Slash menu */
-.slash-menu{position:fixed;background:#0e1428;border:1px solid var(--border-hi);border-radius:8px;padding:6px;width:220px;max-height:280px;overflow-y:auto;z-index:9000;box-shadow:0 16px 50px rgba(0,0,0,.7);display:none}
-.slash-menu.open{display:block}
-.sm-cat{font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:7px 10px 4px}
-.sm-item{padding:7px 10px;border-radius:5px;cursor:pointer;display:flex;align-items:center;gap:9px;transition:background .12s}
-.sm-item:hover,.sm-item.active{background:rgba(30,144,255,.1)}
-.sm-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:14px;border-radius:4px;background:rgba(255,255,255,.04);flex-shrink:0;color:var(--b1)}
-.sm-label{font-size:12.5px;color:var(--text);font-weight:600;line-height:1.2}
-.sm-desc{font-size:10px;color:var(--muted);line-height:1.2}
-.sm-text{flex:1}
-
-/* Sidebar notes list */
-#notes-sub-list .sb-sub-item{font-size:10.5px}
-#notes-sub-list .sb-sub-item .nsl-icon{font-size:11px}
-.nsl-priv-tag{margin-left:auto;font-family:'Barlow Condensed';font-size:7px;font-weight:900;letter-spacing:.12em;color:rgba(255,255,255,.25);text-transform:uppercase}
-
 /* ══ TOOLS ══ */
 .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:34px}
 .tool-card{padding:18px 16px}.tool-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:11px;background:rgba(30,144,255,.08);border:1px solid rgba(30,144,255,.15)}
@@ -682,12 +589,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       Notes
     </div>
-    <div class="sb-sub" id="notes-sub">
-      <div class="sb-sub-item" onclick="gotoNotes()"><div class="sb-sub-dot"></div>Toutes</div>
-      <div class="sb-sub-item" onclick="newNote('public')"><div class="sb-sub-dot" style="border-color:var(--b1);background:rgba(30,144,255,.2)"></div>+ Note publique</div>
-      <div class="sb-sub-item" onclick="newNote('private')"><div class="sb-sub-dot" style="border-color:var(--b4)"></div>+ Note privée</div>
-      <div id="notes-sub-list" style="margin-top:6px;border-top:1px solid rgba(255,255,255,.04);padding-top:4px"></div>
-    </div>
     <div class="sb-item" data-page="tools" onclick="goto('tools')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
       Tools &amp; Série
@@ -806,51 +707,9 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
     </div>
   </div>
 
-  <!-- ════ NOTES ════ -->
-  <div class="page" id="p-notes">
-    <div class="ph">
-      <div class="ph-eye">Workspace</div>
-      <div class="ph-title">LES <em>NOTES</em></div>
-      <div class="ph-sub">Idées, briefs, scripts, recherches. Public visible par tous · Privé visible par toi seul.</div>
-    </div>
-    <div class="pc">
-      <!-- LIST VIEW -->
-      <div id="notes-list-view">
-        <div class="notes-toolbar">
-          <button class="nt-new-btn" onclick="newNote('public')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Nouvelle note publique
-          </button>
-          <button class="nt-new-btn nt-priv" onclick="newNote('private')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Nouvelle note privée
-          </button>
-        </div>
-        <div class="notes-grid" id="notes-grid"></div>
-      </div>
-      <!-- EDITOR VIEW -->
-      <div id="notes-editor-view" style="display:none">
-        <div class="ne-toolbar">
-          <button class="ne-back" onclick="closeNote()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-            Toutes les notes
-          </button>
-          <div class="ne-meta" id="ne-meta"></div>
-          <div style="flex:1"></div>
-          <button class="ne-vis-toggle" id="ne-vis-toggle" onclick="toggleNoteVis()"></button>
-          <button class="ne-del" onclick="confirmDeleteNote()" title="Supprimer">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-          </button>
-        </div>
-        <div class="ne-content">
-          <div class="ne-icon-row">
-            <div class="ne-icon" id="ne-icon" onclick="cycleIcon()" title="Changer d'icône">📝</div>
-          </div>
-          <input class="ne-title" id="ne-title" placeholder="Sans titre" oninput="onNoteTitleInput()">
-          <div class="ne-blocks" id="ne-blocks"></div>
-        </div>
-      </div>
-    </div>
+  <!-- ════ NOTES (full editor in iframe) ════ -->
+  <div class="page" id="p-notes" style="padding:0;height:100vh;overflow:hidden">
+    <iframe id="notes-iframe" src="about:blank" style="width:100%;height:100vh;border:none;background:var(--bg);display:block"></iframe>
   </div>
 
   <!-- ════ TOOLS & SÉRIE ════ -->
@@ -1013,9 +872,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
     </div>
   </div>
 </div>
-
-<!-- SLASH MENU (notes editor) -->
-<div class="slash-menu" id="slash-menu"></div>
 
 <!-- ADD PHASE MODAL -->
 <div id="add-phase-modal" onclick="if(event.target===this)closeAddPhaseModal()">
@@ -1561,7 +1417,6 @@ function launchApp() {
 
   applyColors();
   buildPhaseColumns();
-  renderSidebarNotesList();
   fetchVersion();
 }
 
@@ -1797,8 +1652,13 @@ function goto(page) {
   document.querySelector('.main').scrollTop = 0;
   document.getElementById('phases-sub').classList.toggle('open', page === 'phases');
   document.getElementById('admin-sub').classList.toggle('open', page === 'admin');
-  const ns = document.getElementById('notes-sub'); if (ns) ns.classList.toggle('open', page === 'notes');
-  if (page === 'notes') renderSidebarNotesList();
+  if (page === 'notes') {
+    const nf = document.getElementById('notes-iframe');
+    if (nf && (!nf.src || nf.src === 'about:blank' || !nf.src.includes('notes.html'))) {
+      const u = SESSION ? `?user=${encodeURIComponent(SESSION.key)}&name=${encodeURIComponent(SESSION.name)}&admin=${SESSION.isAdmin?1:0}` : '';
+      nf.src = 'notes.html' + u;
+    }
+  }
   if (page === 'audit') {
     const iframe = document.getElementById('audit-iframe');
     if (!iframe.src || iframe.src === 'about:blank') iframe.src = 'audit-underrated.html';
@@ -1923,446 +1783,24 @@ function gotoPhase(person) {
 }
 
 // ══════════════════════════════════
-// NOTES — collaborative workspace
+// NOTES — full Notion clone loaded via iframe (notes.html)
 // ══════════════════════════════════
-const NOTE_ICONS = ['📝','💡','🚀','🎬','📊','🧠','🔥','⚡','🎯','📌','✨','🎨','🛠️','📖','💎','🌊','🦋','🌟'];
-let CURRENT_NOTE_ID = null;
-let _slashTargetBlockId = null;
-let _slashFilter = '';
-let _slashActiveIdx = 0;
-
-function getNotes() {
-  try { return JSON.parse(localStorage.getItem('ur_notes') || '[]'); }
-  catch(e) { return []; }
-}
-function saveNotes(notes) { localStorage.setItem('ur_notes', JSON.stringify(notes)); }
-function getNote(id) { return getNotes().find(n => n.id === id); }
-function updateNote(id, patch) {
-  const notes = getNotes();
-  const i = notes.findIndex(n => n.id === id);
-  if (i < 0) return;
-  notes[i] = { ...notes[i], ...patch, updatedAt: Date.now() };
-  saveNotes(notes);
-  return notes[i];
-}
-function getVisibleNotes() {
-  if (!SESSION) return [];
-  return getNotes().filter(n =>
-    n.visibility === 'public' || n.authorKey === SESSION.key
-  );
-}
-function canEditNote(note) {
-  if (!note || !SESSION) return false;
-  // Author can always edit. Admin can edit any public note.
-  if (note.authorKey === SESSION.key) return true;
-  if (SESSION.isAdmin && note.visibility === 'public') return true;
-  return false;
-}
-
-function newNote(visibility) {
-  if (!SESSION) return;
-  const id = 'n_' + Date.now() + Math.floor(Math.random()*999);
-  const note = {
-    id, title: '', icon: NOTE_ICONS[Math.floor(Math.random()*NOTE_ICONS.length)],
-    visibility: visibility || 'public',
-    authorKey: SESSION.key,
-    blocks: [{ id: 'b_'+Date.now(), type:'p', content:'' }],
-    createdAt: Date.now(), updatedAt: Date.now()
-  };
-  const notes = getNotes(); notes.unshift(note); saveNotes(notes);
-  goto('notes'); openNote(id);
-  setTimeout(() => document.getElementById('ne-title')?.focus(), 80);
-}
-
 function gotoNotes() {
   goto('notes');
-  CURRENT_NOTE_ID = null;
-  document.getElementById('notes-list-view').style.display = '';
-  document.getElementById('notes-editor-view').style.display = 'none';
-  renderNotesList();
-  renderSidebarNotesList();
-}
-
-function openNote(id) {
-  const note = getNote(id);
-  if (!note) return;
-  if (note.visibility === 'private' && note.authorKey !== SESSION.key) return; // permission
-  CURRENT_NOTE_ID = id;
-  goto('notes');
-  document.getElementById('notes-list-view').style.display = 'none';
-  document.getElementById('notes-editor-view').style.display = '';
-  renderNoteEditor();
-  renderSidebarNotesList();
-}
-
-function closeNote() {
-  CURRENT_NOTE_ID = null;
-  document.getElementById('notes-list-view').style.display = '';
-  document.getElementById('notes-editor-view').style.display = 'none';
-  renderNotesList();
-  renderSidebarNotesList();
-}
-
-function renderNotesList() {
-  const grid = document.getElementById('notes-grid');
-  if (!grid) return;
-  const notes = getVisibleNotes().sort((a,b) => b.updatedAt - a.updatedAt);
-  if (!notes.length) {
-    grid.innerHTML = `<div class="nc-empty">Aucune note. Crée-en une avec un bouton ci-dessus.</div>`;
-    return;
-  }
-  const names = { mathieu:'MATHIEU', bastien:'BASTIEN', theo:'THÉO', ilame:'ILAME' };
-  grid.innerHTML = notes.map(n => {
-    const previewText = (n.blocks||[]).slice(0,3).map(b => b.content || '').filter(Boolean).join(' · ') || '—';
-    const isPriv = n.visibility === 'private';
-    return `<div class="note-card${isPriv ? ' private' : ''}" onclick="openNote('${n.id}')">
-      <div class="nc-head">
-        <span class="nc-icon">${n.icon || '📝'}</span>
-        <span class="nc-title">${escapeHtml(n.title || 'Sans titre')}</span>
-        <span class="nc-vis ${n.visibility}">${isPriv ? 'PRIVÉ' : 'PUBLIC'}</span>
-      </div>
-      <div class="nc-preview">${escapeHtml(previewText).slice(0,180)}</div>
-      <div class="nc-foot">
-        <span>${names[n.authorKey] || n.authorKey}</span>
-        <span>${formatNoteDate(n.updatedAt)}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderSidebarNotesList() {
-  const list = document.getElementById('notes-sub-list');
-  if (!list) return;
-  const notes = getVisibleNotes().sort((a,b) => b.updatedAt - a.updatedAt).slice(0,12);
-  if (!notes.length) { list.innerHTML = ''; return; }
-  list.innerHTML = notes.map(n => `
-    <div class="sb-sub-item ${n.id === CURRENT_NOTE_ID ? 'active' : ''}" onclick="openNote('${n.id}')">
-      <span class="nsl-icon">${n.icon || '📝'}</span>
-      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${escapeHtml(n.title || 'Sans titre')}</span>
-      ${n.visibility === 'private' ? '<span class="nsl-priv-tag">priv</span>' : ''}
-    </div>`).join('');
-}
-
-function renderNoteEditor() {
-  const note = getNote(CURRENT_NOTE_ID);
-  if (!note) { closeNote(); return; }
-  const editable = canEditNote(note);
-  const names = { mathieu:'Mathieu', bastien:'Bastien', theo:'Théo', ilame:'Ilame' };
-
-  document.getElementById('ne-icon').textContent = note.icon || '📝';
-  document.getElementById('ne-title').value = note.title || '';
-  document.getElementById('ne-title').disabled = !editable;
-  document.getElementById('ne-title').placeholder = editable ? 'Sans titre' : (note.title || 'Sans titre');
-
-  document.getElementById('ne-meta').innerHTML =
-    `Par ${names[note.authorKey] || note.authorKey} · ${formatNoteDate(note.updatedAt)}` +
-    (!editable ? ' · <span style="color:var(--muted)">lecture seule</span>' : '');
-
-  const visBtn = document.getElementById('ne-vis-toggle');
-  visBtn.className = 'ne-vis-toggle ' + note.visibility;
-  visBtn.innerHTML = note.visibility === 'public'
-    ? `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg>Public`
-    : `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Privé`;
-  visBtn.style.display = editable ? '' : 'none';
-  document.querySelector('.ne-del').style.display = editable ? '' : 'none';
-
-  renderNoteBlocks();
-}
-
-function renderNoteBlocks() {
-  const note = getNote(CURRENT_NOTE_ID);
-  if (!note) return;
-  const editable = canEditNote(note);
-  const container = document.getElementById('ne-blocks');
-  const blocks = note.blocks || [];
-  container.innerHTML = blocks.map(b => renderBlock(b, editable)).join('') +
-    (editable ? `<div class="nb-add" onclick="addBlock(null,'p')">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Ajouter un bloc
-    </div>` : '');
-}
-
-function renderBlock(b, editable) {
-  const isDivider = b.type === 'divider';
-  const isTodo = b.type === 'todo';
-  const ph = blockPlaceholder(b.type);
-  const editAttrs = editable && !isDivider
-    ? `contenteditable="true"
-       oninput="onBlockInput('${b.id}',this)"
-       onkeydown="onBlockKey(event,'${b.id}')"
-       onpaste="onBlockPaste(event,'${b.id}')"`
-    : '';
-  const content = isDivider ? '' : (b.content || '');
-  const cb = isTodo ? `<div class="nb-cb${b.checked ? ' done' : ''}" onclick="toggleTodo('${b.id}')"></div>` : '';
-  const handle = editable ? `<div class="nb-handle" onclick="showBlockMenu(event,'${b.id}')" title="Options">⋮⋮</div>` : '';
-  return `<div class="nb nb-${b.type}${b.checked ? ' done' : ''}" data-id="${b.id}">
-    ${handle}
-    ${cb}
-    <div class="nb-content" data-placeholder="${ph}" ${editAttrs}>${escapeHtml(content)}</div>
-  </div>`;
-}
-
-function blockPlaceholder(type) {
-  const m = {
-    p:"Tape '/' pour les commandes…", h1:"Titre 1", h2:"Titre 2", h3:"Sous-titre",
-    list:"Élément de liste", numbered:"Élément numéroté", todo:"Tâche à faire",
-    quote:"Citation…", callout:"Note importante…", divider:""
-  };
-  return m[type] || '';
-}
-
-function onBlockInput(blockId, el) {
-  const note = getNote(CURRENT_NOTE_ID);
-  if (!note) return;
-  const block = (note.blocks || []).find(b => b.id === blockId);
-  if (!block) return;
-  const text = el.textContent;
-  // Slash-menu trigger
-  if (text === '/' || (text.startsWith('/') && _slashTargetBlockId === blockId)) {
-    _slashTargetBlockId = blockId;
-    _slashFilter = text.slice(1);
-    showSlashMenu(el);
-  } else if (_slashTargetBlockId === blockId) {
-    hideSlashMenu();
-  }
-  block.content = text;
-  saveNotes(getNotes().map(n => n.id === CURRENT_NOTE_ID ? note : n));
-}
-
-function onBlockKey(e, blockId) {
-  if (document.getElementById('slash-menu').classList.contains('open')) {
-    if (e.key === 'ArrowDown') { e.preventDefault(); slashMove(1); return; }
-    if (e.key === 'ArrowUp')   { e.preventDefault(); slashMove(-1); return; }
-    if (e.key === 'Enter')     { e.preventDefault(); slashSelect(); return; }
-    if (e.key === 'Escape')    { e.preventDefault(); hideSlashMenu(); return; }
-  }
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    addBlock(blockId, 'p');
-    return;
-  }
-  if (e.key === 'Backspace') {
-    const note = getNote(CURRENT_NOTE_ID);
-    if (!note) return;
-    const block = (note.blocks||[]).find(b => b.id === blockId);
-    if (block && !block.content && note.blocks.length > 1) {
-      e.preventDefault();
-      removeBlock(blockId, true);
-    }
+  const iframe = document.getElementById('notes-iframe');
+  if (iframe && (!iframe.src || iframe.src === 'about:blank' || !iframe.src.includes('notes.html'))) {
+    const userParam = SESSION ? `?user=${encodeURIComponent(SESSION.key)}&name=${encodeURIComponent(SESSION.name)}&admin=${SESSION.isAdmin?1:0}` : '';
+    iframe.src = 'notes.html' + userParam;
   }
 }
-
-function onBlockPaste(e, blockId) {
-  e.preventDefault();
-  const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-  document.execCommand('insertText', false, text);
-}
-
-function addBlock(afterId, type) {
-  const note = getNote(CURRENT_NOTE_ID);
-  if (!note || !canEditNote(note)) return;
-  const newB = { id: 'b_'+Date.now()+Math.floor(Math.random()*999), type: type || 'p', content: '' };
-  if (newB.type === 'todo') newB.checked = false;
-  if (afterId) {
-    const idx = note.blocks.findIndex(b => b.id === afterId);
-    note.blocks.splice(idx+1, 0, newB);
-  } else {
-    note.blocks.push(newB);
-  }
-  updateNote(CURRENT_NOTE_ID, { blocks: note.blocks });
-  renderNoteBlocks();
-  renderSidebarNotesList();
+function newNote(visibility) {
+  gotoNotes();
   setTimeout(() => {
-    const el = document.querySelector(`.nb[data-id="${newB.id}"] .nb-content`);
-    if (el && newB.type !== 'divider') { el.focus(); placeCaretAtEnd(el); }
-  }, 30);
+    const iframe = document.getElementById('notes-iframe');
+    iframe?.contentWindow?.postMessage({ type:'new-note', visibility }, '*');
+  }, 400);
 }
 
-function removeBlock(id, focusPrev) {
-  const note = getNote(CURRENT_NOTE_ID);
-  if (!note || !canEditNote(note)) return;
-  const idx = note.blocks.findIndex(b => b.id === id);
-  if (idx < 0 || note.blocks.length <= 1) return;
-  note.blocks.splice(idx, 1);
-  updateNote(CURRENT_NOTE_ID, { blocks: note.blocks });
-  renderNoteBlocks();
-  if (focusPrev) {
-    const prev = note.blocks[Math.max(0, idx-1)];
-    setTimeout(() => {
-      const el = document.querySelector(`.nb[data-id="${prev.id}"] .nb-content`);
-      if (el) { el.focus(); placeCaretAtEnd(el); }
-    }, 30);
-  }
-}
-
-function changeBlockType(id, newType) {
-  const note = getNote(CURRENT_NOTE_ID);
-  if (!note || !canEditNote(note)) return;
-  const block = note.blocks.find(b => b.id === id);
-  if (!block) return;
-  block.type = newType;
-  if (newType === 'todo') block.checked = block.checked || false;
-  block.content = block.content.replace(/^\/.*/, '').trim();
-  updateNote(CURRENT_NOTE_ID, { blocks: note.blocks });
-  renderNoteBlocks();
-  setTimeout(() => {
-    const el = document.querySelector(`.nb[data-id="${id}"] .nb-content`);
-    if (el && newType !== 'divider') { el.focus(); placeCaretAtEnd(el); }
-  }, 30);
-}
-
-function toggleTodo(id) {
-  const note = getNote(CURRENT_NOTE_ID);
-  if (!note || !canEditNote(note)) return;
-  const block = note.blocks.find(b => b.id === id);
-  if (!block) return;
-  block.checked = !block.checked;
-  updateNote(CURRENT_NOTE_ID, { blocks: note.blocks });
-  renderNoteBlocks();
-}
-
-function onNoteTitleInput() {
-  if (!CURRENT_NOTE_ID) return;
-  const val = document.getElementById('ne-title').value;
-  updateNote(CURRENT_NOTE_ID, { title: val });
-  renderSidebarNotesList();
-}
-
-function toggleNoteVis() {
-  const note = getNote(CURRENT_NOTE_ID);
-  if (!note || !canEditNote(note)) return;
-  // Only author can change visibility
-  if (note.authorKey !== SESSION.key) return;
-  const newVis = note.visibility === 'public' ? 'private' : 'public';
-  updateNote(CURRENT_NOTE_ID, { visibility: newVis });
-  renderNoteEditor();
-  renderSidebarNotesList();
-}
-
-function cycleIcon() {
-  const note = getNote(CURRENT_NOTE_ID);
-  if (!note || !canEditNote(note)) return;
-  const idx = NOTE_ICONS.indexOf(note.icon || '📝');
-  const next = NOTE_ICONS[(idx+1) % NOTE_ICONS.length];
-  updateNote(CURRENT_NOTE_ID, { icon: next });
-  document.getElementById('ne-icon').textContent = next;
-  renderSidebarNotesList();
-}
-
-function confirmDeleteNote() {
-  if (!CURRENT_NOTE_ID) return;
-  const note = getNote(CURRENT_NOTE_ID);
-  if (!note || !canEditNote(note)) return;
-  if (!confirm('Supprimer cette note ?')) return;
-  saveNotes(getNotes().filter(n => n.id !== CURRENT_NOTE_ID));
-  closeNote();
-}
-
-// Slash menu
-const SLASH_ITEMS = [
-  { type:'h1', icon:'H1', label:'Titre 1', desc:'Grand titre', cat:'Texte' },
-  { type:'h2', icon:'H2', label:'Titre 2', desc:'Titre moyen', cat:'Texte' },
-  { type:'h3', icon:'H3', label:'Sous-titre', desc:'Petit titre stylé', cat:'Texte' },
-  { type:'p',  icon:'¶',  label:'Paragraphe', desc:'Texte normal', cat:'Texte' },
-  { type:'list', icon:'•', label:'Liste à puces', desc:'Liste simple', cat:'Liste' },
-  { type:'numbered', icon:'1.', label:'Liste numérotée', desc:'1, 2, 3…', cat:'Liste' },
-  { type:'todo', icon:'☐', label:'Tâche', desc:'Case à cocher', cat:'Liste' },
-  { type:'quote', icon:'"', label:'Citation', desc:'Citation stylée', cat:'Bloc' },
-  { type:'callout', icon:'💡', label:'Encart', desc:'Info importante', cat:'Bloc' },
-  { type:'divider', icon:'—', label:'Séparateur', desc:'Ligne horizontale', cat:'Bloc' }
-];
-
-function showSlashMenu(blockEl) {
-  const menu = document.getElementById('slash-menu');
-  const filter = _slashFilter.toLowerCase();
-  const items = SLASH_ITEMS.filter(it =>
-    !filter || it.label.toLowerCase().includes(filter) || it.type.includes(filter)
-  );
-  if (!items.length) { hideSlashMenu(); return; }
-  _slashActiveIdx = 0;
-  let html = '';
-  let lastCat = null;
-  items.forEach((it, i) => {
-    if (it.cat !== lastCat) { html += `<div class="sm-cat">${it.cat}</div>`; lastCat = it.cat; }
-    html += `<div class="sm-item${i===0?' active':''}" data-idx="${i}" data-type="${it.type}" onclick="slashPickType('${it.type}')">
-      <div class="sm-icon">${it.icon}</div>
-      <div class="sm-text"><div class="sm-label">${it.label}</div><div class="sm-desc">${it.desc}</div></div>
-    </div>`;
-  });
-  menu.innerHTML = html;
-  menu.classList.add('open');
-  // Position near the cursor
-  const rect = blockEl.getBoundingClientRect();
-  menu.style.top = (rect.bottom + 4) + 'px';
-  menu.style.left = rect.left + 'px';
-  menu._items = items;
-}
-function hideSlashMenu() {
-  const m = document.getElementById('slash-menu');
-  m.classList.remove('open');
-  _slashTargetBlockId = null; _slashFilter = '';
-}
-function slashMove(dir) {
-  const menu = document.getElementById('slash-menu');
-  const items = menu.querySelectorAll('.sm-item');
-  if (!items.length) return;
-  _slashActiveIdx = (_slashActiveIdx + dir + items.length) % items.length;
-  items.forEach((el, i) => el.classList.toggle('active', i === _slashActiveIdx));
-  items[_slashActiveIdx].scrollIntoView({ block:'nearest' });
-}
-function slashSelect() {
-  const menu = document.getElementById('slash-menu');
-  const items = menu.querySelectorAll('.sm-item');
-  if (!items.length) return;
-  const type = items[_slashActiveIdx].dataset.type;
-  slashPickType(type);
-}
-function slashPickType(type) {
-  if (!_slashTargetBlockId) return;
-  changeBlockType(_slashTargetBlockId, type);
-  hideSlashMenu();
-}
-
-function placeCaretAtEnd(el) {
-  el.focus();
-  if (typeof window.getSelection !== 'undefined' && typeof document.createRange !== 'undefined') {
-    const range = document.createRange();
-    range.selectNodeContents(el); range.collapse(false);
-    const sel = window.getSelection();
-    sel.removeAllRanges(); sel.addRange(range);
-  }
-}
-
-function escapeHtml(s) {
-  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-}
-
-function formatNoteDate(ts) {
-  if (!ts) return '';
-  const d = new Date(ts);
-  const now = new Date();
-  const diff = (now - d) / 1000;
-  if (diff < 60) return 'à l\'instant';
-  if (diff < 3600) return Math.floor(diff/60) + 'min';
-  if (diff < 86400) return Math.floor(diff/3600) + 'h';
-  if (diff < 604800) return Math.floor(diff/86400) + 'j';
-  return d.toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
-}
-
-function showBlockMenu(e, blockId) {
-  e.stopPropagation();
-  const note = getNote(CURRENT_NOTE_ID);
-  if (!note || !canEditNote(note)) return;
-  if (!confirm('Supprimer ce bloc ?')) return;
-  removeBlock(blockId, true);
-}
-
-// Hide slash menu on outside click
-document.addEventListener('click', (e) => {
-  const menu = document.getElementById('slash-menu');
-  if (!menu) return;
-  if (!menu.contains(e.target) && !e.target.closest('.nb-content')) hideSlashMenu();
-});
 
 // ══ PERSON FILTER ══
 function filterPerson(person) {
