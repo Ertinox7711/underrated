@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 08:26 — `ca69860`
+feat: move suggestions to phases page, simplify equipe cards
+
 ## 05/05/2026 08:22 — `58110a4`
 feat: phase modal - badge selector instead of free text input
 
