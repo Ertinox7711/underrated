@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 20:14 — `0fa7484`
+feat: hub offres - SVG icons per feature + expandable description rows + desc editable in admin mode
+
 ## 05/05/2026 20:11 — `85405cc`
 feat: hub offres page (STUDIO 97€ vs ELITE 1200€) + inline admin editor with localStorage persistence
 
