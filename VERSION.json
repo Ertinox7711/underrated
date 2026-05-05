@@ -1,8 +1,8 @@
 {
-  "commit": "ecfcac5",
-  "message": "feat: espace equipe - tasks, notes auto-save, drag-drop screenshots per member",
-  "commitDate": "2026-05-05T21:45:48+02:00",
-  "buildDate": "2026-05-05T19:46:07Z",
-  "buildDateFR": "05/05/2026 21:46",
+  "commit": "38647a1",
+  "message": "feat: espace equipe - timestamps, activity log, badges sur tabs, dates images/tasks/notes",
+  "commitDate": "2026-05-05T21:50:09+02:00",
+  "buildDate": "2026-05-05T19:50:28Z",
+  "buildDateFR": "05/05/2026 21:50",
   "branch": "main"
 }

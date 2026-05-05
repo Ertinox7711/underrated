@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 21:50 — `38647a1`
+feat: espace equipe - timestamps, activity log, badges sur tabs, dates images/tasks/notes
+
 ## 05/05/2026 21:46 — `ecfcac5`
 feat: espace equipe - tasks, notes auto-save, drag-drop screenshots per member
 
