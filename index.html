@@ -1482,7 +1482,7 @@ function hasAccount(key) {
   return !!getCredentials()[key];
 }
 // Seed tous les comptes par défaut (pseudo = leur prénom)
-const CREDS_VERSION = '4';
+const CREDS_VERSION = '5';
 function seedAdmin() {
   const defaults = { mathieu:'mathieu', bastien:'bastien', theo:'theo', ilame:'ilame' };
   if (localStorage.getItem('ur_creds_v') !== CREDS_VERSION) {
