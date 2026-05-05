@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 06:56 — `bf0c2f6`
+feat: add dashboard war room + audit stratégique
+
 ## 04/05/2026 18:35 — `f2bba19`
 fix: tasks board - scope localStorage per user, sync done/status, fix date timezone, prevent focus loss on date edit
 
