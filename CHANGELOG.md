@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 08:10 — `fd0f7fd`
+feat: equipe - member suggestion system, admin approve/reject
+
 ## 05/05/2026 08:03 — `75c51b7`
 feat: equipe page - admin can edit member card role + tasks inline
 
