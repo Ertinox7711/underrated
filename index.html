@@ -786,6 +786,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
     </div>
     <button class="login-btn" onclick="doLogin()">CONNEXION</button>
     <div class="login-err" id="login-err"></div>
+    <div style="text-align:center;margin-top:16px"><span onclick="forceReset()" style="font-size:10px;color:var(--muted);cursor:pointer;opacity:.45;font-family:'Barlow Condensed';letter-spacing:.05em">réinitialiser les accès</span></div>
   </div>
 </div>
 
@@ -1481,6 +1482,16 @@ function saveCredential(key, password) {
 function hasAccount(key) {
   return !!getCredentials()[key];
 }
+function forceReset() {
+  const defaults = { mathieu:'mathieu', bastien:'bastien', theo:'theo', ilame:'ilame' };
+  localStorage.setItem('ur_credentials', JSON.stringify(defaults));
+  localStorage.setItem('ur_creds_v', '5');
+  const err = document.getElementById('login-err');
+  err.textContent = 'Accès réinitialisés — connecte-toi avec ton prénom';
+  err.style.color = '#5DC48A';
+  err.style.display = 'block';
+}
+
 // Seed tous les comptes par défaut (pseudo = leur prénom)
 const CREDS_VERSION = '5';
 function seedAdmin() {
