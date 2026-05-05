@@ -1,5 +1,8 @@
 # Changelog
 
+## 05/05/2026 07:49 — `b7567cf`
+feat: changelog panel slide-in, plus de window.open
+
 ## 05/05/2026 07:45 — `19c6495`
 feat: phases dynamiques, couleur perso par membre, addTask auto-personne
 
