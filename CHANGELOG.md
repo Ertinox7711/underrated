@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 04:39 — `66f1d93`
+feat(client): standalone client area with Studio/Elite plan gating
+
 ## 06/05/2026 04:32 — `59a839a`
 feat(marketing): seed default content for court/mid/long with new strategy
 
