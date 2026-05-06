@@ -1,8 +1,8 @@
 {
-  "commit": "d071057",
-  "message": "fix: home title -> UNDERRATED",
-  "commitDate": "2026-05-06T17:53:35+02:00",
-  "buildDate": "2026-05-06T15:53:46Z",
-  "buildDateFR": "06/05/2026 17:53",
+  "commit": "3f3335c",
+  "message": "feat(home): RATED en blanc avec animation shine sweep",
+  "commitDate": "2026-05-06T17:57:14+02:00",
+  "buildDate": "2026-05-06T15:58:26Z",
+  "buildDateFR": "06/05/2026 17:58",
   "branch": "main"
 }

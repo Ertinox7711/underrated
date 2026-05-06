@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 17:58 — `3f3335c`
+feat(home): RATED en blanc avec animation shine sweep
+
 ## 06/05/2026 17:53 — `d071057`
 fix: home title -> UNDERRATED
 
