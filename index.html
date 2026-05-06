@@ -789,6 +789,69 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .mkt-open-btn{display:flex;align-items:center;gap:5px;font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);cursor:pointer;border:none;background:none;padding:0;margin-top:8px;transition:color .2s}
 .mkt-open-btn:hover{color:var(--b1)}
 
+/* ══ WORKSPACE (unified) ══ */
+.ws-gantt-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:24px}
+.ws-gantt-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.ws-gantt-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.1em;color:var(--text)}
+.ws-gantt-info{font-size:11px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.08em;text-transform:uppercase}
+.ws-gantt{position:relative;background:var(--surface-2,#0a0f17);border-radius:10px;padding:14px;min-height:140px;overflow-x:auto}
+.ws-gantt-axis{position:relative;height:24px;border-bottom:1px solid var(--border);margin-bottom:12px;display:flex}
+.ws-gantt-month{flex:1;font-size:10px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.08em;text-transform:uppercase;text-align:left;padding-left:6px;border-left:1px solid rgba(255,255,255,.04)}
+.ws-gantt-month:first-child{border-left:none;padding-left:0}
+.ws-gantt-bars{position:relative;display:flex;flex-direction:column;gap:10px}
+.ws-gantt-row{position:relative;height:38px}
+.ws-gantt-bar{
+  position:absolute;height:32px;border-radius:8px;cursor:pointer;
+  display:flex;align-items:center;padding:0 14px;color:white;
+  font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.06em;
+  transition:transform .15s,box-shadow .15s;overflow:hidden;
+}
+.ws-gantt-bar:hover{transform:scale(1.01);box-shadow:0 4px 18px rgba(0,0,0,.4)}
+.ws-gantt-bar.editing{outline:2px solid white;outline-offset:2px}
+.ws-gantt-today{position:absolute;top:0;bottom:0;width:2px;background:#FFD700;z-index:5;pointer-events:none}
+.ws-gantt-today::after{content:'AUJ';position:absolute;top:-18px;left:-12px;font-size:9px;color:#FFD700;font-family:'Barlow Condensed';letter-spacing:.08em;font-weight:900}
+
+/* Phase cards */
+.ws-phases{display:flex;flex-direction:column;gap:18px}
+.ws-phase-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;border-left:4px solid var(--b1)}
+.ws-phase-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.ws-phase-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.08em}
+.ws-phase-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.ws-phase-meta{display:flex;gap:10px;align-items:center}
+.ws-phase-badge{font-family:'Barlow Condensed';font-size:10px;font-weight:900;letter-spacing:.12em;padding:4px 10px;border-radius:4px;text-transform:uppercase;background:rgba(30,144,255,.15);color:var(--b1);border:1px solid rgba(30,144,255,.3)}
+.ws-phase-dates{font-size:11px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.08em}
+.ws-phase-members{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.ws-pm-card{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:.15s}
+.ws-pm-card:hover{background:rgba(255,255,255,.04);border-color:var(--b1);transform:translateY(-2px)}
+.ws-pm-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ws-pm-dot{width:10px;height:10px;border-radius:50%}
+.ws-pm-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.06em}
+.ws-pm-progress-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.ws-pm-progress-bar{height:100%;border-radius:3px;transition:width .3s}
+.ws-pm-stats{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--muted)}
+
+/* Member expanded panel */
+.ws-member-panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-top:24px;overflow:hidden}
+.ws-member-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border)}
+.ws-member-title{display:flex;align-items:center;gap:14px}
+.ws-member-dot{width:14px;height:14px;border-radius:50%}
+.ws-member-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.08em}
+.ws-member-role{font-size:12px;color:var(--muted)}
+.ws-member-close{background:none;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px}
+.ws-member-close:hover{color:var(--text);border-color:var(--accent,#FF5E7D)}
+.ws-member-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 22px}
+.ws-mt{padding:14px 18px;font-family:'Barlow Condensed';font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:.15s}
+.ws-mt:hover{color:var(--text)}
+.ws-mt.active{color:var(--b1);border-bottom-color:var(--b1)}
+.ws-member-body{padding:22px}
+.ws-task-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.ws-task-cb{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.ws-task-cb.checked{background:var(--b1);border-color:var(--b1)}
+.ws-task-cb.checked::after{content:'✓';color:white;font-size:11px;font-weight:bold}
+.ws-task-text{flex:1;font-size:14px}
+.ws-task-text.done{text-decoration:line-through;color:var(--muted)}
+.ws-task-phase{font-size:10px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;background:rgba(255,255,255,.04);border-radius:3px}
+
 /* ══ MOBILE ══ */
 @media(max-width:700px){
   body{flex-direction:column;overflow:hidden}
@@ -876,20 +939,9 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Membres
     </div>
-    <div class="sb-item" data-page="phases" onclick="gotoPhase('all')">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      Phases
-    </div>
-    <div class="sb-sub" id="phases-sub">
-      <div class="sb-sub-item" data-person="all" onclick="gotoPhase('all')"><div class="sb-sub-dot"></div>Tout voir</div>
-      <div class="sb-sub-item" data-person="mathieu" onclick="gotoPhase('mathieu')"><div class="sb-sub-dot" style="border-color:var(--b1)"></div>Mathieu</div>
-      <div class="sb-sub-item" data-person="bastien" onclick="gotoPhase('bastien')"><div class="sb-sub-dot" style="border-color:#9B59B6"></div>Bastien</div>
-      <div class="sb-sub-item" data-person="theo" onclick="gotoPhase('theo')"><div class="sb-sub-dot" style="border-color:var(--b3)"></div>Théo</div>
-      <div class="sb-sub-item" data-person="ilame" onclick="gotoPhase('ilame')"><div class="sb-sub-dot" style="border-color:#27AE60"></div>Ilame</div>
-    </div>
-    <div class="sb-item" data-page="espace" onclick="goto('espace')">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-      Espace
+    <div class="sb-item" data-page="workspace" onclick="goto('workspace')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Workspace
     </div>
 
     <!-- ════ PRODUCTION ════ -->
@@ -987,7 +1039,49 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
     </div>
   </div>
 
-  <!-- ════ PHASES ════ -->
+  <!-- ════ WORKSPACE (unified Phases + Espace) ════ -->
+  <div class="page" id="p-workspace">
+    <div class="ph">
+      <div class="ph-eye">Workspace</div>
+      <div class="ph-title">ROADMAP <em>ÉQUIPE</em></div>
+      <div class="ph-sub" id="ws-sub">Timeline globale, phases, et workspace par membre — tout en un.</div>
+    </div>
+    <div class="pc">
+      <!-- Gantt timeline -->
+      <div class="ws-gantt-wrap rv d1">
+        <div class="ws-gantt-head">
+          <div class="ws-gantt-title">TIMELINE GLOBALE</div>
+          <div class="ws-gantt-info" id="ws-gantt-info">Click sur une barre pour modifier (admin)</div>
+        </div>
+        <div class="ws-gantt" id="ws-gantt"></div>
+      </div>
+
+      <!-- Phase cards with member breakdown -->
+      <div class="ws-phases" id="ws-phases"></div>
+
+      <!-- Member expanded panel (tasks / media / log) -->
+      <div class="ws-member-panel" id="ws-member-panel" style="display:none">
+        <div class="ws-member-head">
+          <div class="ws-member-title">
+            <div class="ws-member-dot" id="ws-mp-dot"></div>
+            <div>
+              <div class="ws-member-name" id="ws-mp-name"></div>
+              <div class="ws-member-role" id="ws-mp-role"></div>
+            </div>
+          </div>
+          <button class="ws-member-close" onclick="wsCloseMember()">✕</button>
+        </div>
+        <div class="ws-member-tabs">
+          <div class="ws-mt active" data-tab="tasks" onclick="wsMemberTab('tasks')">Tâches</div>
+          <div class="ws-mt" data-tab="media" onclick="wsMemberTab('media')">Media</div>
+          <div class="ws-mt" data-tab="log" onclick="wsMemberTab('log')">Activité</div>
+        </div>
+        <div class="ws-member-body" id="ws-member-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ PHASES (legacy, kept for backward compat) ════ -->
   <div class="page" id="p-phases">
     <div class="ph">
       <div class="ph-eye">Roadmap</div>
@@ -1591,8 +1685,8 @@ function seedAdmin() {
 
 // ══ PHASES DATA ══
 const DEFAULT_PHASES = [
-  { id:'p1', name:'PHASE 1', badge:'ACTIVE', sub:'Setup — Infrastructure, outils, bases', color:'30,144,255' },
-  { id:'p2', name:'PHASE 2', badge:'NEXT',   sub:'Production — Daily content, funnel, scale', color:'86,204,242' }
+  { id:'p1', name:'PHASE 1', badge:'ACTIVE', sub:'Setup — Infrastructure, money reels, formation', color:'30,144,255', start:'2026-05-06', end:'2026-06-06' },
+  { id:'p2', name:'PHASE 2', badge:'NEXT',   sub:'Scale — Multi-séries, formation 1200€, brand deals', color:'86,204,242', start:'2026-06-07', end:'2027-05-06' }
 ];
 const PHASE_COLORS = [
   '30,144,255','86,204,242','79,110,247','155,89,182','231,76,60','255,107,53','255,215,0','39,174,96','93,196,138'
@@ -3016,6 +3110,222 @@ function placeCaretAtStart(el) {
 }
 document.addEventListener('click', e=>{ if(!e.target.closest('#mkt-slash-menu')&&!e.target.closest('.mkt-editable')) hideSlashMenu(); });
 
+// ══ WORKSPACE (unified Phases + Espace) ══
+let WS_CUR_MEMBER = null;
+let WS_CUR_TAB = 'tasks';
+
+function wsParseDate(s) { return new Date(s + 'T00:00:00').getTime(); }
+function wsFmtDate(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString('fr-FR', {day:'2-digit',month:'short'});
+}
+function wsFmtMonth(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString('fr-FR', {month:'short',year:'2-digit'});
+}
+
+function wsRender() {
+  wsRenderGantt();
+  wsRenderPhases();
+}
+
+function wsRenderGantt() {
+  const wrap = document.getElementById('ws-gantt');
+  if (!wrap) return;
+  const phases = getPhases();
+  if (!phases.length) { wrap.innerHTML = '<div style="color:var(--muted);text-align:center;padding:30px">Aucune phase</div>'; return; }
+
+  // Find global range
+  const allDates = phases.flatMap(p => [wsParseDate(p.start||'2026-05-01'), wsParseDate(p.end||'2027-05-01')]);
+  const minDate = Math.min(...allDates);
+  const maxDate = Math.max(...allDates);
+  const rangeMs = maxDate - minDate;
+  const today = Date.now();
+
+  // Generate month axis (every month between min/max)
+  const months = [];
+  let cur = new Date(minDate);
+  cur.setDate(1);
+  while (cur.getTime() <= maxDate) {
+    months.push(cur.getTime());
+    cur.setMonth(cur.getMonth() + 1);
+  }
+
+  const axisHtml = `<div class="ws-gantt-axis">${months.map(m => `<div class="ws-gantt-month">${wsFmtMonth(m)}</div>`).join('')}</div>`;
+
+  const todayPct = ((today - minDate) / rangeMs) * 100;
+  const todayMarker = (today >= minDate && today <= maxDate) ? `<div class="ws-gantt-today" style="left:${todayPct}%"></div>` : '';
+
+  const barsHtml = phases.map((p, idx) => {
+    const start = wsParseDate(p.start || '2026-05-01');
+    const end = wsParseDate(p.end || '2027-05-01');
+    const leftPct = ((start - minDate) / rangeMs) * 100;
+    const widthPct = ((end - start) / rangeMs) * 100;
+    const bg = `rgb(${p.color})`;
+    const isAdmin = (typeof SESSION !== 'undefined' && SESSION && SESSION.isAdmin);
+    const cursor = isAdmin ? 'cursor:pointer' : 'cursor:default';
+    const onclick = isAdmin ? `onclick="wsEditPhase('${p.id}')"` : '';
+    return `
+      <div class="ws-gantt-row">
+        <div class="ws-gantt-bar" style="left:${leftPct}%;width:${widthPct}%;background:${bg};${cursor}" ${onclick} title="${p.name} — ${wsFmtDate(start)} → ${wsFmtDate(end)}">
+          ${p.name} <span style="opacity:.7;font-size:11px;margin-left:8px">${wsFmtDate(start)} → ${wsFmtDate(end)}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  wrap.innerHTML = axisHtml + `<div class="ws-gantt-bars" style="position:relative">${todayMarker}${barsHtml}</div>`;
+}
+
+function wsEditPhase(phaseId) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const phases = getPhases();
+  const p = phases.find(x => x.id === phaseId);
+  if (!p) return;
+  const newStart = prompt(`Date début de ${p.name} (YYYY-MM-DD) :`, p.start || '2026-05-06');
+  if (!newStart) return;
+  const newEnd = prompt(`Date fin de ${p.name} (YYYY-MM-DD) :`, p.end || '2026-06-06');
+  if (!newEnd) return;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(newStart) || !/^\d{4}-\d{2}-\d{2}$/.test(newEnd)) {
+    alert('Format date invalide. Utilise YYYY-MM-DD (ex: 2026-06-15)'); return;
+  }
+  p.start = newStart;
+  p.end = newEnd;
+  localStorage.setItem('ur_phases', JSON.stringify(phases));
+  if (typeof dbSet === 'function') dbSet('phases', {items: phases});
+  wsRender();
+}
+
+function wsRenderPhases() {
+  const wrap = document.getElementById('ws-phases');
+  if (!wrap) return;
+  const phases = getPhases();
+  const tasks = (typeof getTasks === 'function') ? getTasks() : null;
+  const done = (typeof getDoneTasks === 'function') ? getDoneTasks() : {};
+
+  wrap.innerHTML = phases.map(p => {
+    const bg = `rgb(${p.color})`;
+    const memberHtml = ESP_MEMBERS.map(m => {
+      // Get tasks count for this member in this phase
+      let taskList = [];
+      if (tasks && tasks[m.key] && tasks[m.key][p.id]) taskList = tasks[m.key][p.id];
+      const total = taskList.length;
+      const doneCount = taskList.filter(t => done[m.key] && done[m.key][p.id] && done[m.key][p.id][t]).length;
+      const pct = total ? Math.round((doneCount/total)*100) : 0;
+      return `
+        <div class="ws-pm-card" onclick="wsOpenMember('${m.key}','${p.id}')">
+          <div class="ws-pm-head">
+            <div class="ws-pm-dot" style="background:${m.color}"></div>
+            <div class="ws-pm-name">${m.label}</div>
+          </div>
+          <div class="ws-pm-progress-track">
+            <div class="ws-pm-progress-bar" style="width:${pct}%;background:${m.color}"></div>
+          </div>
+          <div class="ws-pm-stats">
+            <span>${doneCount}/${total} tâches</span>
+            <span>${pct}%</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="ws-phase-card" style="border-left-color:${bg}">
+        <div class="ws-phase-head">
+          <div>
+            <div class="ws-phase-title" style="color:${bg}">${p.name}</div>
+            <div class="ws-phase-sub">${p.sub}</div>
+          </div>
+          <div class="ws-phase-meta">
+            <span class="ws-phase-badge" style="background:rgba(${p.color},.15);color:${bg};border-color:rgba(${p.color},.3)">${p.badge}</span>
+            <span class="ws-phase-dates">${wsFmtDate(wsParseDate(p.start||'2026-05-01'))} → ${wsFmtDate(wsParseDate(p.end||'2026-06-01'))}</span>
+          </div>
+        </div>
+        <div class="ws-phase-members">${memberHtml}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function wsOpenMember(memberKey, phaseId) {
+  WS_CUR_MEMBER = memberKey;
+  const m = ESP_MEMBERS.find(x => x.key === memberKey);
+  const acc = (typeof ACCOUNTS !== 'undefined' && ACCOUNTS[memberKey]) || {role:''};
+  document.getElementById('ws-mp-name').textContent = m.label.toUpperCase();
+  document.getElementById('ws-mp-role').textContent = acc.role || '';
+  document.getElementById('ws-mp-dot').style.background = m.color;
+  document.getElementById('ws-member-panel').style.display = 'block';
+  wsMemberTab('tasks');
+  setTimeout(() => document.getElementById('ws-member-panel').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+}
+
+function wsCloseMember() {
+  document.getElementById('ws-member-panel').style.display = 'none';
+  WS_CUR_MEMBER = null;
+}
+
+function wsMemberTab(tab) {
+  WS_CUR_TAB = tab;
+  document.querySelectorAll('.ws-mt').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  const body = document.getElementById('ws-member-body');
+  if (tab === 'tasks') body.innerHTML = wsRenderTasks();
+  else if (tab === 'media') body.innerHTML = wsRenderMedia();
+  else if (tab === 'log') body.innerHTML = wsRenderLog();
+}
+
+function wsRenderTasks() {
+  if (!WS_CUR_MEMBER) return '';
+  const phases = getPhases();
+  const tasks = (typeof getTasks === 'function') ? getTasks() : {};
+  const done = (typeof getDoneTasks === 'function') ? getDoneTasks() : {};
+  let html = '';
+  phases.forEach(p => {
+    const list = (tasks[WS_CUR_MEMBER] && tasks[WS_CUR_MEMBER][p.id]) || [];
+    if (!list.length) return;
+    html += `<div style="margin-bottom:18px"><div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:.08em;color:rgb(${p.color});margin-bottom:8px">${p.name}</div>`;
+    list.forEach(t => {
+      const isDone = done[WS_CUR_MEMBER] && done[WS_CUR_MEMBER][p.id] && done[WS_CUR_MEMBER][p.id][t];
+      html += `
+        <div class="ws-task-row">
+          <div class="ws-task-cb ${isDone?'checked':''}" onclick="wsToggleTask('${WS_CUR_MEMBER}','${p.id}','${t.replace(/'/g,"\\'")}')"></div>
+          <div class="ws-task-text ${isDone?'done':''}">${t}</div>
+          <div class="ws-task-phase">${p.id.toUpperCase()}</div>
+        </div>
+      `;
+    });
+    html += '</div>';
+  });
+  return html || '<div style="color:var(--muted);text-align:center;padding:30px">Aucune tâche assignée</div>';
+}
+
+function wsToggleTask(who, phaseId, taskText) {
+  if (typeof toggleTaskDone === 'function') {
+    toggleTaskDone(who, phaseId, taskText);
+    setTimeout(() => { wsMemberTab('tasks'); wsRenderPhases(); }, 50);
+  }
+}
+
+function wsRenderMedia() {
+  if (!WS_CUR_MEMBER) return '';
+  try {
+    const imgs = JSON.parse(localStorage.getItem(`esp-${WS_CUR_MEMBER}-media`) || '[]');
+    if (!imgs.length) return '<div style="color:var(--muted);text-align:center;padding:30px">Aucun media uploadé</div>';
+    return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">${imgs.map(i => `<img src="${i.src}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">`).join('')}</div>`;
+  } catch(e) { return '<div style="color:var(--muted)">Erreur chargement media</div>'; }
+}
+
+function wsRenderLog() {
+  if (!WS_CUR_MEMBER) return '';
+  try {
+    const log = JSON.parse(localStorage.getItem(`esp-${WS_CUR_MEMBER}-log`) || '[]');
+    if (!log.length) return '<div style="color:var(--muted);text-align:center;padding:30px">Aucune activité enregistrée</div>';
+    return log.slice(-30).reverse().map(e => {
+      const d = new Date(e.at).toLocaleString('fr-FR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+      return `<div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between"><span style="font-size:13px">${e.text||e.type}</span><span style="font-size:11px;color:var(--muted)">${d}</span></div>`;
+    }).join('');
+  } catch(e) { return '<div style="color:var(--muted)">Erreur chargement log</div>'; }
+}
+
 // ══ HUB OFFRES ══
 let HUB_EDIT = false;
 const HUB_F_KEY = 'hub-features';
@@ -3191,7 +3501,8 @@ function goto(page) {
   const nav = document.querySelector('.sb-item[data-page="' + page + '"]');
   if (nav) nav.classList.add('active');
   document.querySelector('.main').scrollTop = 0;
-  document.getElementById('phases-sub').classList.toggle('open', page === 'phases');
+  const phSub = document.getElementById('phases-sub');
+  if (phSub) phSub.classList.toggle('open', page === 'phases');
   document.getElementById('admin-sub').classList.toggle('open', page === 'admin');
   if (page === 'notes') {
     const nf = document.getElementById('notes-iframe');
@@ -3206,6 +3517,7 @@ function goto(page) {
   }
   if (page === 'hub') { renderHub(); mktUpdatePreviews(); }
   if (page === 'espace') espGoto(ESP_CUR);
+  if (page === 'workspace') { wsRender(); wsCloseMember(); }
 }
 
 function gotoAdmin(who) {
