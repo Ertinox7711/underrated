@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 17:53 — `d071057`
+fix: home title -> UNDERRATED
+
 ## 06/05/2026 17:52 — `73a3318`
 feat: home title WAR ROOM -> SGRR TEAM
 
