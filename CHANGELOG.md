@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 05:47 — `c540ee3`
+fix(workspace): SVG calendar icon au lieu d emoji sur bouton date
+
 ## 06/05/2026 05:45 — `52075bb`
 feat(workspace): swimlanes par personne style Notion timeline + axis aligne
 
