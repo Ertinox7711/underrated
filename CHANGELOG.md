@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 17:52 — `73a3318`
+feat: home title WAR ROOM -> SGRR TEAM
+
 ## 06/05/2026 17:48 — `4fbac27`
 feat: favicon SVG eclair bleu (index + client)
 
