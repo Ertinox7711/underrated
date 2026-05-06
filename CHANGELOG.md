@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 06:21 — `6c21317`
+feat(workspace): sticky member column + bigger cells (56/120/160) for legibility
+
 ## 06/05/2026 06:18 — `8d69d75`
 fix(workspace): clean up - remove phase vertical lines + z-index member header
 

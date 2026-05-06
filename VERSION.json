@@ -1,8 +1,8 @@
 {
-  "commit": "8d69d75",
-  "message": "fix(workspace): clean up - remove phase vertical lines + z-index member header",
-  "commitDate": "2026-05-06T06:18:29+02:00",
-  "buildDate": "2026-05-06T04:18:38Z",
-  "buildDateFR": "06/05/2026 06:18",
+  "commit": "6c21317",
+  "message": "feat(workspace): sticky member column + bigger cells (56/120/160) for legibility",
+  "commitDate": "2026-05-06T06:21:33+02:00",
+  "buildDate": "2026-05-06T04:21:41Z",
+  "buildDateFR": "06/05/2026 06:21",
   "branch": "main"
 }
