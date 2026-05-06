@@ -262,6 +262,32 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .home-hero{padding:34px 36px 22px;position:relative;z-index:1}
 .home-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(54px,8vw,106px);line-height:.88;letter-spacing:.03em;margin-bottom:8px}
 .home-title .gr{background:linear-gradient(135deg,var(--b1) 0%,var(--b2) 50%,var(--b3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.home-title .rated-shine{
+  display:inline-block;
+  background:linear-gradient(110deg,#ffffff 30%,#ffffff 40%,rgba(135,206,250,.95) 50%,#ffffff 60%,#ffffff 70%);
+  background-size:200% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;color:transparent;
+  animation:shineSweep 3.5s ease-in-out infinite;
+  text-shadow:0 0 30px rgba(255,255,255,.15);
+  position:relative;
+}
+.home-title .rated-shine::after{
+  content:'RATED';
+  position:absolute;inset:0;
+  -webkit-text-fill-color:transparent;color:transparent;
+  background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.6) 48%,transparent 60%);
+  background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  animation:shineSweep 3.5s ease-in-out infinite;
+  pointer-events:none;
+  filter:blur(1px);
+}
+@keyframes shineSweep{
+  0%{background-position:200% 0}
+  60%{background-position:-100% 0}
+  100%{background-position:-100% 0}
+}
 .home-welcome{font-size:13px;color:var(--muted)}
 .home-welcome b{color:var(--text)}
 .home-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 36px 26px;position:relative;z-index:1}
@@ -1151,7 +1177,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
   <!-- ════ HOME ════ -->
   <div class="page active" id="p-home">
     <div class="home-hero">
-      <div class="home-title"><span class="gr">UNDER<br>RATED</span></div>
+      <div class="home-title"><span class="gr">UNDER</span><br><span class="rated-shine">RATED</span></div>
       <div class="home-welcome">Connecté en tant que <b id="home-username"></b> · <span id="home-date"></span></div>
     </div>
     <div class="home-stats">
