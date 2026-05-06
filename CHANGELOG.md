@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 06:01 — `1c6a370`
+feat(workspace): refonte Notion-style - task pills + phase banner top + vertical guidelines
+
 ## 06/05/2026 05:58 — `02860a2`
 feat: workspace task dots + simplify Membres page (role only) + SVG icons
 
