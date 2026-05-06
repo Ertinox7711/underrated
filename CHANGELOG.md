@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 05:45 — `52075bb`
+feat(workspace): swimlanes par personne style Notion timeline + axis aligne
+
 ## 06/05/2026 05:40 — `d2df221`
 feat(workspace): zoom timeline jours/semaines/mois avec scroll horizontal
 
