@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 06:18 — `8d69d75`
+fix(workspace): clean up - remove phase vertical lines + z-index member header
+
 ## 06/05/2026 06:15 — `cba0673`
 fix(workspace): label AUJOURD HUI sur today marker + skip 170px header
 
