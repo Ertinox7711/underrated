@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 06:15 — `cba0673`
+fix(workspace): label AUJOURD HUI sur today marker + skip 170px header
+
 ## 06/05/2026 06:11 — `45ac533`
 feat(workspace): phase chips full-width readable au top hors timeline
 
