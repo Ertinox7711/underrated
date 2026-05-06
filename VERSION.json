@@ -1,8 +1,8 @@
 {
-  "commit": "5a52b4e",
-  "message": "feat(workspace): create + delete tasks per phase per membre",
-  "commitDate": "2026-05-06T05:37:12+02:00",
-  "buildDate": "2026-05-06T03:37:21Z",
-  "buildDateFR": "06/05/2026 05:37",
+  "commit": "d2df221",
+  "message": "feat(workspace): zoom timeline jours/semaines/mois avec scroll horizontal",
+  "commitDate": "2026-05-06T05:40:05+02:00",
+  "buildDate": "2026-05-06T03:40:13Z",
+  "buildDateFR": "06/05/2026 05:40",
   "branch": "main"
 }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 05:40 — `d2df221`
+feat(workspace): zoom timeline jours/semaines/mois avec scroll horizontal
+
 ## 06/05/2026 05:37 — `5a52b4e`
 feat(workspace): create + delete tasks per phase per membre
 
