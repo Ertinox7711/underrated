@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 13:50 — `521e8e5`
+feat(workspace): phase backdrop bands sur timeline (clipped au viewport)
+
 ## 06/05/2026 06:25 — `afbb962`
 feat(workspace): viewport limite (7j/14j/30j) avec nav prev/today/next
 

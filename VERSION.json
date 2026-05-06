@@ -1,8 +1,8 @@
 {
-  "commit": "afbb962",
-  "message": "feat(workspace): viewport limite (7j/14j/30j) avec nav prev/today/next",
-  "commitDate": "2026-05-06T06:25:28+02:00",
-  "buildDate": "2026-05-06T04:25:39Z",
-  "buildDateFR": "06/05/2026 06:25",
+  "commit": "521e8e5",
+  "message": "feat(workspace): phase backdrop bands sur timeline (clipped au viewport)",
+  "commitDate": "2026-05-06T13:50:31+02:00",
+  "buildDate": "2026-05-06T11:50:42Z",
+  "buildDateFR": "06/05/2026 13:50",
   "branch": "main"
 }
