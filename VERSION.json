@@ -1,8 +1,8 @@
 {
-  "commit": "e87f829",
-  "message": "feat(hub): clarifie diff Analytics (trends) vs Dashboard (stats brutes)",
-  "commitDate": "2026-05-06T04:52:04+02:00",
-  "buildDate": "2026-05-06T02:52:21Z",
-  "buildDateFR": "06/05/2026 04:52",
+  "commit": "20ed919",
+  "message": "feat(nav): regroupe sidebar en 4 sections - Pilotage / Equipe / Production / Admin",
+  "commitDate": "2026-05-06T04:56:07+02:00",
+  "buildDate": "2026-05-06T02:56:16Z",
+  "buildDateFR": "06/05/2026 04:56",
   "branch": "main"
 }

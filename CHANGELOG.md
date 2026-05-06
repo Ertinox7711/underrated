@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 04:56 — `20ed919`
+feat(nav): regroupe sidebar en 4 sections - Pilotage / Equipe / Production / Admin
+
 ## 06/05/2026 04:52 — `e87f829`
 feat(hub): clarifie diff Analytics (trends) vs Dashboard (stats brutes)
 
