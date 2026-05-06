@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 18:23 — `e43cb3d`
+fix(workspace): remove duplicate today const declaration in wsRenderGantt
+
 ## 06/05/2026 18:18 — `a691527`
 fix(auth): force reset all creds - uniform Capital first letter pattern
 
