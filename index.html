@@ -1091,18 +1091,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
         <div class="ws-gantt" id="ws-gantt"></div>
       </div>
 
-      <!-- Calendar view -->
-      <div class="ws-cal-wrap rv d2">
-        <div class="ws-cal-head">
-          <button class="ws-cal-nav" onclick="wsCalNav(-1)">‹</button>
-          <div class="ws-cal-title" id="ws-cal-title"></div>
-          <button class="ws-cal-nav" onclick="wsCalNav(1)">›</button>
-          <button class="ws-cal-today" onclick="wsCalToday()">Aujourd'hui</button>
-        </div>
-        <div class="ws-cal-grid" id="ws-cal-grid"></div>
-        <div class="ws-cal-legend" id="ws-cal-legend"></div>
-      </div>
-
       <!-- Phase cards with member breakdown -->
       <div class="ws-phases" id="ws-phases"></div>
 
@@ -3175,7 +3163,6 @@ let _wsCalDate = new Date();
 
 function wsRender() {
   wsRenderGantt();
-  wsRenderCalendar();
   wsRenderPhases();
 }
 
