@@ -1,8 +1,8 @@
 {
-  "commit": "3f3335c",
-  "message": "feat(home): RATED en blanc avec animation shine sweep",
-  "commitDate": "2026-05-06T17:57:14+02:00",
-  "buildDate": "2026-05-06T15:58:26Z",
-  "buildDateFR": "06/05/2026 17:58",
+  "commit": "203acfe",
+  "message": "fix(home): RATED shine animation simplifiee - retire ::after qui buggait le R",
+  "commitDate": "2026-05-06T18:00:15+02:00",
+  "buildDate": "2026-05-06T16:00:30Z",
+  "buildDateFR": "06/05/2026 18:00",
   "branch": "main"
 }

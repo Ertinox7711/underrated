@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 18:00 — `203acfe`
+fix(home): RATED shine animation simplifiee - retire ::after qui buggait le R
+
 ## 06/05/2026 17:58 — `3f3335c`
 feat(home): RATED en blanc avec animation shine sweep
 
