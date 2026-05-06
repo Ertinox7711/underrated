@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 05:31 — `cbe50ac`
+feat(workspace): popup calendrier date picker - click bar -> choisir debut puis fin
+
 ## 06/05/2026 05:27 — `f1e35aa`
 feat(workspace): calendrier mensuel avec marqueurs phases (start/end/during)
 

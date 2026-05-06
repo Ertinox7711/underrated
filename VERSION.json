@@ -1,8 +1,8 @@
 {
-  "commit": "f1e35aa",
-  "message": "feat(workspace): calendrier mensuel avec marqueurs phases (start/end/during)",
-  "commitDate": "2026-05-06T05:27:13+02:00",
-  "buildDate": "2026-05-06T03:27:30Z",
-  "buildDateFR": "06/05/2026 05:27",
+  "commit": "cbe50ac",
+  "message": "feat(workspace): popup calendrier date picker - click bar -> choisir debut puis fin",
+  "commitDate": "2026-05-06T05:30:57+02:00",
+  "buildDate": "2026-05-06T03:31:14Z",
+  "buildDateFR": "06/05/2026 05:31",
   "branch": "main"
 }
