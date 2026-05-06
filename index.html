@@ -3742,7 +3742,6 @@ function wsRenderGantt() {
   const cellWidth = viewportDays === 7 ? 110 : viewportDays === 14 ? 60 : 32;
   const contentWidth = viewportDays * cellWidth;
 
-  const today = (() => { const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
   const todayInRange = today >= minDate && today < maxDate;
   const todayLeft = todayInRange ? Math.round(((today - minDate) / oneDay) * cellWidth + cellWidth/2) : -1;
 
