@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 04:32 — `59a839a`
+feat(marketing): seed default content for court/mid/long with new strategy
+
 ## 05/05/2026 23:42 — `1fd1103`
 feat: marketing plan — full block editor with slash commands
 
