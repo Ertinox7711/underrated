@@ -1,8 +1,8 @@
 {
-  "commit": "6c21317",
-  "message": "feat(workspace): sticky member column + bigger cells (56/120/160) for legibility",
-  "commitDate": "2026-05-06T06:21:33+02:00",
-  "buildDate": "2026-05-06T04:21:41Z",
-  "buildDateFR": "06/05/2026 06:21",
+  "commit": "afbb962",
+  "message": "feat(workspace): viewport limite (7j/14j/30j) avec nav prev/today/next",
+  "commitDate": "2026-05-06T06:25:28+02:00",
+  "buildDate": "2026-05-06T04:25:39Z",
+  "buildDateFR": "06/05/2026 06:25",
   "branch": "main"
 }
