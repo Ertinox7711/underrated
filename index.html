@@ -264,29 +264,16 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .home-title .gr{background:linear-gradient(135deg,var(--b1) 0%,var(--b2) 50%,var(--b3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .home-title .rated-shine{
   display:inline-block;
-  background:linear-gradient(110deg,#ffffff 30%,#ffffff 40%,rgba(135,206,250,.95) 50%,#ffffff 60%,#ffffff 70%);
-  background-size:200% 100%;
+  color:#ffffff;
+  background:linear-gradient(110deg,#ffffff 0%,#ffffff 40%,rgba(180,220,255,.6) 50%,#ffffff 60%,#ffffff 100%);
+  background-size:300% 100%;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;color:transparent;
-  animation:shineSweep 3.5s ease-in-out infinite;
-  text-shadow:0 0 30px rgba(255,255,255,.15);
-  position:relative;
-}
-.home-title .rated-shine::after{
-  content:'RATED';
-  position:absolute;inset:0;
-  -webkit-text-fill-color:transparent;color:transparent;
-  background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.6) 48%,transparent 60%);
-  background-size:200% 100%;
-  -webkit-background-clip:text;background-clip:text;
-  animation:shineSweep 3.5s ease-in-out infinite;
-  pointer-events:none;
-  filter:blur(1px);
+  background-clip:text;
+  animation:shineSweep 4s linear infinite;
 }
 @keyframes shineSweep{
-  0%{background-position:200% 0}
-  60%{background-position:-100% 0}
-  100%{background-position:-100% 0}
+  0%   {background-position:150% 0}
+  100% {background-position:-150% 0}
 }
 .home-welcome{font-size:13px;color:var(--muted)}
 .home-welcome b{color:var(--text)}
