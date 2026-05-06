@@ -2039,6 +2039,9 @@ function launchApp() {
   document.getElementById('app-sidebar').style.display = 'flex';
   document.getElementById('app-main').style.display = 'block';
 
+  // Seed marketing plan content if empty
+  if (typeof mktSeedIfEmpty === 'function') mktSeedIfEmpty();
+
   // Sidebar user badge
   document.getElementById('sb-name').textContent = SESSION.name;
   document.getElementById('sb-role').textContent = SESSION.role;
@@ -2749,7 +2752,96 @@ const MKT_KEYS = ['court','mid','long'];
 // ══ MARKETING BLOCK EDITOR ══
 let _mktDocKey = null;
 let _mktSaveTimer = null;
-const MKT_TITLES = {court:'Court Terme — 0 à 3 mois', mid:'Moyen Terme — 3 à 12 mois', long:'Long Terme — 12 mois+'};
+const MKT_TITLES = {court:'Court Terme — Mois 1 (infra + premières ventes)', mid:'Moyen Terme — Scale Gen Z FR + Europe', long:'Long Terme — Empire IA Gen Z mondial'};
+
+const MKT_SEED = {
+  court: [
+    {type:'h1', content:'OBJECTIF — Mois 1'},
+    {type:'callout', content:'Tout opérationnel + 5-10 ventes formation 97€'},
+    {type:'h2', content:'Semaine 1 — Setup infra complète'},
+    {type:'todo', content:'Mathieu : Teachable formation up + lien bio Insta + YT', checked:false},
+    {type:'todo', content:'Théo : pixel TikTok + Stripe + tracking UTM', checked:false},
+    {type:'todo', content:'Bastien : 3 reels test postés (hooks différents)', checked:false},
+    {type:'todo', content:'Ilame : scripts DM closing prêts', checked:false},
+    {type:'todo', content:'Comptes TikTok créés (multi : Mathieu, Bastien, secondaires)', checked:false},
+    {type:'todo', content:'Comptes YouTube Shorts setup', checked:false},
+    {type:'todo', content:'Discord serveur prêt (channels : announces, clippers, buyers, support)', checked:false},
+    {type:'todo', content:'Tools gratuits validés : ChatGPT, Gemini, Midjourney trial, ElevenLabs free, CapCut', checked:false},
+    {type:'h2', content:'Semaine 1-2 — Recrute clippers'},
+    {type:'todo', content:'Recrute 3-5 clippers (Discord public + outreach)', checked:false},
+    {type:'todo', content:'Brief écrit + dossier assets partagé', checked:false},
+    {type:'todo', content:'Commission 20% sur ventes attribuées (lien tracké)', checked:false},
+    {type:'h2', content:'Semaine 2-4 — Production daily'},
+    {type:'bullet', content:'1 reel/jour minimum (Bastien + Mathieu rotation)'},
+    {type:'bullet', content:'Format 30-60s, hook 3s, CTA "lien bio"'},
+    {type:'bullet', content:'3 angles testés : tuto outil / case study / before-after'},
+    {type:'bullet', content:'Closing DMs entrants par Ilame'},
+    {type:'h2', content:'Multi-séries IA en parallèle'},
+    {type:'bullet', content:'3-5 formats simultanés dès mois 1 (funnel acquisition gratuit géant)'},
+    {type:'bullet', content:'1er épisode série Underrated principale (cadence Skibidi-style)'},
+    {type:'bullet', content:'Money reels = "voici comment j\'ai fait épisode X"'},
+    {type:'bullet', content:'Tester 2-3 niches IA en parallèle pour identifier la qui prend'},
+    {type:'h2', content:'KPI fin mois 1'},
+    {type:'callout', content:'Infra 100% prête • 3-5 clippers actifs • 5-10 ventes 97€ • Taux conversion landing > 2%'}
+  ],
+  mid: [
+    {type:'h1', content:'OBJECTIF — Mois 2-12'},
+    {type:'callout', content:'MRR 20k+ • Label Underrated établi • Brand deals récurrents'},
+    {type:'h2', content:'Scale séries IA + production'},
+    {type:'bullet', content:'Daily drop sur LE format gagnant identifié mois 1'},
+    {type:'bullet', content:'5-7 formats parallèles si plusieurs niches prennent'},
+    {type:'bullet', content:'Outsource production à clippers/freelances (Bastien manage)'},
+    {type:'h2', content:'Stack premium (cash réinvesti)'},
+    {type:'todo', content:'Seedance / Veo 3 Pro intégrés', checked:false},
+    {type:'todo', content:'ElevenLabs Pro', checked:false},
+    {type:'todo', content:'Midjourney Pro', checked:false},
+    {type:'h2', content:'Académie complète'},
+    {type:'bullet', content:'Module entrée 47€ → upsell 297€ → mastermind 1997€'},
+    {type:'bullet', content:'Premier accompagnement 1200€ → 10+ vendus'},
+    {type:'bullet', content:'Webinars mensuels gratuits → upsell formation'},
+    {type:'h2', content:'Réseau ambassadeurs / clippers'},
+    {type:'bullet', content:'30+ clippers payés (commission)'},
+    {type:'bullet', content:'50+ ambassadeurs Gen Z (clippers évolués)'},
+    {type:'bullet', content:'Discord communauté active 1000+ membres'},
+    {type:'h2', content:'Brand deals + expansion Europe'},
+    {type:'todo', content:'Outreach brand deals (Oasis-style 30-70k€)', checked:false},
+    {type:'todo', content:'Expansion Espagne (formation traduite IA)', checked:false},
+    {type:'todo', content:'Expansion Italie', checked:false},
+    {type:'todo', content:'Merch / livre / live event', checked:false}
+  ],
+  long: [
+    {type:'h1', content:'VISION — 12+ mois'},
+    {type:'callout', content:'Empire IA Gen Z mondial • Référence globale "make money IA" • MRR 50k+'},
+    {type:'h2', content:'Expansion globale'},
+    {type:'bullet', content:'USA (marché premium, prix x2-3 en USD)'},
+    {type:'bullet', content:'Asie (Japon, Corée — fan culture IA forte)'},
+    {type:'bullet', content:'LATAM (Brésil, Mexique — Gen Z digitale massive)'},
+    {type:'bullet', content:'Localisation IA pour chaque marché (voix, scripts, références culturelles)'},
+    {type:'h2', content:'Volume > prix premium'},
+    {type:'bullet', content:'Vente masse Gen Z, pas niche premium'},
+    {type:'bullet', content:'Marges via volume + automatisation IA'},
+    {type:'bullet', content:'Tout remote, équipe scale en freelance/commission'},
+    {type:'bullet', content:'Pas de studio physique — fully digital-first'},
+    {type:'h2', content:'Modèle empire'},
+    {type:'bullet', content:'Underrated devient label/fond qui lance d\'autres marques IA'},
+    {type:'bullet', content:'Spinoffs verticaux : gaming, beauté, sport, lifestyle'},
+    {type:'bullet', content:'IP propre forte (personnages, univers transmédia)'},
+    {type:'bullet', content:'Partenariats créateurs Gen Z mondiaux (collabs, lives, challenges)'},
+    {type:'h2', content:'Exit potentiel'},
+    {type:'callout', content:'Acquisition par bigger player ou continue cash flow infinite. Décision quand MRR > 100k.'}
+  ]
+};
+
+function mktSeedIfEmpty() {
+  ['court','mid','long'].forEach(k => {
+    const existing = localStorage.getItem('mkt-blocks-'+k);
+    if (!existing || existing === '[]' || existing === 'null') {
+      const blocks = MKT_SEED[k].map(b => ({id: Date.now()+Math.random(), type:b.type, content:b.content, checked:b.checked||false}));
+      localStorage.setItem('mkt-blocks-'+k, JSON.stringify(blocks));
+      if (typeof dbSet === 'function') dbSet('marketing', {[k+'_blocks']: blocks});
+    }
+  });
+}
 
 function getMktBlocks(k) {
   try { return JSON.parse(localStorage.getItem('mkt-blocks-'+k)||'[]'); } catch(e) { return []; }
