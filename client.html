@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Underrated — Espace Client</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent }
+  :root {
+    --bg:#080c14; --surface:#0f1521; --surface-2:#151c2a; --border:#1f2937;
+    --text:#e5e7eb; --muted:#94a3b8; --accent:#FF5E7D; --accent-2:#9B59B6;
+    --gold:#FFD700; --green:#27AE60; --red:#E74C3C;
+  }
+  body {
+    font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--text);
+    min-height:100vh; padding:20px;
+  }
+  .login-screen {
+    max-width:400px; margin:80px auto; background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; padding:32px; box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .logo {
+    font-family:'Bebas Neue','Inter',sans-serif; font-size:32px; letter-spacing:.1em;
+    text-align:center; margin-bottom:8px; background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .subtitle { text-align:center; color:var(--muted); margin-bottom:24px; font-size:13px }
+  .input-group { margin-bottom:14px }
+  label { display:block; font-size:12px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:.05em }
+  input {
+    width:100%; padding:12px 14px; background:var(--surface-2); border:1px solid var(--border);
+    border-radius:10px; color:var(--text); font-size:14px; font-family:inherit;
+  }
+  input:focus { outline:none; border-color:var(--accent) }
+  .btn {
+    width:100%; padding:14px; background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    border:none; border-radius:10px; color:white; font-weight:600; cursor:pointer; font-size:14px;
+    letter-spacing:.05em; text-transform:uppercase; margin-top:8px;
+  }
+  .btn:hover { opacity:.9 }
+  .err { color:var(--red); font-size:13px; margin-top:10px; text-align:center; display:none }
+
+  .app { max-width:1200px; margin:0 auto; display:none }
+  .header {
+    display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;
+    padding:20px; background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  }
+  .header-left { display:flex; align-items:center; gap:14px }
+  .avatar {
+    width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex; align-items:center; justify-content:center; font-weight:700; color:white;
+  }
+  .h-name { font-weight:600; font-size:15px }
+  .h-plan { font-size:12px; color:var(--muted) }
+  .plan-badge {
+    padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:.05em;
+    background:rgba(255,215,0,.15); color:var(--gold); border:1px solid rgba(255,215,0,.3);
+  }
+  .plan-badge.studio { background:rgba(155,89,182,.15); color:var(--accent-2); border-color:rgba(155,89,182,.3) }
+  .logout {
+    background:none; border:1px solid var(--border); color:var(--muted); padding:8px 14px;
+    border-radius:8px; cursor:pointer; font-size:13px;
+  }
+  .logout:hover { color:var(--text); border-color:var(--accent) }
+
+  .section-title {
+    font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:.08em;
+    margin:32px 0 16px; padding-left:4px; color:var(--text);
+  }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px }
+  .tool-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px;
+    position:relative; transition:.2s;
+  }
+  .tool-card:hover { border-color:var(--accent); transform:translateY(-2px) }
+  .tool-card.locked { opacity:.55 }
+  .tool-card.locked::before {
+    content:'🔒'; position:absolute; top:14px; right:14px; font-size:16px;
+  }
+  .tool-icon {
+    width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex; align-items:center; justify-content:center; margin-bottom:14px; color:white;
+  }
+  .tool-icon svg { width:22px; height:22px; stroke:white; fill:none; stroke-width:2 }
+  .tool-name { font-weight:600; font-size:15px; margin-bottom:6px }
+  .tool-desc { font-size:13px; color:var(--muted); line-height:1.5; margin-bottom:14px }
+  .tool-quota {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 12px; background:var(--surface-2); border-radius:8px; font-size:12px;
+  }
+  .quota-val { color:var(--accent); font-weight:600 }
+  .tool-cta {
+    margin-top:12px; padding:10px; background:var(--surface-2); border:1px solid var(--border);
+    border-radius:8px; font-size:12px; color:var(--muted); text-align:center; cursor:not-allowed;
+  }
+  .tool-cta.available { background:var(--accent); color:white; border-color:var(--accent); cursor:pointer }
+  .tool-cta.locked-cta { color:var(--muted); font-style:italic }
+
+  .formation-section {
+    background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px;
+    margin-bottom:24px;
+  }
+  .formation-section iframe { width:100%; height:600px; border:none; border-radius:10px; background:#000 }
+  .formation-empty {
+    padding:40px; text-align:center; color:var(--muted);
+    background:var(--surface-2); border-radius:10px;
+  }
+
+  @media (max-width:600px) {
+    body { padding:12px }
+    .header { flex-direction:column; gap:12px; text-align:center }
+    .grid { grid-template-columns:1fr }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="logo">UNDERRATED</div>
+  <div class="subtitle">Espace Client — Studio & Elite</div>
+  <div class="input-group">
+    <label>Email</label>
+    <input type="email" id="login-email" placeholder="ton@email.com" autocomplete="email">
+  </div>
+  <div class="input-group">
+    <label>Mot de passe</label>
+    <input type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password">
+  </div>
+  <button class="btn" onclick="doClientLogin(document.getElementById('login-email').value, document.getElementById('login-pwd').value)">Se connecter</button>
+  <div class="err" id="err"></div>
+  <div style="margin-top:16px; text-align:center; font-size:12px; color:var(--muted)">
+    Pas encore client ? <a href="https://underrated.teachable.com" style="color:var(--accent)">Voir les offres</a>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-left">
+      <div class="avatar" id="avatar">U</div>
+      <div>
+        <div class="h-name" id="h-name">Client</div>
+        <div class="h-plan">Plan : <span class="plan-badge" id="h-plan">ELITE</span></div>
+      </div>
+    </div>
+    <button class="logout" onclick="logoutClient()">Déconnexion</button>
+  </div>
+
+  <div class="section-title">📚 Ma Formation</div>
+  <div class="formation-section">
+    <div class="formation-empty" id="formation-content">
+      Modules formation en cours de setup. Tu recevras un email quand l'accès Teachable sera prêt.
+    </div>
+  </div>
+
+  <div class="section-title">🛠️ Mes Outils</div>
+  <div class="grid" id="tools-grid"></div>
+</div>
+
+<script>
+const FB_CONFIG = {
+  apiKey:'AIzaSyCuW_zyfd47vDaqXYvRLifJStHcJ9icxuQ',
+  authDomain:'robot-validation-produit.firebaseapp.com',
+  projectId:'robot-validation-produit',
+  storageBucket:'robot-validation-produit.firebasestorage.app',
+  messagingSenderId:'286183181940',
+  appId:'1:286183181940:web:5f4a681c5c83274b5ecb21'
+};
+let DB = null;
+try { firebase.initializeApp(FB_CONFIG); DB = firebase.firestore(); } catch(e) {}
+
+// Plans : Studio = 97€, Elite = 1200€
+const PLAN_FEATURES = {
+  studio: {
+    'video_episode':    {access:true,  quota:'5 épisodes/mois'},
+    'script_gen':       {access:false, quota:'🔒 Blurred'},
+    'comment_scraper':  {access:false, quota:'🔒 Blurred'},
+    'desc_hashtags':    {access:false, quota:'🔒 Blurred'},
+    'analytics':        {access:false, quota:'🔒 Blurred'},
+    'stats':            {access:false, quota:'🔒 Blurred'},
+    'marketplace':      {access:true,  quota:'Prix normal'},
+    'formation':        {access:true,  quota:'Accès complet'},
+    'coaching':         {access:false, quota:'—'}
+  },
+  elite: {
+    'video_episode':    {access:true,  quota:'30 épisodes/mois'},
+    'script_gen':       {access:true,  quota:'30 req/mois'},
+    'comment_scraper':  {access:true,  quota:'30 req/mois'},
+    'desc_hashtags':    {access:true,  quota:'30 req/mois'},
+    'analytics':        {access:true,  quota:'Full accès'},
+    'stats':            {access:true,  quota:'Full accès'},
+    'marketplace':      {access:true,  quota:'-20% réduction'},
+    'formation':        {access:true,  quota:'Accès complet'},
+    'coaching':         {access:true,  quota:'Inclus 1-to-1 Ilame'}
+  }
+};
+
+const TOOLS = [
+  {id:'video_episode', name:'Création vidéo épisode', desc:'Génère un épisode complet : visuels Midjourney + voix ElevenLabs + montage CapCut.', icon:'<path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/>'},
+  {id:'script_gen', name:'Script Generator', desc:'GPT-4o génère le script complet 60-90s (6 phases) depuis un prompt court.', icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'},
+  {id:'comment_scraper', name:'Comment Scraper', desc:'Scrape commentaires TikTok → extrait demandes audience → génère brief épisode suivant.', icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'},
+  {id:'desc_hashtags', name:'Description + Hashtags', desc:'Génère description TikTok/YouTube + hashtags optimisés pour chaque épisode.', icon:'<line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>'},
+  {id:'analytics', name:'Analytics Tracker', desc:'Dashboard vues, rétention, commentaires TikTok + YouTube par épisode. Alertes sous-perf.', icon:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>'},
+  {id:'stats', name:'Stats Dashboard', desc:'Vue globale revenus, ventes, vues cumulées série, progression KPIs trimestriels.', icon:'<path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>'},
+  {id:'marketplace', name:'Marketplace TikTok', desc:'Marketplace de comptes TikTok à racheter ou louer pour booster visibilité.', icon:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>'},
+  {id:'formation', name:'Formation (modules)', desc:'4 modules pédagogiques : storytelling, structure 60-90s, personnages Pixar, funnel.', icon:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'},
+  {id:'coaching', name:'Coaching Ilame', desc:'Sessions 1-to-1 : stratégie TikTok, closing brand deals, optimisation funnel.', icon:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'}
+];
+
+let CLIENT = null;
+
+async function doClientLogin(email, pwd) {
+  const err = document.getElementById('err');
+  err.style.display = 'none';
+  email = (email||'').trim().toLowerCase();
+  if (!email || !pwd) { err.textContent = 'Email et mot de passe requis'; err.style.display = 'block'; return; }
+
+  if (!DB) { err.textContent = 'Erreur connexion serveur'; err.style.display = 'block'; return; }
+
+  try {
+    const snap = await DB.collection('ur_clients').doc(email).get();
+    if (!snap.exists) { err.textContent = 'Compte introuvable'; err.style.display = 'block'; return; }
+    const data = snap.data();
+    if (data.password !== pwd) { err.textContent = 'Mot de passe incorrect'; err.style.display = 'block'; return; }
+    CLIENT = {email, name:data.name||email.split('@')[0], plan:data.plan||'studio', teachable_url:data.teachable_url||''};
+    sessionStorage.setItem('ur_client', JSON.stringify(CLIENT));
+    showApp();
+  } catch(e) {
+    err.textContent = 'Erreur : ' + e.message;
+    err.style.display = 'block';
+  }
+}
+
+function logoutClient() {
+  sessionStorage.removeItem('ur_client');
+  CLIENT = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'block';
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('h-name').textContent = CLIENT.name;
+  document.getElementById('avatar').textContent = CLIENT.name[0].toUpperCase();
+  const planEl = document.getElementById('h-plan');
+  planEl.textContent = CLIENT.plan.toUpperCase();
+  planEl.className = 'plan-badge ' + (CLIENT.plan === 'studio' ? 'studio' : '');
+  if (CLIENT.teachable_url) {
+    document.getElementById('formation-content').outerHTML = '<iframe id="formation-content" src="'+CLIENT.teachable_url+'"></iframe>';
+  }
+  renderTools();
+}
+
+function renderTools() {
+  const features = PLAN_FEATURES[CLIENT.plan] || PLAN_FEATURES.studio;
+  const grid = document.getElementById('tools-grid');
+  grid.innerHTML = TOOLS.map(t => {
+    const f = features[t.id] || {access:false, quota:'—'};
+    const lockedClass = f.access ? '' : 'locked';
+    return `
+      <div class="tool-card ${lockedClass}">
+        <div class="tool-icon"><svg viewBox="0 0 24 24">${t.icon}</svg></div>
+        <div class="tool-name">${t.name}</div>
+        <div class="tool-desc">${t.desc}</div>
+        <div class="tool-quota">
+          <span>Ton accès :</span>
+          <span class="quota-val">${f.quota}</span>
+        </div>
+        <div class="tool-cta ${f.access ? 'locked-cta' : 'locked-cta'}">
+          ${f.access ? 'Bientôt disponible' : 'Upgrade vers Elite pour débloquer'}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Auto-login from session
+window.addEventListener('DOMContentLoaded', () => {
+  const cached = sessionStorage.getItem('ur_client');
+  if (cached) {
+    try { CLIENT = JSON.parse(cached); showApp(); } catch(e) {}
+  }
+  document.getElementById('login-pwd').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doClientLogin(document.getElementById('login-email').value, document.getElementById('login-pwd').value);
+  });
+});
+</script>
+</body>
+</html>
