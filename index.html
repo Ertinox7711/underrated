@@ -809,6 +809,13 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ws-gantt-bar:hover{transform:scale(1.01);box-shadow:0 4px 18px rgba(0,0,0,.4)}
 .ws-gantt-bar.editing{outline:2px solid white;outline-offset:2px}
 .ws-bar-label{pointer-events:none;user-select:none;flex:1}
+.ws-dp-dow{font-family:'Barlow Condensed';font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:4px}
+.ws-dp-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);border-radius:6px;cursor:pointer;background:rgba(255,255,255,.02);transition:background .15s,transform .1s}
+.ws-dp-day:hover{background:rgba(30,144,255,.15);color:var(--text);transform:scale(1.05)}
+.ws-dp-day.in-month{color:var(--text)}
+.ws-dp-day.today{outline:1.5px solid #FFD700;outline-offset:-1.5px}
+.ws-dp-day.inrange{background:rgba(30,144,255,.15);color:var(--text)}
+.ws-dp-day.start,.ws-dp-day.end{font-weight:bold}
 .ws-bar-handle{position:absolute;top:0;bottom:0;width:8px;cursor:ew-resize;background:rgba(255,255,255,.15);transition:background .15s}
 .ws-bar-handle:hover{background:rgba(255,255,255,.4)}
 .ws-bar-handle-left{left:0;border-radius:8px 0 0 8px}
@@ -3268,91 +3275,123 @@ function wsRenderGantt() {
     const leftPct = ((start - minDate) / rangeMs) * 100;
     const widthPct = ((end - start) / rangeMs) * 100;
     const bg = `rgb(${p.color})`;
-    const cursor = isAdmin ? 'cursor:grab' : 'cursor:default';
-    const handles = isAdmin ? `
-      <div class="ws-bar-handle ws-bar-handle-left" data-phase="${p.id}" data-action="resize-start"></div>
-      <div class="ws-bar-handle ws-bar-handle-right" data-phase="${p.id}" data-action="resize-end"></div>
-    ` : '';
+    const cursor = isAdmin ? 'cursor:pointer' : 'cursor:default';
+    const onclick = isAdmin ? `onclick="wsOpenDatePicker('${p.id}')"` : '';
     return `
       <div class="ws-gantt-row">
-        <div class="ws-gantt-bar" data-phase="${p.id}" data-action="move" style="left:${leftPct}%;width:${widthPct}%;background:${bg};${cursor}" title="${p.name} — ${wsFmtDate(start)} → ${wsFmtDate(end)}">
+        <div class="ws-gantt-bar" data-phase="${p.id}" style="left:${leftPct}%;width:${widthPct}%;background:${bg};${cursor}" ${onclick} title="${isAdmin ? 'Click pour modifier les dates' : ''}">
           <span class="ws-bar-label">${p.name} <span style="opacity:.7;font-size:11px;margin-left:8px">${wsFmtDate(start)} → ${wsFmtDate(end)}</span></span>
-          ${handles}
         </div>
       </div>
     `;
   }).join('');
 
   wrap.innerHTML = axisHtml + `<div class="ws-gantt-bars" id="ws-gantt-bars" style="position:relative">${todayMarker}${barsHtml}</div>`;
-
-  if (isAdmin) wsAttachDrag(minDate, maxDate);
 }
 
-let _wsDrag = null;
-function wsAttachDrag(minDate, maxDate) {
-  const bars = document.getElementById('ws-gantt-bars');
-  if (!bars) return;
+// Date picker popup
+let _wsDP = { phaseId:null, step:'start', selected:{start:null,end:null}, viewDate:new Date() };
 
-  bars.querySelectorAll('.ws-gantt-bar, .ws-bar-handle').forEach(el => {
-    el.addEventListener('mousedown', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      const phaseId = el.dataset.phase;
-      const action = el.dataset.action;
-      const phases = getPhases();
-      const p = phases.find(x => x.id === phaseId);
-      if (!p) return;
-      const containerRect = bars.getBoundingClientRect();
-      _wsDrag = {
-        phaseId, action,
-        startX: e.clientX,
-        origStart: wsParseDate(p.start),
-        origEnd: wsParseDate(p.end),
-        minDate, maxDate,
-        rangeMs: maxDate - minDate,
-        containerWidth: containerRect.width
-      };
-      document.body.style.cursor = action === 'move' ? 'grabbing' : 'ew-resize';
-    });
-  });
-}
-
-document.addEventListener('mousemove', e => {
-  if (!_wsDrag) return;
-  const dx = e.clientX - _wsDrag.startX;
-  const dxMs = (dx / _wsDrag.containerWidth) * _wsDrag.rangeMs;
-  // Snap to days
-  const oneDay = 86400000;
-  const dxDays = Math.round(dxMs / oneDay) * oneDay;
-
+function wsOpenDatePicker(phaseId) {
+  if (!SESSION || !SESSION.isAdmin) return;
   const phases = getPhases();
-  const p = phases.find(x => x.id === _wsDrag.phaseId);
+  const p = phases.find(x => x.id === phaseId);
   if (!p) return;
+  _wsDP.phaseId = phaseId;
+  _wsDP.step = 'start';
+  _wsDP.selected = { start: wsParseDate(p.start), end: wsParseDate(p.end) };
+  _wsDP.viewDate = new Date(p.start);
+  document.getElementById('ws-dp-overlay').style.display = 'flex';
+  wsDPRender();
+}
 
-  if (_wsDrag.action === 'move') {
-    p.start = new Date(_wsDrag.origStart + dxDays).toISOString().slice(0,10);
-    p.end = new Date(_wsDrag.origEnd + dxDays).toISOString().slice(0,10);
-  } else if (_wsDrag.action === 'resize-start') {
-    const newStart = _wsDrag.origStart + dxDays;
-    if (newStart < _wsDrag.origEnd - oneDay) p.start = new Date(newStart).toISOString().slice(0,10);
-  } else if (_wsDrag.action === 'resize-end') {
-    const newEnd = _wsDrag.origEnd + dxDays;
-    if (newEnd > _wsDrag.origStart + oneDay) p.end = new Date(newEnd).toISOString().slice(0,10);
+function wsCloseDatePicker() {
+  document.getElementById('ws-dp-overlay').style.display = 'none';
+  _wsDP.phaseId = null;
+}
+
+function wsDPNav(delta) {
+  _wsDP.viewDate.setMonth(_wsDP.viewDate.getMonth() + delta);
+  wsDPRender();
+}
+
+function wsDPPick(ts) {
+  if (_wsDP.step === 'start') {
+    _wsDP.selected.start = ts;
+    if (_wsDP.selected.end < ts) _wsDP.selected.end = ts + 86400000;
+    _wsDP.step = 'end';
+    wsDPRender();
+  } else {
+    if (ts < _wsDP.selected.start) {
+      alert('Date de fin doit être après date de début');
+      return;
+    }
+    _wsDP.selected.end = ts;
+    wsDPSave();
   }
+}
+
+function wsDPSave() {
+  const phases = getPhases();
+  const p = phases.find(x => x.id === _wsDP.phaseId);
+  if (!p) return;
+  p.start = new Date(_wsDP.selected.start).toISOString().slice(0,10);
+  p.end = new Date(_wsDP.selected.end).toISOString().slice(0,10);
   localStorage.setItem('ur_phases', JSON.stringify(phases));
-  wsRenderGantt();
-});
+  if (typeof dbSet === 'function') dbSet('phases', {items: phases});
+  wsCloseDatePicker();
+  wsRender();
+}
 
-document.addEventListener('mouseup', () => {
-  if (!_wsDrag) return;
-  document.body.style.cursor = '';
-  // Persist to Firebase on release
-  if (typeof dbSet === 'function') {
-    dbSet('phases', {items: getPhases()});
-  }
-  wsRenderPhases();
-  _wsDrag = null;
-});
+function wsDPRender() {
+  const grid = document.getElementById('ws-dp-grid');
+  const title = document.getElementById('ws-dp-title');
+  const stepLbl = document.getElementById('ws-dp-step');
+  const phases = getPhases();
+  const p = phases.find(x => x.id === _wsDP.phaseId);
+  if (!p || !grid) return;
+
+  const monthName = _wsDP.viewDate.toLocaleDateString('fr-FR', {month:'long',year:'numeric'});
+  title.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+  stepLbl.innerHTML = _wsDP.step === 'start'
+    ? `<strong style="color:rgb(${p.color})">${p.name}</strong> — Choisir date <strong>DÉBUT</strong>`
+    : `<strong style="color:rgb(${p.color})">${p.name}</strong> — Début : <strong>${wsFmtDate(_wsDP.selected.start)}</strong> — Choisir date <strong>FIN</strong>`;
+
+  const year = _wsDP.viewDate.getFullYear();
+  const month = _wsDP.viewDate.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  let dowStart = firstDay.getDay() - 1;
+  if (dowStart < 0) dowStart = 6;
+  const daysInMonth = lastDay.getDate();
+  const prevMonthLast = new Date(year, month, 0).getDate();
+  const today = new Date();
+  const isToday = (d, m, y) => d === today.getDate() && m === today.getMonth() && y === today.getFullYear();
+
+  const dows = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  let html = dows.map(d => `<div class="ws-dp-dow">${d}</div>`).join('');
+
+  const cells = [];
+  for (let i = dowStart - 1; i >= 0; i--) cells.push({day: prevMonthLast - i, m: month - 1, y: year, inMonth: false});
+  for (let d = 1; d <= daysInMonth; d++) cells.push({day: d, m: month, y: year, inMonth: true});
+  while (cells.length % 7 !== 0) cells.push({day: cells.length - dowStart - daysInMonth + 1, m: month + 1, y: year, inMonth: false});
+
+  cells.forEach(c => {
+    const dayDate = new Date(c.y, c.m, c.day).getTime();
+    const isStart = dayDate === _wsDP.selected.start;
+    const isEnd = dayDate === _wsDP.selected.end;
+    const isInRange = dayDate > _wsDP.selected.start && dayDate < _wsDP.selected.end;
+    const todayCls = isToday(c.day, c.m, c.y) ? ' today' : '';
+    const inMonthCls = c.inMonth ? ' in-month' : '';
+    let cls = '';
+    if (isStart) cls = ' start';
+    else if (isEnd) cls = ' end';
+    else if (isInRange) cls = ' inrange';
+    html += `<div class="ws-dp-day${inMonthCls}${todayCls}${cls}" onclick="wsDPPick(${dayDate})" style="${isStart||isEnd?`background:rgb(${p.color});color:white`:''}">${c.day}</div>`;
+  });
+
+  grid.innerHTML = html;
+}
 
 function wsRenderPhases() {
   const wrap = document.getElementById('ws-phases');
@@ -3922,6 +3961,25 @@ function fetchVersion() {
 })();
 </script>
 <!-- BELL MODAL -->
+<!-- ══ WORKSPACE DATE PICKER OVERLAY ══ -->
+<div id="ws-dp-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)wsCloseDatePicker()">
+  <div style="width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)">
+      <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.08em">Modifier dates</div>
+      <button onclick="wsCloseDatePicker()" style="background:none;border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:50%;cursor:pointer">✕</button>
+    </div>
+    <div id="ws-dp-step" style="padding:14px 20px;font-size:13px;color:var(--text);background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)"></div>
+    <div style="padding:18px 20px">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+        <button class="ws-cal-nav" onclick="wsDPNav(-1)" style="width:32px;height:32px;background:var(--surface-2,#0a0f17);border:1px solid var(--border);color:var(--text);border-radius:8px;cursor:pointer;font-weight:bold">‹</button>
+        <div id="ws-dp-title" style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.08em;flex:1;text-align:center"></div>
+        <button class="ws-cal-nav" onclick="wsDPNav(1)" style="width:32px;height:32px;background:var(--surface-2,#0a0f17);border:1px solid var(--border);color:var(--text);border-radius:8px;cursor:pointer;font-weight:bold">›</button>
+      </div>
+      <div id="ws-dp-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ MARKETING DOC OVERLAY ══ -->
 <div id="mkt-doc-overlay">
   <div class="mkt-doc-hdr">
