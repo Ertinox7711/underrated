@@ -1944,19 +1944,21 @@ function forceReset() {
 }
 
 // Seed tous les comptes par défaut (pseudo = leur prénom)
-const CREDS_VERSION = '6';
+const CREDS_VERSION = '8';
 function seedAdmin() {
-  const defaults = { mathieu:'mathieu', bastien:'Bastien', theo:'theo', ilame:'ilame' };
+  // Uniform pattern: capitalize first letter
+  const defaults = { mathieu:'Mathieu', bastien:'Bastien', theo:'Theo', ilame:'Ilame' };
   if (localStorage.getItem('ur_creds_v') !== CREDS_VERSION) {
-    // Force reset — new default passwords
+    // Force HARD reset — overwrite all
     localStorage.setItem('ur_credentials', JSON.stringify(defaults));
     localStorage.setItem('ur_creds_v', CREDS_VERSION);
     return;
   }
+  // Always force defaults if mismatch detected
   const creds = getCredentials();
   let changed = false;
   for (const [k, v] of Object.entries(defaults)) {
-    if (!creds[k]) { creds[k] = v; changed = true; }
+    if (creds[k] !== v) { creds[k] = v; changed = true; }
   }
   if (changed) localStorage.setItem('ur_credentials', JSON.stringify(creds));
 }
