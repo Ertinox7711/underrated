@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 04:43 — `344610a`
+feat(strat): refonte strategie pivot money-reels-first + uniformise 97e
+
 ## 06/05/2026 04:39 — `66f1d93`
 feat(client): standalone client area with Studio/Elite plan gating
 

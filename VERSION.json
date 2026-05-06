@@ -1,8 +1,8 @@
 {
-  "commit": "66f1d93",
-  "message": "feat(client): standalone client area with Studio/Elite plan gating",
-  "commitDate": "2026-05-06T04:38:58+02:00",
-  "buildDate": "2026-05-06T02:39:08Z",
-  "buildDateFR": "06/05/2026 04:39",
+  "commit": "344610a",
+  "message": "feat(strat): refonte strategie pivot money-reels-first + uniformise 97e",
+  "commitDate": "2026-05-06T04:43:28+02:00",
+  "buildDate": "2026-05-06T02:43:37Z",
+  "buildDateFR": "06/05/2026 04:43",
   "branch": "main"
 }
