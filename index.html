@@ -1944,9 +1944,9 @@ function forceReset() {
 }
 
 // Seed tous les comptes par défaut (pseudo = leur prénom)
-const CREDS_VERSION = '5';
+const CREDS_VERSION = '6';
 function seedAdmin() {
-  const defaults = { mathieu:'mathieu', bastien:'bastien', theo:'theo', ilame:'ilame' };
+  const defaults = { mathieu:'mathieu', bastien:'Bastien', theo:'theo', ilame:'ilame' };
   if (localStorage.getItem('ur_creds_v') !== CREDS_VERSION) {
     // Force reset — new default passwords
     localStorage.setItem('ur_credentials', JSON.stringify(defaults));
