@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 05:58 — `02860a2`
+feat: workspace task dots + simplify Membres page (role only) + SVG icons
+
 ## 06/05/2026 05:52 — `79928c9`
 feat(workspace): 4 vues style Notion - Timeline/Table/Kanban/Mes taches + metadata (status/priority/date)
 
