@@ -871,7 +871,9 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ws-bar-handle:hover{background:rgba(255,255,255,.4)}
 .ws-bar-handle-left{left:0;border-radius:8px 0 0 8px}
 .ws-bar-handle-right{right:0;border-radius:0 8px 8px 0}
-.ws-gantt-today{position:absolute;top:0;bottom:0;width:2px;background:#FFD700;z-index:5;pointer-events:none}
+.ws-gantt-today{position:absolute;top:0;bottom:0;width:2px;background:#FFD700;z-index:5;pointer-events:none;box-shadow:0 0 8px rgba(255,215,0,.5)}
+.ws-gantt-today::before{content:'AUJOURD\'HUI';position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:10px;font-family:'Bebas Neue',sans-serif;letter-spacing:.12em;font-weight:900;background:#FFD700;color:#000;padding:3px 8px;border-radius:4px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.ws-gantt-today::after{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:8px;height:8px;background:#FFD700;border-radius:50%;border:2px solid #0a0f17}
 
 /* Swimlanes (Notion-like timeline) */
 .ws-swimlanes{display:flex;flex-direction:column;gap:8px;position:relative}
@@ -936,7 +938,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ws-pill-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .ws-pill-text{overflow:hidden;text-overflow:ellipsis;flex:1}
 .ws-pill-date{font-family:'Barlow Condensed';font-size:10px;letter-spacing:.04em;opacity:.7;flex-shrink:0;margin-left:4px;text-transform:uppercase}
-.ws-gantt-today::after{content:'AUJ';position:absolute;top:-18px;left:-12px;font-size:9px;color:#FFD700;font-family:'Barlow Condensed';letter-spacing:.08em;font-weight:900}
+/* legacy AUJ removed — see ws-gantt-today::before above */
 
 /* Calendar */
 .ws-cal-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:24px}
@@ -3696,8 +3698,9 @@ function wsRenderGantt() {
     axisHtml = `<div style="min-width:${contentWidth+170}px;display:flex"><div style="width:170px;flex-shrink:0"></div><div style="flex:1;min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${months.map(m => `<div class="ws-gantt-month" style="flex:0 0 ${cellWidth}px;border-left:1px solid rgba(255,255,255,.04)">${wsFmtMonth(m)}</div>`).join('')}</div></div></div>`;
   }
 
+  // Today marker: position calc'd vs track area only (skip 170px member header)
   const todayPct = ((today - minDate) / rangeMs) * 100;
-  const todayMarker = (today >= minDate && today <= maxDate) ? `<div class="ws-gantt-today" style="left:${todayPct}%"></div>` : '';
+  const todayMarker = (today >= minDate && today <= maxDate) ? `<div class="ws-gantt-today" style="left:calc(170px + (100% - 170px) * ${todayPct/100})"></div>` : '';
 
   const isAdmin = (typeof SESSION !== 'undefined' && SESSION && SESSION.isAdmin);
   const tasks = getSavedTasks();
