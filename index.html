@@ -828,6 +828,21 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ws-bar-handle-left{left:0;border-radius:8px 0 0 8px}
 .ws-bar-handle-right{right:0;border-radius:0 8px 8px 0}
 .ws-gantt-today{position:absolute;top:0;bottom:0;width:2px;background:#FFD700;z-index:5;pointer-events:none}
+
+/* Swimlanes (Notion-like timeline) */
+.ws-swimlanes{display:flex;flex-direction:column;gap:8px;position:relative}
+.ws-swim-row{display:flex;align-items:stretch;gap:0;background:rgba(255,255,255,.02);border-radius:8px;overflow:hidden;min-height:54px}
+.ws-swim-head{display:flex;align-items:center;gap:10px;padding:10px 14px;min-width:170px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border)}
+.ws-swim-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ws-swim-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.06em;color:var(--text)}
+.ws-swim-role{font-size:10px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.05em;line-height:1.3;margin-top:2px}
+.ws-swim-track{position:relative;flex:1;min-height:54px;padding:8px 0}
+.ws-swim-bar{position:absolute;top:8px;bottom:8px;border-radius:6px;cursor:pointer;display:flex;align-items:center;padding:0 12px;color:white;overflow:hidden;transition:transform .12s,box-shadow .12s;font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;font-size:13px}
+.ws-swim-bar:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.4);z-index:2}
+.ws-swim-bar-fill{position:absolute;top:0;bottom:0;left:0;border-radius:6px 0 0 6px;pointer-events:none}
+.ws-swim-bar-label{position:relative;z-index:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ws-bar-date{margin-left:auto;background:rgba(0,0,0,.25);border:none;color:white;width:24px;height:24px;border-radius:5px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:2}
+.ws-bar-date:hover{background:rgba(0,0,0,.5)}
 .ws-gantt-today::after{content:'AUJ';position:absolute;top:-18px;left:-12px;font-size:9px;color:#FFD700;font-family:'Barlow Condensed';letter-spacing:.08em;font-weight:900}
 
 /* Calendar */
@@ -1102,9 +1117,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
         </div>
         <div class="ws-gantt" id="ws-gantt"></div>
       </div>
-
-      <!-- Phase cards with member breakdown -->
-      <div class="ws-phases" id="ws-phases"></div>
 
       <!-- Member expanded panel (tasks / media / log) -->
       <div class="ws-member-panel" id="ws-member-panel" style="display:none">
@@ -3182,7 +3194,6 @@ function wsSetZoom(z) {
 
 function wsRender() {
   wsRenderGantt();
-  wsRenderPhases();
 }
 
 function wsCalNav(delta) {
@@ -3290,7 +3301,7 @@ function wsRenderGantt() {
       const isWeekend = dt.getDay() === 0 || dt.getDay() === 6;
       return `<div class="ws-gantt-axis-day" style="flex:0 0 ${cellWidth}px;color:${isWeekend?'var(--muted)':'var(--text)'};border-left:1px solid rgba(255,255,255,.04);font-family:'Barlow Condensed';letter-spacing:.04em">${dt.getDate()}<br><span style="font-size:8px;opacity:.6">${['D','L','M','M','J','V','S'][dt.getDay()]}</span></div>`;
     }).join('');
-    axisHtml = `<div style="min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${monthRow}</div><div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:12px">${dayRow}</div></div>`;
+    axisHtml = `<div style="min-width:${contentWidth+170}px;display:flex"><div style="width:170px;flex-shrink:0"></div><div style="flex:1;min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${monthRow}</div><div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:12px">${dayRow}</div></div></div>`;
   } else if (_wsZoom === 'week') {
     // Snap to monday
     const weeks = [];
@@ -3318,7 +3329,7 @@ function wsRenderGantt() {
       const weekNum = wsGetWeekNum(dt);
       return `<div class="ws-gantt-axis-week" style="flex:0 0 ${cellWidth}px;border-left:1px solid rgba(255,255,255,.04);font-family:'Barlow Condensed';color:var(--muted)">S${weekNum}<br><span style="font-size:9px;opacity:.7">${dt.getDate()}/${dt.getMonth()+1}</span></div>`;
     }).join('');
-    axisHtml = `<div style="min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${monthRow}</div><div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:12px">${weekRow}</div></div>`;
+    axisHtml = `<div style="min-width:${contentWidth+170}px;display:flex"><div style="width:170px;flex-shrink:0"></div><div style="flex:1;min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${monthRow}</div><div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:12px">${weekRow}</div></div></div>`;
   } else {
     // Months
     const months = [];
@@ -3330,31 +3341,61 @@ function wsRenderGantt() {
     }
     totalCells = months.length;
     contentWidth = totalCells * cellWidth;
-    axisHtml = `<div style="min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${months.map(m => `<div class="ws-gantt-month" style="flex:0 0 ${cellWidth}px;border-left:1px solid rgba(255,255,255,.04)">${wsFmtMonth(m)}</div>`).join('')}</div></div>`;
+    axisHtml = `<div style="min-width:${contentWidth+170}px;display:flex"><div style="width:170px;flex-shrink:0"></div><div style="flex:1;min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${months.map(m => `<div class="ws-gantt-month" style="flex:0 0 ${cellWidth}px;border-left:1px solid rgba(255,255,255,.04)">${wsFmtMonth(m)}</div>`).join('')}</div></div></div>`;
   }
 
   const todayPct = ((today - minDate) / rangeMs) * 100;
   const todayMarker = (today >= minDate && today <= maxDate) ? `<div class="ws-gantt-today" style="left:${todayPct}%"></div>` : '';
 
   const isAdmin = (typeof SESSION !== 'undefined' && SESSION && SESSION.isAdmin);
-  const barsHtml = phases.map((p, idx) => {
-    const start = wsParseDate(p.start || '2026-05-01');
-    const end = wsParseDate(p.end || '2027-05-01');
-    const leftPct = ((start - minDate) / rangeMs) * 100;
-    const widthPct = ((end - start) / rangeMs) * 100;
-    const bg = `rgb(${p.color})`;
-    const cursor = isAdmin ? 'cursor:pointer' : 'cursor:default';
-    const onclick = isAdmin ? `onclick="wsOpenDatePicker('${p.id}')"` : '';
+  const tasks = getSavedTasks();
+
+  // Swimlanes: 1 row per member, phases as bars within
+  const swimlanesHtml = ESP_MEMBERS.map(m => {
+    const acc = (typeof ACCOUNTS !== 'undefined' && ACCOUNTS[m.key]) || {role:''};
+    const memberPhases = phases.filter(p => {
+      // Phase is for this member if they have tasks (or default tasks) in it
+      const hasTasks = (tasks[m.key] && tasks[m.key][p.id])
+                    || (DEFAULT_TASKS[m.key] && DEFAULT_TASKS[m.key][p.id]);
+      return hasTasks && hasTasks.length > 0;
+    });
+    const barsForMember = memberPhases.map(p => {
+      const start = wsParseDate(p.start || '2026-05-01');
+      const end = wsParseDate(p.end || '2027-05-01');
+      const leftPct = ((start - minDate) / rangeMs) * 100;
+      const widthPct = ((end - start) / rangeMs) * 100;
+      const bg = `rgb(${p.color})`;
+      const list = (tasks[m.key] && tasks[m.key][p.id]) || (DEFAULT_TASKS[m.key] && DEFAULT_TASKS[m.key][p.id]) || [];
+      const total = list.length;
+      const doneCount = list.filter(t => isTaskDone(m.key, p.id, t)).length;
+      const pct = total ? Math.round((doneCount/total)*100) : 0;
+      const dateBtn = isAdmin ? `<button class="ws-bar-date" onclick="event.stopPropagation();wsOpenDatePicker('${p.id}')" title="Modifier dates">📅</button>` : '';
+      return `
+        <div class="ws-swim-bar" style="left:${leftPct}%;width:${widthPct}%;background:${bg}" onclick="wsOpenMember('${m.key}','${p.id}')" title="${p.name} — ${doneCount}/${total} tâches — ${wsFmtDate(start)} → ${wsFmtDate(end)}">
+          <div class="ws-swim-bar-fill" style="width:${pct}%;background:rgba(255,255,255,.25)"></div>
+          <span class="ws-swim-bar-label">${p.name} <span style="opacity:.85;font-size:10px">${doneCount}/${total}</span></span>
+          ${dateBtn}
+        </div>
+      `;
+    }).join('');
+
     return `
-      <div class="ws-gantt-row">
-        <div class="ws-gantt-bar" data-phase="${p.id}" style="left:${leftPct}%;width:${widthPct}%;background:${bg};${cursor}" ${onclick} title="${isAdmin ? 'Click pour modifier les dates' : ''}">
-          <span class="ws-bar-label">${p.name} <span style="opacity:.7;font-size:11px;margin-left:8px">${wsFmtDate(start)} → ${wsFmtDate(end)}</span></span>
+      <div class="ws-swim-row">
+        <div class="ws-swim-head" style="border-left:3px solid ${m.color}">
+          <div class="ws-swim-dot" style="background:${m.color}"></div>
+          <div>
+            <div class="ws-swim-name">${m.label}</div>
+            <div class="ws-swim-role">${acc.role || ''}</div>
+          </div>
+        </div>
+        <div class="ws-swim-track" style="min-width:${contentWidth}px">
+          ${barsForMember || `<div style="color:var(--muted);font-size:11px;padding:10px;text-align:center;width:100%">Aucune phase assignée</div>`}
         </div>
       </div>
     `;
   }).join('');
 
-  wrap.innerHTML = axisHtml + `<div class="ws-gantt-bars" id="ws-gantt-bars" style="position:relative;min-width:${contentWidth}px">${todayMarker}${barsHtml}</div>`;
+  wrap.innerHTML = axisHtml + `<div class="ws-swimlanes" id="ws-gantt-bars" style="position:relative;min-width:${contentWidth}px">${todayMarker}${swimlanesHtml}</div>`;
 }
 
 function wsGetWeekNum(d) {
