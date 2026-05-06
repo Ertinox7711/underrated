@@ -878,7 +878,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 /* Swimlanes (Notion-like timeline) */
 .ws-swimlanes{display:flex;flex-direction:column;gap:8px;position:relative}
 .ws-swim-row{display:flex;align-items:stretch;gap:0;background:rgba(255,255,255,.02);border-radius:8px;overflow:hidden;min-height:54px}
-.ws-swim-head{display:flex;align-items:center;gap:10px;padding:10px 14px;min-width:170px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border)}
+.ws-swim-head{display:flex;align-items:center;gap:10px;padding:10px 14px;min-width:170px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);position:relative;z-index:20}
 .ws-swim-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .ws-swim-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.06em;color:var(--text)}
 .ws-swim-role{font-size:10px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.05em;line-height:1.3;margin-top:2px}
@@ -904,7 +904,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ws-swim-block{display:flex;flex-direction:column;background:rgba(255,255,255,.02);border-radius:8px;overflow:hidden;border:1px solid var(--border)}
 .ws-swim-block .ws-swim-row{background:transparent;border:none;border-radius:0;border-bottom:1px solid var(--border)}
 .ws-swim-block .ws-swim-row:last-child{border-bottom:none}
-.ws-unsched-row{padding:10px 14px 12px 187px;background:rgba(0,0,0,.15);display:flex;flex-direction:column;gap:8px}
+.ws-unsched-row{padding:10px 14px 12px 187px;background:rgba(0,0,0,.25);display:flex;flex-direction:column;gap:8px;position:relative;z-index:15}
 .ws-unsched-lbl{font-family:'Barlow Condensed';font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .ws-unsched-chips{display:flex;flex-wrap:wrap;gap:6px}
 .ws-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:14px;border:1px solid;font-size:11px;font-weight:600;cursor:pointer;transition:.12s}
@@ -3720,17 +3720,8 @@ function wsRenderGantt() {
     </div>`;
   }).join('');
 
-  // Phase vertical lines spanning all swimlanes
-  const phaseLinesHtml = phases.flatMap(p => {
-    const start = wsParseDate(p.start || '2026-05-01');
-    const end = wsParseDate(p.end || '2027-05-01');
-    const startPct = ((start - minDate) / rangeMs) * 100;
-    const endPct = ((end - minDate) / rangeMs) * 100;
-    return [
-      `<div class="ws-phase-line" style="left:${startPct}%;background:rgba(${p.color},.3)"></div>`,
-      `<div class="ws-phase-line" style="left:${endPct}%;background:rgba(${p.color},.3)"></div>`
-    ];
-  }).join('');
+  // No more phase vertical lines (clutter) — phases shown only in top chips
+  const phaseLinesHtml = '';
 
   // Swimlanes: scheduled tasks on timeline + unscheduled chips inline
   const swimlanesHtml = ESP_MEMBERS.map(m => {
