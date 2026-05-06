@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 05:24 — `798c828`
+feat(workspace): drag and drop sur timeline gantt - move + resize bars
+
 ## 06/05/2026 05:07 — `4f6d335`
 feat(workspace): unified page - gantt timeline + phase cards + member panels
 
