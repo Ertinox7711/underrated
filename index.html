@@ -887,6 +887,18 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ws-swim-bar-label{position:relative;z-index:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ws-bar-date{margin-left:auto;background:rgba(0,0,0,.25);border:none;color:white;width:24px;height:24px;border-radius:5px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:2}
 .ws-bar-date:hover{background:rgba(0,0,0,.5)}
+
+/* Phase backdrops + task dots */
+.ws-phase-backdrop{position:absolute;top:6px;bottom:6px;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;gap:6px;pointer-events:none}
+.ws-phase-backdrop-lbl{font-family:'Barlow Condensed';font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.7;pointer-events:none}
+.ws-phase-edit{background:rgba(0,0,0,.4);border:none;color:white;width:22px;height:22px;border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;pointer-events:auto;z-index:3}
+.ws-phase-edit:hover{background:rgba(0,0,0,.7)}
+
+.ws-task-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;border:2px solid;cursor:pointer;z-index:5;transition:transform .12s,box-shadow .12s}
+.ws-task-dot:hover{transform:translate(-50%,-50%) scale(1.4);box-shadow:0 0 0 3px rgba(255,255,255,.1),0 4px 12px rgba(0,0,0,.5);z-index:10}
+.ws-task-dot.no-date{opacity:.5;border-style:dashed}
+.ws-task-dot-tip{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.92);color:white;padding:6px 10px;border-radius:6px;font-size:11px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:20;border:1px solid var(--border);max-width:240px;text-align:center}
+.ws-task-dot:hover .ws-task-dot-tip{opacity:1}
 .ws-gantt-today::after{content:'AUJ';position:absolute;top:-18px;left:-12px;font-size:9px;color:#FFD700;font-family:'Barlow Condensed';letter-spacing:.08em;font-weight:900}
 
 /* Calendar */
@@ -1178,7 +1190,7 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
               <button class="ws-zoom-btn active" data-zoom="week" onclick="wsSetZoom('week')">Semaines</button>
               <button class="ws-zoom-btn" data-zoom="month" onclick="wsSetZoom('month')">Mois</button>
             </div>
-            <div class="ws-gantt-info" id="ws-gantt-info">Click barre = ouvrir tâches • 📅 = modifier dates (admin)</div>
+            <div class="ws-gantt-info" id="ws-gantt-info">Click barre = ouvrir tâches • <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> = modifier dates (admin)</div>
           </div>
           <div class="ws-gantt" id="ws-gantt"></div>
         </div>
@@ -2194,10 +2206,7 @@ function buildEquipe() {
       <div class="m-num">${nums[key]}</div>
       <div class="m-name">${names[key]}</div>
       ${roleEl}
-      <ul class="m-tasks">${taskItems}</ul>
-      ${bottomContent}
-      ${phaseTasksHtml}
-      <div class="m-phases" style="margin-top:10px">${phaseBadges}</div>
+      <div class="m-phases" style="margin-top:14px">${phaseBadges}</div>
     </div>`;
   }).join('');
 }
@@ -3448,7 +3457,7 @@ function wsRenderKanban() {
               </div>
               <span class="ws-kb-card-phase" style="background:rgb(${t._phaseObj.color})">${t._phaseObj.name}</span>
             </div>
-            ${t.dueDate ? `<div style="font-size:10px;color:var(--muted);font-family:'Barlow Condensed'">📅 ${new Date(t.dueDate).toLocaleDateString('fr-FR')}</div>` : ''}
+            ${t.dueDate ? `<div style="font-size:10px;color:var(--muted);font-family:'Barlow Condensed'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${new Date(t.dueDate).toLocaleDateString('fr-FR')}</div>` : ''}
           </div>
         `).join('')}
         ${col.items.length === 0 ? '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;font-style:italic">Vide</div>' : ''}
@@ -3489,7 +3498,7 @@ function wsRenderMine() {
           <div class="ws-kb-card-meta">
             <div class="ws-kb-card-tags">
               <span class="ws-prio-pill" style="background:${TASK_PRIORITY_COLORS[t.priority]}22;color:${TASK_PRIORITY_COLORS[t.priority]}">${TASK_PRIORITY_LABELS[t.priority]}</span>
-              ${t.dueDate ? `<span style="font-size:11px;color:var(--muted)">📅 ${new Date(t.dueDate).toLocaleDateString('fr-FR')}</span>` : ''}
+              ${t.dueDate ? `<span style="font-size:11px;color:var(--muted)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${new Date(t.dueDate).toLocaleDateString('fr-FR')}</span>` : ''}
             </div>
             <div style="display:flex;gap:6px;align-items:center">
               <span class="ws-kb-card-phase" style="background:rgb(${t._phaseObj.color})">${t._phaseObj.name}</span>
@@ -3656,33 +3665,37 @@ function wsRenderGantt() {
   const isAdmin = (typeof SESSION !== 'undefined' && SESSION && SESSION.isAdmin);
   const tasks = getSavedTasks();
 
-  // Swimlanes: 1 row per member, phases as bars within
+  // Swimlanes: 1 row per member, TASKS as dots positioned by their dueDate
   const swimlanesHtml = ESP_MEMBERS.map(m => {
     const acc = (typeof ACCOUNTS !== 'undefined' && ACCOUNTS[m.key]) || {role:''};
-    const memberPhases = phases.filter(p => {
-      // Phase is for this member if they have tasks (or default tasks) in it
-      const hasTasks = (tasks[m.key] && tasks[m.key][p.id])
-                    || (DEFAULT_TASKS[m.key] && DEFAULT_TASKS[m.key][p.id]);
-      return hasTasks && hasTasks.length > 0;
-    });
-    const barsForMember = memberPhases.map(p => {
+    const memberTasks = wsGetAllTasks(m.key);
+
+    // Tasks with dueDate go on timeline; tasks without get fallback (phase start)
+    const dotsHtml = memberTasks.map(t => {
+      const dueTs = t.dueDate ? wsParseDate(t.dueDate) : wsParseDate(t._phaseObj.start);
+      const isFallback = !t.dueDate;
+      if (dueTs < minDate || dueTs > maxDate) return '';
+      const leftPct = ((dueTs - minDate) / rangeMs) * 100;
+      const phaseColor = `rgb(${t._phaseObj.color})`;
+      const statusColor = TASK_STATUS_COLORS[t.status];
+      const isMine = SESSION && SESSION.key === m.key;
+      const canEdit = isAdmin || isMine;
+      const editAttr = canEdit ? `onclick="event.stopPropagation();wsOpenTaskEditor('${m.key}','${t._phase}',${t._idx})"` : '';
+      return `
+        <div class="ws-task-dot ${isFallback?'no-date':''}" style="left:${leftPct}%;background:${statusColor};border-color:${phaseColor}" ${editAttr} title="${t.text} — ${TASK_STATUS_LABELS[t.status]} — ${t.dueDate ? new Date(t.dueDate).toLocaleDateString('fr-FR') : 'Sans date'} (${t._phaseObj.name})">
+          <span class="ws-task-dot-tip">${t.text}${t.dueDate ? '<br><small>'+new Date(t.dueDate).toLocaleDateString('fr-FR')+'</small>':' <small>(sans date)</small>'}</span>
+        </div>
+      `;
+    }).join('');
+
+    // Phase backdrops (subtle bars showing phase ranges)
+    const phaseBackdrops = phases.map(p => {
       const start = wsParseDate(p.start || '2026-05-01');
       const end = wsParseDate(p.end || '2027-05-01');
       const leftPct = ((start - minDate) / rangeMs) * 100;
       const widthPct = ((end - start) / rangeMs) * 100;
-      const bg = `rgb(${p.color})`;
-      const list = (tasks[m.key] && tasks[m.key][p.id]) || (DEFAULT_TASKS[m.key] && DEFAULT_TASKS[m.key][p.id]) || [];
-      const total = list.length;
-      const doneCount = list.filter(t => isTaskDone(m.key, p.id, t)).length;
-      const pct = total ? Math.round((doneCount/total)*100) : 0;
-      const dateBtn = isAdmin ? `<button class="ws-bar-date" onclick="event.stopPropagation();wsOpenDatePicker('${p.id}')" title="Modifier dates"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>` : '';
-      return `
-        <div class="ws-swim-bar" style="left:${leftPct}%;width:${widthPct}%;background:${bg}" onclick="wsOpenMember('${m.key}','${p.id}')" title="${p.name} — ${doneCount}/${total} tâches — ${wsFmtDate(start)} → ${wsFmtDate(end)}">
-          <div class="ws-swim-bar-fill" style="width:${pct}%;background:rgba(255,255,255,.25)"></div>
-          <span class="ws-swim-bar-label">${p.name} <span style="opacity:.85;font-size:10px">${doneCount}/${total}</span></span>
-          ${dateBtn}
-        </div>
-      `;
+      const adminBtn = isAdmin ? `<button class="ws-phase-edit" onclick="event.stopPropagation();wsOpenDatePicker('${p.id}')" title="Modifier dates ${p.name}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>` : '';
+      return `<div class="ws-phase-backdrop" style="left:${leftPct}%;width:${widthPct}%;background:rgba(${p.color},.07);border-left:2px solid rgba(${p.color},.4);border-right:2px solid rgba(${p.color},.4)"><span class="ws-phase-backdrop-lbl" style="color:rgb(${p.color})">${p.name}</span>${adminBtn}</div>`;
     }).join('');
 
     return `
@@ -3693,9 +3706,11 @@ function wsRenderGantt() {
             <div class="ws-swim-name">${m.label}</div>
             <div class="ws-swim-role">${acc.role || ''}</div>
           </div>
+          <div style="margin-left:auto;font-size:11px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.06em">${memberTasks.length} t</div>
         </div>
-        <div class="ws-swim-track" style="min-width:${contentWidth}px">
-          ${barsForMember || `<div style="color:var(--muted);font-size:11px;padding:10px;text-align:center;width:100%">Aucune phase assignée</div>`}
+        <div class="ws-swim-track" style="min-width:${contentWidth}px;position:relative">
+          ${phaseBackdrops}
+          ${dotsHtml || `<div style="color:var(--muted);font-size:11px;padding:14px;text-align:center;width:100%">Aucune tâche</div>`}
         </div>
       </div>
     `;
@@ -3712,6 +3727,63 @@ function wsGetWeekNum(d) {
   target.setMonth(0, 1);
   if (target.getDay() !== 4) target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
   return 1 + Math.ceil((firstThursday - target) / 604800000);
+}
+
+// Task editor popup (per-task: due date, priority, status)
+function wsOpenTaskEditor(who, phaseId, idx) {
+  const isAdmin = SESSION && SESSION.isAdmin;
+  const isMine = SESSION && SESSION.key === who;
+  if (!isAdmin && !isMine) return;
+  const tasks = getSavedTasks();
+  const list = (tasks[who] && tasks[who][phaseId]) || (DEFAULT_TASKS[who] && DEFAULT_TASKS[who][phaseId]) || [];
+  const t = wsTaskObj(list[idx], who, phaseId);
+  const phases = getPhases();
+  const p = phases.find(x => x.id === phaseId);
+  if (!t || !p) return;
+
+  // Build modal
+  let modal = document.getElementById('ws-task-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'ws-task-modal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px';
+    modal.onclick = e => { if (e.target === modal) modal.remove(); };
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div style="width:100%;max-width:440px;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)">
+        <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.08em">Modifier tâche</div>
+        <button onclick="document.getElementById('ws-task-modal').remove()" style="background:none;border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:50%;cursor:pointer">✕</button>
+      </div>
+      <div style="padding:20px">
+        <div style="margin-bottom:14px"><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-family:'Barlow Condensed'">Tâche</div><input type="text" id="wstm-text" value="${t.text.replace(/"/g,'&quot;')}" style="width:100%;background:var(--surface-2,#0a0f17);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:14px"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+          <div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-family:'Barlow Condensed'">Échéance</div><input type="date" id="wstm-date" value="${t.dueDate||''}" style="width:100%;background:var(--surface-2,#0a0f17);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:13px"></div>
+          <div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-family:'Barlow Condensed'">Priorité</div><select id="wstm-prio" style="width:100%;background:var(--surface-2,#0a0f17);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:13px">${TASK_PRIORITIES.map(pr => `<option value="${pr}" ${t.priority===pr?'selected':''}>${TASK_PRIORITY_LABELS[pr]}</option>`).join('')}</select></div>
+        </div>
+        <div style="margin-bottom:14px"><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-family:'Barlow Condensed'">État</div><div style="display:flex;gap:6px">${TASK_STATUSES.map(s => `<button type="button" onclick="document.querySelectorAll('#wstm-status-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');this.dataset.selected='1';document.querySelectorAll('#wstm-status-btn').forEach(b=>{if(b!==this)delete b.dataset.selected})" id="wstm-status-btn" data-status="${s}" ${t.status===s?'data-selected="1"':''} style="flex:1;background:${TASK_STATUS_COLORS[s]}${t.status===s?'':'22'};color:${t.status===s?'white':TASK_STATUS_COLORS[s]};border:1px solid ${TASK_STATUS_COLORS[s]}55;padding:8px;border-radius:6px;cursor:pointer;font-family:'Barlow Condensed';font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${TASK_STATUS_LABELS[s]}</button>`).join('')}</div></div>
+        <div style="margin-bottom:18px"><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-family:'Barlow Condensed'">Description</div><textarea id="wstm-desc" rows="3" style="width:100%;background:var(--surface-2,#0a0f17);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:13px;resize:vertical">${t.description||''}</textarea></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button onclick="document.getElementById('ws-task-modal').remove()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:10px 18px;border-radius:8px;cursor:pointer;font-family:'Barlow Condensed';font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700">Annuler</button>
+          <button onclick="wsSaveTaskEdit('${who}','${phaseId}',${idx})" style="background:var(--b1);border:none;color:white;padding:10px 18px;border-radius:8px;cursor:pointer;font-family:'Barlow Condensed';font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700">Sauvegarder</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function wsSaveTaskEdit(who, phaseId, idx) {
+  const text = document.getElementById('wstm-text').value.trim();
+  const dueDate = document.getElementById('wstm-date').value || null;
+  const priority = document.getElementById('wstm-prio').value;
+  const description = document.getElementById('wstm-desc').value.trim();
+  const statusBtn = document.querySelector('#ws-task-modal [data-selected="1"]');
+  const status = statusBtn ? statusBtn.dataset.status : 'todo';
+  if (!text) { alert('Le texte est requis'); return; }
+  wsUpdateTaskMeta(who, phaseId, idx, {text, dueDate, priority, description, status});
+  document.getElementById('ws-task-modal').remove();
+  wsRender();
 }
 
 // Date picker popup
