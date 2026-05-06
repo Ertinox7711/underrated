@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 06:11 — `45ac533`
+feat(workspace): phase chips full-width readable au top hors timeline
+
 ## 06/05/2026 06:07 — `aac5549`
 feat(workspace): split scheduled timeline + unscheduled chips a planifier
 

@@ -1,8 +1,8 @@
 {
-  "commit": "aac5549",
-  "message": "feat(workspace): split scheduled timeline + unscheduled chips a planifier",
-  "commitDate": "2026-05-06T06:07:33+02:00",
-  "buildDate": "2026-05-06T04:07:42Z",
-  "buildDateFR": "06/05/2026 06:07",
+  "commit": "45ac533",
+  "message": "feat(workspace): phase chips full-width readable au top hors timeline",
+  "commitDate": "2026-05-06T06:11:12+02:00",
+  "buildDate": "2026-05-06T04:11:21Z",
+  "buildDateFR": "06/05/2026 06:11",
   "branch": "main"
 }
