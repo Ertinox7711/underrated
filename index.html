@@ -3384,17 +3384,15 @@ function wsRenderPhases() {
   const wrap = document.getElementById('ws-phases');
   if (!wrap) return;
   const phases = getPhases();
-  const tasks = (typeof getTasks === 'function') ? getTasks() : null;
-  const done = (typeof getDoneTasks === 'function') ? getDoneTasks() : {};
+  const tasks = getSavedTasks();
 
   wrap.innerHTML = phases.map(p => {
     const bg = `rgb(${p.color})`;
     const memberHtml = ESP_MEMBERS.map(m => {
-      // Get tasks count for this member in this phase
-      let taskList = [];
-      if (tasks && tasks[m.key] && tasks[m.key][p.id]) taskList = tasks[m.key][p.id];
+      // Use defaults if no saved tasks for this person
+      let taskList = (tasks[m.key] && tasks[m.key][p.id]) || (DEFAULT_TASKS[m.key] && DEFAULT_TASKS[m.key][p.id]) || [];
       const total = taskList.length;
-      const doneCount = taskList.filter(t => done[m.key] && done[m.key][p.id] && done[m.key][p.id][t]).length;
+      const doneCount = taskList.filter(t => isTaskDone(m.key, p.id, t)).length;
       const pct = total ? Math.round((doneCount/total)*100) : 0;
       return `
         <div class="ws-pm-card" onclick="wsOpenMember('${m.key}','${p.id}')">
@@ -3460,33 +3458,79 @@ function wsMemberTab(tab) {
 function wsRenderTasks() {
   if (!WS_CUR_MEMBER) return '';
   const phases = getPhases();
-  const tasks = (typeof getTasks === 'function') ? getTasks() : {};
-  const done = (typeof getDoneTasks === 'function') ? getDoneTasks() : {};
+  const tasks = getSavedTasks();
+  const isAdmin = SESSION && SESSION.isAdmin;
+  const isMine = SESSION && SESSION.key === WS_CUR_MEMBER;
+  const canEdit = isAdmin || isMine;
   let html = '';
+
   phases.forEach(p => {
-    const list = (tasks[WS_CUR_MEMBER] && tasks[WS_CUR_MEMBER][p.id]) || [];
-    if (!list.length) return;
-    html += `<div style="margin-bottom:18px"><div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:.08em;color:rgb(${p.color});margin-bottom:8px">${p.name}</div>`;
-    list.forEach(t => {
-      const isDone = done[WS_CUR_MEMBER] && done[WS_CUR_MEMBER][p.id] && done[WS_CUR_MEMBER][p.id][t];
+    const list = (tasks[WS_CUR_MEMBER] && tasks[WS_CUR_MEMBER][p.id])
+              || (DEFAULT_TASKS[WS_CUR_MEMBER] && DEFAULT_TASKS[WS_CUR_MEMBER][p.id])
+              || [];
+    html += `<div style="margin-bottom:22px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-family:'Bebas Neue';font-size:14px;letter-spacing:.08em;color:rgb(${p.color})">${p.name}</div>
+        <div style="font-size:11px;color:var(--muted)">${list.filter(t => isTaskDone(WS_CUR_MEMBER, p.id, t)).length}/${list.length}</div>
+      </div>`;
+    list.forEach((t, idx) => {
+      const isDone = isTaskDone(WS_CUR_MEMBER, p.id, t);
+      const safe = t.replace(/"/g,'&quot;').replace(/'/g,"\\'");
       html += `
         <div class="ws-task-row">
-          <div class="ws-task-cb ${isDone?'checked':''}" onclick="wsToggleTask('${WS_CUR_MEMBER}','${p.id}','${t.replace(/'/g,"\\'")}')"></div>
+          <div class="ws-task-cb ${isDone?'checked':''}" onclick="wsToggleTask('${WS_CUR_MEMBER}','${p.id}','${safe}')"></div>
           <div class="ws-task-text ${isDone?'done':''}">${t}</div>
-          <div class="ws-task-phase">${p.id.toUpperCase()}</div>
+          ${canEdit ? `<button onclick="wsDeleteTask('${WS_CUR_MEMBER}','${p.id}',${idx})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:4px 8px" title="Supprimer">✕</button>` : ''}
         </div>
       `;
     });
+    if (canEdit) {
+      html += `
+        <form onsubmit="wsAddTask(event,'${WS_CUR_MEMBER}','${p.id}')" style="display:flex;gap:6px;margin-top:8px">
+          <input type="text" placeholder="Nouvelle tâche pour ${p.name}..." style="flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px" id="ws-newtask-${WS_CUR_MEMBER}-${p.id}">
+          <button type="submit" style="background:rgb(${p.color});color:white;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;font-family:'Barlow Condensed';font-weight:700;letter-spacing:.06em;font-size:12px;text-transform:uppercase">+ Ajouter</button>
+        </form>
+      `;
+    }
     html += '</div>';
   });
-  return html || '<div style="color:var(--muted);text-align:center;padding:30px">Aucune tâche assignée</div>';
+  return html;
 }
 
 function wsToggleTask(who, phaseId, taskText) {
-  if (typeof toggleTaskDone === 'function') {
-    toggleTaskDone(who, phaseId, taskText);
-    setTimeout(() => { wsMemberTab('tasks'); wsRenderPhases(); }, 50);
-  }
+  const cur = isTaskDone(who, phaseId, taskText);
+  setTaskDone(who, phaseId, taskText, !cur);
+  setTimeout(() => { wsMemberTab('tasks'); wsRenderPhases(); }, 30);
+}
+
+function wsAddTask(e, who, phaseId) {
+  e.preventDefault();
+  const isAdmin = SESSION && SESSION.isAdmin;
+  const isMine = SESSION && SESSION.key === who;
+  if (!isAdmin && !isMine) return;
+  const input = document.getElementById(`ws-newtask-${who}-${phaseId}`);
+  const text = (input.value || '').trim();
+  if (!text) return;
+  const tasks = getSavedTasks();
+  if (!tasks[who]) tasks[who] = JSON.parse(JSON.stringify(DEFAULT_TASKS[who] || {}));
+  if (!tasks[who][phaseId]) tasks[who][phaseId] = [];
+  tasks[who][phaseId].push(text);
+  saveTasks(tasks);
+  input.value = '';
+  wsMemberTab('tasks');
+  wsRenderPhases();
+}
+
+function wsDeleteTask(who, phaseId, idx) {
+  const isAdmin = SESSION && SESSION.isAdmin;
+  const isMine = SESSION && SESSION.key === who;
+  if (!isAdmin && !isMine) return;
+  const tasks = getSavedTasks();
+  if (!tasks[who]) tasks[who] = JSON.parse(JSON.stringify(DEFAULT_TASKS[who] || {}));
+  if (tasks[who][phaseId]) tasks[who][phaseId].splice(idx, 1);
+  saveTasks(tasks);
+  wsMemberTab('tasks');
+  wsRenderPhases();
 }
 
 function wsRenderMedia() {
