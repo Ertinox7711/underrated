@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 05:32 — `b6e4ab6`
+fix(workspace): retire calendrier mensuel - garde gantt + popup picker seulement
+
 ## 06/05/2026 05:31 — `cbe50ac`
 feat(workspace): popup calendrier date picker - click bar -> choisir debut puis fin
 
