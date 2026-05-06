@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 17:48 — `4fbac27`
+feat: favicon SVG eclair bleu (index + client)
+
 ## 06/05/2026 13:50 — `521e8e5`
 feat(workspace): phase backdrop bands sur timeline (clipped au viewport)
 
