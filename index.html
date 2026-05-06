@@ -1027,6 +1027,65 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ws-task-text.done{text-decoration:line-through;color:var(--muted)}
 .ws-task-phase{font-size:10px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;background:rgba(255,255,255,.04);border-radius:3px}
 
+/* ══ WORKSPACE GANTT v2 (clean Notion-like) ══ */
+.wsg-phases{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.wsg-phase{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1px solid;font-family:'Barlow Condensed';letter-spacing:.06em;opacity:.5;transition:.2s}
+.wsg-phase.active{opacity:1}
+.wsg-phase-dot{width:8px;height:8px;border-radius:50%}
+.wsg-phase-name{font-weight:700;font-size:12px;text-transform:uppercase}
+.wsg-phase-dates{font-size:10px;opacity:.7;text-transform:uppercase}
+.wsg-phase-edit{background:rgba(0,0,0,.35);border:none;color:white;width:22px;height:22px;border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:4px}
+.wsg-phase-edit:hover{background:rgba(0,0,0,.6)}
+
+.wsg-scroll{overflow-x:auto;background:var(--surface,#0f1521);border:1px solid var(--border);border-radius:10px}
+.wsg-table{position:relative;min-width:100%}
+.wsg-header{display:flex;position:sticky;top:0;z-index:30;background:var(--surface,#0f1521);border-bottom:1px solid var(--border)}
+.wsg-headcorner{background:var(--surface,#0f1521);border-right:1px solid var(--border)}
+.wsg-rowhead{display:flex;align-items:center;gap:10px;padding:8px 12px;width:180px;min-width:180px;flex-shrink:0;background:var(--surface,#0f1521);border-right:1px solid var(--border);position:sticky;left:0;z-index:25}
+.wsg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.wsg-rowhead-info{display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.wsg-rowhead-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.06em;color:var(--text)}
+.wsg-rowhead-role{font-size:10px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.04em;text-transform:uppercase}
+
+.wsg-month-row{display:flex;border-bottom:1px solid var(--border)}
+.wsg-month{padding:6px 10px;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:.08em;color:var(--text);border-left:1px solid var(--border);box-sizing:border-box}
+.wsg-month:first-child{border-left:none}
+.wsg-day-row{display:flex}
+.wsg-day{padding:4px 0;text-align:center;border-left:1px solid rgba(255,255,255,.04);box-sizing:border-box}
+.wsg-day.we{background:rgba(255,255,255,.015)}
+.wsg-day.today{background:rgba(255,215,0,.1)}
+.wsg-day-num{font-family:'Barlow Condensed';font-size:13px;font-weight:700;color:var(--text);line-height:1.1}
+.wsg-day-dow{font-size:9px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.04em;line-height:1.1;margin-top:2px}
+.wsg-day.today .wsg-day-num{color:#FFD700}
+
+.wsg-body{display:flex;flex-direction:column}
+.wsg-row{display:flex;border-bottom:1px solid var(--border);position:relative}
+.wsg-row:last-child{border-bottom:none}
+.wsg-track{position:relative;flex:1}
+.wsg-cells{display:flex;position:absolute;inset:0}
+.wsg-cell{border-left:1px solid rgba(255,255,255,.03);box-sizing:border-box}
+.wsg-cell.we{background:rgba(255,255,255,.012)}
+.wsg-cell.today{background:rgba(255,215,0,.05)}
+
+.wsg-pill{position:absolute;height:28px;border-radius:6px;border:1.5px solid;display:flex;align-items:center;gap:6px;padding:0 10px;cursor:pointer;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;transition:transform .12s,filter .12s,box-shadow .12s;z-index:5;box-sizing:border-box}
+.wsg-pill:hover{transform:translateY(-1px);filter:brightness(1.25);box-shadow:0 4px 14px rgba(0,0,0,.4);z-index:10}
+.wsg-pill.done .wsg-pill-text{text-decoration:line-through;opacity:.7}
+.wsg-pill-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.wsg-pill-text{overflow:hidden;text-overflow:ellipsis}
+
+.wsg-today{position:absolute;top:0;bottom:0;width:2px;background:#FFD700;z-index:15;pointer-events:none;box-shadow:0 0 8px rgba(255,215,0,.6)}
+.wsg-today-label{position:absolute;top:-22px;left:50%;transform:translateX(-50%);background:#FFD700;color:#000;font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:.12em;font-weight:900;padding:3px 8px;border-radius:4px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+
+.wsg-unsched{margin-top:18px;background:var(--surface,#0f1521);border:1px solid var(--border);border-radius:10px;padding:14px}
+.wsg-unsched-head{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.12em;color:var(--muted);margin-bottom:12px}
+.wsg-unsched-grp{margin-bottom:12px;padding:10px;background:rgba(255,255,255,.02);border-radius:8px}
+.wsg-unsched-grp:last-child{margin-bottom:0}
+.wsg-unsched-name{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.06em;margin-bottom:8px}
+.wsg-unsched-chips{display:flex;flex-wrap:wrap;gap:6px}
+.wsg-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:14px;border:1px solid;font-size:11px;font-weight:600;cursor:pointer;transition:.12s;white-space:nowrap;max-width:280px;overflow:hidden;text-overflow:ellipsis}
+.wsg-chip:hover{filter:brightness(1.3);transform:translateY(-1px)}
+.wsg-chip.done{text-decoration:line-through;opacity:.7}
+
 /* ══ MOBILE ══ */
 @media(max-width:700px){
   body{flex-direction:column;overflow:hidden}
@@ -3661,219 +3720,183 @@ function wsRenderGantt() {
   const wrap = document.getElementById('ws-gantt');
   if (!wrap) return;
   const phases = getPhases();
-  if (!phases.length) { wrap.innerHTML = '<div style="color:var(--muted);text-align:center;padding:30px">Aucune phase</div>'; return; }
-
-  // VIEWPORT: limit to N days from _wsViewStart (Notion-like)
   const oneDay = 86400000;
   const viewportDays = wsViewportDays();
-  const minDate = _wsViewStart.getTime();
+  // Snap _wsViewStart to start of day
+  const startMs = (() => { const d = new Date(_wsViewStart); d.setHours(0,0,0,0); return d.getTime(); })();
+  const minDate = startMs;
   const maxDate = minDate + viewportDays * oneDay;
   const rangeMs = maxDate - minDate;
-  const today = Date.now();
-  const totalDays = viewportDays;
-
-  // Cell width fits viewport width (~1000px - 170 header = 830px content area)
-  // Day mode: 7 days fill content. Week: 14 days. Month: 30 days.
-  const cellWidth = _wsZoom === 'day' ? 110 : _wsZoom === 'week' ? 55 : 28;
-  let totalCells, contentWidth;
-
-  // Build axis based on zoom
-  let axisHtml = '';
-  if (_wsZoom === 'day') {
-    const days = [];
-    let cur = new Date(minDate);
-    while (cur.getTime() <= maxDate) {
-      days.push(cur.getTime());
-      cur = new Date(cur.getTime() + oneDay);
-    }
-    totalCells = days.length;
-    contentWidth = totalCells * cellWidth;
-    // Group by month for top row
-    const monthGroups = {};
-    days.forEach(d => {
-      const dt = new Date(d);
-      const k = dt.getFullYear()+'-'+dt.getMonth();
-      if (!monthGroups[k]) monthGroups[k] = {label: wsFmtMonth(d), count: 0};
-      monthGroups[k].count++;
-    });
-    const monthRow = Object.values(monthGroups).map(m => `<div class="ws-gantt-month" style="flex:0 0 ${m.count * cellWidth}px">${m.label}</div>`).join('');
-    const dayRow = days.map(d => {
-      const dt = new Date(d);
-      const isWeekend = dt.getDay() === 0 || dt.getDay() === 6;
-      return `<div class="ws-gantt-axis-day" style="flex:0 0 ${cellWidth}px;color:${isWeekend?'var(--muted)':'var(--text)'};border-left:1px solid rgba(255,255,255,.04);font-family:'Barlow Condensed';letter-spacing:.04em">${dt.getDate()}<br><span style="font-size:8px;opacity:.6">${['D','L','M','M','J','V','S'][dt.getDay()]}</span></div>`;
-    }).join('');
-    axisHtml = `<div style="min-width:${contentWidth+170}px;display:flex"><div style="width:170px;flex-shrink:0"></div><div style="flex:1;min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${monthRow}</div><div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:12px">${dayRow}</div></div></div>`;
-  } else if (_wsZoom === 'week') {
-    // Snap to monday
-    const weeks = [];
-    const startMonday = new Date(minDate);
-    const dow = startMonday.getDay();
-    const offset = dow === 0 ? -6 : 1 - dow;
-    startMonday.setDate(startMonday.getDate() + offset);
-    let cur = new Date(startMonday);
-    while (cur.getTime() <= maxDate) {
-      weeks.push(cur.getTime());
-      cur = new Date(cur.getTime() + 7 * oneDay);
-    }
-    totalCells = weeks.length;
-    contentWidth = totalCells * cellWidth;
-    const monthGroups = {};
-    weeks.forEach(w => {
-      const dt = new Date(w);
-      const k = dt.getFullYear()+'-'+dt.getMonth();
-      if (!monthGroups[k]) monthGroups[k] = {label: wsFmtMonth(w), count: 0};
-      monthGroups[k].count++;
-    });
-    const monthRow = Object.values(monthGroups).map(m => `<div class="ws-gantt-month" style="flex:0 0 ${m.count * cellWidth}px">${m.label}</div>`).join('');
-    const weekRow = weeks.map(w => {
-      const dt = new Date(w);
-      const weekNum = wsGetWeekNum(dt);
-      return `<div class="ws-gantt-axis-week" style="flex:0 0 ${cellWidth}px;border-left:1px solid rgba(255,255,255,.04);font-family:'Barlow Condensed';color:var(--muted)">S${weekNum}<br><span style="font-size:9px;opacity:.7">${dt.getDate()}/${dt.getMonth()+1}</span></div>`;
-    }).join('');
-    axisHtml = `<div style="min-width:${contentWidth+170}px;display:flex"><div style="width:170px;flex-shrink:0"></div><div style="flex:1;min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${monthRow}</div><div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:12px">${weekRow}</div></div></div>`;
-  } else {
-    // Months
-    const months = [];
-    let cur = new Date(minDate);
-    cur.setDate(1);
-    while (cur.getTime() <= maxDate) {
-      months.push(cur.getTime());
-      cur.setMonth(cur.getMonth() + 1);
-    }
-    totalCells = months.length;
-    contentWidth = totalCells * cellWidth;
-    axisHtml = `<div style="min-width:${contentWidth+170}px;display:flex"><div style="width:170px;flex-shrink:0"></div><div style="flex:1;min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${months.map(m => `<div class="ws-gantt-month" style="flex:0 0 ${cellWidth}px;border-left:1px solid rgba(255,255,255,.04)">${wsFmtMonth(m)}</div>`).join('')}</div></div></div>`;
-  }
-
-  // Today marker: position calc'd vs track area only (skip 170px member header)
-  const todayPct = ((today - minDate) / rangeMs) * 100;
-  const todayMarker = (today >= minDate && today <= maxDate) ? `<div class="ws-gantt-today" style="left:calc(170px + (100% - 170px) * ${todayPct/100})"></div>` : '';
-
-  const isAdmin = (typeof SESSION !== 'undefined' && SESSION && SESSION.isAdmin);
+  const today = (() => { const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
+  const HEAD_W = 180;
+  const isAdmin = SESSION && SESSION.isAdmin;
   const tasks = getSavedTasks();
 
-  // Phase header chips at top — full-width readable, NOT positioned on timeline
-  const phaseHeaderHtml = phases.map(p => {
-    const start = wsParseDate(p.start || '2026-05-01');
-    const end = wsParseDate(p.end || '2027-05-01');
-    const adminBtn = isAdmin ? `<button class="ws-phase-edit-btn" onclick="event.stopPropagation();wsOpenDatePicker('${p.id}')" title="Modifier dates"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>` : '';
-    return `<div class="ws-phase-chip" style="background:rgba(${p.color},.15);border:1px solid rgba(${p.color},.5);color:rgb(${p.color})">
-      <div class="ws-phase-chip-dot" style="background:rgb(${p.color})"></div>
-      <div style="flex:1;min-width:0">
-        <div style="font-family:'Bebas Neue';font-size:15px;letter-spacing:.08em;line-height:1">${p.name}</div>
-        <div style="font-size:10px;font-family:'Barlow Condensed';letter-spacing:.06em;opacity:.75;margin-top:3px">${wsFmtDate(start)} → ${wsFmtDate(end)}</div>
-      </div>
-      ${adminBtn}
+  // Build day cells (always one cell = 1 day, simple grid)
+  const days = [];
+  for (let i = 0; i < viewportDays; i++) days.push(minDate + i * oneDay);
+
+  // Cell width based on viewport: smaller cells when more days
+  const cellWidth = viewportDays === 7 ? 110 : viewportDays === 14 ? 60 : 32;
+  const contentWidth = viewportDays * cellWidth;
+
+  const today = (() => { const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
+  const todayInRange = today >= minDate && today < maxDate;
+  const todayLeft = todayInRange ? Math.round(((today - minDate) / oneDay) * cellWidth + cellWidth/2) : -1;
+
+  // ── HEADER AXIS ──
+  // Top: month label spanning days within month
+  const monthGroups = [];
+  days.forEach(d => {
+    const dt = new Date(d);
+    const key = dt.getFullYear() + '-' + dt.getMonth();
+    const last = monthGroups[monthGroups.length-1];
+    if (last && last.key === key) last.count++;
+    else monthGroups.push({key, label: dt.toLocaleDateString('fr-FR',{month:'long',year:'numeric'}), count:1});
+  });
+  const monthRow = monthGroups.map(g => `<div class="wsg-month" style="width:${g.count*cellWidth}px">${g.label.charAt(0).toUpperCase()+g.label.slice(1)}</div>`).join('');
+
+  // Day numbers + day-of-week
+  const dayRow = days.map(d => {
+    const dt = new Date(d);
+    const isToday = d === today;
+    const dow = ['D','L','M','M','J','V','S'][dt.getDay()];
+    const isWeekend = dt.getDay() === 0 || dt.getDay() === 6;
+    return `<div class="wsg-day ${isToday?'today':''} ${isWeekend?'we':''}" style="width:${cellWidth}px">
+      <div class="wsg-day-num">${dt.getDate()}</div>
+      <div class="wsg-day-dow">${dow}</div>
     </div>`;
   }).join('');
 
-  // Phase backdrop bands on timeline (clipped to viewport)
-  const phaseLinesHtml = phases.map(p => {
-    const ps = wsParseDate(p.start || '2026-05-01');
-    const pe = wsParseDate(p.end || '2027-05-01');
-    if (pe < minDate || ps > maxDate) return '';
-    const visStart = Math.max(ps, minDate);
-    const visEnd = Math.min(pe, maxDate);
-    const leftPct = ((visStart - minDate) / rangeMs) * 100;
-    const widthPct = ((visEnd - visStart) / rangeMs) * 100;
-    const showLabel = widthPct > 8;
-    return `<div class="ws-phase-bg" style="left:${leftPct}%;width:${widthPct}%;background:rgba(${p.color},.06);border-top:2px solid rgba(${p.color},.4);border-bottom:2px solid rgba(${p.color},.2)">${showLabel?`<span class="ws-phase-bg-lbl" style="color:rgb(${p.color})">${p.name}</span>`:''}</div>`;
-  }).join('');
+  // ── ROWS PER MEMBER ──
+  const PILL_H = 28;
+  const PILL_GAP = 6;
+  const ROW_PAD = 10;
 
-  // Swimlanes: scheduled tasks on timeline + unscheduled chips inline
-  const swimlanesHtml = ESP_MEMBERS.map(m => {
-    const acc = (typeof ACCOUNTS !== 'undefined' && ACCOUNTS[m.key]) || {role:''};
-    const memberTasks = wsGetAllTasks(m.key);
-    const scheduled = memberTasks.filter(t => t.dueDate);
-    const unscheduled = memberTasks.filter(t => !t.dueDate);
+  const rowsHtml = ESP_MEMBERS.map(m => {
     const isMine = SESSION && SESSION.key === m.key;
     const canEdit = isAdmin || isMine;
+    const memberTasks = wsGetAllTasks(m.key);
+    const scheduled = memberTasks.filter(t => {
+      if (!t.dueDate) return false;
+      const ts = wsParseDate(t.dueDate);
+      return ts >= minDate && ts < maxDate;
+    });
 
-    const PILL_HEIGHT = 26;
-    const PILL_GAP = 4;
+    // Layout pills with collision avoidance
     const layouts = [];
     const pillsData = scheduled.map(t => {
       const dueTs = wsParseDate(t.dueDate);
-      if (dueTs < minDate || dueTs > maxDate) return null;
-      const leftPct = ((dueTs - minDate) / rangeMs) * 100;
-      const charPx = 6.5;
-      const pillWidthPx = Math.max(110, Math.min(220, t.text.length * charPx + 50));
-      const pillWidthPct = (pillWidthPx / contentWidth) * 100;
+      const dayIdx = Math.floor((dueTs - minDate) / oneDay);
+      const left = dayIdx * cellWidth + 2;
+      const charPx = viewportDays === 30 ? 5.5 : 6.5;
+      const widthPx = Math.max(viewportDays === 30 ? 80 : 110, Math.min(viewportDays === 30 ? 140 : 220, t.text.length * charPx + 40));
       let row = 0;
-      while (true) {
-        const collision = layouts.find(l => l.row === row && !(leftPct + pillWidthPct < l.left || leftPct > l.left + l.width));
-        if (!collision) break;
-        row++;
-      }
-      layouts.push({row, left:leftPct, width:pillWidthPct});
-      return {...t, leftPct, row};
-    }).filter(Boolean);
+      while (layouts.find(l => l.row === row && !(left + widthPx < l.left || left > l.left + l.width))) row++;
+      layouts.push({row, left, width:widthPx});
+      return {...t, left, widthPx, row};
+    });
 
     const maxRow = layouts.length ? Math.max(...layouts.map(l => l.row)) : -1;
-    const trackHeight = Math.max(54, (maxRow + 1) * (PILL_HEIGHT + PILL_GAP) + 14);
+    const rowH = Math.max(54, (maxRow + 1) * (PILL_H + PILL_GAP) + ROW_PAD * 2);
 
     const pillsHtml = pillsData.map(t => {
       const editAttr = canEdit ? `onclick="event.stopPropagation();wsOpenTaskEditor('${m.key}','${t._phase}',${t._idx})"` : '';
       const phaseColor = `rgb(${t._phaseObj.color})`;
       const statusColor = TASK_STATUS_COLORS[t.status];
       const isDone = t.status === 'done';
-      const dateLabel = new Date(t.dueDate).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
-      return `
-        <div class="ws-task-pill ${isDone?'done':''}" style="left:${t.leftPct}%;top:${7 + t.row * (PILL_HEIGHT + PILL_GAP)}px;background:${statusColor}1f;border-color:${statusColor};color:${statusColor}" ${editAttr} title="${t.text}">
-          <span class="ws-pill-dot" style="background:${phaseColor}"></span>
-          <span class="ws-pill-text">${t.text}</span>
-          <span class="ws-pill-date">${dateLabel}</span>
-        </div>
-      `;
+      return `<div class="wsg-pill ${isDone?'done':''}" style="left:${t.left}px;top:${ROW_PAD + t.row*(PILL_H+PILL_GAP)}px;width:${t.widthPx}px;background:${statusColor}26;border-color:${statusColor};color:${statusColor}" ${editAttr} title="${t.text}">
+        <span class="wsg-pill-dot" style="background:${phaseColor}"></span>
+        <span class="wsg-pill-text">${t.text}</span>
+      </div>`;
     }).join('');
 
-    const unschedHtml = unscheduled.map(t => {
+    const dayCellsBg = days.map(d => {
+      const dt = new Date(d);
+      const isToday = d === today;
+      const isWeekend = dt.getDay() === 0 || dt.getDay() === 6;
+      return `<div class="wsg-cell ${isToday?'today':''} ${isWeekend?'we':''}" style="width:${cellWidth}px"></div>`;
+    }).join('');
+
+    return `<div class="wsg-row" style="height:${rowH}px">
+      <div class="wsg-rowhead" style="border-left:3px solid ${m.color}">
+        <div class="wsg-dot" style="background:${m.color}"></div>
+        <div class="wsg-rowhead-info">
+          <div class="wsg-rowhead-name">${m.label}</div>
+          <div class="wsg-rowhead-role">${memberTasks.length} t • ${scheduled.length} datées</div>
+        </div>
+      </div>
+      <div class="wsg-track" style="width:${contentWidth}px">
+        <div class="wsg-cells">${dayCellsBg}</div>
+        ${pillsHtml}
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── UNSCHEDULED SECTION (commune) ──
+  const unschedAll = ESP_MEMBERS.map(m => {
+    const isMine = SESSION && SESSION.key === m.key;
+    const canEdit = isAdmin || isMine;
+    const tasks = wsGetAllTasks(m.key).filter(t => !t.dueDate);
+    if (!tasks.length) return '';
+    const chips = tasks.map(t => {
       const editAttr = canEdit ? `onclick="event.stopPropagation();wsOpenTaskEditor('${m.key}','${t._phase}',${t._idx})"` : '';
       const phaseColor = `rgb(${t._phaseObj.color})`;
       const statusColor = TASK_STATUS_COLORS[t.status];
       const isDone = t.status === 'done';
-      return `
-        <div class="ws-chip ${isDone?'done':''}" style="background:${statusColor}1f;border-color:${statusColor}55;color:${statusColor}" ${editAttr} title="Click pour planifier : ${t.text}">
-          <span class="ws-pill-dot" style="background:${phaseColor};width:6px;height:6px"></span>
-          <span class="ws-chip-text">${t.text}</span>
-        </div>
-      `;
+      return `<div class="wsg-chip ${isDone?'done':''}" style="background:${statusColor}1a;border-color:${statusColor}66;color:${statusColor}" ${editAttr} title="Click pour planifier : ${t.text}">
+        <span class="wsg-pill-dot" style="background:${phaseColor};width:6px;height:6px"></span>
+        ${t.text}
+      </div>`;
     }).join('');
+    return `<div class="wsg-unsched-grp">
+      <div class="wsg-unsched-name" style="color:${m.color}">${m.label} <span style="opacity:.5">${tasks.length}</span></div>
+      <div class="wsg-unsched-chips">${chips}</div>
+    </div>`;
+  }).filter(Boolean).join('');
 
-    const unschedSection = unscheduled.length ? `
-      <div class="ws-unsched-row">
-        <div class="ws-unsched-lbl">À planifier <span style="background:rgba(255,255,255,.06);padding:1px 7px;border-radius:9px;font-size:10px;margin-left:6px">${unscheduled.length}</span></div>
-        <div class="ws-unsched-chips">${unschedHtml}</div>
-      </div>
-    ` : '';
+  const unschedSection = unschedAll ? `<div class="wsg-unsched">
+    <div class="wsg-unsched-head">À PLANIFIER</div>
+    ${unschedAll}
+  </div>` : '';
 
-    return `
-      <div class="ws-swim-block">
-        <div class="ws-swim-row" style="min-height:${trackHeight}px">
-          <div class="ws-swim-head" style="border-left:3px solid ${m.color}">
-            <div class="ws-swim-dot" style="background:${m.color}"></div>
-            <div>
-              <div class="ws-swim-name">${m.label}</div>
-              <div class="ws-swim-role">${acc.role || ''}</div>
-            </div>
-            <div style="margin-left:auto;font-size:11px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.06em">${memberTasks.length}</div>
-          </div>
-          <div class="ws-swim-track" style="min-width:${contentWidth}px;position:relative;height:${trackHeight}px">
-            ${pillsHtml || `<div style="color:var(--muted);font-size:11px;padding:18px;text-align:center;width:100%;font-style:italic">Aucune tâche datée</div>`}
-          </div>
-        </div>
-        ${unschedSection}
-      </div>
-    `;
+  // ── ASSEMBLE ──
+  // Phase indicator: simple text below the header showing active phase(s) for this viewport
+  const activePhases = phases.filter(p => {
+    const ps = wsParseDate(p.start || '2026-05-01');
+    const pe = wsParseDate(p.end || '2027-05-01');
+    return !(pe < minDate || ps > maxDate);
+  });
+  const phaseChipsHtml = phases.map(p => {
+    const ps = wsParseDate(p.start || '2026-05-01');
+    const pe = wsParseDate(p.end || '2027-05-01');
+    const inRange = !(pe < minDate || ps > maxDate);
+    const adminBtn = isAdmin ? `<button class="wsg-phase-edit" onclick="event.stopPropagation();wsOpenDatePicker('${p.id}')" title="Modifier dates"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>` : '';
+    return `<div class="wsg-phase ${inRange?'active':''}" style="border-color:rgba(${p.color},.5);background:rgba(${p.color},${inRange?'.12':'.04'});color:rgb(${p.color})">
+      <div class="wsg-phase-dot" style="background:rgb(${p.color})"></div>
+      <span class="wsg-phase-name">${p.name}</span>
+      <span class="wsg-phase-dates">${wsFmtDate(ps)} → ${wsFmtDate(pe)}</span>
+      ${adminBtn}
+    </div>`;
   }).join('');
 
-  // Phase chips row at top — full width, no scroll, sticky readable
-  const phaseBannerRow = `<div class="ws-phase-chips-row">${phaseHeaderHtml}</div>`;
-
-  // Phase lines layer (under all swimlanes)
-  const phaseLinesLayer = `<div style="position:absolute;left:170px;top:38px;right:0;bottom:0;pointer-events:none;z-index:1">${phaseLinesHtml}</div>`;
-
-  wrap.innerHTML = axisHtml + phaseBannerRow + `<div class="ws-swimlanes" id="ws-gantt-bars" style="position:relative;min-width:${contentWidth+170}px">${phaseLinesLayer}${todayMarker}${swimlanesHtml}</div>`;
+  wrap.innerHTML = `
+    <div class="wsg-phases">${phaseChipsHtml}</div>
+    <div class="wsg-scroll">
+      <div class="wsg-table" style="width:${HEAD_W + contentWidth}px">
+        <div class="wsg-header">
+          <div class="wsg-rowhead wsg-headcorner"></div>
+          <div class="wsg-track" style="width:${contentWidth}px">
+            <div class="wsg-month-row">${monthRow}</div>
+            <div class="wsg-day-row">${dayRow}</div>
+          </div>
+        </div>
+        ${todayInRange ? `<div class="wsg-today" style="left:${HEAD_W + todayLeft}px"><div class="wsg-today-label">AUJOURD'HUI</div></div>` : ''}
+        <div class="wsg-body">${rowsHtml}</div>
+      </div>
+    </div>
+    ${unschedSection}
+  `;
 }
 
 function wsGetWeekNum(d) {
