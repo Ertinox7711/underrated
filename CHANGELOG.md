@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 05:37 — `5a52b4e`
+feat(workspace): create + delete tasks per phase per membre
+
 ## 06/05/2026 05:32 — `b6e4ab6`
 fix(workspace): retire calendrier mensuel - garde gantt + popup picker seulement
 
