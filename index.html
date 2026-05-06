@@ -790,6 +790,50 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .mkt-open-btn:hover{color:var(--b1)}
 
 /* ══ WORKSPACE (unified) ══ */
+.ws-view-tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:6px;margin-bottom:18px;width:fit-content}
+.ws-vt{display:flex;align-items:center;gap:8px;background:none;border:none;color:var(--muted);padding:9px 16px;border-radius:7px;cursor:pointer;font-family:'Barlow Condensed';font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:.15s}
+.ws-vt:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.ws-vt.active{background:var(--b1);color:white}
+.ws-vt svg{flex-shrink:0}
+
+/* Table view */
+.ws-tbl{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.ws-tbl th{background:var(--surface-2,#0a0f17);font-family:'Barlow Condensed';font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
+.ws-tbl td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;vertical-align:middle}
+.ws-tbl tr:hover td{background:rgba(255,255,255,.02)}
+.ws-tbl tr:last-child td{border-bottom:none}
+.ws-status-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:14px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:.15s}
+.ws-status-pill:hover{filter:brightness(1.15)}
+.ws-status-dot{width:8px;height:8px;border-radius:50%}
+.ws-prio-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;font-family:'Barlow Condensed';letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.ws-member-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px}
+.ws-member-pill-dot{width:8px;height:8px;border-radius:50%}
+.ws-tbl-date{font-size:12px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.04em}
+.ws-tbl-date.overdue{color:#ef4444}
+.ws-tbl-date input{background:transparent;border:1px dashed var(--border);color:var(--text);font-family:inherit;font-size:12px;padding:3px 6px;border-radius:4px;width:120px}
+.ws-tbl-row-add{padding:10px 16px;background:rgba(255,255,255,.02);border-top:1px solid var(--border)}
+.ws-tbl-row-add input{width:100%;background:transparent;border:none;color:var(--text);font-family:inherit;font-size:13px;outline:none}
+.ws-tbl-row-add input::placeholder{color:var(--muted)}
+
+/* Kanban view */
+.ws-kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;min-height:400px}
+.ws-kb-col{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:300px}
+.ws-kb-col.drop-target{border-color:var(--b1);background:rgba(30,144,255,.05)}
+.ws-kb-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:2px solid;font-family:'Bebas Neue';font-size:14px;letter-spacing:.08em}
+.ws-kb-count{background:rgba(255,255,255,.08);padding:2px 8px;border-radius:10px;font-size:11px;color:var(--muted);font-family:'Barlow Condensed'}
+.ws-kb-card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:grab;transition:.15s;display:flex;flex-direction:column;gap:8px}
+.ws-kb-card:hover{border-color:var(--b1);transform:translateY(-1px)}
+.ws-kb-card.dragging{opacity:.4}
+.ws-kb-card-text{font-size:13px;line-height:1.4;color:var(--text)}
+.ws-kb-card-meta{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+.ws-kb-card-tags{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.ws-kb-card-phase{font-size:9px;font-family:'Barlow Condensed';letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:3px;color:white;font-weight:700}
+.ws-kb-add{background:none;border:1px dashed var(--border);color:var(--muted);padding:10px;border-radius:8px;cursor:pointer;font-size:12px;font-family:'Barlow Condensed';letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-top:auto}
+.ws-kb-add:hover{border-color:var(--b1);color:var(--b1)}
+
+/* Mes tâches */
+.ws-mine-empty{text-align:center;padding:40px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:12px}
+
 .ws-gantt-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:24px}
 .ws-gantt-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .ws-gantt-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.1em;color:var(--text)}
@@ -1104,18 +1148,55 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
       <div class="ph-sub" id="ws-sub">Timeline globale, phases, et workspace par membre — tout en un.</div>
     </div>
     <div class="pc">
-      <!-- Gantt timeline -->
-      <div class="ws-gantt-wrap rv d1">
-        <div class="ws-gantt-head">
-          <div class="ws-gantt-title">TIMELINE GLOBALE</div>
-          <div class="ws-zoom-tabs">
-            <button class="ws-zoom-btn" data-zoom="day" onclick="wsSetZoom('day')">Jours</button>
-            <button class="ws-zoom-btn active" data-zoom="week" onclick="wsSetZoom('week')">Semaines</button>
-            <button class="ws-zoom-btn" data-zoom="month" onclick="wsSetZoom('month')">Mois</button>
+      <!-- View tabs (Notion-like) -->
+      <div class="ws-view-tabs rv d1">
+        <button class="ws-vt active" data-view="timeline" onclick="wsSetView('timeline')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+          Timeline
+        </button>
+        <button class="ws-vt" data-view="table" onclick="wsSetView('table')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          Table
+        </button>
+        <button class="ws-vt" data-view="kanban" onclick="wsSetView('kanban')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="6" height="18" rx="1"/><rect x="9.5" y="3" width="6" height="14" rx="1"/><rect x="16" y="3" width="5" height="10" rx="1"/></svg>
+          Kanban
+        </button>
+        <button class="ws-vt" data-view="mine" onclick="wsSetView('mine')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Mes tâches
+        </button>
+      </div>
+
+      <!-- View: Timeline (default) -->
+      <div class="ws-view" id="ws-view-timeline">
+        <div class="ws-gantt-wrap">
+          <div class="ws-gantt-head">
+            <div class="ws-gantt-title">TIMELINE GLOBALE</div>
+            <div class="ws-zoom-tabs">
+              <button class="ws-zoom-btn" data-zoom="day" onclick="wsSetZoom('day')">Jours</button>
+              <button class="ws-zoom-btn active" data-zoom="week" onclick="wsSetZoom('week')">Semaines</button>
+              <button class="ws-zoom-btn" data-zoom="month" onclick="wsSetZoom('month')">Mois</button>
+            </div>
+            <div class="ws-gantt-info" id="ws-gantt-info">Click barre = ouvrir tâches • 📅 = modifier dates (admin)</div>
           </div>
-          <div class="ws-gantt-info" id="ws-gantt-info">Click sur une barre pour modifier (admin)</div>
+          <div class="ws-gantt" id="ws-gantt"></div>
         </div>
-        <div class="ws-gantt" id="ws-gantt"></div>
+      </div>
+
+      <!-- View: Table -->
+      <div class="ws-view" id="ws-view-table" style="display:none">
+        <div id="ws-table-wrap"></div>
+      </div>
+
+      <!-- View: Kanban -->
+      <div class="ws-view" id="ws-view-kanban" style="display:none">
+        <div id="ws-kanban-wrap"></div>
+      </div>
+
+      <!-- View: Mes tâches -->
+      <div class="ws-view" id="ws-view-mine" style="display:none">
+        <div id="ws-mine-wrap"></div>
       </div>
 
       <!-- Member expanded panel (tasks / media / log) -->
@@ -3169,6 +3250,64 @@ function placeCaretAtStart(el) {
 }
 document.addEventListener('click', e=>{ if(!e.target.closest('#mkt-slash-menu')&&!e.target.closest('.mkt-editable')) hideSlashMenu(); });
 
+// ══ TASK OBJECT HELPERS (Notion-like metadata) ══
+// Backward compat: tasks stored as strings get auto-wrapped to objects on read
+const TASK_STATUSES = ['todo','doing','done'];
+const TASK_STATUS_LABELS = { todo:'Pas commencé', doing:'En cours', done:'Terminé' };
+const TASK_STATUS_COLORS = { todo:'#94a3b8', doing:'#3b82f6', done:'#10b981' };
+const TASK_PRIORITIES = ['low','med','high'];
+const TASK_PRIORITY_LABELS = { low:'Basse', med:'Moyenne', high:'Haute' };
+const TASK_PRIORITY_COLORS = { low:'#64748b', med:'#f59e0b', high:'#ef4444' };
+
+function wsTaskObj(t, who, phaseId) {
+  // Wrap a string task into an object, preserving done state
+  if (typeof t === 'string') {
+    return {
+      id: t,
+      text: t,
+      status: isTaskDone(who, phaseId, t) ? 'done' : 'todo',
+      dueDate: null,
+      priority: 'med',
+      description: ''
+    };
+  }
+  return Object.assign({status:'todo', dueDate:null, priority:'med', description:''}, t);
+}
+
+function wsGetAllTasks(filterMember) {
+  // Returns flat list of all tasks across all members + phases as objects
+  const tasks = getSavedTasks();
+  const phases = getPhases();
+  const result = [];
+  ESP_MEMBERS.forEach(m => {
+    if (filterMember && m.key !== filterMember) return;
+    phases.forEach(p => {
+      const list = (tasks[m.key] && tasks[m.key][p.id]) || (DEFAULT_TASKS[m.key] && DEFAULT_TASKS[m.key][p.id]) || [];
+      list.forEach((t, idx) => {
+        const obj = wsTaskObj(t, m.key, p.id);
+        result.push({...obj, _who:m.key, _phase:p.id, _idx:idx, _phaseObj:p, _memberObj:m});
+      });
+    });
+  });
+  return result;
+}
+
+function wsUpdateTaskMeta(who, phaseId, idx, updates) {
+  const tasks = getSavedTasks();
+  if (!tasks[who]) tasks[who] = JSON.parse(JSON.stringify(DEFAULT_TASKS[who] || {}));
+  if (!tasks[who][phaseId]) tasks[who][phaseId] = [];
+  const cur = tasks[who][phaseId][idx];
+  if (cur === undefined) return;
+  // Convert string to object on first metadata update
+  const obj = wsTaskObj(cur, who, phaseId);
+  const newObj = Object.assign({}, obj, updates);
+  tasks[who][phaseId][idx] = newObj;
+  saveTasks(tasks);
+  // If status went to done, also mark in done store for backward compat
+  if (updates.status === 'done') setTaskDone(who, phaseId, obj.text || obj.id, true);
+  if (updates.status && updates.status !== 'done') setTaskDone(who, phaseId, obj.text || obj.id, false);
+}
+
 // ══ WORKSPACE (unified Phases + Espace) ══
 let WS_CUR_MEMBER = null;
 let WS_CUR_TAB = 'tasks';
@@ -3192,8 +3331,175 @@ function wsSetZoom(z) {
   wsRenderGantt();
 }
 
+let _wsView = 'timeline';
+
+function wsSetView(v) {
+  _wsView = v;
+  document.querySelectorAll('.ws-vt').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  document.querySelectorAll('.ws-view').forEach(el => el.style.display = 'none');
+  const target = document.getElementById('ws-view-' + v);
+  if (target) target.style.display = 'block';
+  wsRender();
+}
+
 function wsRender() {
-  wsRenderGantt();
+  if (_wsView === 'timeline') wsRenderGantt();
+  else if (_wsView === 'table') wsRenderTable();
+  else if (_wsView === 'kanban') wsRenderKanban();
+  else if (_wsView === 'mine') wsRenderMine();
+}
+
+// ── TABLE VIEW ──
+function wsRenderTable() {
+  const wrap = document.getElementById('ws-table-wrap');
+  if (!wrap) return;
+  const all = wsGetAllTasks();
+  const isAdmin = SESSION && SESSION.isAdmin;
+
+  const rowsHtml = all.map(t => `
+    <tr>
+      <td>
+        <div style="font-weight:500">${t.text}</div>
+        ${t.description ? `<div style="font-size:11px;color:var(--muted);margin-top:3px">${t.description}</div>` : ''}
+      </td>
+      <td>${wsStatusPill(t)}</td>
+      <td><span class="ws-member-pill"><span class="ws-member-pill-dot" style="background:${t._memberObj.color}"></span>${t._memberObj.label}</span></td>
+      <td><span class="ws-prio-pill" style="background:${TASK_PRIORITY_COLORS[t.priority]}22;color:${TASK_PRIORITY_COLORS[t.priority]};border:1px solid ${TASK_PRIORITY_COLORS[t.priority]}55" onclick="wsCyclePriority('${t._who}','${t._phase}',${t._idx})">${TASK_PRIORITY_LABELS[t.priority]}</span></td>
+      <td>${wsDateCell(t)}</td>
+      <td><span class="ws-kb-card-phase" style="background:rgb(${t._phaseObj.color})">${t._phaseObj.name}</span></td>
+      <td style="text-align:right">
+        ${(isAdmin || (SESSION && SESSION.key === t._who)) ? `<button onclick="wsDeleteTask('${t._who}','${t._phase}',${t._idx})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px">✕</button>` : ''}
+      </td>
+    </tr>
+  `).join('');
+
+  wrap.innerHTML = `
+    <table class="ws-tbl">
+      <thead><tr>
+        <th style="width:30%">Nom de la tâche</th>
+        <th>État</th>
+        <th>Personne</th>
+        <th>Priorité</th>
+        <th>Échéance</th>
+        <th>Phase</th>
+        <th></th>
+      </tr></thead>
+      <tbody>${rowsHtml || '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted)">Aucune tâche</td></tr>'}</tbody>
+    </table>
+  `;
+}
+
+function wsStatusPill(t) {
+  const c = TASK_STATUS_COLORS[t.status];
+  return `<span class="ws-status-pill" style="background:${c}22;color:${c};border-color:${c}55" onclick="wsCycleStatus('${t._who}','${t._phase}',${t._idx})">
+    <span class="ws-status-dot" style="background:${c}"></span>${TASK_STATUS_LABELS[t.status]}
+  </span>`;
+}
+
+function wsDateCell(t) {
+  const overdue = t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'done';
+  const isAdmin = SESSION && SESSION.isAdmin;
+  const isMine = SESSION && SESSION.key === t._who;
+  const canEdit = isAdmin || isMine;
+  if (canEdit) {
+    return `<input type="date" class="ws-tbl-date${overdue?' overdue':''}" value="${t.dueDate||''}" onchange="wsUpdateTaskMeta('${t._who}','${t._phase}',${t._idx},{dueDate:this.value||null});wsRender()">`;
+  }
+  return `<span class="ws-tbl-date${overdue?' overdue':''}">${t.dueDate ? new Date(t.dueDate).toLocaleDateString('fr-FR') : '—'}</span>`;
+}
+
+function wsCycleStatus(who, phase, idx) {
+  const tasks = getSavedTasks();
+  const list = (tasks[who] && tasks[who][phase]) || (DEFAULT_TASKS[who] && DEFAULT_TASKS[who][phase]) || [];
+  const cur = wsTaskObj(list[idx], who, phase);
+  const next = TASK_STATUSES[(TASK_STATUSES.indexOf(cur.status) + 1) % TASK_STATUSES.length];
+  wsUpdateTaskMeta(who, phase, idx, {status: next});
+  wsRender();
+}
+
+function wsCyclePriority(who, phase, idx) {
+  const tasks = getSavedTasks();
+  const list = (tasks[who] && tasks[who][phase]) || (DEFAULT_TASKS[who] && DEFAULT_TASKS[who][phase]) || [];
+  const cur = wsTaskObj(list[idx], who, phase);
+  const next = TASK_PRIORITIES[(TASK_PRIORITIES.indexOf(cur.priority) + 1) % TASK_PRIORITIES.length];
+  wsUpdateTaskMeta(who, phase, idx, {priority: next});
+  wsRender();
+}
+
+// ── KANBAN VIEW ──
+function wsRenderKanban() {
+  const wrap = document.getElementById('ws-kanban-wrap');
+  if (!wrap) return;
+  const all = wsGetAllTasks();
+  const cols = TASK_STATUSES.map(s => ({status:s, items: all.filter(t => t.status === s)}));
+  wrap.innerHTML = `<div class="ws-kanban">
+    ${cols.map(col => `
+      <div class="ws-kb-col" data-status="${col.status}" ondragover="event.preventDefault();this.classList.add('drop-target')" ondragleave="this.classList.remove('drop-target')" ondrop="wsKanbanDrop(event,'${col.status}')">
+        <div class="ws-kb-head" style="border-bottom-color:${TASK_STATUS_COLORS[col.status]};color:${TASK_STATUS_COLORS[col.status]}">
+          <div>${TASK_STATUS_LABELS[col.status]}</div>
+          <div class="ws-kb-count">${col.items.length}</div>
+        </div>
+        ${col.items.map(t => `
+          <div class="ws-kb-card" draggable="true" data-who="${t._who}" data-phase="${t._phase}" data-idx="${t._idx}" ondragstart="this.classList.add('dragging');event.dataTransfer.setData('text/plain',JSON.stringify({who:'${t._who}',phase:'${t._phase}',idx:${t._idx}}))" ondragend="this.classList.remove('dragging')">
+            <div class="ws-kb-card-text">${t.text}</div>
+            <div class="ws-kb-card-meta">
+              <div class="ws-kb-card-tags">
+                <span class="ws-member-pill"><span class="ws-member-pill-dot" style="background:${t._memberObj.color}"></span><span style="font-size:11px">${t._memberObj.label}</span></span>
+                <span class="ws-prio-pill" style="background:${TASK_PRIORITY_COLORS[t.priority]}22;color:${TASK_PRIORITY_COLORS[t.priority]}">${TASK_PRIORITY_LABELS[t.priority]}</span>
+              </div>
+              <span class="ws-kb-card-phase" style="background:rgb(${t._phaseObj.color})">${t._phaseObj.name}</span>
+            </div>
+            ${t.dueDate ? `<div style="font-size:10px;color:var(--muted);font-family:'Barlow Condensed'">📅 ${new Date(t.dueDate).toLocaleDateString('fr-FR')}</div>` : ''}
+          </div>
+        `).join('')}
+        ${col.items.length === 0 ? '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;font-style:italic">Vide</div>' : ''}
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function wsKanbanDrop(e, newStatus) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drop-target');
+  try {
+    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+    wsUpdateTaskMeta(data.who, data.phase, data.idx, {status: newStatus});
+    wsRender();
+  } catch(err) {}
+}
+
+// ── MES TÂCHES VIEW ──
+function wsRenderMine() {
+  const wrap = document.getElementById('ws-mine-wrap');
+  if (!wrap) return;
+  if (!SESSION) { wrap.innerHTML = '<div class="ws-mine-empty">Connecte-toi pour voir tes tâches</div>'; return; }
+  const all = wsGetAllTasks(SESSION.key);
+  if (!all.length) { wrap.innerHTML = '<div class="ws-mine-empty">Tu n\'as aucune tâche assignée</div>'; return; }
+
+  const byStatus = TASK_STATUSES.map(s => ({status:s, items: all.filter(t => t.status === s)}));
+  wrap.innerHTML = byStatus.map(col => `
+    <div style="margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;font-family:'Bebas Neue';font-size:18px;letter-spacing:.08em;color:${TASK_STATUS_COLORS[col.status]}">
+        <span class="ws-status-dot" style="background:${TASK_STATUS_COLORS[col.status]};width:10px;height:10px"></span>
+        ${TASK_STATUS_LABELS[col.status]}
+        <span style="background:rgba(255,255,255,.06);font-size:11px;padding:2px 8px;border-radius:10px;color:var(--muted);font-family:'Barlow Condensed'">${col.items.length}</span>
+      </div>
+      ${col.items.length ? col.items.map(t => `
+        <div class="ws-kb-card" style="margin-bottom:8px">
+          <div class="ws-kb-card-text">${t.text}</div>
+          <div class="ws-kb-card-meta">
+            <div class="ws-kb-card-tags">
+              <span class="ws-prio-pill" style="background:${TASK_PRIORITY_COLORS[t.priority]}22;color:${TASK_PRIORITY_COLORS[t.priority]}">${TASK_PRIORITY_LABELS[t.priority]}</span>
+              ${t.dueDate ? `<span style="font-size:11px;color:var(--muted)">📅 ${new Date(t.dueDate).toLocaleDateString('fr-FR')}</span>` : ''}
+            </div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <span class="ws-kb-card-phase" style="background:rgb(${t._phaseObj.color})">${t._phaseObj.name}</span>
+              <button onclick="wsCycleStatus('${t._who}','${t._phase}',${t._idx})" style="background:${TASK_STATUS_COLORS[t.status]};color:white;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px;font-family:'Barlow Condensed';font-weight:700;letter-spacing:.06em;text-transform:uppercase">→ ${TASK_STATUS_LABELS[TASK_STATUSES[(TASK_STATUSES.indexOf(t.status)+1)%TASK_STATUSES.length]]}</button>
+            </div>
+          </div>
+        </div>
+      `).join('') : '<div style="color:var(--muted);font-size:12px;padding:10px;font-style:italic">Aucune</div>'}
+    </div>
+  `).join('');
 }
 
 function wsCalNav(delta) {
