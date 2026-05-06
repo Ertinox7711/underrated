@@ -1,8 +1,8 @@
 {
-  "commit": "203acfe",
-  "message": "fix(home): RATED shine animation simplifiee - retire ::after qui buggait le R",
-  "commitDate": "2026-05-06T18:00:15+02:00",
-  "buildDate": "2026-05-06T16:00:30Z",
-  "buildDateFR": "06/05/2026 18:00",
+  "commit": "5201352",
+  "message": "feat(workspace): refonte timeline V2 - clean Notion-style avec table propre",
+  "commitDate": "2026-05-06T18:09:00+02:00",
+  "buildDate": "2026-05-06T16:09:17Z",
+  "buildDateFR": "06/05/2026 18:09",
   "branch": "main"
 }

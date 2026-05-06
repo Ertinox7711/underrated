@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 18:09 — `5201352`
+feat(workspace): refonte timeline V2 - clean Notion-style avec table propre
+
 ## 06/05/2026 18:00 — `203acfe`
 fix(home): RATED shine animation simplifiee - retire ::after qui buggait le R
 
