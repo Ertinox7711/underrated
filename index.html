@@ -794,6 +794,13 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ws-gantt-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .ws-gantt-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.1em;color:var(--text)}
 .ws-gantt-info{font-size:11px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.08em;text-transform:uppercase}
+.ws-zoom-tabs{display:flex;gap:4px;background:var(--surface-2,#0a0f17);border:1px solid var(--border);border-radius:8px;padding:3px}
+.ws-zoom-btn{background:none;border:none;color:var(--muted);padding:6px 12px;border-radius:5px;cursor:pointer;font-family:'Barlow Condensed';font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;transition:.15s}
+.ws-zoom-btn:hover{color:var(--text)}
+.ws-zoom-btn.active{background:var(--b1);color:white}
+.ws-gantt{overflow-x:auto;overflow-y:hidden}
+.ws-gantt-axis-day{font-size:9px;text-align:center;padding:2px 0}
+.ws-gantt-axis-week{font-size:10px;text-align:center;padding:4px 0}
 .ws-gantt{position:relative;background:var(--surface-2,#0a0f17);border-radius:10px;padding:14px;min-height:140px;overflow-x:auto}
 .ws-gantt-axis{position:relative;height:24px;border-bottom:1px solid var(--border);margin-bottom:12px;display:flex}
 .ws-gantt-month{flex:1;font-size:10px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.08em;text-transform:uppercase;text-align:left;padding-left:6px;border-left:1px solid rgba(255,255,255,.04)}
@@ -1086,6 +1093,11 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
       <div class="ws-gantt-wrap rv d1">
         <div class="ws-gantt-head">
           <div class="ws-gantt-title">TIMELINE GLOBALE</div>
+          <div class="ws-zoom-tabs">
+            <button class="ws-zoom-btn" data-zoom="day" onclick="wsSetZoom('day')">Jours</button>
+            <button class="ws-zoom-btn active" data-zoom="week" onclick="wsSetZoom('week')">Semaines</button>
+            <button class="ws-zoom-btn" data-zoom="month" onclick="wsSetZoom('month')">Mois</button>
+          </div>
           <div class="ws-gantt-info" id="ws-gantt-info">Click sur une barre pour modifier (admin)</div>
         </div>
         <div class="ws-gantt" id="ws-gantt"></div>
@@ -3160,6 +3172,13 @@ function wsFmtMonth(ts) {
 }
 
 let _wsCalDate = new Date();
+let _wsZoom = 'week';
+
+function wsSetZoom(z) {
+  _wsZoom = z;
+  document.querySelectorAll('.ws-zoom-btn').forEach(b => b.classList.toggle('active', b.dataset.zoom === z));
+  wsRenderGantt();
+}
 
 function wsRender() {
   wsRenderGantt();
@@ -3234,23 +3253,85 @@ function wsRenderGantt() {
   const phases = getPhases();
   if (!phases.length) { wrap.innerHTML = '<div style="color:var(--muted);text-align:center;padding:30px">Aucune phase</div>'; return; }
 
-  // Find global range
   const allDates = phases.flatMap(p => [wsParseDate(p.start||'2026-05-01'), wsParseDate(p.end||'2027-05-01')]);
   const minDate = Math.min(...allDates);
   const maxDate = Math.max(...allDates);
   const rangeMs = maxDate - minDate;
   const today = Date.now();
+  const oneDay = 86400000;
+  const totalDays = Math.round(rangeMs / oneDay);
 
-  // Generate month axis (every month between min/max)
-  const months = [];
-  let cur = new Date(minDate);
-  cur.setDate(1);
-  while (cur.getTime() <= maxDate) {
-    months.push(cur.getTime());
-    cur.setMonth(cur.getMonth() + 1);
+  // Min cell width per zoom level for horizontal scroll
+  const cellWidth = _wsZoom === 'day' ? 36 : _wsZoom === 'week' ? 90 : 110;
+  let totalCells, contentWidth;
+
+  // Build axis based on zoom
+  let axisHtml = '';
+  if (_wsZoom === 'day') {
+    const days = [];
+    let cur = new Date(minDate);
+    while (cur.getTime() <= maxDate) {
+      days.push(cur.getTime());
+      cur = new Date(cur.getTime() + oneDay);
+    }
+    totalCells = days.length;
+    contentWidth = totalCells * cellWidth;
+    // Group by month for top row
+    const monthGroups = {};
+    days.forEach(d => {
+      const dt = new Date(d);
+      const k = dt.getFullYear()+'-'+dt.getMonth();
+      if (!monthGroups[k]) monthGroups[k] = {label: wsFmtMonth(d), count: 0};
+      monthGroups[k].count++;
+    });
+    const monthRow = Object.values(monthGroups).map(m => `<div class="ws-gantt-month" style="flex:0 0 ${m.count * cellWidth}px">${m.label}</div>`).join('');
+    const dayRow = days.map(d => {
+      const dt = new Date(d);
+      const isWeekend = dt.getDay() === 0 || dt.getDay() === 6;
+      return `<div class="ws-gantt-axis-day" style="flex:0 0 ${cellWidth}px;color:${isWeekend?'var(--muted)':'var(--text)'};border-left:1px solid rgba(255,255,255,.04);font-family:'Barlow Condensed';letter-spacing:.04em">${dt.getDate()}<br><span style="font-size:8px;opacity:.6">${['D','L','M','M','J','V','S'][dt.getDay()]}</span></div>`;
+    }).join('');
+    axisHtml = `<div style="min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${monthRow}</div><div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:12px">${dayRow}</div></div>`;
+  } else if (_wsZoom === 'week') {
+    // Snap to monday
+    const weeks = [];
+    const startMonday = new Date(minDate);
+    const dow = startMonday.getDay();
+    const offset = dow === 0 ? -6 : 1 - dow;
+    startMonday.setDate(startMonday.getDate() + offset);
+    let cur = new Date(startMonday);
+    while (cur.getTime() <= maxDate) {
+      weeks.push(cur.getTime());
+      cur = new Date(cur.getTime() + 7 * oneDay);
+    }
+    totalCells = weeks.length;
+    contentWidth = totalCells * cellWidth;
+    const monthGroups = {};
+    weeks.forEach(w => {
+      const dt = new Date(w);
+      const k = dt.getFullYear()+'-'+dt.getMonth();
+      if (!monthGroups[k]) monthGroups[k] = {label: wsFmtMonth(w), count: 0};
+      monthGroups[k].count++;
+    });
+    const monthRow = Object.values(monthGroups).map(m => `<div class="ws-gantt-month" style="flex:0 0 ${m.count * cellWidth}px">${m.label}</div>`).join('');
+    const weekRow = weeks.map(w => {
+      const dt = new Date(w);
+      const weekNum = wsGetWeekNum(dt);
+      return `<div class="ws-gantt-axis-week" style="flex:0 0 ${cellWidth}px;border-left:1px solid rgba(255,255,255,.04);font-family:'Barlow Condensed';color:var(--muted)">S${weekNum}<br><span style="font-size:9px;opacity:.7">${dt.getDate()}/${dt.getMonth()+1}</span></div>`;
+    }).join('');
+    axisHtml = `<div style="min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${monthRow}</div><div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:12px">${weekRow}</div></div>`;
+  } else {
+    // Months
+    const months = [];
+    let cur = new Date(minDate);
+    cur.setDate(1);
+    while (cur.getTime() <= maxDate) {
+      months.push(cur.getTime());
+      cur.setMonth(cur.getMonth() + 1);
+    }
+    totalCells = months.length;
+    contentWidth = totalCells * cellWidth;
+    axisHtml = `<div style="min-width:${contentWidth}px"><div class="ws-gantt-axis" style="display:flex">${months.map(m => `<div class="ws-gantt-month" style="flex:0 0 ${cellWidth}px;border-left:1px solid rgba(255,255,255,.04)">${wsFmtMonth(m)}</div>`).join('')}</div></div>`;
   }
-
-  const axisHtml = `<div class="ws-gantt-axis">${months.map(m => `<div class="ws-gantt-month">${wsFmtMonth(m)}</div>`).join('')}</div>`;
 
   const todayPct = ((today - minDate) / rangeMs) * 100;
   const todayMarker = (today >= minDate && today <= maxDate) ? `<div class="ws-gantt-today" style="left:${todayPct}%"></div>` : '';
@@ -3273,7 +3354,17 @@ function wsRenderGantt() {
     `;
   }).join('');
 
-  wrap.innerHTML = axisHtml + `<div class="ws-gantt-bars" id="ws-gantt-bars" style="position:relative">${todayMarker}${barsHtml}</div>`;
+  wrap.innerHTML = axisHtml + `<div class="ws-gantt-bars" id="ws-gantt-bars" style="position:relative;min-width:${contentWidth}px">${todayMarker}${barsHtml}</div>`;
+}
+
+function wsGetWeekNum(d) {
+  const target = new Date(d.valueOf());
+  const dayNr = (d.getDay() + 6) % 7;
+  target.setDate(target.getDate() - dayNr + 3);
+  const firstThursday = target.valueOf();
+  target.setMonth(0, 1);
+  if (target.getDay() !== 4) target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+  return 1 + Math.ceil((firstThursday - target) / 604800000);
 }
 
 // Date picker popup
