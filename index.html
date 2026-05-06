@@ -838,6 +838,11 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ws-gantt-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .ws-gantt-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.1em;color:var(--text)}
 .ws-gantt-info{font-size:11px;color:var(--muted);font-family:'Barlow Condensed';letter-spacing:.08em;text-transform:uppercase}
+.ws-nav{display:flex;gap:4px;background:var(--surface-2,#0a0f17);border:1px solid var(--border);border-radius:8px;padding:3px}
+.ws-nav-btn{background:none;border:none;color:var(--text);width:32px;height:32px;border-radius:5px;cursor:pointer;font-size:18px;font-weight:bold;display:flex;align-items:center;justify-content:center;transition:.15s}
+.ws-nav-btn:hover{background:var(--b1);color:white}
+.ws-nav-today-btn{width:auto;padding:0 12px;font-family:'Barlow Condensed';font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ws-nav-today-btn:hover{color:white}
 .ws-zoom-tabs{display:flex;gap:4px;background:var(--surface-2,#0a0f17);border:1px solid var(--border);border-radius:8px;padding:3px}
 .ws-zoom-btn{background:none;border:none;color:var(--muted);padding:6px 12px;border-radius:5px;cursor:pointer;font-family:'Barlow Condensed';font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;transition:.15s}
 .ws-zoom-btn:hover{color:var(--text)}
@@ -1224,10 +1229,15 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
         <div class="ws-gantt-wrap">
           <div class="ws-gantt-head">
             <div class="ws-gantt-title">TIMELINE GLOBALE</div>
+            <div class="ws-nav">
+              <button class="ws-nav-btn" onclick="wsNav(-1)" title="Précédent">‹</button>
+              <button class="ws-nav-btn ws-nav-today-btn" onclick="wsNavToday()" title="Aujourd'hui">Aujourd'hui</button>
+              <button class="ws-nav-btn" onclick="wsNav(1)" title="Suivant">›</button>
+            </div>
             <div class="ws-zoom-tabs">
-              <button class="ws-zoom-btn" data-zoom="day" onclick="wsSetZoom('day')">Jours</button>
-              <button class="ws-zoom-btn active" data-zoom="week" onclick="wsSetZoom('week')">Semaines</button>
-              <button class="ws-zoom-btn" data-zoom="month" onclick="wsSetZoom('month')">Mois</button>
+              <button class="ws-zoom-btn" data-zoom="day" onclick="wsSetZoom('day')">7 jours</button>
+              <button class="ws-zoom-btn active" data-zoom="week" onclick="wsSetZoom('week')">2 semaines</button>
+              <button class="ws-zoom-btn" data-zoom="month" onclick="wsSetZoom('month')">30 jours</button>
             </div>
             <div class="ws-gantt-info" id="ws-gantt-info">Click barre = ouvrir tâches • <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> = modifier dates (admin)</div>
           </div>
@@ -3372,10 +3382,27 @@ function wsFmtMonth(ts) {
 
 let _wsCalDate = new Date();
 let _wsZoom = 'week';
+let _wsViewStart = (function(){ const d=new Date(); d.setHours(0,0,0,0); return d; })();
 
 function wsSetZoom(z) {
   _wsZoom = z;
   document.querySelectorAll('.ws-zoom-btn').forEach(b => b.classList.toggle('active', b.dataset.zoom === z));
+  wsRenderGantt();
+}
+
+function wsViewportDays() {
+  return _wsZoom === 'day' ? 7 : _wsZoom === 'week' ? 14 : 30;
+}
+
+function wsNav(delta) {
+  const days = wsViewportDays();
+  _wsViewStart = new Date(_wsViewStart.getTime() + delta * days * 86400000);
+  wsRenderGantt();
+}
+
+function wsNavToday() {
+  const d = new Date(); d.setHours(0,0,0,0);
+  _wsViewStart = d;
   wsRenderGantt();
 }
 
@@ -3618,16 +3645,18 @@ function wsRenderGantt() {
   const phases = getPhases();
   if (!phases.length) { wrap.innerHTML = '<div style="color:var(--muted);text-align:center;padding:30px">Aucune phase</div>'; return; }
 
-  const allDates = phases.flatMap(p => [wsParseDate(p.start||'2026-05-01'), wsParseDate(p.end||'2027-05-01')]);
-  const minDate = Math.min(...allDates);
-  const maxDate = Math.max(...allDates);
+  // VIEWPORT: limit to N days from _wsViewStart (Notion-like)
+  const oneDay = 86400000;
+  const viewportDays = wsViewportDays();
+  const minDate = _wsViewStart.getTime();
+  const maxDate = minDate + viewportDays * oneDay;
   const rangeMs = maxDate - minDate;
   const today = Date.now();
-  const oneDay = 86400000;
-  const totalDays = Math.round(rangeMs / oneDay);
+  const totalDays = viewportDays;
 
-  // Min cell width per zoom level for horizontal scroll (lisible)
-  const cellWidth = _wsZoom === 'day' ? 56 : _wsZoom === 'week' ? 120 : 160;
+  // Cell width fits viewport width (~1000px - 170 header = 830px content area)
+  // Day mode: 7 days fill content. Week: 14 days. Month: 30 days.
+  const cellWidth = _wsZoom === 'day' ? 110 : _wsZoom === 'week' ? 55 : 28;
   let totalCells, contentWidth;
 
   // Build axis based on zoom
