@@ -816,6 +816,29 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 .ws-gantt-today{position:absolute;top:0;bottom:0;width:2px;background:#FFD700;z-index:5;pointer-events:none}
 .ws-gantt-today::after{content:'AUJ';position:absolute;top:-18px;left:-12px;font-size:9px;color:#FFD700;font-family:'Barlow Condensed';letter-spacing:.08em;font-weight:900}
 
+/* Calendar */
+.ws-cal-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:24px}
+.ws-cal-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.ws-cal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.08em;flex:1;text-align:center}
+.ws-cal-nav{background:var(--surface-2,#0a0f17);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:18px;font-weight:bold}
+.ws-cal-nav:hover{border-color:var(--b1);color:var(--b1)}
+.ws-cal-today{background:var(--b1);color:white;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'Barlow Condensed';font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.ws-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;background:var(--surface-2,#0a0f17);padding:10px;border-radius:10px}
+.ws-cal-dow{font-family:'Barlow Condensed';font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.ws-cal-day{aspect-ratio:1;border-radius:6px;padding:6px;display:flex;flex-direction:column;background:rgba(255,255,255,.02);position:relative;font-size:12px;color:var(--muted);min-height:60px}
+.ws-cal-day.in-month{color:var(--text)}
+.ws-cal-day.today{outline:2px solid #FFD700;outline-offset:-2px}
+.ws-cal-day.has-event{background:rgba(255,255,255,.05)}
+.ws-cal-day-num{font-weight:600;font-size:13px}
+.ws-cal-events{display:flex;flex-direction:column;gap:2px;margin-top:4px;flex:1;overflow:hidden}
+.ws-cal-event{font-size:9px;font-family:'Barlow Condensed';letter-spacing:.05em;text-transform:uppercase;font-weight:700;padding:1px 4px;border-radius:3px;color:white;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ws-cal-event.start::before{content:'▶ '}
+.ws-cal-event.end::before{content:'■ '}
+.ws-cal-event.during{opacity:.5}
+.ws-cal-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
+.ws-cal-legend-item{display:flex;align-items:center;gap:6px}
+.ws-cal-legend-dot{width:10px;height:10px;border-radius:3px}
+
 /* Phase cards */
 .ws-phases{display:flex;flex-direction:column;gap:18px}
 .ws-phase-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;border-left:4px solid var(--b1)}
@@ -1059,6 +1082,18 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
           <div class="ws-gantt-info" id="ws-gantt-info">Click sur une barre pour modifier (admin)</div>
         </div>
         <div class="ws-gantt" id="ws-gantt"></div>
+      </div>
+
+      <!-- Calendar view -->
+      <div class="ws-cal-wrap rv d2">
+        <div class="ws-cal-head">
+          <button class="ws-cal-nav" onclick="wsCalNav(-1)">‹</button>
+          <div class="ws-cal-title" id="ws-cal-title"></div>
+          <button class="ws-cal-nav" onclick="wsCalNav(1)">›</button>
+          <button class="ws-cal-today" onclick="wsCalToday()">Aujourd'hui</button>
+        </div>
+        <div class="ws-cal-grid" id="ws-cal-grid"></div>
+        <div class="ws-cal-legend" id="ws-cal-legend"></div>
       </div>
 
       <!-- Phase cards with member breakdown -->
@@ -3129,9 +3164,74 @@ function wsFmtMonth(ts) {
   return d.toLocaleDateString('fr-FR', {month:'short',year:'2-digit'});
 }
 
+let _wsCalDate = new Date();
+
 function wsRender() {
   wsRenderGantt();
+  wsRenderCalendar();
   wsRenderPhases();
+}
+
+function wsCalNav(delta) {
+  _wsCalDate.setMonth(_wsCalDate.getMonth() + delta);
+  wsRenderCalendar();
+}
+function wsCalToday() {
+  _wsCalDate = new Date();
+  wsRenderCalendar();
+}
+
+function wsRenderCalendar() {
+  const grid = document.getElementById('ws-cal-grid');
+  const title = document.getElementById('ws-cal-title');
+  const legend = document.getElementById('ws-cal-legend');
+  if (!grid || !title) return;
+
+  const phases = getPhases();
+  const year = _wsCalDate.getFullYear();
+  const month = _wsCalDate.getMonth();
+  const monthName = _wsCalDate.toLocaleDateString('fr-FR', {month:'long',year:'numeric'});
+  title.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  // Monday-first: 0=Mon, 6=Sun
+  let dowStart = firstDay.getDay() - 1;
+  if (dowStart < 0) dowStart = 6;
+  const daysInMonth = lastDay.getDate();
+  const prevMonthLast = new Date(year, month, 0).getDate();
+  const today = new Date();
+  const isToday = (d, m, y) => d === today.getDate() && m === today.getMonth() && y === today.getFullYear();
+
+  const dows = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  let html = dows.map(d => `<div class="ws-cal-dow">${d}</div>`).join('');
+
+  const cells = [];
+  for (let i = dowStart - 1; i >= 0; i--) cells.push({day: prevMonthLast - i, m: month - 1, y: year, inMonth: false});
+  for (let d = 1; d <= daysInMonth; d++) cells.push({day: d, m: month, y: year, inMonth: true});
+  while (cells.length % 7 !== 0) cells.push({day: cells.length - dowStart - daysInMonth + 1, m: month + 1, y: year, inMonth: false});
+
+  cells.forEach(c => {
+    const dayDate = new Date(c.y, c.m, c.day).getTime();
+    const events = [];
+    phases.forEach(p => {
+      const ps = wsParseDate(p.start);
+      const pe = wsParseDate(p.end);
+      if (dayDate === ps) events.push({type:'start', label:p.name+' DÉBUT', color:p.color});
+      else if (dayDate === pe) events.push({type:'end', label:p.name+' FIN', color:p.color});
+      else if (dayDate > ps && dayDate < pe) events.push({type:'during', label:p.name, color:p.color});
+    });
+    const eventsHtml = events.map(e => `<div class="ws-cal-event ${e.type}" style="background:rgb(${e.color})">${e.label}</div>`).join('');
+    const todayClass = isToday(c.day, c.m, c.y) ? ' today' : '';
+    const inMonthClass = c.inMonth ? ' in-month' : '';
+    const hasEventClass = events.length ? ' has-event' : '';
+    html += `<div class="ws-cal-day${inMonthClass}${todayClass}${hasEventClass}"><div class="ws-cal-day-num">${c.day}</div><div class="ws-cal-events">${eventsHtml}</div></div>`;
+  });
+
+  grid.innerHTML = html;
+
+  // Legend
+  legend.innerHTML = phases.map(p => `<div class="ws-cal-legend-item"><div class="ws-cal-legend-dot" style="background:rgb(${p.color})"></div>${p.name} : ${wsFmtDate(wsParseDate(p.start))} → ${wsFmtDate(wsParseDate(p.end))}</div>`).join('') + `<div class="ws-cal-legend-item"><div class="ws-cal-legend-dot" style="background:#FFD700"></div>Aujourd'hui</div>`;
 }
 
 function wsRenderGantt() {
