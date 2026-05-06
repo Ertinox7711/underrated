@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 04:58 — `a424014`
+feat(nav): sections plus grosses avec SVG icons (no emojis)
+
 ## 06/05/2026 04:56 — `20ed919`
 feat(nav): regroupe sidebar en 4 sections - Pilotage / Equipe / Production / Admin
 
