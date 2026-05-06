@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 05:27 — `f1e35aa`
+feat(workspace): calendrier mensuel avec marqueurs phases (start/end/during)
+
 ## 06/05/2026 05:24 — `798c828`
 feat(workspace): drag and drop sur timeline gantt - move + resize bars
 
