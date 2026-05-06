@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 05:07 — `4f6d335`
+feat(workspace): unified page - gantt timeline + phase cards + member panels
+
 ## 06/05/2026 04:58 — `a424014`
 feat(nav): sections plus grosses avec SVG icons (no emojis)
 

@@ -1,8 +1,8 @@
 {
-  "commit": "a424014",
-  "message": "feat(nav): sections plus grosses avec SVG icons (no emojis)",
-  "commitDate": "2026-05-06T04:58:48+02:00",
-  "buildDate": "2026-05-06T02:58:59Z",
-  "buildDateFR": "06/05/2026 04:58",
+  "commit": "4f6d335",
+  "message": "feat(workspace): unified page - gantt timeline + phase cards + member panels",
+  "commitDate": "2026-05-06T05:07:45+02:00",
+  "buildDate": "2026-05-06T03:07:54Z",
+  "buildDateFR": "06/05/2026 05:07",
   "branch": "main"
 }
