@@ -1,8 +1,8 @@
 {
-  "commit": "c540ee3",
-  "message": "fix(workspace): SVG calendar icon au lieu d emoji sur bouton date",
-  "commitDate": "2026-05-06T05:47:23+02:00",
-  "buildDate": "2026-05-06T03:47:39Z",
-  "buildDateFR": "06/05/2026 05:47",
+  "commit": "79928c9",
+  "message": "feat(workspace): 4 vues style Notion - Timeline/Table/Kanban/Mes taches + metadata (status/priority/date)",
+  "commitDate": "2026-05-06T05:52:46+02:00",
+  "buildDate": "2026-05-06T03:52:57Z",
+  "buildDateFR": "06/05/2026 05:52",
   "branch": "main"
 }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 05:52 — `79928c9`
+feat(workspace): 4 vues style Notion - Timeline/Table/Kanban/Mes taches + metadata (status/priority/date)
+
 ## 06/05/2026 05:47 — `c540ee3`
 fix(workspace): SVG calendar icon au lieu d emoji sur bouton date
 
