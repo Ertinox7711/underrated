@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 04:52 — `e87f829`
+feat(hub): clarifie diff Analytics (trends) vs Dashboard (stats brutes)
+
 ## 06/05/2026 04:43 — `344610a`
 feat(strat): refonte strategie pivot money-reels-first + uniformise 97e
 
