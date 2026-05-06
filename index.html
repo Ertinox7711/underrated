@@ -922,6 +922,10 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 /* Phase vertical guidelines through swimlanes */
 .ws-phase-line{position:absolute;top:0;bottom:0;width:1px;pointer-events:none}
 
+/* Phase backdrop bands on timeline */
+.ws-phase-bg{position:absolute;top:0;bottom:0;pointer-events:none;display:flex;align-items:flex-start;padding-top:6px;padding-left:10px;z-index:1}
+.ws-phase-bg-lbl{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:.08em;opacity:.5;font-weight:700}
+
 /* Task pills (Notion-like) */
 .ws-task-pill{
   position:absolute;
@@ -3749,8 +3753,18 @@ function wsRenderGantt() {
     </div>`;
   }).join('');
 
-  // No more phase vertical lines (clutter) — phases shown only in top chips
-  const phaseLinesHtml = '';
+  // Phase backdrop bands on timeline (clipped to viewport)
+  const phaseLinesHtml = phases.map(p => {
+    const ps = wsParseDate(p.start || '2026-05-01');
+    const pe = wsParseDate(p.end || '2027-05-01');
+    if (pe < minDate || ps > maxDate) return '';
+    const visStart = Math.max(ps, minDate);
+    const visEnd = Math.min(pe, maxDate);
+    const leftPct = ((visStart - minDate) / rangeMs) * 100;
+    const widthPct = ((visEnd - visStart) / rangeMs) * 100;
+    const showLabel = widthPct > 8;
+    return `<div class="ws-phase-bg" style="left:${leftPct}%;width:${widthPct}%;background:rgba(${p.color},.06);border-top:2px solid rgba(${p.color},.4);border-bottom:2px solid rgba(${p.color},.2)">${showLabel?`<span class="ws-phase-bg-lbl" style="color:rgb(${p.color})">${p.name}</span>`:''}</div>`;
+  }).join('');
 
   // Swimlanes: scheduled tasks on timeline + unscheduled chips inline
   const swimlanesHtml = ESP_MEMBERS.map(m => {
