@@ -1,8 +1,8 @@
 {
-  "commit": "98df321",
-  "message": "fix(auth): bastien password = Bastien (capital B) + CREDS_VERSION bump force reset",
-  "commitDate": "2026-05-06T18:15:32+02:00",
-  "buildDate": "2026-05-06T16:15:57Z",
-  "buildDateFR": "06/05/2026 18:15",
+  "commit": "a691527",
+  "message": "fix(auth): force reset all creds - uniform Capital first letter pattern",
+  "commitDate": "2026-05-06T18:18:37+02:00",
+  "buildDate": "2026-05-06T16:18:54Z",
+  "buildDateFR": "06/05/2026 18:18",
   "branch": "main"
 }

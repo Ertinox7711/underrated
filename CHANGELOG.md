@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 18:18 — `a691527`
+fix(auth): force reset all creds - uniform Capital first letter pattern
+
 ## 06/05/2026 18:15 — `98df321`
 fix(auth): bastien password = Bastien (capital B) + CREDS_VERSION bump force reset
 
