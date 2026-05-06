@@ -808,6 +808,11 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;ove
 }
 .ws-gantt-bar:hover{transform:scale(1.01);box-shadow:0 4px 18px rgba(0,0,0,.4)}
 .ws-gantt-bar.editing{outline:2px solid white;outline-offset:2px}
+.ws-bar-label{pointer-events:none;user-select:none;flex:1}
+.ws-bar-handle{position:absolute;top:0;bottom:0;width:8px;cursor:ew-resize;background:rgba(255,255,255,.15);transition:background .15s}
+.ws-bar-handle:hover{background:rgba(255,255,255,.4)}
+.ws-bar-handle-left{left:0;border-radius:8px 0 0 8px}
+.ws-bar-handle-right{right:0;border-radius:0 8px 8px 0}
 .ws-gantt-today{position:absolute;top:0;bottom:0;width:2px;background:#FFD700;z-index:5;pointer-events:none}
 .ws-gantt-today::after{content:'AUJ';position:absolute;top:-18px;left:-12px;font-size:9px;color:#FFD700;font-family:'Barlow Condensed';letter-spacing:.08em;font-weight:900}
 
@@ -3156,45 +3161,98 @@ function wsRenderGantt() {
   const todayPct = ((today - minDate) / rangeMs) * 100;
   const todayMarker = (today >= minDate && today <= maxDate) ? `<div class="ws-gantt-today" style="left:${todayPct}%"></div>` : '';
 
+  const isAdmin = (typeof SESSION !== 'undefined' && SESSION && SESSION.isAdmin);
   const barsHtml = phases.map((p, idx) => {
     const start = wsParseDate(p.start || '2026-05-01');
     const end = wsParseDate(p.end || '2027-05-01');
     const leftPct = ((start - minDate) / rangeMs) * 100;
     const widthPct = ((end - start) / rangeMs) * 100;
     const bg = `rgb(${p.color})`;
-    const isAdmin = (typeof SESSION !== 'undefined' && SESSION && SESSION.isAdmin);
-    const cursor = isAdmin ? 'cursor:pointer' : 'cursor:default';
-    const onclick = isAdmin ? `onclick="wsEditPhase('${p.id}')"` : '';
+    const cursor = isAdmin ? 'cursor:grab' : 'cursor:default';
+    const handles = isAdmin ? `
+      <div class="ws-bar-handle ws-bar-handle-left" data-phase="${p.id}" data-action="resize-start"></div>
+      <div class="ws-bar-handle ws-bar-handle-right" data-phase="${p.id}" data-action="resize-end"></div>
+    ` : '';
     return `
       <div class="ws-gantt-row">
-        <div class="ws-gantt-bar" style="left:${leftPct}%;width:${widthPct}%;background:${bg};${cursor}" ${onclick} title="${p.name} — ${wsFmtDate(start)} → ${wsFmtDate(end)}">
-          ${p.name} <span style="opacity:.7;font-size:11px;margin-left:8px">${wsFmtDate(start)} → ${wsFmtDate(end)}</span>
+        <div class="ws-gantt-bar" data-phase="${p.id}" data-action="move" style="left:${leftPct}%;width:${widthPct}%;background:${bg};${cursor}" title="${p.name} — ${wsFmtDate(start)} → ${wsFmtDate(end)}">
+          <span class="ws-bar-label">${p.name} <span style="opacity:.7;font-size:11px;margin-left:8px">${wsFmtDate(start)} → ${wsFmtDate(end)}</span></span>
+          ${handles}
         </div>
       </div>
     `;
   }).join('');
 
-  wrap.innerHTML = axisHtml + `<div class="ws-gantt-bars" style="position:relative">${todayMarker}${barsHtml}</div>`;
+  wrap.innerHTML = axisHtml + `<div class="ws-gantt-bars" id="ws-gantt-bars" style="position:relative">${todayMarker}${barsHtml}</div>`;
+
+  if (isAdmin) wsAttachDrag(minDate, maxDate);
 }
 
-function wsEditPhase(phaseId) {
-  if (!SESSION || !SESSION.isAdmin) return;
-  const phases = getPhases();
-  const p = phases.find(x => x.id === phaseId);
-  if (!p) return;
-  const newStart = prompt(`Date début de ${p.name} (YYYY-MM-DD) :`, p.start || '2026-05-06');
-  if (!newStart) return;
-  const newEnd = prompt(`Date fin de ${p.name} (YYYY-MM-DD) :`, p.end || '2026-06-06');
-  if (!newEnd) return;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(newStart) || !/^\d{4}-\d{2}-\d{2}$/.test(newEnd)) {
-    alert('Format date invalide. Utilise YYYY-MM-DD (ex: 2026-06-15)'); return;
-  }
-  p.start = newStart;
-  p.end = newEnd;
-  localStorage.setItem('ur_phases', JSON.stringify(phases));
-  if (typeof dbSet === 'function') dbSet('phases', {items: phases});
-  wsRender();
+let _wsDrag = null;
+function wsAttachDrag(minDate, maxDate) {
+  const bars = document.getElementById('ws-gantt-bars');
+  if (!bars) return;
+
+  bars.querySelectorAll('.ws-gantt-bar, .ws-bar-handle').forEach(el => {
+    el.addEventListener('mousedown', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const phaseId = el.dataset.phase;
+      const action = el.dataset.action;
+      const phases = getPhases();
+      const p = phases.find(x => x.id === phaseId);
+      if (!p) return;
+      const containerRect = bars.getBoundingClientRect();
+      _wsDrag = {
+        phaseId, action,
+        startX: e.clientX,
+        origStart: wsParseDate(p.start),
+        origEnd: wsParseDate(p.end),
+        minDate, maxDate,
+        rangeMs: maxDate - minDate,
+        containerWidth: containerRect.width
+      };
+      document.body.style.cursor = action === 'move' ? 'grabbing' : 'ew-resize';
+    });
+  });
 }
+
+document.addEventListener('mousemove', e => {
+  if (!_wsDrag) return;
+  const dx = e.clientX - _wsDrag.startX;
+  const dxMs = (dx / _wsDrag.containerWidth) * _wsDrag.rangeMs;
+  // Snap to days
+  const oneDay = 86400000;
+  const dxDays = Math.round(dxMs / oneDay) * oneDay;
+
+  const phases = getPhases();
+  const p = phases.find(x => x.id === _wsDrag.phaseId);
+  if (!p) return;
+
+  if (_wsDrag.action === 'move') {
+    p.start = new Date(_wsDrag.origStart + dxDays).toISOString().slice(0,10);
+    p.end = new Date(_wsDrag.origEnd + dxDays).toISOString().slice(0,10);
+  } else if (_wsDrag.action === 'resize-start') {
+    const newStart = _wsDrag.origStart + dxDays;
+    if (newStart < _wsDrag.origEnd - oneDay) p.start = new Date(newStart).toISOString().slice(0,10);
+  } else if (_wsDrag.action === 'resize-end') {
+    const newEnd = _wsDrag.origEnd + dxDays;
+    if (newEnd > _wsDrag.origStart + oneDay) p.end = new Date(newEnd).toISOString().slice(0,10);
+  }
+  localStorage.setItem('ur_phases', JSON.stringify(phases));
+  wsRenderGantt();
+});
+
+document.addEventListener('mouseup', () => {
+  if (!_wsDrag) return;
+  document.body.style.cursor = '';
+  // Persist to Firebase on release
+  if (typeof dbSet === 'function') {
+    dbSet('phases', {items: getPhases()});
+  }
+  wsRenderPhases();
+  _wsDrag = null;
+});
 
 function wsRenderPhases() {
   const wrap = document.getElementById('ws-phases');
