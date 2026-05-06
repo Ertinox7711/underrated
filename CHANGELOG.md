@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 18:15 — `98df321`
+fix(auth): bastien password = Bastien (capital B) + CREDS_VERSION bump force reset
+
 ## 06/05/2026 18:09 — `5201352`
 feat(workspace): refonte timeline V2 - clean Notion-style avec table propre
 
