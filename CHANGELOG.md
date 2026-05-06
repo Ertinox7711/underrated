@@ -1,5 +1,8 @@
 # Changelog
 
+## 06/05/2026 06:07 — `aac5549`
+feat(workspace): split scheduled timeline + unscheduled chips a planifier
+
 ## 06/05/2026 06:01 — `1c6a370`
 feat(workspace): refonte Notion-style - task pills + phase banner top + vertical guidelines
 
