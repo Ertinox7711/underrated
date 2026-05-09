@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNDERRATED — WAR ROOM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;700;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b14;--bg2:#0b0f1c;
+  --b1:#1E90FF;--b2:#56CCF2;--b3:#4F6EF7;--b4:#8BA8FF;
+  --border:rgba(100,160,255,.10);--border-hi:rgba(100,160,255,.25);--shine:rgba(100,160,255,.08);
+  --text:rgba(255,255,255,.85);--muted:rgba(255,255,255,.35);
+  --sb:228px;--r:10px;--ease:.35s cubic-bezier(.2,.8,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+/* ══ TOP BAR ══ */
+@keyframes topbar-sweep{0%{background-position:200% center}100%{background-position:-200% center}}
+@keyframes topbar-glow{0%,100%{opacity:.6}50%{opacity:1}}
+#top-bar{
+  position:fixed;top:0;left:0;right:0;height:3px;z-index:99999;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0%,var(--b3) 20%,var(--b1) 40%,var(--b2) 60%,var(--b1) 80%,transparent 100%);
+  background-size:300% 100%;
+  animation:topbar-sweep 8s linear infinite,topbar-glow 8s ease-in-out infinite;
+  box-shadow:0 0 10px var(--b1),0 0 20px rgba(30,144,255,.25);
+}
+
+/* ══ AMBIENT ANIMATIONS ══ */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes pulse-glow{0%,100%{box-shadow:inset 0 1px 0 var(--shine),0 8px 32px rgba(0,0,0,.5)}50%{box-shadow:inset 0 1px 0 var(--shine),0 8px 32px rgba(0,0,0,.5),0 0 22px rgba(30,144,255,.07)}}
+@keyframes badge-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes dot-breathe{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.5);opacity:1}}
+@keyframes sb-active-shine{
+  0%{background-position:-200% center}
+  100%{background-position:200% center}
+}
+@keyframes sb-active-border{
+  0%,100%{box-shadow:inset -2px 0 0 var(--b1),inset 0 0 0 transparent}
+  50%{box-shadow:inset -2px 0 0 var(--b2),inset 0 0 20px rgba(30,144,255,.06)}
+}
+
+.home-title .gr{animation:float 12s ease-in-out infinite}
+.sb-user-dot{animation:dot-breathe 4s ease-in-out infinite}
+.admin-badge{animation:badge-pulse 5s ease-in-out infinite}
+.gc{animation:pulse-glow 10s ease-in-out infinite}
+.gc:hover{animation:none}
+.ph-badge{animation:badge-pulse 6s ease-in-out infinite}
+
+/* Active sidebar item animation */
+.sb-item.active{
+  position:relative;overflow:hidden;
+  animation:sb-active-border 5s ease-in-out infinite;
+}
+.sb-item.active::after{
+  content:'';
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0%,rgba(30,144,255,.06) 50%,transparent 100%);
+  background-size:200% 100%;
+  animation:sb-active-shine 4s ease-in-out infinite;
+}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;overflow:hidden;height:100vh;display:flex}
+
+/* ══════════════════════════════════
+   LOGIN SCREEN
+══════════════════════════════════ */
+#login-screen{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+}
+#login-screen::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(30,144,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(30,144,255,.03) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);
+}
+.login-box{
+  background:rgba(14,20,40,.85);
+  border:1px solid var(--border);
+  backdrop-filter:blur(32px);
+  border-radius:16px;
+  padding:44px 48px;
+  width:100%;max-width:420px;
+  position:relative;z-index:1;
+  box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 60px rgba(30,144,255,.05);
+}
+.login-logo{
+  font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.14em;color:#fff;
+  text-align:center;margin-bottom:4px;
+}
+.login-logo b{background:linear-gradient(90deg,var(--b1),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:36px}
+
+
+.login-field{margin-bottom:14px}
+.login-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block}
+.login-input{
+  width:100%;padding:11px 14px;border-radius:7px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--text);font-family:'Manrope',sans-serif;font-size:13px;
+  outline:none;transition:border-color var(--ease),box-shadow var(--ease);
+}
+.login-input:focus{border-color:rgba(30,144,255,.4);box-shadow:0 0 0 3px rgba(30,144,255,.08)}
+.login-btn{
+  width:100%;padding:13px;border-radius:8px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--b1),var(--b3));
+  color:#fff;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.1em;
+  margin-top:8px;transition:opacity var(--ease),transform var(--ease);
+}
+.login-btn:hover{opacity:.9;transform:translateY(-1px)}
+.login-btn:active{transform:translateY(0)}
+.login-err{
+  font-size:11px;color:#FF5E7D;text-align:center;margin-top:10px;
+  display:none;font-family:'Barlow Condensed';letter-spacing:.04em;
+}
+
+/* ══════════════════════════════════
+   SIDEBAR
+══════════════════════════════════ */
+.sidebar{
+  width:var(--sb);flex-shrink:0;
+  background:rgba(6,9,18,.98);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;position:relative;z-index:10;
+}
+.sb-logo{padding:16px 18px 12px;border-bottom:1px solid var(--border)}
+.sb-logo-t{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.14em;color:#fff}
+.sb-logo-t b{background:linear-gradient(90deg,var(--b1),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sb-logo-s{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+/* User badge in sidebar */
+.sb-user{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 18px 10px;border-bottom:1px solid var(--border);
+}
+.sb-user-dot{width:8px;height:8px;border-radius:50%;background:var(--b1);flex-shrink:0;box-shadow:0 0 8px rgba(30,144,255,.6)}
+.sb-user-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.08em;color:var(--text)}
+.sb-user-role{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sb-logout{
+  margin-left:auto;padding:3px 8px;border-radius:4px;cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  border:1px solid rgba(255,255,255,.08);transition:all var(--ease);
+}
+.sb-logout:hover{color:var(--text);border-color:var(--border-hi)}
+
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto}
+.sb-sec{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:10px 18px 4px}
+.sb-item{
+  display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);border-right:2px solid transparent;
+  transition:background var(--ease),color var(--ease),border-color var(--ease);
+  user-select:none;
+}
+.sb-item:hover{background:rgba(30,144,255,.05);color:var(--text)}
+.sb-item.active{background:rgba(30,144,255,.10);color:var(--b1);border-right-color:var(--b1)}
+.sb-item svg{flex-shrink:0;opacity:.5}.sb-item.active svg{opacity:1}
+/* Admin badge */
+.sb-item.admin-only{position:relative}
+.admin-badge{
+  margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;
+  letter-spacing:.1em;text-transform:uppercase;padding:1px 5px;border-radius:3px;
+  background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.25);color:#FFD700;
+}
+
+.sb-sub{display:none;flex-direction:column;background:rgba(30,144,255,.03)}
+.sb-sub.open{display:flex}
+.sb-sub-item{
+  display:flex;align-items:center;gap:8px;padding:7px 18px 7px 38px;cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);border-right:2px solid transparent;
+  transition:background var(--ease),color var(--ease),border-color var(--ease);
+}
+.sb-sub-item:hover{background:rgba(30,144,255,.06);color:var(--text)}
+.sb-sub-item.active{color:var(--b1);border-right-color:var(--b1);background:rgba(30,144,255,.08)}
+.sb-sub-dot{width:7px;height:7px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0}
+
+.sb-footer{padding:12px 18px;border-top:1px solid var(--border)}
+.ver-badge{display:inline-flex;align-items:center;gap:6px;width:100%;background:rgba(30,144,255,.06);border:1px solid rgba(30,144,255,.12);border-radius:5px;padding:5px 10px;cursor:pointer}
+.ver-txt{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.1em;color:rgba(30,144,255,.5)}
+
+/* ══════════════════════════════════
+   MAIN / PAGES
+══════════════════════════════════ */
+.main{flex:1;overflow-y:auto;overflow-x:hidden;position:relative}
+.main::before{
+  content:'';position:fixed;top:0;left:var(--sb);right:0;bottom:0;
+  z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(30,144,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(30,144,255,.03) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 20%,black 30%,transparent 100%);
+}
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+
+/* ══ CHANGELOG PANEL ══ */
+#changelog-panel{
+  position:fixed;top:0;right:-480px;width:460px;height:100vh;z-index:9998;
+  background:rgba(8,11,20,.97);border-left:1px solid var(--border);
+  backdrop-filter:blur(32px);display:flex;flex-direction:column;
+  transition:right .35s cubic-bezier(.2,.8,.2,1);
+  box-shadow:-16px 0 60px rgba(0,0,0,.6);
+}
+#changelog-panel.open{right:0}
+.cl-header{display:flex;align-items:center;gap:10px;padding:18px 22px;border-bottom:1px solid var(--border);flex-shrink:0}
+.cl-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.08em;flex:1}
+.cl-close{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all var(--ease)}
+.cl-close:hover{border-color:var(--border-hi);color:var(--text)}
+.cl-body{flex:1;overflow-y:auto;padding:20px 22px;font-family:'Manrope',sans-serif;font-size:12px;line-height:1.7;color:rgba(255,255,255,.6)}
+.cl-body h1{font-family:'Bebas Neue';font-size:22px;letter-spacing:.06em;color:var(--text);margin:0 0 16px}
+.cl-body h2{font-family:'Bebas Neue';font-size:16px;letter-spacing:.06em;color:var(--b1);margin:20px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.cl-body h3{font-family:'Barlow Condensed';font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px}
+.cl-body p{margin:0 0 8px}
+.cl-body ul{margin:0 0 10px;padding-left:16px}
+.cl-body li{margin-bottom:3px}
+.cl-body code{font-size:11px;background:rgba(30,144,255,.08);border:1px solid rgba(30,144,255,.15);border-radius:3px;padding:1px 5px;color:var(--b2)}
+.cl-overlay{position:fixed;inset:0;z-index:9997;background:rgba(0,0,0,.4);display:none;backdrop-filter:blur(2px)}
+.cl-overlay.open{display:block}
+@media(max-width:700px){#changelog-panel{width:100%;right:-100%}}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.page.active .rv{animation:fadeUp .45s ease both}
+.page.active .rv.d1{animation-delay:.04s}.page.active .rv.d2{animation-delay:.09s}
+.page.active .rv.d3{animation-delay:.14s}.page.active .rv.d4{animation-delay:.19s}
+.page.active .rv.d5{animation-delay:.24s}.page.active .rv.d6{animation-delay:.29s}
+
+/* LAYOUT */
+.ph{padding:34px 36px 0;position:relative;z-index:1}
+.ph-eye{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--b1);opacity:.6;margin-bottom:6px}
+.ph-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,64px);line-height:.9;letter-spacing:.03em;margin-bottom:8px}
+.ph-title em{background:linear-gradient(135deg,var(--b1),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-style:normal}
+.ph-sub{font-size:12px;color:var(--muted);max-width:480px;line-height:1.65;margin-bottom:30px}
+.pc{padding:0 36px 60px;position:relative;z-index:1}
+.gc{background:rgba(20,28,50,.5);border:1px solid var(--border);backdrop-filter:blur(20px);border-radius:var(--r);box-shadow:inset 0 1px 0 var(--shine),0 8px 32px rgba(0,0,0,.5);transition:transform var(--ease),box-shadow var(--ease),border-color var(--ease)}
+.gc:hover{transform:translateY(-4px);border-color:var(--border-hi);box-shadow:inset 0 1px 0 var(--shine),0 16px 48px rgba(0,0,0,.6),0 0 20px rgba(30,144,255,.12)}
+.sec-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--b1);opacity:.6;margin-bottom:6px}
+.sec-h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,2.8vw,34px);letter-spacing:.04em;margin-bottom:16px}
+.sec-h2 em{background:linear-gradient(135deg,var(--b1),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-style:normal}
+
+/* WHO / PHASE TAGS */
+.who{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;flex-shrink:0}
+.w-m{background:rgba(30,144,255,.15);color:var(--b1)}.w-b{background:rgba(155,89,182,.2);color:#B07FD4}
+.w-t{background:rgba(79,110,247,.18);color:var(--b4)}.w-i{background:rgba(39,174,96,.15);color:#5DC48A}
+.w-x{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5)}
+.mph{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;border:1px solid}
+.mph-1{background:rgba(30,144,255,.1);border-color:rgba(30,144,255,.3);color:var(--b1)}
+.mph-2{background:rgba(86,204,242,.08);border-color:rgba(86,204,242,.25);color:var(--b2)}
+
+/* ══ HOME ══ */
+.home-hero{padding:34px 36px 22px;position:relative;z-index:1}
+.home-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(54px,8vw,106px);line-height:.88;letter-spacing:.03em;margin-bottom:8px}
+.home-title .gr{background:linear-gradient(135deg,var(--b1) 0%,var(--b2) 50%,var(--b3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.home-welcome{font-size:13px;color:var(--muted)}
+.home-welcome b{color:var(--text)}
+.home-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 36px 26px;position:relative;z-index:1}
+.hs{padding:14px 18px;border-radius:var(--r);background:rgba(20,28,50,.5);border:1px solid var(--border)}
+.hs-v{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.04em;background:linear-gradient(135deg,var(--b1),var(--b2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hs-l{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 36px 52px;position:relative;z-index:1}
+.home-card{padding:20px 22px;cursor:pointer}
+.hc-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--b1);opacity:.6;margin-bottom:5px}
+.hc-title{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:.04em;margin-bottom:7px}
+.hc-body{font-size:11.5px;color:var(--muted);line-height:1.6}
+/* My tasks widget on home */
+.my-tasks-widget{padding:0 36px 36px;position:relative;z-index:1}
+.my-tasks-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* ══ REMINDERS ══ */
+.rem-widget{padding:0 36px 40px;position:relative;z-index:1}
+.rem-add{display:grid;grid-template-columns:1fr 200px auto auto;gap:8px;margin-bottom:16px;align-items:stretch}
+.rem-input,.rem-date{background:rgba(14,20,40,.55);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Manrope',sans-serif;font-size:13px;padding:10px 13px;outline:none;transition:border-color .2s}
+.rem-input:focus,.rem-date:focus{border-color:rgba(30,144,255,.4)}
+.rem-date{font-size:12px;color:rgba(255,255,255,.65);color-scheme:dark}
+.rem-vis-grp{display:flex;background:rgba(14,20,40,.55);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.rem-vis-btn{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:0 12px;border:none;background:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;border-right:1px solid var(--border)}
+.rem-vis-btn:last-child{border-right:none}
+.rem-vis-btn:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.rem-vis-btn.sel{background:rgba(30,144,255,.15);color:var(--b1)}
+.rem-submit{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.08em;background:linear-gradient(135deg,var(--b1),var(--b3));color:#fff;border:none;border-radius:8px;padding:0 18px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .2s}
+.rem-submit:hover{opacity:.85}
+.rem-list{display:flex;flex-direction:column;gap:8px}
+.rem-empty{padding:24px;text-align:center;color:rgba(255,255,255,.25);font-style:italic;font-size:13px;border:1px dashed rgba(255,255,255,.08);border-radius:8px}
+.rem-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(14,20,40,.5);border:1px solid var(--border);border-radius:8px;transition:all .2s}
+.rem-item:hover{border-color:rgba(30,144,255,.25)}
+.rem-item.done{opacity:.45}
+.rem-item.due{border-color:rgba(255,107,53,.4);background:rgba(255,107,53,.06)}
+.rem-item.due-soon{border-color:rgba(255,215,0,.35);background:rgba(255,215,0,.04)}
+.rem-cb{width:18px;height:18px;border:1.5px solid rgba(255,255,255,.25);border-radius:4px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;background:none}
+.rem-cb:hover{border-color:var(--b1)}
+.rem-cb.checked{background:var(--b1);border-color:var(--b1)}
+.rem-cb.checked::after{content:'✓';color:#fff;font-size:12px;font-weight:900}
+.rem-body{flex:1;min-width:0}
+.rem-text{font-size:13px;color:rgba(255,255,255,.85);line-height:1.4;margin-bottom:3px;word-break:break-word}
+.rem-item.done .rem-text{text-decoration:line-through;color:rgba(255,255,255,.4)}
+.rem-meta{display:flex;align-items:center;gap:8px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.rem-due{color:var(--b1)}
+.rem-item.due .rem-due{color:#FF6B35}
+.rem-item.due-soon .rem-due{color:#FFD700}
+.rem-vis-tag{padding:2px 6px;border-radius:3px;border:1px solid}
+.rem-vis-tag.public{background:rgba(30,144,255,.12);border-color:rgba(30,144,255,.28);color:var(--b1)}
+.rem-vis-tag.private{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12);color:var(--muted)}
+.rem-author{color:rgba(255,255,255,.4)}
+.rem-del{background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;padding:4px 6px;border-radius:4px;font-size:13px;transition:all .15s;flex-shrink:0}
+.rem-del:hover{color:#E74C3C;background:rgba(231,76,60,.08)}
+@media(max-width:880px){
+  .rem-add{grid-template-columns:1fr;gap:6px}
+  .rem-vis-grp,.rem-submit{justify-content:center}
+}
+.mtask-col{padding:18px 20px;border-radius:var(--r);background:rgba(14,20,40,.55);border:1px solid var(--border)}
+.mtask-col-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.06em;margin-bottom:10px}
+.ph1c .mtask-col-title{color:var(--b1)}.ph2c .mtask-col-title{color:var(--b2)}
+.mtask{font-size:11px;color:rgba(255,255,255,.55);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:8px}
+.mtask:last-child{border-bottom:none}
+.mtask-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+
+/* ══ ÉQUIPE ══ */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.member{padding:22px;border-radius:var(--r);position:relative;overflow:hidden;background:rgba(14,20,40,.55);border:1px solid var(--border);backdrop-filter:blur(20px);transition:transform var(--ease),box-shadow var(--ease),border-color var(--ease)}
+.member::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);opacity:.8}
+.member:hover{transform:translateY(-5px);border-color:rgba(var(--acc-rgb),.3);box-shadow:0 16px 48px rgba(0,0,0,.5),0 0 20px rgba(var(--acc-rgb),.2)}
+.member.me{border-color:rgba(var(--acc-rgb),.4);box-shadow:0 0 0 1px rgba(var(--acc-rgb),.2),0 8px 32px rgba(0,0,0,.5)}
+.m-mathieu{--acc:var(--b1);--acc-rgb:30,144,255}.m-bastien{--acc:#9B59B6;--acc-rgb:155,89,182}
+.m-theo{--acc:var(--b3);--acc-rgb:79,110,247}.m-ilame{--acc:#27AE60;--acc-rgb:39,174,96}
+.m-num{position:absolute;bottom:10px;right:14px;font-family:'Bebas Neue',sans-serif;font-size:70px;line-height:1;color:var(--acc);opacity:.04;pointer-events:none}
+.me-tag{position:absolute;top:14px;right:14px;font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:rgba(var(--acc-rgb),.2);color:var(--acc);border:1px solid rgba(var(--acc-rgb),.3)}
+.m-name{font-family:'Bebas Neue',sans-serif;font-size:23px;letter-spacing:.06em;color:var(--acc);margin-bottom:1px}
+.m-role{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:13px}
+.m-role[contenteditable="true"]{outline:none;border-bottom:1px dashed rgba(255,255,255,.18);padding-bottom:2px;cursor:text;min-width:40px}
+.m-role[contenteditable="true"]:focus{border-bottom-color:var(--acc);color:rgba(255,255,255,.6)}
+.m-tasks{list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:13px}
+.m-tasks li{font-size:11px;color:rgba(255,255,255,.55);line-height:1.4;padding-left:11px;position:relative;display:flex;align-items:flex-start;gap:5px}
+.m-tasks li::before{content:'';position:absolute;left:0;top:6px;width:3px;height:3px;border-radius:50%;background:var(--acc);opacity:.7;flex-shrink:0}
+.m-tasks li span.mc-txt{flex:1}
+.m-tasks li span.mc-txt[contenteditable="true"]{outline:none;cursor:text}
+.m-tasks li span.mc-txt[contenteditable="true"]:focus{color:rgba(255,255,255,.8)}
+.m-tasks li .mc-del{opacity:0;font-size:9px;color:rgba(255,255,255,.25);cursor:pointer;transition:opacity .2s,color .2s;flex-shrink:0;padding:0 2px;line-height:1.4}
+.m-tasks li:hover .mc-del{opacity:1}
+.m-tasks li .mc-del:hover{color:#E74C3C}
+.mc-add-btn{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;margin-top:4px;opacity:0;transition:opacity .2s}
+.mc-add-btn:hover{color:var(--acc)}
+.member:hover .mc-add-btn{opacity:1}
+/* ══ SUGGESTIONS ══ */
+.mc-suggest-btn{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;margin-top:8px;padding:6px 10px;border-radius:6px;border:1px dashed rgba(255,255,255,.12);transition:all .2s;background:transparent}
+.mc-suggest-btn:hover{color:var(--acc);border-color:var(--acc);background:rgba(30,144,255,.04)}
+.mc-suggest-input-wrap{margin-top:8px;display:none}
+.mc-suggest-input-wrap.open{display:block}
+.mc-suggest-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:rgba(255,255,255,.8);font-family:'Manrope',sans-serif;font-size:11px;padding:7px 10px;outline:none;resize:none}
+.mc-suggest-input:focus{border-color:var(--acc)}
+.mc-suggest-actions{display:flex;gap:6px;margin-top:6px}
+.mc-suggest-submit{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;background:rgba(30,144,255,.15);border:1px solid rgba(30,144,255,.3);color:var(--b1);border-radius:5px;padding:4px 10px;cursor:pointer;transition:all .2s}
+.mc-suggest-submit:hover{background:rgba(30,144,255,.25)}
+.mc-suggest-cancel{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:none;background:none;cursor:pointer;padding:4px 6px}
+.mc-pending{margin-top:10px;border-top:1px solid rgba(255,255,255,.06);padding-top:10px}
+.mc-pending-title{font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.mc-suggestion{background:rgba(255,213,0,.05);border:1px solid rgba(255,213,0,.15);border-radius:6px;padding:7px 9px;margin-bottom:6px;font-size:11px;color:rgba(255,255,255,.65);line-height:1.4}
+.mc-suggestion .sg-meta{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,213,0,.5);margin-bottom:3px}
+.mc-suggestion .sg-actions{display:flex;gap:5px;margin-top:6px}
+.sg-approve{font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.3);color:#5DC48A;border-radius:4px;padding:3px 8px;cursor:pointer;transition:all .2s}
+.sg-approve:hover{background:rgba(39,174,96,.28)}
+.sg-reject{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1px solid rgba(255,255,255,.1);background:none;border-radius:4px;padding:3px 8px;cursor:pointer;transition:all .2s}
+.sg-reject:hover{color:#E74C3C;border-color:rgba(231,76,60,.3)}
+.m-phases{display:flex;gap:5px;flex-wrap:wrap}
+/* Member phase tasks (checkable, linked to Phases page) */
+.mpt-wrap{margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,.06)}
+.mpt-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.mpt-head-lbl{font-family:'Barlow Condensed',sans-serif;font-size:8.5px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.mpt-progress{flex:1;height:3px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden}
+.mpt-progress-bar{height:100%;border-radius:2px;transition:width .35s ease}
+.mpt-count{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.08em;color:rgba(255,255,255,.5);min-width:30px;text-align:right}
+.mpt-phase{margin-bottom:8px}
+.mpt-phase:last-child{margin-bottom:0}
+.mpt-phase-lbl{font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px;opacity:.75}
+.mpt-item{display:flex;align-items:flex-start;gap:7px;padding:4px 0;transition:opacity .2s}
+.mpt-item.done{opacity:.42}
+.mpt-cb{width:13px;height:13px;border:1.5px solid rgba(255,255,255,.25);border-radius:3px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:2px}
+.mpt-cb:hover{border-color:var(--acc)}
+.mpt-cb.checked{background:var(--acc);border-color:var(--acc)}
+.mpt-cb.checked::after{content:'✓';color:#fff;font-size:9px;font-weight:900;line-height:1}
+.mpt-txt{font-size:11px;color:rgba(255,255,255,.62);line-height:1.4;flex:1}
+.mpt-item.done .mpt-txt{text-decoration:line-through;color:rgba(255,255,255,.35)}
+
+/* ══ PHASES ══ */
+.person-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.ptab{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:7px 16px;border-radius:6px;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all var(--ease)}
+.ptab:hover{color:var(--text);border-color:var(--border-hi)}
+.ptab.active{background:rgba(30,144,255,.12);border-color:rgba(30,144,255,.3);color:var(--b1)}
+.ptab[data-person="bastien"].active{background:rgba(155,89,182,.12);border-color:rgba(155,89,182,.3);color:#B07FD4}
+.ptab[data-person="theo"].active{background:rgba(79,110,247,.12);border-color:rgba(79,110,247,.3);color:var(--b4)}
+.ptab[data-person="ilame"].active{background:rgba(39,174,96,.12);border-color:rgba(39,174,96,.3);color:#5DC48A}
+.phases-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.phase-col{border-radius:var(--r);padding:26px;position:relative;overflow:hidden}
+.ph1{background:rgba(30,144,255,.05);border:1px solid rgba(30,144,255,.18)}
+.ph2{background:rgba(86,204,242,.03);border:1px solid rgba(86,204,242,.12)}
+.ph-badge{position:absolute;top:16px;right:16px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:.14em;padding:3px 8px;border-radius:3px}
+.ph1 .ph-badge{background:rgba(30,144,255,.15);color:var(--b1);border:1px solid rgba(30,144,255,.3)}
+.ph2 .ph-badge{background:rgba(86,204,242,.08);color:var(--b2);border:1px solid rgba(86,204,242,.2)}
+.ph-custom .ph-badge{background:rgba(var(--ph-rgb),.15);color:rgb(var(--ph-rgb));border:1px solid rgba(var(--ph-rgb),.3)}
+.ph-bgnum{position:absolute;bottom:8px;right:16px;font-family:'Bebas Neue',sans-serif;font-size:96px;line-height:.9;opacity:.04;pointer-events:none}
+.ph1 .ph-bgnum{color:var(--b1)}.ph2 .ph-bgnum{color:var(--b2)}
+.ph-custom .ph-bgnum{color:rgb(var(--ph-rgb))}
+.ph-col-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.05em;margin-bottom:3px}
+.ph1 .ph-col-title{color:var(--b1)}.ph2 .ph-col-title{color:var(--b2)}
+.ph-custom .ph-col-title{color:rgb(var(--ph-rgb))}
+.ph-col-sub{font-size:11px;color:var(--muted);margin-bottom:16px;letter-spacing:.02em}
+.ph-col-del{position:absolute;top:14px;left:16px;font-size:10px;color:rgba(255,255,255,.15);cursor:pointer;background:none;border:none;padding:3px 6px;border-radius:4px;transition:all .2s;display:none}
+.ph-col-del:hover{color:#E74C3C;background:rgba(231,76,60,.1)}
+.admin-view .ph-col-del{display:block}
+/* new phase button */
+.new-phase-btn{display:none;align-items:center;gap:8px;padding:20px;border-radius:var(--r);border:2px dashed rgba(255,255,255,.1);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.2);transition:all .3s;justify-content:center;min-height:100px}
+.new-phase-btn:hover{border-color:rgba(30,144,255,.35);color:var(--b1);background:rgba(30,144,255,.04)}
+.admin-view .new-phase-btn{display:flex}
+/* add phase modal */
+#add-phase-modal{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center}
+#add-phase-modal.open{display:flex}
+.apm-box{background:#0e1428;border:1px solid var(--border-hi);border-radius:14px;padding:32px 36px;width:100%;max-width:420px}
+.apm-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;color:#fff;margin-bottom:4px}
+.apm-sub{font-size:11px;color:var(--muted);margin-bottom:24px}
+.apm-field{margin-bottom:14px}
+.apm-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block}
+.apm-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:rgba(255,255,255,.85);font-family:'Manrope',sans-serif;font-size:13px;padding:10px 13px;outline:none;transition:border-color .2s}
+.apm-input:focus{border-color:var(--b1)}
+.apm-badge-grid{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.apm-badge-opt{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border-radius:5px;border:1px solid rgba(255,255,255,.12);color:var(--muted);cursor:pointer;transition:all .18s;background:rgba(255,255,255,.03)}
+.apm-badge-opt:hover{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.7)}
+.apm-badge-opt.sel{background:rgba(30,144,255,.15);border-color:rgba(30,144,255,.4);color:var(--b1)}
+.apm-colors{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.apm-col-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;transition:transform .15s,outline .15s}
+.apm-col-swatch:hover{transform:scale(1.15)}
+.apm-col-swatch.sel{outline:2px solid #fff;outline-offset:2px}
+.apm-actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end}
+.apm-cancel{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:none;background:none;cursor:pointer;padding:8px 14px}
+.apm-confirm{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.08em;background:linear-gradient(135deg,var(--b1),var(--b3));color:#fff;border:none;border-radius:8px;padding:9px 22px;cursor:pointer;transition:opacity .2s}
+.apm-confirm:hover{opacity:.85}
+.ph-tasks{display:flex;flex-direction:column;gap:7px}
+.ph-task{display:flex;align-items:flex-start;gap:8px;padding:9px 11px;border-radius:7px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);transition:opacity .2s}
+.ph-task.hidden{display:none}
+.ph-task.mine{background:rgba(30,144,255,.06);border-color:rgba(30,144,255,.15)}
+.ph-task-txt{font-size:11.5px;color:rgba(255,255,255,.58);line-height:1.4;flex:1}
+.ph-empty{font-size:11px;color:rgba(255,255,255,.2);font-style:italic;padding:10px 0;display:none}
+.ph-empty.show{display:block}
+/* Admin: editable task text */
+.ph-task-txt[contenteditable="true"]{outline:none;border-bottom:1px dashed rgba(30,144,255,.3)}
+.ph-task.done{opacity:.42}
+.ph-task.done .ph-task-txt{text-decoration:line-through;color:rgba(255,255,255,.35)}
+.ph-cb{width:14px;height:14px;border:1.5px solid rgba(255,255,255,.25);border-radius:3px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px}
+.ph-cb:hover{border-color:var(--b1)}
+.ph-cb.checked{background:var(--b1);border-color:var(--b1)}
+.ph-cb.checked::after{content:'✓';color:#fff;font-size:9px;font-weight:900;line-height:1}
+.add-task-btn{display:none;align-items:center;gap:6px;padding:8px 11px;border-radius:7px;background:rgba(30,144,255,.04);border:1px dashed rgba(30,144,255,.2);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(30,144,255,.5);margin-top:4px;transition:all var(--ease)}
+.add-task-btn:hover{background:rgba(30,144,255,.08);color:var(--b1)}
+.admin-view .add-task-btn{display:flex}
+
+/* person header in phases */
+.person-header{display:none;align-items:center;gap:14px;padding:16px 20px;border-radius:var(--r);margin-bottom:20px;border:1px solid var(--border);background:rgba(14,20,40,.5)}
+.person-header.show{display:flex}
+.person-header-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.06em}
+.person-header-role{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* ══ TOOLS ══ */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:34px}
+.tool-card{padding:18px 16px}.tool-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:11px;background:rgba(30,144,255,.08);border:1px solid rgba(30,144,255,.15)}
+.tool-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.06em;color:var(--b1);margin-bottom:2px}
+.tool-use{font-size:11px;color:var(--muted);line-height:1.45}
+.chars-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:34px}
+.char-card{padding:18px;text-align:center}
+.char-dot{width:42px;height:42px;border-radius:50%;margin:0 auto 11px;border:2px solid}
+.char-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.06em;margin-bottom:3px}
+.char-desc{font-size:10px;color:var(--muted);line-height:1.4}
+.c-fraisita{background:rgba(220,20,60,.2);border-color:rgba(220,20,60,.5)}
+.c-fraisio{background:rgba(30,100,255,.2);border-color:rgba(30,100,255,.5)}
+.c-cerisa{background:rgba(148,0,211,.2);border-color:rgba(148,0,211,.5)}
+.c-bananello{background:rgba(255,215,0,.2);border-color:rgba(255,215,0,.5)}
+.c-tbd{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
+.ep-table{width:100%;border-collapse:collapse}
+.ep-table th{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.ep-table td{font-size:12px;color:rgba(255,255,255,.6);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+.ep-time{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--b1)}
+.funnel{display:flex;flex-direction:column;align-items:center;max-width:460px}
+.f-tier{width:100%;padding:16px 20px;background:rgba(20,28,50,.5);border:1px solid var(--border);border-radius:var(--r);margin-bottom:6px}
+.f-tier-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.f-price{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.06em;color:var(--b1)}
+.f-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.f-desc{font-size:11px;color:rgba(255,255,255,.5);line-height:1.5}
+.f-arrow{font-size:16px;color:rgba(30,144,255,.35);text-align:center;margin-bottom:6px}
+
+/* ══ ADMIN TABS ══ */
+.admin-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.atab{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;padding:8px 16px;border-radius:6px;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all var(--ease)}
+.atab:hover{color:var(--text);border-color:var(--border-hi)}
+.atab.active{background:rgba(30,144,255,.12);border-color:rgba(30,144,255,.3);color:var(--b1)}
+.atab[data-who="mathieu"].active{background:rgba(30,144,255,.12);border-color:rgba(30,144,255,.3);color:var(--b1)}
+.atab[data-who="bastien"].active{background:rgba(155,89,182,.12);border-color:rgba(155,89,182,.3);color:#B07FD4}
+.atab[data-who="theo"].active{background:rgba(79,110,247,.12);border-color:rgba(79,110,247,.3);color:var(--b4)}
+.atab[data-who="ilame"].active{background:rgba(39,174,96,.12);border-color:rgba(39,174,96,.3);color:#5DC48A}
+/* Member preview */
+.member-preview{display:none}
+.member-preview.active{display:block}
+.mp-header{display:flex;align-items:center;gap:16px;padding:20px 24px;border-radius:var(--r);margin-bottom:20px}
+.mp-name{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.06em}
+.mp-role{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.mp-badge{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:3px;margin-left:auto}
+.mp-phases{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mp-phase{border-radius:var(--r);padding:22px}
+.mp-phase-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.05em;margin-bottom:14px}
+.mp-tasks{display:flex;flex-direction:column;gap:6px}
+.mp-task{display:flex;align-items:flex-start;gap:8px;padding:9px 11px;border-radius:7px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}
+.mp-task-txt{font-size:11.5px;color:rgba(255,255,255,.6);line-height:1.4;flex:1;outline:none}
+.mp-task-txt[contenteditable="true"]{border-bottom:1px dashed rgba(255,255,255,.2)}
+.mp-del{cursor:pointer;color:rgba(255,80,80,.4);font-size:14px;flex-shrink:0;transition:color var(--ease)}
+.mp-del:hover{color:rgba(255,80,80,.8)}
+.mp-add{display:flex;align-items:center;gap:6px;padding:8px 11px;border-radius:7px;background:rgba(255,255,255,.025);border:1px dashed rgba(255,255,255,.1);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:4px;transition:all var(--ease)}
+.mp-add:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.6)}
+@media(max-width:700px){.mp-phases{grid-template-columns:1fr}}
+
+/* ══ ADMIN PAGE ══ */
+.admin-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:32px}
+.admin-member-card{padding:20px;position:relative}
+.amc-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.06em;margin-bottom:4px}
+.amc-tasks{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.amc-task{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:6px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.04)}
+.amc-task-txt{font-size:11px;color:rgba(255,255,255,.55);line-height:1.4;flex:1;outline:none}
+.amc-task-txt[contenteditable="true"]{border-bottom:1px dashed rgba(255,255,255,.15)}
+.amc-del{cursor:pointer;color:rgba(255,80,80,.4);font-size:14px;flex-shrink:0;transition:color var(--ease)}
+.amc-del:hover{color:rgba(255,80,80,.8)}
+.amc-add{display:flex;align-items:center;gap:5px;padding:7px 10px;border-radius:6px;background:rgba(255,255,255,.025);border:1px dashed rgba(255,255,255,.1);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:4px;transition:all var(--ease)}
+.amc-add:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.6)}
+
+/* ══ COLOR PICKER ══ */
+.color-picker{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.color-picker-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);width:100%}
+.cp-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all var(--ease);flex-shrink:0}
+.cp-swatch:hover{transform:scale(1.2)}
+.cp-swatch.active{border-color:#fff;transform:scale(1.15)}
+
+/* ══ ADD TASK MODAL ══ */
+#add-task-modal{
+  position:fixed;inset:0;z-index:9995;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
+}
+#add-task-modal.open{display:flex}
+.atm-box{
+  background:rgba(10,15,30,.97);border:1px solid var(--border);border-radius:14px;
+  padding:28px 32px;width:100%;max-width:400px;
+  box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 40px rgba(30,144,255,.06);
+  animation:fadeUp .25s ease both;
+}
+.atm-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;margin-bottom:4px}
+.atm-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+.atm-who{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.atm-btn{padding:10px;border-radius:7px;cursor:pointer;text-align:center;border:1px solid var(--border);background:rgba(255,255,255,.03);transition:all var(--ease)}
+.atm-btn:hover{border-color:var(--border-hi);background:rgba(255,255,255,.05)}
+.atm-btn.sel{border-color:var(--sel-col,var(--b1));background:rgba(var(--sel-rgb,30,144,255),.12)}
+.atm-btn-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.06em}
+.atm-btn-role{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:1px}
+.atm-input{width:100%;padding:11px 14px;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-family:'Manrope',sans-serif;font-size:13px;outline:none;margin-bottom:16px;transition:border-color var(--ease)}
+.atm-input:focus{border-color:rgba(30,144,255,.4)}
+.atm-actions{display:flex;gap:8px}
+.atm-confirm{flex:1;padding:11px;border-radius:7px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--b1),var(--b3));color:#fff;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.08em;transition:opacity var(--ease)}
+.atm-confirm:hover{opacity:.88}
+.atm-cancel{padding:11px 16px;border-radius:7px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;transition:all var(--ease)}
+.atm-cancel:hover{border-color:var(--border-hi);color:var(--text)}
+
+/* ══ STRAT ══ */
+.strat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.strat-card{padding:22px}
+.strat-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em;margin-bottom:10px}
+.strat-body{font-size:12px;color:var(--muted);line-height:1.7}
+
+/* ══ AUDIT ══ */
+.audit-frame{width:100%;height:100vh;border:none}
+
+/* ══ MOBILE ══ */
+@media(max-width:700px){
+  body{flex-direction:column;overflow:hidden}
+  .sidebar{width:100%;height:54px;flex-direction:row;border-right:none;border-bottom:1px solid var(--border);position:fixed;bottom:0;left:0;z-index:100;order:2}
+  .sb-logo,.sb-footer,.sb-sec,.sb-sub,.sb-user{display:none!important}
+  .sb-nav{display:flex;flex-direction:row;padding:0;overflow-x:auto;overflow-y:hidden;width:100%}
+  .sb-item{flex-direction:column;gap:2px;padding:7px 10px;font-size:8px;min-width:56px;text-align:center;border-right:none;border-top:2px solid transparent}
+  .sb-item.active{border-right-color:transparent;border-top-color:var(--b1)}
+  .main{order:1;height:calc(100vh - 54px);overflow-y:auto}
+  .main::before{left:0}
+  .home-stats,.home-grid,.phases-grid,.my-tasks-grid{grid-template-columns:1fr}
+  .ph,.pc,.home-hero,.home-stats,.home-grid,.my-tasks-widget{padding-left:16px;padding-right:16px}
+  .login-box{margin:16px;padding:28px 24px}
+  .person-selector{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div id="top-bar"></div>
+
+<!-- ══════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo"><b>UNDER</b>RATED</div>
+    <div class="login-sub">War Room — Connexion</div>
+
+    <div class="login-field">
+      <label class="login-label">Pseudo</label>
+      <input class="login-input" type="text" id="login-pseudo" placeholder="ton pseudo" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pwd').focus()">
+    </div>
+    <div class="login-field">
+      <label class="login-label">Mot de passe</label>
+      <input class="login-input" type="password" id="login-pwd" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">CONNEXION</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     APP (hidden until login)
+══════════════════════════════════ -->
+<aside class="sidebar" id="app-sidebar" style="display:none">
+  <div class="sb-logo">
+    <div class="sb-logo-t"><b>UNDER</b>RATED</div>
+    <div class="sb-logo-s">War Room</div>
+  </div>
+  <!-- User badge -->
+  <div class="sb-user">
+    <div class="sb-user-dot" id="sb-dot"></div>
+    <div>
+      <div class="sb-user-name" id="sb-name"></div>
+      <div class="sb-user-role" id="sb-role"></div>
+    </div>
+    <div class="sb-logout" onclick="doLogout()">Quitter</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sec">Navigation</div>
+    <div class="sb-item active" data-page="home" onclick="goto('home')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </div>
+    <div class="sb-item" data-page="equipe" onclick="goto('equipe')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Équipe
+    </div>
+    <div class="sb-item" data-page="phases" onclick="gotoPhase('all')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Phases
+    </div>
+    <div class="sb-sub" id="phases-sub">
+      <div class="sb-sub-item" data-person="all" onclick="gotoPhase('all')"><div class="sb-sub-dot"></div>Tout voir</div>
+      <div class="sb-sub-item" data-person="mathieu" onclick="gotoPhase('mathieu')"><div class="sb-sub-dot" style="border-color:var(--b1)"></div>Mathieu</div>
+      <div class="sb-sub-item" data-person="bastien" onclick="gotoPhase('bastien')"><div class="sb-sub-dot" style="border-color:#9B59B6"></div>Bastien</div>
+      <div class="sb-sub-item" data-person="theo" onclick="gotoPhase('theo')"><div class="sb-sub-dot" style="border-color:var(--b3)"></div>Théo</div>
+      <div class="sb-sub-item" data-person="ilame" onclick="gotoPhase('ilame')"><div class="sb-sub-dot" style="border-color:#27AE60"></div>Ilame</div>
+    </div>
+    <div class="sb-item" data-page="notes" onclick="gotoNotes()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Notes
+    </div>
+    <div class="sb-item" data-page="tools" onclick="goto('tools')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+      Tools &amp; Série
+    </div>
+    <div class="sb-item" data-page="audit" onclick="goto('audit')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Audit
+    </div>
+    <div class="sb-item" data-page="strat" onclick="goto('strat')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      Stratégie
+    </div>
+    <!-- Admin only -->
+    <div class="sb-item admin-only" id="sb-admin-btn" data-page="admin" onclick="gotoAdmin('global')" style="display:none">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Admin
+      <span class="admin-badge">CEO</span>
+    </div>
+    <div class="sb-sub" id="admin-sub">
+      <div class="sb-sub-item" data-amember="global" onclick="gotoAdmin('global')"><div class="sb-sub-dot"></div>Vue globale</div>
+      <div class="sb-sub-item" data-amember="mathieu" onclick="gotoAdmin('mathieu')"><div class="sb-sub-dot" style="border-color:var(--b1)"></div>Mathieu</div>
+      <div class="sb-sub-item" data-amember="bastien" onclick="gotoAdmin('bastien')"><div class="sb-sub-dot" style="border-color:#9B59B6"></div>Bastien</div>
+      <div class="sb-sub-item" data-amember="theo" onclick="gotoAdmin('theo')"><div class="sb-sub-dot" style="border-color:var(--b3)"></div>Théo</div>
+      <div class="sb-sub-item" data-amember="ilame" onclick="gotoAdmin('ilame')"><div class="sb-sub-dot" style="border-color:#27AE60"></div>Ilame</div>
+    </div>
+  </nav>
+  <div class="sb-footer">
+    <div class="ver-badge" onclick="openChangelog()">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(30,144,255,.5)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span class="ver-txt" id="ver-txt">—</span>
+    </div>
+  </div>
+</aside>
+
+<main class="main" id="app-main" style="display:none">
+
+  <!-- ════ HOME ════ -->
+  <div class="page active" id="p-home">
+    <div class="home-hero">
+      <div class="home-title"><span class="gr">WAR<br>ROOM</span></div>
+      <div class="home-welcome">Connecté en tant que <b id="home-username"></b> · <span id="home-date"></span></div>
+    </div>
+    <div class="home-stats">
+      <div class="hs rv d1"><div class="hs-v">4</div><div class="hs-l">Membres actifs</div></div>
+      <div class="hs rv d2"><div class="hs-v">P1</div><div class="hs-l">Phase active</div></div>
+      <div class="hs rv d3"><div class="hs-v">99€</div><div class="hs-l">Entrée formation</div></div>
+      <div class="hs rv d4"><div class="hs-v">18H</div><div class="hs-l">Drop daily série</div></div>
+    </div>
+
+    <!-- My tasks widget (hidden for admin, shown for others) -->
+    <div class="my-tasks-widget" id="my-tasks-widget" style="display:none">
+      <div class="sec-lbl">Mes tâches</div>
+      <div class="sec-h2">MES <em>PHASES</em></div>
+      <div class="my-tasks-grid" id="my-tasks-grid"></div>
+    </div>
+
+
+    <div class="home-grid">
+      <div class="gc home-card rv d1" onclick="goto('equipe')">
+        <div class="hc-lbl">Équipe</div><div class="hc-title">LES 4 MEMBRES</div>
+        <div class="hc-body">Mathieu, Bastien, Théo, Ilame — rôles, responsabilités et phases.</div>
+      </div>
+      <div class="gc home-card rv d2" onclick="gotoPhase('all')">
+        <div class="hc-lbl">Roadmap</div><div class="hc-title">PHASES 1 &amp; 2</div>
+        <div class="hc-body">Phase 1 = tout construire. Phase 2 = lancer et scaler. Vue par personne.</div>
+      </div>
+      <div class="gc home-card rv d3" onclick="goto('tools')">
+        <div class="hc-lbl">Production</div><div class="hc-title">TOOLS &amp; SÉRIE</div>
+        <div class="hc-body">Stack IA, personnages, format 60–90s, funnel 99€ → 1200€.</div>
+      </div>
+      <div class="gc home-card rv d4" onclick="goto('strat')">
+        <div class="hc-lbl">Vision</div><div class="hc-title">STRATÉGIE</div>
+        <div class="hc-body">Positionnement, modèle revenus, KPIs. Audit Skibidi Fruits.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ ÉQUIPE ════ -->
+  <div class="page" id="p-equipe">
+    <div class="ph">
+      <div class="ph-eye">Membres</div>
+      <div class="ph-title">LES 4 <em>MEMBRES</em></div>
+      <div class="ph-sub">Chaque rôle est défini. Chaque phase est attribuée.</div>
+    </div>
+    <div class="pc">
+      <div class="team-grid" id="team-grid-dynamic"></div>
+    </div>
+  </div>
+
+  <!-- ════ PHASES ════ -->
+  <div class="page" id="p-phases">
+    <div class="ph">
+      <div class="ph-eye">Roadmap</div>
+      <div class="ph-title">LES 2 <em>PHASES</em></div>
+      <div class="ph-sub" id="phases-sub-title">Phase 1 = tout construire. Phase 2 = tout lancer et scaler.</div>
+    </div>
+    <div class="pc">
+      <div class="person-tabs rv d1" id="person-tabs-wrap">
+        <div class="ptab active" data-person="all" onclick="filterPerson('all')">Tous</div>
+        <div class="ptab" data-person="mathieu" onclick="filterPerson('mathieu')">Mathieu</div>
+        <div class="ptab" data-person="bastien" onclick="filterPerson('bastien')">Bastien</div>
+        <div class="ptab" data-person="theo" onclick="filterPerson('theo')">Théo</div>
+        <div class="ptab" data-person="ilame" onclick="filterPerson('ilame')">Ilame</div>
+      </div>
+      <div class="person-header" id="person-header">
+        <div>
+          <div class="person-header-name" id="person-header-name"></div>
+          <div class="person-header-role" id="person-header-role"></div>
+        </div>
+        <div id="person-header-phases" style="display:flex;gap:5px;margin-left:auto"></div>
+      </div>
+      <div class="phases-grid" id="phases-grid-dynamic"></div>
+      <div class="new-phase-btn" onclick="openAddPhaseModal()" style="margin-top:20px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouvelle phase
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ NOTES (full editor in iframe) ════ -->
+  <div class="page" id="p-notes" style="padding:0;height:100vh;overflow:hidden">
+    <iframe id="notes-iframe" src="about:blank" style="width:100%;height:100vh;border:none;background:var(--bg);display:block"></iframe>
+  </div>
+
+  <!-- ════ TOOLS & SÉRIE ════ -->
+  <div class="page" id="p-tools">
+    <div class="ph">
+      <div class="ph-eye">Production</div>
+      <div class="ph-title">TOOLS &amp; <em>SÉRIE</em></div>
+      <div class="ph-sub">Stack IA, personnages, format épisode, funnel de vente.</div>
+    </div>
+    <div class="pc">
+      <div class="sec-lbl">Stack production</div>
+      <div class="sec-h2">LES <em>OUTILS</em></div>
+      <div class="tools-grid">
+        <div class="gc tool-card rv d1"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="tool-name">CHATGPT</div><div class="tool-use">Scripts, narration, dialogues</div></div>
+        <div class="gc tool-card rv d2"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div class="tool-name">ELEVENLABS</div><div class="tool-use">Voix personnages (Pro)</div></div>
+        <div class="gc tool-card rv d3"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div><div class="tool-name">RUNWAY / VEO3</div><div class="tool-use">Génération vidéo IA</div></div>
+        <div class="gc tool-card rv d4"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><div class="tool-name">MIDJOURNEY V7</div><div class="tool-use">Visuels + décors</div></div>
+        <div class="gc tool-card rv d5"><div class="tool-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="tool-name">CAPCUT PRO</div><div class="tool-use">Montage, sous-titres, effets</div></div>
+      </div>
+      <div class="sec-lbl" style="margin-top:4px">Série — Personnages</div>
+      <div class="sec-h2">LES <em>PERSOS</em></div>
+      <div class="chars-grid">
+        <div class="gc char-card rv d1"><div class="char-dot c-fraisita"></div><div class="char-name" style="color:#DC143C">FRAISITA</div><div class="char-desc">Féminine · Fraise rouge · Meneuse</div></div>
+        <div class="gc char-card rv d2"><div class="char-dot c-fraisio"></div><div class="char-name" style="color:#1E64FF">FRAISIO</div><div class="char-desc">Masculin · Fraise bleue · Stratège</div></div>
+        <div class="gc char-card rv d3"><div class="char-dot c-cerisa"></div><div class="char-name" style="color:#9400D3">CERISA</div><div class="char-desc">Féminine · Cerise · Imprévisible</div></div>
+        <div class="gc char-card rv d4"><div class="char-dot c-bananello"></div><div class="char-name" style="color:#FFD700">BANANELLO</div><div class="char-desc">Masculin · Banane · Naif attachant</div></div>
+        <div class="gc char-card rv d5"><div class="char-dot c-tbd"></div><div class="char-name" style="color:var(--muted)">TBD 5–8</div><div class="char-desc">4 personnages à définir</div></div>
+      </div>
+      <div class="sec-lbl" style="margin-top:4px">Format épisode</div>
+      <div class="sec-h2">60–90 <em>SECONDES</em></div>
+      <div class="gc" style="overflow:hidden;margin-bottom:34px">
+        <table class="ep-table"><thead><tr><th>Timing</th><th>Phase</th><th>Objectif</th></tr></thead>
+        <tbody>
+          <tr><td><span class="ep-time">0–3s</span></td><td>Accroche</td><td>Extrait du moment intense</td></tr>
+          <tr><td><span class="ep-time">3–8s</span></td><td>Intro</td><td>Logo + "Épisode X — Underrated Game"</td></tr>
+          <tr><td><span class="ep-time">8–25s</span></td><td>Setup</td><td>Récap ou annonce du jeu</td></tr>
+          <tr><td><span class="ep-time">25–50s</span></td><td>Action</td><td>Déroulement — coupes &lt;2s, dialogues Gen Z</td></tr>
+          <tr><td><span class="ep-time">50–55s</span></td><td>Choc</td><td>Élimination ou révélation</td></tr>
+          <tr><td><span class="ep-time">55–60s</span></td><td>CTA</td><td>Cliffhanger + appel commentaire</td></tr>
+        </tbody></table>
+      </div>
+      <div class="sec-lbl">Funnel de vente</div>
+      <div class="sec-h2">99€ → <em>1200€</em></div>
+      <div class="funnel rv d1">
+        <div class="f-tier">
+          <div class="f-tier-top"><div><div class="f-label">Entrée</div><div class="f-price">99€</div></div><div style="text-align:right"><div class="f-label">Plateforme</div><div style="font-family:'Barlow Condensed';font-size:13px;color:var(--b2)">TEACHABLE</div></div></div>
+          <div class="f-desc">Formation "Comment créer une série IA virale"<br><span style="font-size:10px;color:rgba(255,255,255,.25)">Géré par Mathieu</span></div>
+        </div>
+        <div class="f-arrow">↓</div>
+        <div class="f-tier" style="border-color:rgba(86,204,242,.22)">
+          <div class="f-tier-top"><div><div class="f-label">Upsell</div><div class="f-price" style="color:var(--b2)">1200€</div></div><div style="text-align:right"><div class="f-label">Type</div><div style="font-family:'Barlow Condensed';font-size:13px;color:var(--b2)">COACHING 1-TO-1</div></div></div>
+          <div class="f-desc">Accompagnement perso — scalable après 99€<br><span style="font-size:10px;color:rgba(255,255,255,.25)">Géré par Théo + Ilame</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ AUDIT ════ -->
+  <div class="page" id="p-audit">
+    <iframe class="audit-frame" id="audit-iframe" src="about:blank"></iframe>
+  </div>
+
+  <!-- ════ STRATÉGIE ════ -->
+  <div class="page" id="p-strat">
+    <div class="ph">
+      <div class="ph-eye">Vision</div>
+      <div class="ph-title">CE QU'ON <em>FAIT NOUS</em></div>
+      <div class="ph-sub">Notre angle, notre positionnement, notre modèle de revenus.</div>
+    </div>
+    <div class="pc">
+      <div class="strat-grid">
+        <div class="gc strat-card rv d1"><div class="sec-lbl">Concept</div><div class="strat-title">SÉRIE IA QUOTIDIENNE</div><div class="strat-body">Style Squid Game. Personnages fruits IA. TikTok/Shorts 60–90s. Drop daily 18h. Tension max, cliffhangers, dialogues Gen Z.</div></div>
+        <div class="gc strat-card rv d2"><div class="sec-lbl">Avantage vs Skibidi Fruits</div><div class="strat-title">CE QU'ON FAIT MIEUX</div><div class="strat-body">Meilleure narration (rétention validée). Conversion directe via 99€. Accompagnement 1200€. Équipe ops dédiée.</div></div>
+        <div class="gc strat-card rv d3">
+          <div class="sec-lbl">Modèle revenus</div><div class="strat-title">3 FLUX</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+            <div><div style="font-family:'Bebas Neue';font-size:14px;color:var(--b1)">1. BRAND DEALS</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">30–70k€ type Oasis. Priorité long terme.</div></div>
+            <div><div style="font-family:'Bebas Neue';font-size:14px;color:var(--b2)">2. FORMATION</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">99€ Teachable. Cible trim 1 : 30 ventes = 3000€.</div></div>
+            <div><div style="font-family:'Bebas Neue';font-size:14px;color:rgba(255,255,255,.35)">3. CREATOR FUND</div><div style="font-size:11.5px;color:var(--muted);line-height:1.6">Secondaire. ~0.05–0.10€ / 1000 vues TikTok.</div></div>
+          </div>
+        </div>
+        <div class="gc strat-card rv d4">
+          <div class="sec-lbl">KPIs</div><div class="strat-title">OBJECTIFS TRIM 1</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
+            <div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--b1)">30</div><div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Ventes formation</div></div>
+            <div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--b2)">3 000€</div><div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Revenu formation</div></div>
+            <div><div style="font-family:'Bebas Neue';font-size:28px;color:rgba(255,255,255,.4)">DAILY</div><div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Fréquence drop</div></div>
+          </div>
+        </div>
+        <div class="gc strat-card rv d5" style="grid-column:1/-1">
+          <div class="sec-lbl">Référence</div><div class="strat-title">AUDIT COMPLET — SKIBIDI FRUITS</div>
+          <div class="strat-body" style="margin-bottom:16px">10 leviers analysés. Clones morts documentés. Concurrents mappés. Direction visuelle définie.</div>
+          <button onclick="goto('audit')" style="background:rgba(30,144,255,.12);border:1px solid rgba(30,144,255,.3);color:var(--b1);font-family:'Barlow Condensed';font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;padding:8px 18px;border-radius:5px;cursor:pointer">VOIR L'AUDIT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ ADMIN ════ -->
+  <div class="page" id="p-admin">
+    <div class="ph">
+      <div class="ph-eye">Admin — Vue CEO</div>
+      <div class="ph-title" id="admin-page-title">GESTION <em>ÉQUIPE</em></div>
+      <div class="ph-sub" id="admin-page-sub">Tâches éditables, mots de passe, preview des vues membres.</div>
+    </div>
+    <div class="pc">
+      <!-- Tab bar -->
+      <div class="admin-tabs rv d1">
+        <div class="atab active" data-who="global" onclick="gotoAdmin('global')">Vue globale</div>
+        <div class="atab" data-who="mathieu" onclick="gotoAdmin('mathieu')">Mathieu</div>
+        <div class="atab" data-who="bastien" onclick="gotoAdmin('bastien')">Bastien</div>
+        <div class="atab" data-who="theo" onclick="gotoAdmin('theo')">Théo</div>
+        <div class="atab" data-who="ilame" onclick="gotoAdmin('ilame')">Ilame</div>
+      </div>
+
+      <!-- Vue globale -->
+      <div id="admin-tab-global">
+        <div class="gc rv d2" style="padding:22px;margin-bottom:24px">
+          <div class="sec-lbl">Accès équipe</div>
+          <div class="sec-h2" style="font-size:20px;margin-bottom:16px">MOTS DE PASSE</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px" id="admin-pwd-grid"></div>
+        </div>
+        <div class="admin-overview" id="admin-overview"></div>
+      </div>
+
+      <!-- Member previews (generated by JS) -->
+      <div id="admin-tab-member" style="display:none"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ADD TASK MODAL -->
+<div id="add-task-modal" onclick="if(event.target===this)closeAddTask()">
+  <div class="atm-box">
+    <div class="atm-title">AJOUTER UNE TÂCHE</div>
+    <div class="atm-sub" id="atm-phase-lbl">Phase 1 — Setup</div>
+    <div class="atm-who" id="atm-who-grid">
+      <div class="atm-btn" data-key="mathieu" onclick="atSelectWho('mathieu')" style="--sel-col:#1E90FF;--sel-rgb:30,144,255">
+        <div class="atm-btn-name" style="color:#1E90FF">MATHIEU</div>
+        <div class="atm-btn-role">CEO + COO</div>
+      </div>
+      <div class="atm-btn" data-key="bastien" onclick="atSelectWho('bastien')" style="--sel-col:#9B59B6;--sel-rgb:155,89,182">
+        <div class="atm-btn-name" style="color:#9B59B6">BASTIEN</div>
+        <div class="atm-btn-role">Content & Product</div>
+      </div>
+      <div class="atm-btn" data-key="theo" onclick="atSelectWho('theo')" style="--sel-col:#4F6EF7;--sel-rgb:79,110,247">
+        <div class="atm-btn-name" style="color:#4F6EF7">THÉO</div>
+        <div class="atm-btn-role">Infrastructure</div>
+      </div>
+      <div class="atm-btn" data-key="ilame" onclick="atSelectWho('ilame')" style="--sel-col:#27AE60;--sel-rgb:39,174,96">
+        <div class="atm-btn-name" style="color:#27AE60">ILAME</div>
+        <div class="atm-btn-role">Sales & Community</div>
+      </div>
+    </div>
+    <input class="atm-input" id="atm-txt" placeholder="Description de la tâche…" onkeydown="if(event.key==='Enter')confirmAddTask()">
+    <div class="atm-actions">
+      <button class="atm-cancel" onclick="closeAddTask()">Annuler</button>
+      <button class="atm-confirm" onclick="confirmAddTask()">AJOUTER</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PHASE MODAL -->
+<div id="add-phase-modal" onclick="if(event.target===this)closeAddPhaseModal()">
+  <div class="apm-box">
+    <div class="apm-title">NOUVELLE PHASE</div>
+    <div class="apm-sub">Définir une nouvelle étape du projet</div>
+    <div class="apm-field">
+      <label class="apm-label">Nom de la phase</label>
+      <input class="apm-input" id="apm-name" placeholder="Ex: PHASE 3 — Scale international" onkeydown="if(event.key==='Enter')document.getElementById('apm-badge').focus()">
+    </div>
+    <div class="apm-field">
+      <label class="apm-label">Badge statut</label>
+      <div class="apm-badge-grid" id="apm-badge-grid"></div>
+    </div>
+    <div class="apm-field">
+      <label class="apm-label">Description courte</label>
+      <input class="apm-input" id="apm-sub" placeholder="Ex: Expansion internationale + partenariats" onkeydown="if(event.key==='Enter')confirmAddPhase()">
+    </div>
+    <div class="apm-field">
+      <label class="apm-label">Couleur accent</label>
+      <div class="apm-colors" id="apm-colors"></div>
+    </div>
+    <div class="apm-actions">
+      <button class="apm-cancel" onclick="closeAddPhaseModal()">Annuler</button>
+      <button class="apm-confirm" onclick="confirmAddPhase()">CRÉER</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGELOG PANEL -->
+<div class="cl-overlay" id="cl-overlay" onclick="closeChangelog()"></div>
+<div id="changelog-panel">
+  <div class="cl-header">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--b1)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    <div class="cl-title">CHANGELOG</div>
+    <button class="cl-close" onclick="closeChangelog()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="cl-body" id="cl-body">Chargement…</div>
+</div>
+
+<script>
+// ══════════════════════════════════
+// ACCOUNTS — métadonnées uniquement (pas de credentials ici)
+// Les email/password sont stockés dans localStorage 'ur_credentials'
+// ══════════════════════════════════
+const ACCOUNTS = {
+  mathieu: { name:'MATHIEU', role:'CEO + COO',              color:'var(--b1)', dotColor:'#1E90FF', isAdmin:true  },
+  bastien: { name:'BASTIEN', role:'Content & Product',      color:'#B07FD4',   dotColor:'#9B59B6', isAdmin:false },
+  theo:    { name:'THÉO',    role:'Infrastructure',         color:'var(--b4)', dotColor:'#4F6EF7', isAdmin:false },
+  ilame:   { name:'ILAME',   role:'Sales & Community',      color:'#5DC48A',   dotColor:'#27AE60', isAdmin:false }
+};
+
+// ══ CREDENTIAL STORAGE ══
+// Format: { mathieu: 'monmdp', bastien: 'autremdp', ... }
+function getCredentials() {
+  try {
+    const raw = JSON.parse(localStorage.getItem('ur_credentials') || '{}');
+    // Migrate old format { email, password } → string
+    const out = {};
+    for (const [k, v] of Object.entries(raw)) { out[k] = typeof v === 'object' ? v.password : v; }
+    return out;
+  } catch(e) { return {}; }
+}
+function saveCredential(key, password) {
+  const creds = getCredentials();
+  creds[key] = password;
+  localStorage.setItem('ur_credentials', JSON.stringify(creds));
+}
+function hasAccount(key) {
+  return !!getCredentials()[key];
+}
+// Seed tous les comptes par défaut (pseudo = leur prénom)
+const CREDS_VERSION = '4';
+function seedAdmin() {
+  const defaults = { mathieu:'mathieu', bastien:'bastien', theo:'theo', ilame:'ilame' };
+  if (localStorage.getItem('ur_creds_v') !== CREDS_VERSION) {
+    // Force reset — new default passwords
+    localStorage.setItem('ur_credentials', JSON.stringify(defaults));
+    localStorage.setItem('ur_creds_v', CREDS_VERSION);
+    return;
+  }
+  const creds = getCredentials();
+  let changed = false;
+  for (const [k, v] of Object.entries(defaults)) {
+    if (!creds[k]) { creds[k] = v; changed = true; }
+  }
+  if (changed) localStorage.setItem('ur_credentials', JSON.stringify(creds));
+}
+
+// ══ PHASES DATA ══
+const DEFAULT_PHASES = [
+  { id:'p1', name:'PHASE 1', badge:'ACTIVE', sub:'Setup — Infrastructure, outils, bases', color:'30,144,255' },
+  { id:'p2', name:'PHASE 2', badge:'NEXT',   sub:'Production — Daily content, funnel, scale', color:'86,204,242' }
+];
+const PHASE_COLORS = [
+  '30,144,255','86,204,242','79,110,247','155,89,182','231,76,60','255,107,53','255,215,0','39,174,96','93,196,138'
+];
+let _apmColor = '79,110,247';
+let _apmBadge = 'NEXT';
+const PHASE_BADGES = ['ACTIVE','EN COURS','NEXT','FUTURE','PAUSE','DONE','URGENT','BLOQUÉ'];
+
+function getPhases() {
+  try { return JSON.parse(localStorage.getItem('ur_phases') || 'null') || JSON.parse(JSON.stringify(DEFAULT_PHASES)); }
+  catch(e) { return JSON.parse(JSON.stringify(DEFAULT_PHASES)); }
+}
+function savePhases(phases) { localStorage.setItem('ur_phases', JSON.stringify(phases)); }
+
+function buildPhaseColumns() {
+  const grid = document.getElementById('phases-grid-dynamic');
+  if (!grid) return;
+  const phases = getPhases();
+  const allSuggestions = getSuggestions();
+  const isAdmin = SESSION && SESSION.isAdmin;
+  const names = { mathieu:'MATHIEU', bastien:'BASTIEN', theo:'THÉO', ilame:'ILAME' };
+
+  grid.innerHTML = phases.map((ph, i) => {
+    const isP1 = ph.id === 'p1', isP2 = ph.id === 'p2';
+    const colCls = isP1 ? 'ph1' : isP2 ? 'ph2' : 'ph-custom';
+    const delBtn = isAdmin && !isP1 && !isP2
+      ? `<button class="ph-col-del" onclick="deletePhase('${ph.id}')" title="Supprimer cette phase">✕</button>` : '';
+    const styleAttr = colCls === 'ph-custom' ? ` style="--ph-rgb:${ph.color};background:rgba(${ph.color},.04);border:1px solid rgba(${ph.color},.2)"` : '';
+
+    const phaseSuggestions = allSuggestions.filter(s => s.phaseId === ph.id);
+
+    // Admin: review pending suggestions
+    const adminSgHtml = isAdmin && phaseSuggestions.length ? `
+      <div class="mc-pending" style="margin-top:14px">
+        <div class="mc-pending-title">
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          ${phaseSuggestions.length} suggestion${phaseSuggestions.length > 1 ? 's' : ''}
+        </div>
+        ${phaseSuggestions.map(sg => `
+          <div class="mc-suggestion">
+            <div class="sg-meta">${names[sg.authorKey] || sg.authorKey}</div>
+            ${sg.text}
+            <div class="sg-actions">
+              <button class="sg-approve" onclick="approveSuggestion(${sg.id})">Approuver</button>
+              <button class="sg-reject" onclick="rejectSuggestion(${sg.id})">Refuser</button>
+            </div>
+          </div>`).join('')}
+      </div>` : '';
+
+    // Non-admin: suggest input + their pending suggestions
+    const myKey = SESSION ? SESSION.key : null;
+    const myPending = !isAdmin ? phaseSuggestions.filter(s => s.authorKey === myKey) : [];
+    const myPendingHtml = myPending.length ? `
+      <div class="mc-pending" style="margin-top:10px">
+        <div class="mc-pending-title">Tes suggestions en attente</div>
+        ${myPending.map(sg => `<div class="mc-suggestion" style="cursor:default">${sg.text}</div>`).join('')}
+      </div>` : '';
+
+    const suggestBtn = !isAdmin ? `
+      <button class="mc-suggest-btn" onclick="toggleSuggestInput('${ph.id}')" style="margin-top:10px;width:100%;justify-content:center">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Suggérer une tâche
+      </button>
+      <div class="mc-suggest-input-wrap" id="sg-input-${ph.id}">
+        <textarea class="mc-suggest-input" rows="2" placeholder="Décris la tâche à ajouter…"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitSuggestion('${ph.id}')}"></textarea>
+        <div class="mc-suggest-actions">
+          <button class="mc-suggest-submit" onclick="submitSuggestion('${ph.id}')">Envoyer</button>
+          <button class="mc-suggest-cancel" onclick="toggleSuggestInput('${ph.id}')">Annuler</button>
+        </div>
+      </div>
+      ${myPendingHtml}` : '';
+
+    return `<div class="phase-col ${colCls} rv d${i+2}"${styleAttr}>
+      ${delBtn}
+      <span class="ph-badge">${ph.badge}</span>
+      <div class="ph-bgnum">${i+1}</div>
+      <div class="ph-col-title">${ph.name}</div>
+      <div class="ph-col-sub">${ph.sub}</div>
+      <div class="ph-tasks" id="tasks-${ph.id}"></div>
+      <div class="ph-empty" id="empty-${ph.id}">Pas de tâches</div>
+      <div class="add-task-btn" onclick="addTask('${ph.id}')">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Ajouter une tâche
+      </div>
+      ${adminSgHtml}${suggestBtn}
+    </div>`;
+  }).join('');
+  buildPhaseTasks();
+}
+
+function openAddPhaseModal() {
+  if (!SESSION || !SESSION.isAdmin) return;
+  _apmColor = '79,110,247';
+  _apmBadge = 'NEXT';
+  document.getElementById('apm-name').value = '';
+  document.getElementById('apm-sub').value = '';
+  document.getElementById('apm-badge-grid').innerHTML = PHASE_BADGES.map(b =>
+    `<div class="apm-badge-opt${b === _apmBadge ? ' sel' : ''}" onclick="apmSelectBadge('${b}',this)">${b}</div>`
+  ).join('');
+  // Build color swatches
+  document.getElementById('apm-colors').innerHTML = PHASE_COLORS.map(c =>
+    `<div class="apm-col-swatch${c === _apmColor ? ' sel' : ''}"
+      style="background:rgb(${c})"
+      onclick="apmSelectColor('${c}',this)"></div>`
+  ).join('');
+  document.getElementById('add-phase-modal').classList.add('open');
+  setTimeout(() => document.getElementById('apm-name').focus(), 80);
+}
+function closeAddPhaseModal() { document.getElementById('add-phase-modal').classList.remove('open'); }
+function apmSelectBadge(b, el) {
+  _apmBadge = b;
+  document.querySelectorAll('.apm-badge-opt').forEach(s => s.classList.toggle('sel', s === el));
+}
+function apmSelectColor(c, el) {
+  _apmColor = c;
+  document.querySelectorAll('.apm-col-swatch').forEach(s => s.classList.toggle('sel', s === el));
+}
+function confirmAddPhase() {
+  const name = document.getElementById('apm-name').value.trim();
+  if (!name) { document.getElementById('apm-name').focus(); return; }
+  const badge = _apmBadge || 'NEXT';
+  const sub   = document.getElementById('apm-sub').value.trim() || '';
+  const phases = getPhases();
+  const id = 'p_' + Date.now();
+  phases.push({ id, name: name.toUpperCase(), badge: badge.toUpperCase(), sub, color: _apmColor });
+  savePhases(phases);
+  closeAddPhaseModal();
+  buildPhaseColumns();
+}
+function deletePhase(id) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  if (!confirm('Supprimer cette phase et toutes ses tâches ?')) return;
+  const phases = getPhases().filter(p => p.id !== id);
+  savePhases(phases);
+  // also wipe tasks for this phase
+  const tasks = getSavedTasks();
+  Object.keys(tasks).forEach(k => { if (tasks[k][id]) delete tasks[k][id]; });
+  saveTasks(tasks);
+  buildPhaseColumns();
+  buildAdminOverview();
+}
+
+const PERSONS_DATA = {
+  mathieu: { name:'MATHIEU', role:'Fondateur / CEO + COO', color:'var(--b1)', phases:['P1','P2'], whoClass:'w-m' },
+  bastien: { name:'BASTIEN', role:'Head of Content & Product', color:'#B07FD4', phases:['P1','P2'], whoClass:'w-b' },
+  theo:    { name:'THÉO',    role:'Infrastructure',           color:'var(--b4)', phases:['P1','P2'], whoClass:'w-t' },
+  ilame:   { name:'ILAME',   role:'Head of Sales & Community',color:'#5DC48A', phases:['P2'], whoClass:'w-i' }
+};
+
+// Tasks data (for admin edit, stored in localStorage)
+const DEFAULT_TASKS = {
+  mathieu: {
+    p1: ['Formation créée sur Teachable','Schéma narration validé + VSL créée'],
+    p2: ['Marketing court terme + contenu conversion','Gestion pubs avec Ilame']
+  },
+  bastien: {
+    p1: ['CRM complet + tools exclusifs formation','Bots de relance + automatisations','Workflows de base création vidéo'],
+    p2: ['Vidéos daily drop 18h (schéma Mathieu)','Qualité production Gen Z garantie']
+  },
+  theo: {
+    p1: ['BDD + emails automatiques','Discord — canaux, rôles, structure','Comptes TikTok/Instagram + clippers'],
+    p2: ['Surveillance infra + alertes si ça casse','Accompagnement perso 1200€']
+  },
+  ilame: {
+    p1: [],
+    p2: ['Closing leads froids + Discord chauds','Lives Q&A + mentorat élèves','Accompagnement perso 1200€']
+  }
+};
+
+const MEMBER_CARDS_DEFAULT = {
+  mathieu: { role:'Fondateur / CEO + COO — SGRRBOOM', tasks:['Schéma narration — structure et rétention TikTok','VSL de vente + contenu marketing','Décision finale sur tout','Coordination équipe + Teachable + pubs'], phases:['P1','P2'] },
+  bastien: { role:'Head of Content & Product — @lussori', tasks:['P1 — CRM, tools, bots, workflows','P2 — Crée les vidéos Gen Z quotidiennes','Qualité prod (couleurs, formats, codes visuels)','Scale outils selon retours clients'], phases:['P1','P2'] },
+  theo:    { role:'Infrastructure', tasks:['BDD, emails auto, bots IG/TikTok, comptes pub','Discord — canaux, rôles, structure','Clippers — recrutement et gestion','Accompagnement perso clients 1200€'], phases:['P1','P2'] },
+  ilame:   { role:'Head of Sales & Community', tasks:['Closing leads froids + membres Discord chauds','Community management','Mentorat élèves — lives, Q&A','Accompagnement perso clients 1200€'], phases:['P2'] }
+};
+
+function getMemberCards() {
+  try { return JSON.parse(localStorage.getItem('ur_member_cards') || 'null') || JSON.parse(JSON.stringify(MEMBER_CARDS_DEFAULT)); }
+  catch(e) { return JSON.parse(JSON.stringify(MEMBER_CARDS_DEFAULT)); }
+}
+function saveMemberCards(cards) {
+  localStorage.setItem('ur_member_cards', JSON.stringify(cards));
+}
+
+// ══ SUGGESTIONS ══
+function getSuggestions() {
+  try { return JSON.parse(localStorage.getItem('ur_suggestions') || '[]'); }
+  catch(e) { return []; }
+}
+function saveSuggestions(arr) {
+  localStorage.setItem('ur_suggestions', JSON.stringify(arr));
+}
+function toggleSuggestInput(phaseId) {
+  const wrap = document.getElementById('sg-input-' + phaseId);
+  if (!wrap) return;
+  const isOpen = wrap.classList.contains('open');
+  wrap.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    const ta = wrap.querySelector('.mc-suggest-input');
+    if (ta) { ta.value = ''; ta.focus(); }
+  }
+}
+function submitSuggestion(phaseId) {
+  const wrap = document.getElementById('sg-input-' + phaseId);
+  const ta = wrap ? wrap.querySelector('.mc-suggest-input') : null;
+  if (!ta) return;
+  const text = ta.value.trim();
+  if (!text) return;
+  const suggestions = getSuggestions();
+  suggestions.push({ id: Date.now() + Math.random(), phaseId, authorKey: SESSION.key, text, ts: Date.now() });
+  saveSuggestions(suggestions);
+  wrap.classList.remove('open');
+  buildPhaseColumns();
+}
+function approveSuggestion(id) {
+  const suggestions = getSuggestions();
+  const sg = suggestions.find(s => s.id == id);
+  if (!sg) return;
+  const tasks = getSavedTasks();
+  if (!tasks[sg.authorKey]) tasks[sg.authorKey] = JSON.parse(JSON.stringify(DEFAULT_TASKS[sg.authorKey] || {}));
+  if (!tasks[sg.authorKey][sg.phaseId]) tasks[sg.authorKey][sg.phaseId] = [];
+  tasks[sg.authorKey][sg.phaseId].push(sg.text);
+  saveTasks(tasks);
+  saveSuggestions(suggestions.filter(s => s.id != id));
+  buildPhaseColumns();
+  buildAdminOverview();
+}
+function rejectSuggestion(id) {
+  saveSuggestions(getSuggestions().filter(s => s.id != id));
+  buildPhaseColumns();
+}
+function mcSaveRole(key, el) {
+  const cards = getMemberCards();
+  cards[key].role = el.textContent.trim() || MEMBER_CARDS_DEFAULT[key].role;
+  if (!el.textContent.trim()) el.textContent = MEMBER_CARDS_DEFAULT[key].role;
+  saveMemberCards(cards);
+}
+function mcSaveTask(key, idx, el) {
+  const cards = getMemberCards();
+  const val = el.textContent.trim();
+  if (!val) { mcDeleteTask(key, idx); return; }
+  cards[key].tasks[idx] = val;
+  saveMemberCards(cards);
+}
+function mcDeleteTask(key, idx) {
+  const cards = getMemberCards();
+  cards[key].tasks.splice(idx, 1);
+  saveMemberCards(cards);
+  buildEquipe();
+}
+function mcAddTask(key) {
+  const cards = getMemberCards();
+  cards[key].tasks.push('Nouvelle tâche');
+  saveMemberCards(cards);
+  buildEquipe();
+  // Focus the new task
+  setTimeout(() => {
+    const card = document.getElementById('card-' + key);
+    if (!card) return;
+    const items = card.querySelectorAll('.mc-txt[contenteditable]');
+    const last = items[items.length - 1];
+    if (last) { last.focus(); document.execCommand('selectAll', false, null); }
+  }, 30);
+}
+
+function buildEquipe() {
+  const container = document.getElementById('team-grid-dynamic');
+  if (!container) return;
+  const cards = getMemberCards();
+  const allSuggestions = getSuggestions();
+  const nums = { mathieu:'01', bastien:'02', theo:'03', ilame:'04' };
+  const names = { mathieu:'MATHIEU', bastien:'BASTIEN', theo:'THÉO', ilame:'ILAME' };
+  const isAdmin = SESSION && SESSION.isAdmin;
+  const myKey = SESSION ? SESSION.key : null;
+
+  container.innerHTML = Object.keys(MEMBER_CARDS_DEFAULT).map((key, i) => {
+    const d = cards[key] || MEMBER_CARDS_DEFAULT[key];
+    const isMe = myKey === key;
+    const cls = `member m-${key} rv d${i+1}${isMe ? ' me' : ''}`;
+    const cardSuggestions = allSuggestions.filter(s => s.personKey === key);
+
+    const phaseBadges = (d.phases || []).map(p =>
+      `<span class="mph mph-${p === 'P1' ? '1' : '2'}">${p}</span>`
+    ).join('');
+
+    const taskItems = d.tasks.map((t, idx) => {
+      if (isAdmin) {
+        return `<li>
+          <span class="mc-txt" contenteditable="true"
+            onblur="mcSaveTask('${key}',${idx},this)"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
+          >${t}</span>
+          <span class="mc-del" onclick="mcDeleteTask('${key}',${idx})">✕</span>
+        </li>`;
+      }
+      return `<li><span class="mc-txt">${t}</span></li>`;
+    }).join('');
+
+    // Admin only: add button
+    const bottomContent = isAdmin ? `
+      <div class="mc-add-btn" onclick="mcAddTask('${key}')">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Ajouter
+      </div>` : '';
+
+    const meTag = isMe ? `<div class="me-tag">MOI</div>` : '';
+    const roleEl = isAdmin
+      ? `<div class="m-role" contenteditable="true"
+            onblur="mcSaveRole('${key}',this)"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
+          >${d.role}</div>`
+      : `<div class="m-role">${d.role}</div>`;
+
+    // Phase tasks (linked to Phases page) — checkable by member or admin
+    const savedTasks = getSavedTasks();
+    const memberTasks = savedTasks[key] || DEFAULT_TASKS[key] || {};
+    const phases = (typeof getPhases === 'function') ? getPhases() : [];
+    const canToggle = isMe || isAdmin;
+    const colors = getColors();
+    const memberCol = colors[key] || '#1E90FF';
+
+    let phaseTasksHtml = '';
+    let totalTasks = 0, doneTasks = 0;
+    const phaseSections = phases.map(ph => {
+      const list = memberTasks[ph.id] || [];
+      if (!list.length) return '';
+      const items = list.map(t => {
+        const done = isTaskDone(key, ph.id, t);
+        if (done) doneTasks++;
+        totalTasks++;
+        const cbAttrs = canToggle
+          ? `onclick="event.stopPropagation();toggleTaskDone('${key}','${ph.id}',${JSON.stringify(t).replace(/"/g,'&quot;')})"`
+          : 'style="cursor:default"';
+        return `<div class="mpt-item${done ? ' done' : ''}">
+          <div class="mpt-cb${done ? ' checked' : ''}" ${cbAttrs}></div>
+          <div class="mpt-txt">${t.replace(/[<>&]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</div>
+        </div>`;
+      }).join('');
+      return `<div class="mpt-phase">
+        <div class="mpt-phase-lbl" style="color:${memberCol}">${ph.name}</div>
+        ${items}
+      </div>`;
+    }).filter(Boolean).join('');
+
+    if (totalTasks > 0) {
+      const pct = Math.round((doneTasks/totalTasks)*100);
+      phaseTasksHtml = `<div class="mpt-wrap">
+        <div class="mpt-head">
+          <div class="mpt-head-lbl">Tâches</div>
+          <div class="mpt-progress">
+            <div class="mpt-progress-bar" style="width:${pct}%;background:${memberCol}"></div>
+          </div>
+          <div class="mpt-count">${doneTasks}/${totalTasks}</div>
+        </div>
+        ${phaseSections}
+      </div>`;
+    }
+
+    return `<div class="${cls}" id="card-${key}">
+      ${meTag}
+      <div class="m-num">${nums[key]}</div>
+      <div class="m-name">${names[key]}</div>
+      ${roleEl}
+      <ul class="m-tasks">${taskItems}</ul>
+      ${bottomContent}
+      ${phaseTasksHtml}
+      <div class="m-phases" style="margin-top:10px">${phaseBadges}</div>
+    </div>`;
+  }).join('');
+}
+
+let SESSION = null;
+let currentPersonFilter = 'all';
+
+// ══ COLORS ══
+const DEFAULT_COLORS = { mathieu:'#1E90FF', bastien:'#9B59B6', theo:'#4F6EF7', ilame:'#27AE60' };
+const COLOR_PALETTE = ['#1E90FF','#56CCF2','#4F6EF7','#8BA8FF','#9B59B6','#E91E8C','#FF6B35','#FFD700','#27AE60','#5DC48A','#E74C3C','#AAAAAA'];
+
+function getColors() {
+  try { return { ...DEFAULT_COLORS, ...JSON.parse(localStorage.getItem('ur_colors') || '{}') }; }
+  catch(e) { return { ...DEFAULT_COLORS }; }
+}
+function saveColor(key, color) {
+  const c = getColors(); c[key] = color;
+  localStorage.setItem('ur_colors', JSON.stringify(c));
+  applyColors();
+  buildPhaseTasks();
+  if (SESSION && SESSION.isAdmin) { buildAdminOverview(); buildMemberPreview(key); }
+  else buildMyTasks();
+}
+function applyColors() {
+  const c = getColors();
+  Object.entries(c).forEach(([k, v]) => document.documentElement.style.setProperty('--c-' + k, v));
+}
+function colorPickerHTML(key) {
+  const current = getColors()[key];
+  return `<div class="color-picker">
+    <div class="color-picker-lbl">Couleur du profil</div>
+    ${COLOR_PALETTE.map(col => `
+      <div class="cp-swatch${col === current ? ' active' : ''}"
+        style="background:${col}"
+        title="${col}"
+        onclick="saveColor('${key}','${col}');document.querySelectorAll('#cp-${key} .cp-swatch').forEach(s=>s.classList.toggle('active',s.style.background==='${col}'))">
+      </div>`).join('')}
+  </div>`;
+}
+
+// ══ LOGIN ══
+function doLogin() {
+  const pseudo = document.getElementById('login-pseudo').value.trim().toLowerCase();
+  const pwd = document.getElementById('login-pwd').value;
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
+
+  if (!pseudo || !pwd) { err.textContent = 'Pseudo et mot de passe requis'; err.style.display = 'block'; return; }
+
+  const key = Object.keys(ACCOUNTS).find(k => k === pseudo || ACCOUNTS[k].name.toLowerCase() === pseudo);
+  if (!key) { err.textContent = 'Pseudo inconnu'; err.style.display = 'block'; return; }
+
+  const creds = getCredentials();
+  if (creds[key] !== pwd) {
+    err.textContent = 'Mot de passe incorrect';
+    err.style.display = 'block';
+    document.getElementById('login-pwd').value = '';
+    return;
+  }
+
+  SESSION = { key, ...ACCOUNTS[key] };
+  localStorage.setItem('ur_session', JSON.stringify({ key }));
+  launchApp();
+}
+
+// ══ LOGOUT ══
+function doLogout() {
+  localStorage.removeItem('ur_session');
+  SESSION = null;
+  document.getElementById('app-sidebar').style.display = 'none';
+  document.getElementById('app-main').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-pseudo').value = '';
+  document.getElementById('login-pwd').value = '';
+  document.getElementById('login-err').style.display = 'none';
+}
+
+// ══ ADMIN: change password ══
+function adminSetPassword(key) {
+  const input = document.getElementById('admin-pwd-' + key);
+  const val = input.value.trim();
+  if (!val || val.length < 3) { alert('Mot de passe trop court'); return; }
+  saveCredential(key, val);
+  input.value = '';
+  input.placeholder = 'Modifié ✓';
+  setTimeout(() => { input.placeholder = '••••••••'; }, 2000);
+}
+
+function launchApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-sidebar').style.display = 'flex';
+  document.getElementById('app-main').style.display = 'block';
+
+  // Sidebar user badge
+  document.getElementById('sb-name').textContent = SESSION.name;
+  document.getElementById('sb-role').textContent = SESSION.role;
+  document.getElementById('sb-dot').style.background = SESSION.dotColor;
+  document.getElementById('sb-dot').style.boxShadow = '0 0 8px ' + SESSION.dotColor;
+
+  // Admin-only elements
+  document.getElementById('sb-admin-btn').style.display = SESSION.isAdmin ? 'flex' : 'none';
+  if (SESSION.isAdmin) {
+    document.body.classList.add('admin-view');
+    buildAdminOverview();
+    buildAdminPwdGrid();
+  }
+
+  // Home setup
+  document.getElementById('home-username').textContent = SESSION.name;
+  setDate();
+
+  // My tasks widget (non-admin only)
+  if (!SESSION.isAdmin) {
+    buildMyTasks();
+  }
+
+  // Build équipe page (dynamic, handles "me" highlight + admin editable)
+  buildEquipe();
+
+  // If non-admin, open phases filtered to self
+  if (!SESSION.isAdmin) {
+    goto('home');
+  } else {
+    goto('home');
+  }
+
+  applyColors();
+  buildPhaseColumns();
+  renderReminders();
+  fetchVersion();
+}
+
+// ══ MY TASKS WIDGET ══
+// ══ REMINDERS ══
+let _remVis = 'private';
+function getReminders() {
+  try { return JSON.parse(localStorage.getItem('ur_reminders') || '[]'); }
+  catch(e) { return []; }
+}
+function saveReminders(arr) { localStorage.setItem('ur_reminders', JSON.stringify(arr)); }
+function getVisibleReminders() {
+  if (!SESSION) return [];
+  return getReminders().filter(r =>
+    r.visibility === 'public' || r.authorKey === SESSION.key
+  );
+}
+function setReminderVis(v) {
+  _remVis = v;
+  document.getElementById('rem-vis-priv').classList.toggle('sel', v === 'private');
+  document.getElementById('rem-vis-pub').classList.toggle('sel', v === 'public');
+}
+function addReminder() {
+  if (!SESSION) return;
+  const text = document.getElementById('rem-text').value.trim();
+  if (!text) { document.getElementById('rem-text').focus(); return; }
+  const whenVal = document.getElementById('rem-when').value;
+  const dueAt = whenVal ? new Date(whenVal).getTime() : null;
+  const arr = getReminders();
+  arr.push({
+    id: 'r_' + Date.now() + Math.floor(Math.random()*999),
+    text, dueAt,
+    visibility: _remVis,
+    authorKey: SESSION.key,
+    done: false,
+    createdAt: Date.now()
+  });
+  saveReminders(arr);
+  document.getElementById('rem-text').value = '';
+  document.getElementById('rem-when').value = '';
+  renderReminders();
+}
+function toggleReminder(id) {
+  if (!SESSION) return;
+  const arr = getReminders();
+  const r = arr.find(x => x.id === id);
+  if (!r) return;
+  // Only author or admin can toggle
+  if (r.authorKey !== SESSION.key && !SESSION.isAdmin) return;
+  r.done = !r.done;
+  saveReminders(arr);
+  renderReminders();
+}
+function deleteReminder(id) {
+  if (!SESSION) return;
+  const arr = getReminders();
+  const r = arr.find(x => x.id === id);
+  if (!r) return;
+  if (r.authorKey !== SESSION.key && !SESSION.isAdmin) return;
+  if (!confirm('Supprimer ce rappel ?')) return;
+  saveReminders(arr.filter(x => x.id !== id));
+  renderReminders();
+}
+function formatRemDue(ts) {
+  if (!ts) return 'Sans échéance';
+  const d = new Date(ts), now = new Date();
+  const diff = ts - now.getTime();
+  const past = diff < 0;
+  const abs = Math.abs(diff);
+  const mins = Math.round(abs/60000), hours = Math.round(abs/3600000), days = Math.round(abs/86400000);
+  let rel;
+  if (mins < 1) rel = past ? 'à l\'instant' : 'maintenant';
+  else if (mins < 60) rel = (past ? 'il y a ' : 'dans ') + mins + 'min';
+  else if (hours < 24) rel = (past ? 'il y a ' : 'dans ') + hours + 'h';
+  else if (days < 7) rel = (past ? 'il y a ' : 'dans ') + days + 'j';
+  else rel = d.toLocaleDateString('fr-FR', { day:'numeric', month:'short' });
+  const time = d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+  return rel + ' · ' + time;
+}
+function renderReminders() {
+  const list = document.getElementById('rem-list');
+  if (!list) return;
+  const items = getVisibleReminders().sort((a,b) => {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    if (a.dueAt && b.dueAt) return a.dueAt - b.dueAt;
+    if (a.dueAt) return -1;
+    if (b.dueAt) return 1;
+    return b.createdAt - a.createdAt;
+  });
+  if (!items.length) {
+    list.innerHTML = `<div class="rem-empty">Aucun rappel. Crée-en un ci-dessus.</div>`;
+    return;
+  }
+  const names = { mathieu:'Mathieu', bastien:'Bastien', theo:'Théo', ilame:'Ilame' };
+  const now = Date.now();
+  list.innerHTML = items.map(r => {
+    let stateCls = '';
+    if (!r.done && r.dueAt) {
+      if (r.dueAt < now) stateCls = ' due';
+      else if (r.dueAt - now < 3600000) stateCls = ' due-soon';
+    }
+    const canEdit = r.authorKey === SESSION.key || SESSION.isAdmin;
+    return `<div class="rem-item${r.done ? ' done' : ''}${stateCls}">
+      <button class="rem-cb${r.done ? ' checked' : ''}" onclick="toggleReminder('${r.id}')" ${canEdit ? '' : 'disabled style="cursor:default"'}></button>
+      <div class="rem-body">
+        <div class="rem-text">${(r.text||'').replace(/[<>&"]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]))}</div>
+        <div class="rem-meta">
+          <span class="rem-due">${formatRemDue(r.dueAt)}</span>
+          <span class="rem-vis-tag ${r.visibility}">${r.visibility === 'public' ? 'PUBLIC' : 'PRIVÉ'}</span>
+          ${r.authorKey !== SESSION.key ? `<span class="rem-author">par ${names[r.authorKey] || r.authorKey}</span>` : ''}
+        </div>
+      </div>
+      ${canEdit ? `<button class="rem-del" onclick="deleteReminder('${r.id}')" title="Supprimer">✕</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// Auto-refresh reminders every 60s for due-state recompute
+setInterval(() => {
+  if (SESSION && document.getElementById('p-home')?.classList.contains('active')) renderReminders();
+}, 60000);
+
+function buildMyTasks() {
+  const widget = document.getElementById('my-tasks-widget');
+  const grid = document.getElementById('my-tasks-grid');
+  widget.style.display = 'block';
+  const tasks = getSavedTasks();
+  const myTasks = tasks[SESSION.key] || DEFAULT_TASKS[SESSION.key];
+  const col = getColors()[SESSION.key] || '#1E90FF';
+
+  grid.innerHTML = `
+    <div class="mtask-col ph1c">
+      <div class="mtask-col-title" style="color:${col}">PHASE 1</div>
+      ${(myTasks.p1||[]).length ? (myTasks.p1||[]).map(t=>`<div class="mtask"><div class="mtask-dot" style="background:${col}"></div>${t}</div>`).join('') : '<div style="font-size:11px;color:rgba(255,255,255,.2);font-style:italic">Pas de tâches en Phase 1</div>'}
+    </div>
+    <div class="mtask-col ph2c">
+      <div class="mtask-col-title" style="color:${col}">PHASE 2</div>
+      ${(myTasks.p2||[]).length ? (myTasks.p2||[]).map(t=>`<div class="mtask"><div class="mtask-dot" style="background:${col}"></div>${t}</div>`).join('') : '<div style="font-size:11px;color:rgba(255,255,255,.2);font-style:italic">Pas de tâches en Phase 2</div>'}
+    </div>
+  `;
+  // Color picker for non-admin (change own color)
+  let cpDiv = document.getElementById('my-color-picker');
+  if (!cpDiv) {
+    cpDiv = document.createElement('div');
+    cpDiv.id = 'my-color-picker';
+    cpDiv.style.cssText = 'padding:0 36px 36px;position:relative;z-index:1';
+    widget.after(cpDiv);
+  }
+  cpDiv.innerHTML = `<div id="cp-${SESSION.key}">${colorPickerHTML(SESSION.key)}</div>`;
+}
+
+// ══ ADMIN OVERVIEW ══
+function buildAdminOverview() {
+  const container = document.getElementById('admin-overview');
+  const tasks = getSavedTasks();
+  const colors = getColors();
+  const whoClass = { mathieu:'w-m', bastien:'w-b', theo:'w-t', ilame:'w-i' };
+  const bgColors = Object.fromEntries(Object.entries(colors).map(([k,v])=>[k,v+'14']));
+  const borderColors = Object.fromEntries(Object.entries(colors).map(([k,v])=>[k,v+'44']));
+
+  container.innerHTML = Object.entries(PERSONS_DATA).map(([key, p]) => {
+    const saved = tasks[key] || DEFAULT_TASKS[key];
+    const renderPhase = (phase, label) => `
+      <div style="margin-bottom:12px">
+        <div style="font-family:'Barlow Condensed';font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">${label}</div>
+        <div id="admin-tasks-${key}-${phase}">
+          ${(saved[phase]||[]).map((t,i) => `
+            <div class="amc-task" data-person="${key}" data-phase="${phase}" data-idx="${i}">
+              <span class="who ${whoClass[key]}" style="flex-shrink:0">${p.name.charAt(0)+p.name.slice(1).toLowerCase()}</span>
+              <span class="amc-task-txt" contenteditable="true" onblur="saveTaskEdit(this,'${key}','${phase}')">${t}</span>
+              <span class="amc-del" onclick="deleteTask('${key}','${phase}',${i})">✕</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="amc-add" onclick="adminAddTask('${key}','${phase}')">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter
+        </div>
+      </div>
+    `;
+    return `
+      <div class="gc admin-member-card rv d${Object.keys(PERSONS_DATA).indexOf(key)+1}" style="background:${bgColors[key]};border-color:${borderColors[key]}">
+        <div class="amc-name" style="color:${colors[key]}">${p.name}</div>
+        <div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px">${p.role}</div>
+        ${getPhases().map(ph => renderPhase(ph.id, ph.name)).join('')}
+      </div>
+    `;
+  }).join('');
+}
+
+// ══ ADMIN: pwd grid ══
+function buildAdminPwdGrid() {
+  const colors = { mathieu:'var(--b1)', bastien:'#B07FD4', theo:'var(--b4)', ilame:'#5DC48A' };
+  const grid = document.getElementById('admin-pwd-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(ACCOUNTS).map(([key, acc]) => `
+    <div style="padding:14px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)">
+      <div style="font-family:'Bebas Neue';font-size:15px;letter-spacing:.06em;color:${colors[key]};margin-bottom:2px">${acc.name}</div>
+      <div style="font-family:'Barlow Condensed';font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">${acc.role}</div>
+      <div style="display:flex;gap:6px">
+        <input id="admin-pwd-${key}" type="password" placeholder="nouveau mdp"
+          style="flex:1;padding:7px 10px;border-radius:5px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-family:'Manrope';font-size:12px;outline:none"
+          onkeydown="if(event.key==='Enter')adminSetPassword('${key}')">
+        <button onclick="adminSetPassword('${key}')"
+          style="padding:7px 12px;border-radius:5px;border:none;background:rgba(30,144,255,.14);color:var(--b1);font-family:'Barlow Condensed';font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">
+          OK
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ══ TASK STORAGE ══
+// ══ TASK DONE STATE ══ (composite key: personKey|phaseId|taskText)
+function getTaskDoneMap() {
+  try { return JSON.parse(localStorage.getItem('ur_task_done') || '{}'); }
+  catch(e) { return {}; }
+}
+function saveTaskDoneMap(m) { localStorage.setItem('ur_task_done', JSON.stringify(m)); }
+function taskDoneKey(personKey, phaseId, taskText) { return `${personKey}|${phaseId}|${taskText}`; }
+function isTaskDone(personKey, phaseId, taskText) {
+  return !!getTaskDoneMap()[taskDoneKey(personKey, phaseId, taskText)];
+}
+function setTaskDone(personKey, phaseId, taskText, done) {
+  const m = getTaskDoneMap();
+  const k = taskDoneKey(personKey, phaseId, taskText);
+  if (done) m[k] = true; else delete m[k];
+  saveTaskDoneMap(m);
+}
+function toggleTaskDone(personKey, phaseId, taskText) {
+  if (!SESSION) return;
+  // Member can toggle their own. Admin can toggle anyone.
+  if (personKey !== SESSION.key && !SESSION.isAdmin) return;
+  const cur = isTaskDone(personKey, phaseId, taskText);
+  setTaskDone(personKey, phaseId, taskText, !cur);
+  buildEquipe();
+  buildPhaseTasks();
+  if (!SESSION.isAdmin) buildMyTasks();
+}
+
+function getSavedTasks() {
+  try { return JSON.parse(localStorage.getItem('ur_tasks') || '{}'); } catch(e) { return {}; }
+}
+function saveTasks(tasks) {
+  localStorage.setItem('ur_tasks', JSON.stringify(tasks));
+}
+function saveTaskEdit(el, person, phase) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const idx = parseInt(el.closest('.amc-task')?.dataset.idx ?? '-1');
+  if (idx < 0) return;
+  const tasks = getSavedTasks();
+  if (!tasks[person]) tasks[person] = JSON.parse(JSON.stringify(DEFAULT_TASKS[person]));
+  if (tasks[person][phase]) tasks[person][phase][idx] = el.textContent.trim();
+  saveTasks(tasks);
+}
+function deleteTask(person, phase, idx) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const tasks = getSavedTasks();
+  if (!tasks[person]) tasks[person] = JSON.parse(JSON.stringify(DEFAULT_TASKS[person]));
+  if (tasks[person][phase]) { tasks[person][phase].splice(idx, 1); saveTasks(tasks); }
+  buildAdminOverview();
+}
+function adminAddTask(person, phase) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const tasks = getSavedTasks();
+  if (!tasks[person]) tasks[person] = JSON.parse(JSON.stringify(DEFAULT_TASKS[person]));
+  if (!tasks[person][phase]) tasks[person][phase] = [];
+  tasks[person][phase].push('Nouvelle tâche');
+  saveTasks(tasks);
+  buildAdminOverview();
+  // Focus last added
+  setTimeout(() => {
+    const container = document.getElementById(`admin-tasks-${person}-${phase}`);
+    if (container) {
+      const last = container.querySelectorAll('.amc-task-txt');
+      if (last.length) { const el = last[last.length-1]; el.focus(); document.execCommand('selectAll',false,null); }
+    }
+  }, 50);
+}
+// ══ PHASES PAGE — DYNAMIC BUILD ══
+function buildPhaseTasks() {
+  const tasks = getSavedTasks();
+  const colors = getColors();
+  const names = { mathieu:'Mathieu', bastien:'Bastien', theo:'Théo', ilame:'Ilame' };
+  const me = SESSION ? SESSION.key : null;
+  const isAdmin = SESSION && SESSION.isAdmin;
+
+  getPhases().forEach(ph => {
+    const container = document.getElementById('tasks-' + ph.id);
+    if (!container) return;
+    const rows = Object.keys(PERSONS_DATA).flatMap(key => {
+      const saved = tasks[key] || DEFAULT_TASKS[key] || {};
+      return (saved[ph.id] || []).map((t, i) => {
+        const col = colors[key];
+        const mine = me === key;
+        const done = isTaskDone(key, ph.id, t);
+        const canToggle = mine || isAdmin;
+        const editAttr = isAdmin ? `contenteditable="true" onblur="phSaveTask(this)"` : '';
+        const delBtn = isAdmin ? `<span class="amc-del" onclick="phDeleteTask(this)" style="flex-shrink:0">✕</span>` : '';
+        const cbAttrs = canToggle
+          ? `onclick="event.stopPropagation();toggleTaskDone('${key}','${ph.id}',${JSON.stringify(t).replace(/"/g,'&quot;')})"`
+          : 'style="cursor:default;opacity:.5"';
+        return `<div class="ph-task${mine ? ' mine' : ''}${done ? ' done' : ''}" data-who="${key}" data-key="${key}" data-phase="${ph.id}" data-idx="${i}" style="${mine ? `background:${col}11;border-color:${col}33` : ''}">
+          <div class="ph-cb${done ? ' checked' : ''}" ${cbAttrs}></div>
+          <span class="who" style="background:${col}22;color:${col};border-radius:3px;padding:2px 7px;font-family:'Barlow Condensed';font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0">${names[key]}</span>
+          <span class="ph-task-txt" ${editAttr}>${t}</span>
+          ${delBtn}
+        </div>`;
+      });
+    });
+    container.innerHTML = rows.join('') || `<div style="font-size:11px;color:rgba(255,255,255,.2);font-style:italic;padding:8px 0">Aucune tâche</div>`;
+  });
+  filterPerson(currentPersonFilter);
+}
+
+function phSaveTask(el) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const row = el.closest('.ph-task');
+  const { key, phase, idx } = row.dataset;
+  const tasks = getSavedTasks();
+  if (!tasks[key]) tasks[key] = JSON.parse(JSON.stringify(DEFAULT_TASKS[key] || {p1:[],p2:[]}));
+  if (tasks[key][phase]) tasks[key][phase][parseInt(idx)] = el.textContent.trim();
+  saveTasks(tasks);
+}
+
+function phDeleteTask(btn) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const row = btn.closest('.ph-task');
+  const { key, phase, idx } = row.dataset;
+  const tasks = getSavedTasks();
+  if (!tasks[key]) tasks[key] = JSON.parse(JSON.stringify(DEFAULT_TASKS[key] || {p1:[],p2:[]}));
+  tasks[key][phase].splice(parseInt(idx), 1);
+  saveTasks(tasks); buildPhaseTasks(); buildAdminOverview();
+}
+
+// Phases page: add task modal
+let _atPhase = 'p1', _atWho = null;
+
+function addTask(phase) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  _atPhase = phase;
+  _atWho = currentPersonFilter !== 'all' ? currentPersonFilter : null;
+  const phData = getPhases().find(p => p.id === phase);
+  document.getElementById('atm-phase-lbl').textContent = phData ? `${phData.name} — ${phData.sub || phData.badge}` : phase;
+  document.querySelectorAll('.atm-btn').forEach(b => b.classList.remove('sel'));
+  if (_atWho) {
+    const btn = document.querySelector(`.atm-btn[data-key="${_atWho}"]`);
+    if (btn) btn.classList.add('sel');
+  }
+  document.getElementById('atm-txt').value = '';
+  document.getElementById('add-task-modal').classList.add('open');
+  setTimeout(() => document.getElementById('atm-txt').focus(), 80);
+}
+
+function atSelectWho(key) {
+  _atWho = key;
+  document.querySelectorAll('.atm-btn').forEach(b => b.classList.toggle('sel', b.dataset.key === key));
+}
+
+function confirmAddTask() {
+  if (!_atWho) { document.getElementById('atm-who-grid').style.outline = '1px solid rgba(255,80,80,.5)'; setTimeout(()=>document.getElementById('atm-who-grid').style.outline='',1000); return; }
+  const txt = document.getElementById('atm-txt').value.trim();
+  if (!txt) { document.getElementById('atm-txt').focus(); return; }
+  const tasks = getSavedTasks();
+  if (!tasks[_atWho]) tasks[_atWho] = JSON.parse(JSON.stringify(DEFAULT_TASKS[_atWho] || {p1:[],p2:[]}));
+  if (!tasks[_atWho][_atPhase]) tasks[_atWho][_atPhase] = [];
+  tasks[_atWho][_atPhase].push(txt);
+  saveTasks(tasks); buildPhaseTasks(); buildAdminOverview();
+  closeAddTask();
+}
+
+function closeAddTask() {
+  document.getElementById('add-task-modal').classList.remove('open');
+}
+
+// ══ NAV ══
+function goto(page) {
+  if (page === 'admin' && (!SESSION || !SESSION.isAdmin)) return;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('p-' + page).classList.add('active');
+  const nav = document.querySelector('.sb-item[data-page="' + page + '"]');
+  if (nav) nav.classList.add('active');
+  document.querySelector('.main').scrollTop = 0;
+  document.getElementById('phases-sub').classList.toggle('open', page === 'phases');
+  document.getElementById('admin-sub').classList.toggle('open', page === 'admin');
+  if (page === 'notes') {
+    const nf = document.getElementById('notes-iframe');
+    if (nf && (!nf.src || nf.src === 'about:blank' || !nf.src.includes('notes.html'))) {
+      const u = SESSION ? `?user=${encodeURIComponent(SESSION.key)}&name=${encodeURIComponent(SESSION.name)}&admin=${SESSION.isAdmin?1:0}` : '';
+      nf.src = 'notes.html' + u;
+    }
+  }
+  if (page === 'audit') {
+    const iframe = document.getElementById('audit-iframe');
+    if (!iframe.src || iframe.src === 'about:blank') iframe.src = 'audit-underrated.html';
+  }
+}
+
+function gotoAdmin(who) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  goto('admin');
+  // Sync sidebar sub-items
+  document.querySelectorAll('#admin-sub .sb-sub-item').forEach(i =>
+    i.classList.toggle('active', i.dataset.amember === who));
+  // Sync tab bar
+  document.querySelectorAll('.admin-tabs .atab').forEach(t =>
+    t.classList.toggle('active', t.dataset.who === who));
+  // Show/hide sections
+  const isGlobal = who === 'global';
+  document.getElementById('admin-tab-global').style.display = isGlobal ? '' : 'none';
+  document.getElementById('admin-tab-member').style.display = isGlobal ? 'none' : '';
+  if (!isGlobal) buildMemberPreview(who);
+  // Update header
+  const acc = ACCOUNTS[who];
+  document.getElementById('admin-page-title').innerHTML = isGlobal
+    ? 'GESTION <em>ÉQUIPE</em>'
+    : `PREVIEW — <em>${acc ? acc.name : who.toUpperCase()}</em>`;
+  document.getElementById('admin-page-sub').textContent = isGlobal
+    ? 'Tâches éditables, mots de passe, preview des vues membres.'
+    : `Vue de ${acc ? acc.name : who} — modifie ses tâches directement, il verra les changements à sa prochaine connexion.`;
+}
+
+function buildMemberPreview(key) {
+  const acc = ACCOUNTS[key];
+  if (!acc) return;
+  const tasks = getSavedTasks();
+  const myTasks = tasks[key] || DEFAULT_TASKS[key] || { p1:[], p2:[] };
+  const colors = { mathieu:'#1E90FF', bastien:'#9B59B6', theo:'#4F6EF7', ilame:'#27AE60' };
+  const bgColors = { mathieu:'rgba(30,144,255,.06)', bastien:'rgba(155,89,182,.06)', theo:'rgba(79,110,247,.06)', ilame:'rgba(39,174,96,.06)' };
+  const borderColors = { mathieu:'rgba(30,144,255,.2)', bastien:'rgba(155,89,182,.2)', theo:'rgba(79,110,247,.2)', ilame:'rgba(39,174,96,.2)' };
+  const col = colors[key] || '#1E90FF';
+
+  const renderPhase = (phase, label) => {
+    const list = myTasks[phase] || [];
+    return `
+      <div class="mp-phase gc" style="background:${bgColors[key]};border-color:${borderColors[key]}">
+        <div class="mp-phase-title" style="color:${col}">${label}</div>
+        <div class="mp-tasks" id="mp-tasks-${key}-${phase}">
+          ${list.length
+            ? list.map((t, i) => `
+              <div class="mp-task" data-mpkey="${key}" data-mpphase="${phase}" data-idx="${i}">
+                <span class="mp-task-txt" contenteditable="true"
+                  onblur="mpSaveTask(this,'${key}','${phase}')">${t}</span>
+                <span class="mp-del" onclick="mpDeleteTask('${key}','${phase}',${i})">✕</span>
+              </div>`).join('')
+            : `<div style="font-size:11px;color:rgba(255,255,255,.2);font-style:italic;padding:8px 0">Aucune tâche</div>`
+          }
+        </div>
+        <div class="mp-add" onclick="mpAddTask('${key}','${phase}')">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter une tâche
+        </div>
+      </div>`;
+  };
+
+  document.getElementById('admin-tab-member').innerHTML = `
+    <div class="mp-header gc rv d1" style="background:${bgColors[key]};border-color:${borderColors[key]}">
+      <div style="width:44px;height:44px;border-radius:50%;background:${col}22;border:2px solid ${col};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="font-family:'Bebas Neue';font-size:18px;color:${col}">${acc.name.charAt(0)}</span>
+      </div>
+      <div>
+        <div class="mp-name" style="color:${col}">${acc.name}</div>
+        <div class="mp-role">${acc.role}</div>
+      </div>
+      <div class="mp-badge" style="background:${col}22;border:1px solid ${col}55;color:${col}">Preview Admin</div>
+    </div>
+    <div class="gc rv d1b" style="padding:16px 20px;margin-bottom:16px" id="cp-${key}">
+      ${colorPickerHTML(key)}
+    </div>
+    <div class="mp-phases rv d2">
+      ${renderPhase('p1','PHASE 1 — SETUP')}
+      ${renderPhase('p2','PHASE 2 — LAUNCH')}
+    </div>`;
+}
+
+// ══ MEMBER PREVIEW TASK OPS ══
+function mpSaveTask(el, key, phase) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const idx = parseInt(el.closest('.mp-task')?.dataset.idx ?? '-1');
+  if (idx < 0) return;
+  const tasks = getSavedTasks();
+  if (!tasks[key]) tasks[key] = JSON.parse(JSON.stringify(DEFAULT_TASKS[key] || {p1:[],p2:[]}));
+  if (tasks[key][phase]) tasks[key][phase][idx] = el.textContent.trim();
+  saveTasks(tasks);
+}
+function mpDeleteTask(key, phase, idx) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const tasks = getSavedTasks();
+  if (!tasks[key]) tasks[key] = JSON.parse(JSON.stringify(DEFAULT_TASKS[key] || {p1:[],p2:[]}));
+  if (tasks[key][phase]) { tasks[key][phase].splice(idx, 1); saveTasks(tasks); }
+  buildMemberPreview(key); buildPhaseTasks(); buildAdminOverview();
+}
+function mpAddTask(key, phase) {
+  if (!SESSION || !SESSION.isAdmin) return;
+  const tasks = getSavedTasks();
+  if (!tasks[key]) tasks[key] = JSON.parse(JSON.stringify(DEFAULT_TASKS[key] || {p1:[],p2:[]}));
+  if (!tasks[key][phase]) tasks[key][phase] = [];
+  tasks[key][phase].push('Nouvelle tâche');
+  saveTasks(tasks);
+  buildMemberPreview(key); buildPhaseTasks(); buildAdminOverview();
+  setTimeout(() => {
+    const container = document.getElementById(`mp-tasks-${key}-${phase}`);
+    if (container) {
+      const last = container.querySelectorAll('.mp-task-txt');
+      if (last.length) { const el = last[last.length-1]; el.focus(); document.execCommand('selectAll',false,null); }
+    }
+  }, 50);
+}
+
+function gotoPhase(person) {
+  goto('phases');
+  filterPerson(person);
+  document.querySelectorAll('.sb-sub-item').forEach(i => i.classList.toggle('active', i.dataset.person === person));
+}
+
+// ══════════════════════════════════
+// NOTES — full Notion clone loaded via iframe (notes.html)
+// ══════════════════════════════════
+function gotoNotes() {
+  goto('notes');
+  const iframe = document.getElementById('notes-iframe');
+  if (iframe && (!iframe.src || iframe.src === 'about:blank' || !iframe.src.includes('notes.html'))) {
+    const userParam = SESSION ? `?user=${encodeURIComponent(SESSION.key)}&name=${encodeURIComponent(SESSION.name)}&admin=${SESSION.isAdmin?1:0}` : '';
+    iframe.src = 'notes.html' + userParam;
+  }
+}
+function newNote(visibility) {
+  gotoNotes();
+  setTimeout(() => {
+    const iframe = document.getElementById('notes-iframe');
+    iframe?.contentWindow?.postMessage({ type:'new-note', visibility }, '*');
+  }, 400);
+}
+
+
+// ══ PERSON FILTER ══
+function filterPerson(person) {
+  currentPersonFilter = person;
+  document.querySelectorAll('.ptab').forEach(t => t.classList.toggle('active', t.dataset.person === person));
+  const phases = getPhases();
+  const header = document.getElementById('person-header');
+  const me = SESSION ? SESSION.key : null;
+
+  if (person === 'all') {
+    phases.forEach(ph => {
+      document.querySelectorAll(`#tasks-${ph.id} .ph-task`).forEach(t => {
+        t.classList.remove('hidden');
+        t.classList.toggle('mine', !!(me && t.dataset.who === me));
+      });
+      const empty = document.getElementById('empty-' + ph.id);
+      if (empty) empty.classList.remove('show');
+    });
+    header.classList.remove('show');
+    document.getElementById('phases-sub-title').textContent = phases.map(p => p.name).join(' · ');
+    return;
+  }
+
+  phases.forEach(ph => {
+    const allTasks = document.querySelectorAll(`#tasks-${ph.id} .ph-task`);
+    let vis = 0;
+    allTasks.forEach(t => {
+      t.classList.toggle('mine', !!(me && t.dataset.who === me));
+      const show = !!(t.dataset.who && t.dataset.who === person);
+      t.classList.toggle('hidden', !show);
+      if (show) vis++;
+    });
+    const empty = document.getElementById('empty-' + ph.id);
+    if (empty) empty.classList.toggle('show', vis === 0);
+  });
+
+  const p = PERSONS_DATA[person];
+  if (p) {
+    document.getElementById('person-header-name').textContent = p.name;
+    document.getElementById('person-header-name').style.color = p.color;
+    document.getElementById('person-header-role').textContent = p.role;
+    document.getElementById('person-header-phases').innerHTML = p.phases.map(ph => `<span class="mph">${ph}</span>`).join('');
+    header.classList.add('show');
+    document.getElementById('phases-sub-title').textContent = 'Tâches de ' + p.name.charAt(0) + p.name.slice(1).toLowerCase();
+  }
+}
+
+// ══ DATE ══
+function setDate() {
+  const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const now = new Date();
+  const el = document.getElementById('home-date');
+  if (el) el.textContent = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+}
+
+// ══ VERSION ══
+// ══ CHANGELOG PANEL ══
+function openChangelog() {
+  document.getElementById('changelog-panel').classList.add('open');
+  document.getElementById('cl-overlay').classList.add('open');
+  const body = document.getElementById('cl-body');
+  if (body.dataset.loaded) return;
+  fetch('CHANGELOG.md?t=' + Date.now())
+    .then(r => { if (!r.ok) throw new Error('404'); return r.text(); })
+    .then(md => { body.innerHTML = mdToHtml(md); body.dataset.loaded = '1'; })
+    .catch(() => { body.innerHTML = '<p style="color:var(--muted)">Impossible de charger le changelog.</p>'; });
+}
+function closeChangelog() {
+  document.getElementById('changelog-panel').classList.remove('open');
+  document.getElementById('cl-overlay').classList.remove('open');
+}
+function mdToHtml(md) {
+  return md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^\- (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, s => '<ul>' + s + '</ul>')
+    .replace(/\n\n/g,'</p><p>')
+    .replace(/^(?!<[hup])/gm, '<p>').replace(/(?<![>])$/gm, '</p>')
+    .replace(/<p><\/p>/g,'');
+}
+
+function fetchVersion() {
+  fetch('VERSION.json?t=' + Date.now())
+    .then(r => r.json())
+    .then(d => { const el = document.getElementById('ver-txt'); if(el) el.textContent = d.version || (d.commit ? d.commit.slice(0,7) : '—'); })
+    .catch(() => {});
+}
+
+// ══ INIT ══
+(function init() {
+  seedAdmin();
+  try {
+    const saved = JSON.parse(localStorage.getItem('ur_session') || 'null');
+    if (saved && saved.key && ACCOUNTS[saved.key] && hasAccount(saved.key)) {
+      SESSION = { key: saved.key, ...ACCOUNTS[saved.key] };
+      launchApp();
+      return;
+    }
+  } catch(e) {}
+  document.getElementById('login-screen').style.display = 'flex';
+})();
+</script>
+</body>
+</html>

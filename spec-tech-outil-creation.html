@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNDERRATED — SPEC TECHNIQUE OUTIL CRÉATION</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700;900&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g:   #00B140;
+  --g2:  #00FF5E;
+  --pk:  #FF0F7B;
+  --gold:#FFD700;
+  --red: #E63946;
+  --blue:#3A86FF;
+  --pur: #8338EC;
+  --cyan:#00D4FF;
+  --bg:  #050508;
+  --bg2: #08090f;
+  --bg3: #0d0f1a;
+  --w:   #EDF2F4;
+  --dim: rgba(255,255,255,0.55);
+  --muted: rgba(255,255,255,0.25);
+  --glass-bg:     rgba(255,255,255,0.03);
+  --glass-border: rgba(255,255,255,0.08);
+  --code-bg: rgba(0,0,0,.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--w);font-family:'Manrope',sans-serif;overflow-x:hidden;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9990;opacity:.7}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--blue);border-radius:2px}
+.bb{font-family:'Bebas Neue',sans-serif;letter-spacing:.04em}
+.bc{font-family:'Barlow Condensed',sans-serif}
+.mono{font-family:'JetBrains Mono',monospace}
+.container{max-width:1100px;margin:0 auto;padding:0 28px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,8,.9);backdrop-filter:blur(28px);border-bottom:1px solid var(--glass-border)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.12em}
+.nav-logo b{color:var(--cyan)}
+.nav-badge{background:rgba(58,134,255,.12);border:1px solid rgba(58,134,255,.25);border-radius:6px;padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--blue)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;padding-top:58px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.2);border-radius:100px;padding:5px 16px;margin-bottom:24px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)}
+.eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,100px);line-height:.9;letter-spacing:.04em;margin-bottom:20px}
+.hero h1 .c{color:var(--cyan)}
+.hero h1 .g{color:var(--g)}
+.hero-sub{font-family:'Barlow Condensed',sans-serif;font-size:18px;color:var(--dim);max-width:640px;margin:0 auto 40px}
+.hero-note{display:inline-block;background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);border-radius:10px;padding:12px 20px;font-size:13px;color:rgba(255,215,0,.8);font-family:'Barlow Condensed',sans-serif;font-size:15px}
+
+/* SECTION */
+section{padding:72px 0;position:relative;z-index:1}
+.section-label{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
+.section-label::before{content:'';width:20px;height:1px;background:currentColor}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,4vw,56px);line-height:.95;letter-spacing:.04em;margin-bottom:10px}
+.section-desc{font-family:'Barlow Condensed',sans-serif;font-size:16px;color:var(--dim);max-width:580px;margin-bottom:40px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--glass-border),transparent);margin:56px 0}
+
+/* CARDS */
+.card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;padding:24px;transition:border-color .3s,transform .3s}
+.card:hover{transform:translateY(-2px)}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:800px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+/* TAGS */
+.tag{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:2px 9px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.tag.bl{background:rgba(58,134,255,.12);color:var(--blue);border:1px solid rgba(58,134,255,.2)}
+.tag.g{background:rgba(0,177,64,.12);color:var(--g);border:1px solid rgba(0,177,64,.2)}
+.tag.pk{background:rgba(255,15,123,.12);color:var(--pk);border:1px solid rgba(255,15,123,.2)}
+.tag.go{background:rgba(255,215,0,.12);color:var(--gold);border:1px solid rgba(255,215,0,.2)}
+.tag.cy{background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.2)}
+.tag.pu{background:rgba(131,56,236,.12);color:var(--pur);border:1px solid rgba(131,56,236,.2)}
+.tag.wh{background:rgba(255,255,255,.06);color:var(--dim);border:1px solid rgba(255,255,255,.1)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+
+/* CODE */
+pre{background:var(--code-bg);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px 20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;color:rgba(255,255,255,.75);margin:12px 0}
+.kw{color:var(--cyan)}
+.str{color:var(--g)}
+.comment{color:rgba(255,255,255,.3);font-style:italic}
+.fn{color:var(--gold)}
+.num{color:var(--pk)}
+
+/* STEP FLOW */
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:24px;position:relative}
+.step-left{display:flex;flex-direction:column;align-items:center;gap:0;flex-shrink:0;width:48px}
+.step-num{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em;flex-shrink:0;position:relative;z-index:1}
+.step-line{flex:1;width:2px;margin-top:4px;margin-bottom:4px}
+.step:last-child .step-line{display:none}
+.step-content{flex:1;padding-bottom:36px}
+.step-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.step-desc{font-size:13px;color:var(--dim);margin-bottom:12px}
+
+/* API CARD */
+.api-card{border:1px solid var(--glass-border);border-radius:12px;overflow:hidden}
+.api-header{padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--glass-border);background:rgba(255,255,255,.02)}
+.api-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase;flex:1}
+.api-body{padding:14px 18px}
+.api-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
+.api-row:last-child{border-bottom:none}
+.api-key{color:var(--muted);font-weight:600;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:.04em}
+.api-val{color:var(--w);font-family:'JetBrains Mono',monospace;font-size:11px}
+
+/* SCREEN MOCKUP */
+.screen{background:#0a0c14;border:1px solid rgba(255,255,255,.1);border-radius:14px;overflow:hidden;margin:24px 0}
+.screen-bar{height:36px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;padding:0 14px;gap:6px}
+.screen-dot{width:10px;height:10px;border-radius:50%}
+.screen-url{margin-left:12px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);flex:1;text-align:center}
+.screen-body{padding:24px}
+
+/* INPUT MOCK */
+.input-mock{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--dim);margin:6px 0}
+.label-mock{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:14px;margin-bottom:4px;font-family:'Barlow Condensed',sans-serif}
+.btn-mock{display:inline-flex;align-items:center;gap:8px;background:var(--cyan);color:#000;border-radius:8px;padding:10px 20px;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-top:12px;font-family:'Barlow Condensed',sans-serif}
+.progress-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin:8px 0;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;transition:width 1s ease}
+
+/* STATUS */
+.callout{border-radius:12px;padding:16px 20px;margin:16px 0;display:flex;gap:12px;align-items:flex-start}
+.callout.warn{background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.15)}
+.callout.info{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.12)}
+.callout.ok{background:rgba(0,177,64,.05);border:1px solid rgba(0,177,64,.15)}
+.callout-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.callout-body{font-size:13px;color:var(--dim);line-height:1.6}
+.callout-body strong{color:var(--w)}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0}
+th{text-align:left;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.1);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--dim);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{color:var(--w)}
+
+footer{border-top:1px solid var(--glass-border);padding:36px 28px;text-align:center;color:var(--muted);font-size:11px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.08em}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">UNDER<b>RATED</b></div>
+  <div class="nav-badge">Spec Technique — Pour Théo</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">Document Technique Confidentiel</div>
+    <h1 class="bb">STUDIO<br><span class="c">CRÉATION</span><br><span class="g">IA</span></h1>
+    <p class="hero-sub">Outil web qui guide chaque élève step-by-step pour créer ses vidéos style Underrated Game — du script à l'export final — via les APIs IA.</p>
+    <div class="hero-note">
+      🎯 Objectif : un élève avec zéro expérience technique produit son premier épisode en &lt; 2h
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CE QUE C'EST ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-label" style="color:var(--cyan)">Vision Produit</div>
+    <h2 class="section-title bb">C'EST <span style="color:var(--cyan)">QUOI</span> L'OUTIL</h2>
+    <p class="section-desc">Une app web privée, accessible aux élèves après achat de la formation. Chaque étape du workflow de production est automatisée via des APIs.</p>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card" style="border-color:rgba(0,212,255,.15)">
+        <div style="font-size:28px;margin-bottom:10px">❌</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Sans l'outil</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--dim)">
+          <li>→ S'inscrire sur ElevenLabs, configurer la voix</li>
+          <li>→ S'inscrire sur Midjourney, apprendre les prompts</li>
+          <li>→ S'inscrire sur Runway, comprendre les paramètres</li>
+          <li>→ Assembler manuellement dans CapCut</li>
+          <li>→ 7h pour un élève débutant = abandon garanti</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:rgba(0,177,64,.2)">
+        <div style="font-size:28px;margin-bottom:10px">✅</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--g);margin-bottom:8px">Avec l'outil</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--dim)">
+          <li>→ Élève saisit : genre, personnages, épisode N</li>
+          <li>→ Clic "Générer Script" → script en 30 secondes</li>
+          <li>→ Clic "Générer Voix" → fichier audio prêt</li>
+          <li>→ Clic "Générer Visuels" → images + clips vidéo</li>
+          <li>→ Export ZIP → importe dans CapCut et monte</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>Clé différenciatrice formation Underrated :</strong> les concurrents vendent des méthodes théoriques. Underrated livre un outil qui fait le travail technique. L'élève se concentre sur la créativité et la narration, pas sur la technique.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ WORKFLOW STEPS ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-label" style="color:var(--g)">Workflow Élève</div>
+    <h2 class="section-title bb">LES <span style="color:var(--g)">4 ÉTAPES</span><br>DANS L'OUTIL</h2>
+    <p class="section-desc">Chaque étape = un écran de l'app. L'élève avance linéairement. Impossible de se perdre.</p>
+
+    <div class="steps">
+
+      <!-- STEP 1 -->
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num" style="background:rgba(0,212,255,.12);border:2px solid rgba(0,212,255,.3);color:var(--cyan)">1</div>
+          <div class="step-line" style="background:rgba(0,212,255,.15)"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-title" style="color:var(--cyan)">SETUP SÉRIE — Saisie une seule fois</div>
+          <div class="step-desc">L'élève configure sa série. Ces infos alimentent tous les prompts IA en arrière-plan.</div>
+          <div class="screen">
+            <div class="screen-bar">
+              <div class="screen-dot" style="background:#ff5f57"></div>
+              <div class="screen-dot" style="background:#febc2e"></div>
+              <div class="screen-dot" style="background:#28c840"></div>
+              <div class="screen-url">studio.underrated.fr/setup</div>
+            </div>
+            <div class="screen-body">
+              <div class="label-mock">Nom de ta série</div>
+              <div class="input-mock">Underrated Game</div>
+              <div class="label-mock">Genre / Univers</div>
+              <div class="input-mock">Survie / Jeux mortels — personnages fruits 3D</div>
+              <div class="label-mock">Personnages (prénom + type + couleur)</div>
+              <div class="input-mock">Fraisita (féminine, fraise, rouge), Fraisio (masculin, fraise, bleu), Cerisa (féminine, cerise, cramoisi), Bananello (masculin, banane, jaune)</div>
+              <div class="label-mock">Ton / Ambiance</div>
+              <div class="input-mock">Ultra dramatique, coupes rapides, voix qui casse le 4e mur, Gen Z</div>
+              <div class="btn-mock">→ Créer ma série</div>
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag cy">Firebase Firestore</span>
+            <span class="tag wh">Stocké par compte élève</span>
+            <span class="tag wh">Réutilisé à chaque épisode</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num" style="background:rgba(0,177,64,.1);border:2px solid rgba(0,177,64,.3);color:var(--g)">2</div>
+          <div class="step-line" style="background:rgba(0,177,64,.15)"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-title" style="color:var(--g)">SCRIPT — GPT-4 en 30 secondes</div>
+          <div class="step-desc">L'élève donne le contexte de l'épisode. L'app appelle GPT-4 avec un prompt système pré-construit (structure 5 temps obligatoire + cliffhanger).</div>
+          <div class="screen">
+            <div class="screen-bar">
+              <div class="screen-dot" style="background:#ff5f57"></div>
+              <div class="screen-dot" style="background:#febc2e"></div>
+              <div class="screen-dot" style="background:#28c840"></div>
+              <div class="screen-url">studio.underrated.fr/script</div>
+            </div>
+            <div class="screen-body">
+              <div class="label-mock">Épisode numéro</div>
+              <div class="input-mock">12</div>
+              <div class="label-mock">Ce qui s'est passé dans l'épisode précédent</div>
+              <div class="input-mock">Bananello a été éliminé mais Fraisita a trouvé un pouvoir secret qui peut le ramener</div>
+              <div class="label-mock">Demandes des commentaires à intégrer (optionnel)</div>
+              <div class="input-mock">Les fans veulent que Cerisa et Fraisio forment une alliance secrète</div>
+              <div class="btn-mock" style="background:var(--g)">⚡ Générer le Script</div>
+              <div style="margin-top:16px;padding:14px;background:rgba(0,177,64,.06);border:1px solid rgba(0,177,64,.15);border-radius:8px;font-size:12px;color:var(--dim);line-height:1.8">
+                <strong style="color:var(--g)">Script généré ↓</strong><br>
+                [0-3s] Accroche : "Elle avait le pouvoir de tout changer..."<br>
+                [3-8s] Logo UNDERRATED GAME — Épisode 12<br>
+                [8-25s] Fraisita découvre le cristal qui peut ressusciter...<br>
+                [25-50s] Cerisa observe en secret. Fraisio l'approche discrètement...<br>
+                [50-55s] Révélation : ils avaient planifié ça depuis l'épisode 3<br>
+                [55-60s] "Mais quelqu'un d'autre regardait dans l'ombre..." → CTA
+              </div>
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag g">OpenAI GPT-4o API</span>
+            <span class="tag wh">Prompt système Underrated</span>
+            <span class="tag wh">Structure 5 temps forcée</span>
+            <span class="tag wh">~30 secondes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num" style="background:rgba(255,15,123,.1);border:2px solid rgba(255,15,123,.3);color:var(--pk)">3</div>
+          <div class="step-line" style="background:rgba(255,15,123,.15)"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-title" style="color:var(--pk)">MÉDIAS — Voix + Images + Vidéo</div>
+          <div class="step-desc">L'élève lance la génération en parallèle. L'app orchestre ElevenLabs + Midjourney + Runway simultanément. Tout s'assemble automatiquement.</div>
+
+          <div class="grid-3" style="margin-bottom:14px">
+            <div class="api-card">
+              <div class="api-header" style="border-color:rgba(255,15,123,.15)">
+                <div style="font-size:20px">🎙️</div>
+                <div class="api-name" style="color:var(--pk)">Voix</div>
+              </div>
+              <div class="api-body">
+                <div class="api-row"><span class="api-key">API</span><span class="api-val" style="color:var(--pk)">ElevenLabs</span></div>
+                <div class="api-row"><span class="api-key">Input</span><span class="api-val">Script texte</span></div>
+                <div class="api-row"><span class="api-key">Output</span><span class="api-val">voix.mp3</span></div>
+                <div class="api-row"><span class="api-key">Temps</span><span class="api-val">~15-30s</span></div>
+                <div class="api-row"><span class="api-key">Coût</span><span class="api-val">~0.10€/épisode</span></div>
+              </div>
+            </div>
+            <div class="api-card">
+              <div class="api-header" style="border-color:rgba(255,215,0,.15)">
+                <div style="font-size:20px">🎨</div>
+                <div class="api-name" style="color:var(--gold)">Visuels</div>
+              </div>
+              <div class="api-body">
+                <div class="api-row"><span class="api-key">API</span><span class="api-val" style="color:var(--gold)">Midjourney / DALL-E</span></div>
+                <div class="api-row"><span class="api-key">Input</span><span class="api-val">Scènes du script</span></div>
+                <div class="api-row"><span class="api-key">Output</span><span class="api-val">scene_01.png ×5</span></div>
+                <div class="api-row"><span class="api-key">Temps</span><span class="api-val">~1-2 min</span></div>
+                <div class="api-row"><span class="api-key">Coût</span><span class="api-val">~0.20€/épisode</span></div>
+              </div>
+            </div>
+            <div class="api-card">
+              <div class="api-header" style="border-color:rgba(131,56,236,.2)">
+                <div style="font-size:20px">🎬</div>
+                <div class="api-name" style="color:var(--pur)">Vidéo</div>
+              </div>
+              <div class="api-body">
+                <div class="api-row"><span class="api-key">API</span><span class="api-val" style="color:var(--pur)">Runway Gen-3 / Kling</span></div>
+                <div class="api-row"><span class="api-key">Input</span><span class="api-val">Images + motion prompt</span></div>
+                <div class="api-row"><span class="api-key">Output</span><span class="api-val">clip_01.mp4 ×5</span></div>
+                <div class="api-row"><span class="api-key">Temps</span><span class="api-val">~3-5 min</span></div>
+                <div class="api-row"><span class="api-key">Coût</span><span class="api-val">~0.50€/épisode</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="screen">
+            <div class="screen-bar">
+              <div class="screen-dot" style="background:#ff5f57"></div>
+              <div class="screen-dot" style="background:#febc2e"></div>
+              <div class="screen-dot" style="background:#28c840"></div>
+              <div class="screen-url">studio.underrated.fr/generate</div>
+            </div>
+            <div class="screen-body">
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.08em">
+                    <span style="color:var(--pk)">🎙️ VOIX (ElevenLabs)</span>
+                    <span style="color:var(--g)">✓ Terminé — 22s</span>
+                  </div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--g)"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.08em">
+                    <span style="color:var(--gold)">🎨 VISUELS (Midjourney)</span>
+                    <span style="color:var(--gold)">3/5 scènes...</span>
+                  </div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:60%;background:var(--gold)"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.08em">
+                    <span style="color:var(--pur)">🎬 VIDÉO (Runway)</span>
+                    <span style="color:var(--muted)">En attente visuels...</span>
+                  </div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--pur)"></div></div>
+                </div>
+              </div>
+              <div style="margin-top:16px;font-size:12px;color:var(--muted);text-align:center">Génération en parallèle — ~5 minutes au total</div>
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag pk">ElevenLabs API</span>
+            <span class="tag go">Midjourney API / Replicate</span>
+            <span class="tag pu">Runway API</span>
+            <span class="tag wh">Parallèle = rapide</span>
+            <span class="tag wh">~0.80€ / épisode</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num" style="background:rgba(255,215,0,.1);border:2px solid rgba(255,215,0,.3);color:var(--gold)">4</div>
+        </div>
+        <div class="step-content">
+          <div class="step-title" style="color:var(--gold)">EXPORT — Pack ZIP prêt pour CapCut</div>
+          <div class="step-desc">Tous les fichiers générés organisés dans un ZIP. L'élève importe dans CapCut et monte — c'est la seule étape manuelle restante.</div>
+          <div class="screen">
+            <div class="screen-bar">
+              <div class="screen-dot" style="background:#ff5f57"></div>
+              <div class="screen-dot" style="background:#febc2e"></div>
+              <div class="screen-dot" style="background:#28c840"></div>
+              <div class="screen-url">studio.underrated.fr/export</div>
+            </div>
+            <div class="screen-body">
+              <div style="background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.15);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);line-height:1.9">
+                <span style="color:var(--gold)">📦 episode_12_underrated.zip</span><br>
+                ├── <span style="color:var(--pk)">voix_off.mp3</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← ElevenLabs<br>
+                ├── <span style="color:var(--gold)">scene_01_accroche.jpg</span> &nbsp;← Midjourney<br>
+                ├── <span style="color:var(--gold)">scene_02_logo.jpg</span><br>
+                ├── <span style="color:var(--gold)">scene_03_recap.jpg</span><br>
+                ├── <span style="color:var(--gold)">scene_04_reveal.jpg</span><br>
+                ├── <span style="color:var(--gold)">scene_05_cliff.jpg</span><br>
+                ├── <span style="color:var(--pur)">clip_01.mp4</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← Runway<br>
+                ├── <span style="color:var(--pur)">clip_02.mp4</span><br>
+                ├── <span style="color:var(--pur)">clip_03.mp4</span><br>
+                └── <span style="color:var(--g)">script_ep12.txt</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← Référence<br>
+              </div>
+              <div class="btn-mock" style="margin-top:14px;background:var(--gold);color:#000">⬇ Télécharger le Pack</div>
+            </div>
+          </div>
+          <div class="tags">
+            <span class="tag go">Firebase Storage</span>
+            <span class="tag wh">ZIP auto-assemblé</span>
+            <span class="tag wh">Lien valide 24h</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /steps -->
+  </div>
+</section>
+
+<!-- ══════════ ARCHITECTURE TECHNIQUE ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-label" style="color:var(--blue)">Architecture</div>
+    <h2 class="section-title bb">STACK <span style="color:var(--blue)">TECHNIQUE</span></h2>
+    <p class="section-desc">Ce que Théo doit builder. Architecture simple, extensible, hébergeable facilement.</p>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div>
+        <div class="card" style="border-color:rgba(58,134,255,.2);margin-bottom:14px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:12px">Frontend</div>
+          <table>
+            <tr><td style="color:var(--w);font-weight:600">Framework</td><td>React (Vite) ou Vue.js</td></tr>
+            <tr><td style="color:var(--w);font-weight:600">Style</td><td>Tailwind CSS — UI dark mode</td></tr>
+            <tr><td style="color:var(--w);font-weight:600">Auth</td><td>Firebase Auth (Email/Password)</td></tr>
+            <tr><td style="color:var(--w);font-weight:600">State</td><td>Zustand / Pinia</td></tr>
+            <tr><td style="color:var(--w);font-weight:600">Deploy</td><td>Vercel (gratuit, auto-deploy)</td></tr>
+          </table>
+        </div>
+        <div class="card" style="border-color:rgba(0,212,255,.15)">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:12px">Backend API</div>
+          <table>
+            <tr><td style="color:var(--w);font-weight:600">Runtime</td><td>Node.js (Express) ou Python (FastAPI)</td></tr>
+            <tr><td style="color:var(--w);font-weight:600">DB</td><td>Firebase Firestore</td></tr>
+            <tr><td style="color:var(--w);font-weight:600">Storage</td><td>Firebase Storage (fichiers générés)</td></tr>
+            <tr><td style="color:var(--w);font-weight:600">Queue</td><td>BullMQ (Redis) — jobs async vidéo</td></tr>
+            <tr><td style="color:var(--w);font-weight:600">Deploy</td><td>Railway.app (~5$/mois)</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="border-color:rgba(131,56,236,.2);height:100%">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--pur);margin-bottom:12px">APIs Externes</div>
+          <table>
+            <tr>
+              <td style="color:var(--w);font-weight:600">Script</td>
+              <td><span style="color:var(--g)">OpenAI GPT-4o</span><br><small>Clé API Underrated (mutualisée)</small></td>
+            </tr>
+            <tr>
+              <td style="color:var(--w);font-weight:600">Voix</td>
+              <td><span style="color:var(--pk)">ElevenLabs</span><br><small>Voice ID par défaut + clone optionnel</small></td>
+            </tr>
+            <tr>
+              <td style="color:var(--w);font-weight:600">Images</td>
+              <td><span style="color:var(--gold)">DALL-E 3 ou Replicate</span><br><small>Replicate = accès Midjourney/SDXL via API</small></td>
+            </tr>
+            <tr>
+              <td style="color:var(--w);font-weight:600">Vidéo</td>
+              <td><span style="color:var(--pur)">Runway Gen-3 API</span><br><small>Image-to-video, 4 secondes/clip</small></td>
+            </tr>
+            <tr>
+              <td style="color:var(--w);font-weight:600">ZIP</td>
+              <td><span style="color:var(--cyan)">Archiver.js (Node)</span><br><small>Assembly automatique + upload Firebase</small></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schéma flow technique -->
+    <div class="card" style="border-color:rgba(58,134,255,.15)">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:16px">Flow technique complet</div>
+      <pre><span class="comment">// Élève clique "Générer" → Frontend appelle Backend</span>
+
+<span class="kw">POST</span> /api/generate
+{
+  <span class="str">"serieId"</span>: <span class="str">"abc123"</span>,        <span class="comment">// Config série depuis Firestore</span>
+  <span class="str">"episodeNum"</span>: <span class="num">12</span>,
+  <span class="str">"contexte"</span>: <span class="str">"Bananello éliminé..."</span>,
+  <span class="str">"commentaires"</span>: <span class="str">"Alliance Cerisa+Fraisio"</span>
+}
+
+<span class="comment">// Backend orchestre les 4 étapes en async :</span>
+
+<span class="comment">// 1. Script via OpenAI GPT-4o</span>
+<span class="kw">const</span> script = <span class="kw">await</span> <span class="fn">generateScript</span>(contexte, serieConfig);
+
+<span class="comment">// 2. Voix via ElevenLabs</span>
+<span class="comment">// 3. Images via DALL-E / Replicate</span>
+<span class="comment">// → Ces deux en parallèle (Promise.all)</span>
+<span class="kw">const</span> [audio, images] = <span class="kw">await</span> Promise.all([
+  <span class="fn">generateVoice</span>(script.voixoff),
+  <span class="fn">generateImages</span>(script.scenes)  <span class="comment">// 5 scènes</span>
+]);
+
+<span class="comment">// 4. Vidéo via Runway (image → video, séquentiel)</span>
+<span class="kw">const</span> clips = <span class="kw">await</span> <span class="fn">generateVideos</span>(images);
+
+<span class="comment">// 5. ZIP + upload Firebase Storage</span>
+<span class="kw">const</span> zipUrl = <span class="kw">await</span> <span class="fn">packAndUpload</span>({ audio, images, clips, script });
+
+<span class="comment">// 6. Retourne lien de téléchargement à l'élève</span>
+<span class="kw">return</span> { downloadUrl: zipUrl, expiresIn: <span class="str">"24h"</span> };</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ GESTION COÛTS API ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-label" style="color:var(--gold)">Business Model Outil</div>
+    <h2 class="section-title bb">GESTION <span style="color:var(--gold)">COÛTS API</span></h2>
+    <p class="section-desc">Les clés API sont mutualisées côté backend Underrated — les élèves n'ont pas à gérer ça. Deux options de modèle.</p>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card" style="border-color:rgba(0,177,64,.2)">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--g);margin-bottom:16px">Option A — Inclus dans la formation</div>
+        <table>
+          <tr><th>API</th><th>Coût / épisode</th><th>Coût / élève (30 ep)</th></tr>
+          <tr><td>GPT-4o (script)</td><td>~0.05€</td><td>~1.50€</td></tr>
+          <tr><td>ElevenLabs (voix)</td><td>~0.10€</td><td>~3.00€</td></tr>
+          <tr><td>DALL-E 3 (images)</td><td>~0.20€</td><td>~6.00€</td></tr>
+          <tr><td>Runway Gen-3 (vidéo)</td><td>~0.50€</td><td>~15.00€</td></tr>
+          <tr style="border-top:1px solid rgba(0,177,64,.2)"><td style="color:var(--w);font-weight:600">TOTAL</td><td style="color:var(--gold);font-weight:600">~0.85€</td><td style="color:var(--gold);font-weight:600">~25.50€</td></tr>
+        </table>
+        <div class="callout ok" style="margin-top:12px">
+          <div class="callout-icon">✅</div>
+          <div class="callout-body"><strong>Sur 99€ de vente :</strong> coût API ~25€ = marge ~74€. Inclure dans le prix. Message marketing : "Aucun outil à acheter, tout est fourni."</div>
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(58,134,255,.2)">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:16px">Option B — Crédits rechargeable (scale)</div>
+        <div style="font-size:13px;color:var(--dim);margin-bottom:12px">Quand la formation scale (100+ élèves), passer sur un système de crédits pour contrôler les coûts.</div>
+        <table>
+          <tr><th>Pack crédits</th><th>Prix</th><th>Épisodes</th></tr>
+          <tr><td>Starter</td><td>9€</td><td>~10 épisodes</td></tr>
+          <tr><td>Mensuel</td><td>19€</td><td>~22 épisodes</td></tr>
+          <tr><td>Pro</td><td>49€</td><td>~58 épisodes</td></tr>
+        </table>
+        <div class="callout info" style="margin-top:12px">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body"><strong>À activer quand :</strong> &gt;50 élèves actifs simultanement. Pour le lancement, Option A plus simple.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ AUTH & ACCÈS ÉLÈVES ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-label" style="color:var(--pk)">Sécurité & Accès</div>
+    <h2 class="section-title bb">AUTH <span style="color:var(--pk)">ÉLÈVES</span></h2>
+    <p class="section-desc">Seuls les acheteurs de la formation ont accès. Couplé à Teachable pour vérification automatique.</p>
+
+    <div class="card" style="border-color:rgba(255,15,123,.15)">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--pk);margin-bottom:16px">Flow d'accès</div>
+      <pre><span class="comment">// 1. Élève achète sur Teachable (99€)</span>
+<span class="comment">// 2. Teachable Webhook → Backend crée compte Firebase</span>
+
+<span class="kw">POST</span> /webhook/teachable-purchase
+{
+  <span class="str">"email"</span>: <span class="str">"eleve@gmail.com"</span>,
+  <span class="str">"product_id"</span>: <span class="str">"underrated-formation"</span>,
+  <span class="str">"status"</span>: <span class="str">"completed"</span>
+}
+
+<span class="comment">// Backend crée le compte + envoie email avec lien studio</span>
+<span class="kw">await</span> firebase.auth().<span class="fn">createUser</span>({ email, password: <span class="fn">generateTempPassword</span>() });
+<span class="kw">await</span> firestore.<span class="fn">set</span>(<span class="str">`users/${uid}`</span>, {
+  plan: <span class="str">"formation"</span>,
+  credits: <span class="num">30</span>,             <span class="comment">// 30 épisodes inclus</span>
+  purchasedAt: Date.<span class="fn">now</span>()
+});
+<span class="kw">await</span> <span class="fn">sendWelcomeEmail</span>(email, studioLink);</pre>
+    </div>
+
+    <div class="callout warn" style="margin-top:14px">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body"><strong>Important :</strong> chaque call API backend vérifie que l'utilisateur Firebase a bien <code>plan: "formation"</code> ET des crédits disponibles. Sans ça, retourne 403. Empêche le partage de compte.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PLAN DE DEV ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-label" style="color:var(--g)">Plan de développement</div>
+    <h2 class="section-title bb">ORDRE DE <span style="color:var(--g)">BUILD</span></h2>
+    <p class="section-desc">MVP en 3 semaines. Shipping avant la vente de la formation pour avoir la démo à montrer.</p>
+
+    <table style="border:1px solid var(--glass-border);border-radius:12px;overflow:hidden">
+      <thead>
+        <tr style="background:rgba(255,255,255,.03)">
+          <th>Semaine</th>
+          <th>Ce qu'on build</th>
+          <th>Résultat visible</th>
+          <th>Priorité</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--w);font-weight:600;white-space:nowrap">Semaine 1</td>
+          <td>Backend API Node.js<br>Routes : /generate-script, /generate-voice, /generate-images<br>Firebase Auth + Firestore setup</td>
+          <td>Postman appelle les APIs et reçoit les fichiers</td>
+          <td><span class="tag pk">P1</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--w);font-weight:600;white-space:nowrap">Semaine 2</td>
+          <td>Frontend React<br>4 écrans : Setup → Script → Génération → Export<br>Firebase Auth login</td>
+          <td>Workflow complet fonctionnel en local</td>
+          <td><span class="tag pk">P1</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--w);font-weight:600;white-space:nowrap">Semaine 3</td>
+          <td>Runway vidéo API + ZIP assembly<br>Webhook Teachable → création compte auto<br>Deploy Railway + Vercel</td>
+          <td>MVP en prod, accessible avec login</td>
+          <td><span class="tag pk">P1</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--w);font-weight:600;white-space:nowrap">Semaine 4+</td>
+          <td>Historique épisodes, galerie visuels<br>Système crédits, dashboard usage<br>Bots commentaires intégrés</td>
+          <td>Version complète pour scaling</td>
+          <td><span class="tag bl">P2</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="grid-2" style="margin-top:20px">
+      <div class="callout ok">
+        <div class="callout-icon">🚀</div>
+        <div class="callout-body"><strong>MVP shippable en 3 semaines :</strong> script + voix + images + export ZIP. Vidéo Runway = semaine 3. La démo suffit pour vendre la formation en parallèle.</div>
+      </div>
+      <div class="callout info">
+        <div class="callout-icon">📦</div>
+        <div class="callout-body"><strong>Repo suggéré :</strong> monorepo <code>/frontend</code> + <code>/backend</code>. Firebase project existant <code>robot-validation-produit</code> — ajouter une app <code>underrated-studio</code>.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RÉSUMÉ POUR THÉO -->
+<section style="padding-bottom:100px">
+  <div class="container">
+    <div class="section-label" style="color:var(--gold)">Résumé</div>
+    <h2 class="section-title bb">TL;DR <span style="color:var(--gold)">POUR THÉO</span></h2>
+
+    <div class="card" style="border-color:rgba(255,215,0,.2)">
+      <pre style="font-size:13px;line-height:2"><span class="comment">/*
+  UNDERRATED STUDIO — Ce qu'on veut builder
+
+  App web privée (login requis = achat formation)
+  Un élève entre : genre, personnages, contexte épisode
+  L'app appelle en séquence :
+    1. GPT-4o API       → script structuré 5 temps + cliffhanger
+    2. ElevenLabs API   → voix-off MP3 (~15s)
+    3. DALL-E/Replicate → 5 images des scènes (~1-2min)
+    4. Runway API       → 5 clips vidéo depuis images (~3-5min)
+    5. ZIP assembly     → pack téléchargeable 24h
+
+  Élève importe dans CapCut → monte → publie sur TikTok.
+
+  Stack recommandée :
+    Frontend : React + Tailwind → Vercel
+    Backend  : Node.js Express  → Railway
+    DB       : Firebase Firestore (projet existant)
+    Storage  : Firebase Storage
+    Queue    : BullMQ (jobs vidéo async)
+
+  Clés API mutualisées côté backend.
+  Auth via Firebase (créé auto après achat Teachable webhook).
+  MVP en 3 semaines. Vidéo = nice-to-have semaine 3.
+
+  Coût par épisode généré : ~0.85€
+  Prix formation : 99€ incluant ~30 épisodes = viable.
+*/</span></pre>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>UNDERRATED STUDIO — Spec Technique Confidentielle · Mai 2025</p>
+    <p style="margin-top:6px;font-size:10px">À partager avec Théo (Infra) uniquement</p>
+  </div>
+</footer>
+
+</body>
+</html>

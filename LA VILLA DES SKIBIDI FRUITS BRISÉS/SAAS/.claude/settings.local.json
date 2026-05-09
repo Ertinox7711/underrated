@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(gh api *)",
+      "Bash(ls /tmp/skill-grab/ 2>&1)",
+      "Bash(SKILLS_DIR=\"/c/Users/maths/.claude/skills\" *)",
+      "Bash(set -e)",
+      "Bash(cp -r /tmp/skill-grab/stripe-ai/skills/stripe-best-practices /c/Users/maths/.claude/skills/stripe-best-practices)",
+      "Bash(cp -r /tmp/skill-grab/stripe-ai/skills/upgrade-stripe /c/Users/maths/.claude/skills/upgrade-stripe)",
+      "Bash(cp -r /tmp/skill-grab/jezweb/plugins/integrations/skills/stripe-payments /c/Users/maths/.claude/skills/stripe-payments)",
+      "Bash(cp -r /tmp/skill-grab/openclaudia/skills/stripe-dispute /c/Users/maths/.claude/skills/stripe-dispute)",
+      "Bash(rm -rf /tmp/skill-grab && echo \"cleaned\")"
+    ]
+  }
+}

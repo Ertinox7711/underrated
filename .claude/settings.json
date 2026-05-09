@@ -1,4 +1,18 @@
 {
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "$j = [PSCustomObject]@{systemMessage='SGRR&LAW SKILLS ACTIFS → /frontend-design (UI/dashboard) | /marketing:draft-content (posts/scripts) | /marketing:campaign-plan (launches) | /marketing:email-sequence (funnels) | /seo (SEO) | /land-and-deploy (deploy) | /create-viral-content (TikTok) | /video-marketing (VSL) | /stripe-payments (Stripe) | /review (code review) | /ship (prod deploy)'; suppressOutput=$false} | ConvertTo-Json -Compress; Write-Output $j",
+            "statusMessage": "Loading project skills..."
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "Bash(git *)",

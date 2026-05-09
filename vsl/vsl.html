@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNDERRATED — Comment j'ai gagné de l'argent avec TikTok sans montrer mon visage</title>
+<meta name="description" content="Mathieu a généré des revenus réels avec TikTok en recréant du contenu Skibidi-type grâce à l'IA. Découvre exactement comment — et réplique la méthode dès cette semaine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&family=Inter:wght@300;400;500;600;700&family=League+Spartan:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:#0d1217;
+  color:#fff;
+  font-family:'Inter',sans-serif;
+  font-size:17px;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#0d1217}
+::-webkit-scrollbar-thumb{background:#3898EC;border-radius:2px}
+
+/* ── UTILS ── */
+.container{max-width:1100px;margin:0 auto;padding:0 40px}
+.container-sm{max-width:800px;margin:0 auto;padding:0 40px}
+@media(max-width:600px){.container,.container-sm{padding:0 20px}}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:12px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(13,18,23,.95);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.nav-logo{
+  font-family:'League Spartan',sans-serif;
+  font-size:20px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:#fff;
+}
+.nav-logo span{color:#28AEEA}
+.nav-cta{
+  padding:10px 24px;
+  background:#3898EC;
+  color:#fff;
+  font-family:'League Spartan',sans-serif;
+  font-weight:700;font-size:14px;
+  text-transform:uppercase;
+  border:2px solid #fff;
+  text-decoration:none;
+  cursor:pointer;
+  transition:background .2s,transform .15s;
+}
+.nav-cta:hover{background:#28AEEA;transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{
+  padding:120px 40px 80px;
+  text-align:center;
+  background:#0d1217;
+}
+.hero h1{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(36px,4.6vw,59px);
+  font-weight:700;
+  line-height:1.0;
+  letter-spacing:normal;
+  max-width:820px;
+  margin:0 auto 32px;
+}
+.hero h1 .blue{color:#28AEEA}
+
+.hero-sub{
+  font-family:'Inter',sans-serif;
+  font-size:clamp(16px,2vw,20px);
+  color:rgba(255,255,255,.65);
+  max-width:560px;
+  margin:0 auto 48px;
+  font-weight:400;
+}
+
+/* ── VIDEO CARD (style keoreveals .tf-card) ── */
+.tf-card{
+  width:min(92vw,1160px);
+  margin:0 auto 56px;
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  background:#000;
+  position:relative;
+  aspect-ratio:16/9;
+}
+@media(max-width:768px){.tf-card{border-radius:12px}}
+
+.video-thumbnail{
+  position:relative;
+  width:100%;height:100%;
+  cursor:pointer;
+  overflow:hidden;
+}
+.video-thumbnail-img{
+  width:100%;height:100%;
+  object-fit:cover;
+  filter:blur(0px);
+  transition:filter .3s;
+}
+.video-thumbnail-img.blurred{filter:blur(5px);transform:scale(1.05)}
+
+/* Wistia-style placeholder */
+.video-placeholder-bg{
+  width:100%;height:100%;
+  background:linear-gradient(135deg,#0d1217 0%,#111c26 50%,#0d1217 100%);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.video-overlay{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:20px;
+  background:rgba(0,0,0,.15);
+  transition:background .2s;
+}
+.video-overlay:hover{background:rgba(0,0,0,.25)}
+
+.play-btn{
+  width:80px;height:80px;
+  border-radius:50%;
+  background:#3898EC;
+  border:3px solid #fff;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .2s,background .2s;
+  box-shadow:0 4px 24px rgba(56,152,236,.4);
+}
+.video-overlay:hover .play-btn{transform:scale(1.08);background:#28AEEA}
+.play-btn::after{
+  content:'';
+  border-top:14px solid transparent;
+  border-bottom:14px solid transparent;
+  border-left:22px solid #fff;
+  margin-left:5px;
+}
+.video-label{
+  font-family:'Inter',sans-serif;
+  font-size:13px;color:rgba(255,255,255,.5);
+  text-transform:uppercase;letter-spacing:.12em;font-weight:600;
+}
+
+/* Live viewer counter (style keoreveals) */
+.live-counter{
+  position:absolute;top:16px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;
+  padding:6px 16px;
+  display:flex;align-items:center;gap:8px;
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:500;
+  color:rgba(255,255,255,.85);
+  white-space:nowrap;
+  z-index:10;
+}
+.live-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:#ff4444;
+  flex-shrink:0;
+  animation:pulse-red 1.5s infinite;
+}
+@keyframes pulse-red{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+#viewer-count{font-weight:700;color:#fff}
+
+/* ── STATS BAR ── */
+.stats-bar{
+  padding:48px 0;
+  border-top:1px solid rgba(255,255,255,.08);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:#0d1217;
+}
+.stats-inner{
+  display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;
+  gap:0;
+  max-width:700px;
+  margin:0 auto;
+}
+.stat-block{
+  text-align:center;
+  padding:0 60px;
+  border-right:1px solid rgba(255,255,255,.15);
+}
+.stat-block:last-of-type{border-right:none}
+.stat-num{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(36px,5vw,54px);
+  font-weight:700;
+  color:#fff;
+  line-height:1;
+  margin-bottom:6px;
+}
+.stat-num .blue{color:#28AEEA}
+.stat-lbl{
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  color:rgba(255,255,255,.45);
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.stats-cta{
+  text-align:center;
+  margin-top:40px;
+}
+
+/* ── CTA BUTTON (primary) ── */
+.btn-blue{
+  display:inline-block;
+  padding:15px 35px;
+  background:#3898EC;
+  color:#fff;
+  font-family:'League Spartan',sans-serif;
+  font-weight:700;font-size:22px;
+  text-transform:uppercase;
+  border:2px solid #fff;
+  text-decoration:none;
+  cursor:pointer;
+  transition:background .2s,transform .15s;
+  letter-spacing:.02em;
+}
+.btn-blue:hover{background:#28AEEA;transform:translateY(-2px)}
+
+/* ── QUIZ SECTION ── */
+.quiz-section{
+  padding:80px 0;
+  background:#111820;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.quiz-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+  align-items:center;
+}
+@media(max-width:760px){.quiz-grid{grid-template-columns:1fr;gap:40px}}
+
+.quiz-label{
+  font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:700;
+  color:#28AEEA;
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  margin-bottom:16px;
+}
+.quiz-question{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(22px,3vw,32px);
+  font-weight:700;
+  line-height:1.2;
+  margin-bottom:32px;
+  color:#fff;
+}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+.quiz-opt{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:16px 20px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.03);
+  cursor:pointer;
+  transition:all .2s;
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  font-weight:500;
+  color:rgba(255,255,255,.7);
+  text-align:left;
+}
+.quiz-opt:hover{
+  border-color:#3898EC;
+  color:#fff;
+  background:rgba(56,152,236,.08);
+}
+.quiz-opt.selected{
+  border-color:#3898EC;
+  background:rgba(56,152,236,.12);
+  color:#fff;
+}
+.quiz-opt-num{
+  font-family:'Inconsolata',monospace;
+  font-size:13px;
+  font-weight:700;
+  color:#3898EC;
+  min-width:18px;
+  padding-top:1px;
+}
+.quiz-photo{
+  aspect-ratio:4/5;
+  background:#111;
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.quiz-photo img{width:100%;height:100%;object-fit:cover}
+.quiz-photo-placeholder{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:100%;height:100%;
+  gap:12px;
+  font-size:48px;
+}
+.quiz-photo-placeholder p{
+  font-family:'Inter',sans-serif;
+  font-size:14px;color:rgba(255,255,255,.3);
+  text-align:center;
+}
+
+.quiz-result{
+  display:none;
+  text-align:center;
+  padding:32px 0;
+}
+.quiz-result.show{display:block}
+.quiz-result-title{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(28px,4vw,44px);
+  font-weight:700;
+  color:#fff;
+  margin-bottom:12px;
+}
+.quiz-result-title span{color:#28AEEA}
+.quiz-result-text{
+  font-family:'Inter',sans-serif;
+  font-size:17px;
+  color:rgba(255,255,255,.6);
+  max-width:480px;
+  margin:0 auto 28px;
+  line-height:1.6;
+}
+
+/* ── PROOF ROW ── */
+.proof-row{
+  padding:80px 0;
+  background:#0d1217;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.proof-label{
+  text-align:center;
+  font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:700;
+  color:rgba(255,255,255,.4);
+  text-transform:uppercase;letter-spacing:.15em;
+  margin-bottom:40px;
+}
+.proof-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+}
+@media(max-width:900px){.proof-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.proof-grid{grid-template-columns:1fr 1fr;gap:12px}}
+
+.proof-card{
+  background:#111820;
+  border:1px solid rgba(255,255,255,.06);
+  overflow:hidden;
+  border-radius:4px;
+}
+.proof-thumb{
+  aspect-ratio:9/16;
+  background:#111;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  cursor:pointer;
+  font-size:36px;
+  overflow:hidden;
+}
+.proof-thumb::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.3);
+}
+.proof-thumb img{
+  width:100%;height:100%;
+  object-fit:cover;
+  filter:blur(5px);
+  transform:scale(1.05);
+  transition:filter .3s,transform .3s;
+}
+.proof-card:hover .proof-thumb img{filter:blur(0);transform:scale(1)}
+.proof-thumb-play{
+  position:absolute;z-index:1;
+  width:44px;height:44px;
+  border-radius:50%;
+  background:#3898EC;
+  border:2px solid #fff;
+  display:flex;align-items:center;justify-content:center;
+}
+.proof-thumb-play::after{
+  content:'';
+  border-top:8px solid transparent;
+  border-bottom:8px solid transparent;
+  border-left:13px solid #fff;
+  margin-left:3px;
+}
+.proof-info{padding:14px 16px}
+.proof-name{
+  font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;
+}
+.proof-amount{
+  font-family:'League Spartan',sans-serif;
+  font-size:22px;font-weight:700;
+  color:#28AEEA;
+}
+
+/* ── HOOK ── */
+.hook-section{
+  padding:80px 0;
+  background:#0d1217;
+  border-top:1px solid rgba(255,255,255,.06);
+  text-align:center;
+}
+.hook-section blockquote{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(22px,3.5vw,42px);
+  font-weight:700;
+  line-height:1.2;
+  max-width:760px;
+  margin:0 auto 24px;
+}
+.hook-section blockquote em{
+  font-style:normal;
+  color:#28AEEA;
+}
+.hook-section p{
+  font-family:'Inter',sans-serif;
+  font-size:17px;
+  color:rgba(255,255,255,.55);
+  max-width:620px;
+  margin:0 auto;
+  line-height:1.65;
+}
+.hook-section p strong{color:#fff}
+
+/* ── BENEFITS ── */
+.benefits-section{
+  padding:80px 0;
+  background:#111820;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.benefits-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:center;
+}
+@media(max-width:760px){.benefits-grid{grid-template-columns:1fr;gap:40px}}
+
+.benefits-label{
+  font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:700;
+  color:#28AEEA;
+  text-transform:uppercase;letter-spacing:.15em;
+  margin-bottom:12px;
+}
+.benefits-title{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(28px,4vw,48px);
+  font-weight:700;
+  line-height:1.1;
+  margin-bottom:32px;
+}
+.checklist{display:flex;flex-direction:column;gap:16px;margin-bottom:36px}
+.check-item{
+  display:flex;align-items:flex-start;gap:14px;
+  font-family:'Inter',sans-serif;
+  font-size:16px;color:rgba(255,255,255,.8);
+  line-height:1.4;
+}
+.check-icon{
+  width:22px;height:22px;
+  border-radius:50%;
+  background:#3898EC;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  margin-top:1px;
+}
+.check-icon::after{
+  content:'✓';
+  font-size:12px;
+  font-weight:700;
+  color:#fff;
+}
+
+/* Leaderboard card */
+.leaderboard-card{
+  background:linear-gradient(135deg,#e8632a,#f09030,#e8632a);
+  padding:40px;
+  text-align:center;
+  border-radius:4px;
+  color:#fff;
+}
+.lb-top{
+  font-family:'Inter',sans-serif;
+  font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.2em;
+  opacity:.8;
+  margin-bottom:8px;
+}
+.lb-title{
+  font-family:'League Spartan',sans-serif;
+  font-size:18px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;
+  margin-bottom:24px;
+}
+.lb-badge{
+  font-family:'Inter',sans-serif;
+  background:rgba(255,255,255,.15);
+  display:inline-block;
+  padding:4px 16px;
+  font-size:13px;font-weight:700;
+  margin-bottom:20px;
+}
+.lb-rank{
+  font-family:'League Spartan',sans-serif;
+  font-size:96px;font-weight:700;
+  line-height:1;
+  margin-bottom:8px;
+}
+.lb-name{
+  font-family:'Poppins',sans-serif;
+  font-size:22px;font-weight:700;
+  opacity:.9;
+}
+
+/* ── MEMBERS ── */
+.members-section{
+  padding:80px 0;
+  background:#0d1217;
+  border-top:1px solid rgba(255,255,255,.06);
+  text-align:center;
+}
+.members-title{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(32px,5vw,60px);
+  font-weight:700;
+  margin-bottom:8px;
+}
+.members-title span{color:#28AEEA}
+.members-sub{
+  font-family:'Inter',sans-serif;
+  font-size:14px;color:rgba(255,255,255,.35);
+  margin-bottom:48px;
+  font-style:italic;
+}
+
+.members-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+  margin-bottom:48px;
+}
+@media(max-width:900px){.members-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.members-grid{grid-template-columns:1fr 1fr;gap:12px}}
+
+.member-card{
+  background:#111820;
+  border:1px solid rgba(255,255,255,.06);
+  overflow:hidden;
+  border-radius:4px;
+}
+.member-thumb{
+  aspect-ratio:9/16;
+  background:#111;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  font-size:32px;
+  cursor:pointer;
+  overflow:hidden;
+}
+.member-thumb::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.25);
+}
+.member-thumb img{
+  width:100%;height:100%;
+  object-fit:cover;
+  filter:blur(5px);
+  transform:scale(1.05);
+  transition:filter .3s,transform .3s;
+}
+.member-card:hover .member-thumb img{filter:blur(0);transform:scale(1)}
+.member-thumb-play{
+  position:absolute;z-index:1;
+  width:40px;height:40px;
+  border-radius:50%;
+  background:#3898EC;
+  border:2px solid #fff;
+  display:flex;align-items:center;justify-content:center;
+}
+.member-thumb-play::after{
+  content:'';
+  border-top:7px solid transparent;
+  border-bottom:7px solid transparent;
+  border-left:11px solid #fff;
+  margin-left:2px;
+}
+.member-info{padding:12px 14px}
+.member-label{
+  font-family:'Inter',sans-serif;
+  font-size:12px;color:rgba(255,255,255,.4);font-weight:600;margin-bottom:4px;
+}
+.member-name{
+  font-family:'Poppins',sans-serif;
+  font-size:15px;font-weight:700;color:#fff;
+}
+
+/* ── PLAN SECTION ── */
+.plan-section{
+  padding:80px 0;
+  background:#111820;
+  border-top:1px solid rgba(255,255,255,.06);
+  text-align:center;
+}
+.plan-title{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(24px,4vw,44px);
+  font-weight:700;
+  line-height:1.15;
+  max-width:680px;
+  margin:0 auto 16px;
+}
+.plan-title span{color:#28AEEA}
+.plan-sub{
+  font-family:'Inter',sans-serif;
+  font-size:16px;color:rgba(255,255,255,.5);
+  margin-bottom:56px;
+}
+.plan-cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+  margin-bottom:56px;
+}
+@media(max-width:760px){.plan-cards{grid-template-columns:1fr;gap:16px}}
+
+.plan-card{
+  background:rgba(0,0,0,.4);
+  border:1px solid rgba(255,255,255,.1);
+  padding:36px 28px;
+  text-align:left;
+  transition:border-color .2s;
+  border-radius:4px;
+}
+.plan-card:hover{border-color:rgba(56,152,236,.4)}
+.plan-card-icon{font-size:36px;margin-bottom:20px}
+.plan-card-title{
+  font-family:'League Spartan',sans-serif;
+  font-size:20px;font-weight:700;
+  margin-bottom:12px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.plan-card-desc{
+  font-family:'Inter',sans-serif;
+  font-size:15px;color:rgba(255,255,255,.55);
+  line-height:1.65;
+}
+.plan-card-desc strong{color:rgba(255,255,255,.85);font-weight:600}
+
+/* ── COMMUNITY ── */
+.community-section{
+  padding:80px 0;
+  background:#0d1217;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.community-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:center;
+}
+@media(max-width:760px){.community-grid{grid-template-columns:1fr;gap:40px}}
+
+.community-label{
+  font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:700;
+  color:#28AEEA;
+  text-transform:uppercase;letter-spacing:.15em;
+  margin-bottom:12px;
+}
+.community-title{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(28px,4vw,52px);
+  font-weight:700;
+  line-height:1.05;
+  text-transform:uppercase;
+  margin-bottom:24px;
+}
+.community-text{
+  font-family:'Inter',sans-serif;
+  font-size:16px;
+  color:rgba(255,255,255,.6);
+  line-height:1.7;
+  margin-bottom:16px;
+}
+.community-text strong{color:#fff}
+
+.community-stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  margin:32px 0 36px;
+}
+.comm-stat{
+  border:1px solid rgba(255,255,255,.1);
+  padding:20px;
+  text-align:center;
+  border-radius:4px;
+}
+.comm-stat-num{
+  font-family:'League Spartan',sans-serif;
+  font-size:32px;font-weight:700;
+  color:#28AEEA;
+  margin-bottom:4px;
+}
+.comm-stat-lbl{
+  font-family:'Inter',sans-serif;
+  font-size:12px;color:rgba(255,255,255,.4);
+  text-transform:uppercase;letter-spacing:.08em;
+}
+
+.community-visual{
+  background:#111820;
+  border:1px solid rgba(255,255,255,.06);
+  padding:40px;
+  border-radius:8px;
+}
+.discord-mock{
+  background:#1e1f22;
+  border-radius:8px;
+  padding:20px;
+  text-align:left;
+}
+.dm-header{
+  font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:700;
+  color:rgba(255,255,255,.8);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  padding-bottom:12px;
+  margin-bottom:16px;
+}
+.dm-item{
+  display:flex;gap:10px;align-items:flex-start;
+  margin-bottom:12px;
+}
+.dm-avi{
+  width:32px;height:32px;border-radius:50%;
+  background:#3898EC;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.dm-content{font-size:13px;line-height:1.4}
+.dm-name{
+  font-family:'Poppins',sans-serif;
+  font-weight:700;color:#28AEEA;font-size:12px;margin-bottom:2px;
+}
+.dm-text{
+  font-family:'Inter',sans-serif;
+  color:rgba(255,255,255,.7);
+}
+
+/* ── STORY ── */
+.story-section{
+  padding:100px 0 80px;
+  background:#111820;
+  border-top:1px solid rgba(255,255,255,.06);
+  text-align:center;
+}
+.story-section h2{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(26px,4vw,44px);
+  font-weight:700;
+  margin-bottom:24px;
+  max-width:640px;
+  margin-left:auto;margin-right:auto;
+}
+.story-section p{
+  font-family:'Inter',sans-serif;
+  font-size:17px;
+  color:rgba(255,255,255,.6);
+  line-height:1.75;
+  max-width:620px;
+  margin:0 auto 16px;
+}
+.story-section p strong{color:#fff}
+.story-section .story-highlight{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(20px,3vw,32px);
+  font-weight:700;
+  color:#fff;
+  margin:32px auto;
+  max-width:600px;
+}
+.story-section .story-highlight span{color:#28AEEA}
+.story-section .story-img{
+  max-width:520px;
+  margin:40px auto;
+  aspect-ratio:4/3;
+  background:#111;
+  display:flex;align-items:center;justify-content:center;
+  font-size:48px;
+  color:rgba(255,255,255,.2);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:4px;
+}
+
+/* ── FAQ ── */
+.faq-section{
+  padding:80px 0;
+  background:#0d1217;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.faq-title{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(28px,4vw,48px);
+  font-weight:700;
+  text-align:center;
+  margin-bottom:48px;
+}
+.faq-list{
+  max-width:780px;
+  margin:0 auto;
+  display:flex;flex-direction:column;gap:2px;
+}
+.faq-item{overflow:hidden}
+.faq-q{
+  width:100%;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 28px;
+  background:#111820;
+  border:1px solid rgba(255,255,255,.06);
+  cursor:pointer;
+  font-family:'Inter',sans-serif;
+  font-weight:700;font-size:17px;
+  color:#fff;
+  text-align:left;
+  transition:background .15s;
+}
+.faq-q:hover{background:#13192080}
+.faq-icon{
+  font-size:22px;color:#3898EC;
+  transition:transform .25s;flex-shrink:0;margin-left:16px;
+}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-a{
+  max-height:0;overflow:hidden;
+  background:#0a0d12;
+  border:1px solid rgba(255,255,255,.04);
+  border-top:none;
+  padding:0 28px;
+  font-family:'Inter',sans-serif;
+  color:rgba(255,255,255,.6);
+  font-size:16px;line-height:1.7;
+  transition:max-height .3s ease,padding .2s;
+}
+.faq-item.open .faq-a{
+  max-height:400px;
+  padding:20px 28px;
+}
+
+/* ── FINAL CTA ── */
+.final-cta{
+  padding:120px 40px;
+  background:#0d1217;
+  border-top:1px solid rgba(255,255,255,.08);
+  text-align:center;
+}
+.final-cta h2{
+  font-family:'League Spartan',sans-serif;
+  font-size:clamp(32px,6vw,72px);
+  font-weight:700;
+  line-height:1.05;
+  max-width:700px;
+  margin:0 auto 24px;
+}
+.final-cta h2 span{color:#28AEEA}
+.final-cta-sub{
+  font-family:'Inter',sans-serif;
+  font-size:18px;
+  color:rgba(255,255,255,.5);
+  max-width:500px;
+  margin:0 auto 48px;
+  line-height:1.55;
+}
+.urgency{
+  margin-top:20px;
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  color:rgba(255,255,255,.3);
+  text-transform:uppercase;letter-spacing:.1em;
+}
+.dot{
+  display:inline-block;
+  width:8px;height:8px;
+  background:#3898EC;
+  border-radius:50%;
+  margin-right:8px;
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── FOOTER ── */
+footer{
+  padding:48px 40px;
+  background:#0a0d12;
+  border-top:1px solid rgba(255,255,255,.06);
+  text-align:center;
+}
+.footer-logo{
+  font-family:'League Spartan',sans-serif;
+  font-size:18px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(255,255,255,.15);
+  margin-bottom:20px;
+}
+footer p{
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  color:rgba(255,255,255,.18);
+  max-width:700px;
+  margin:0 auto 8px;
+  line-height:1.7;
+}
+
+/* ── SECTION DIVIDER CTA ── */
+.cta-divider{
+  padding:40px 0;
+  text-align:center;
+  border-top:1px solid rgba(255,255,255,.06);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  background:#0d1217;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .hero{padding:100px 20px 60px}
+  .stat-block{padding:0 28px}
+  .btn-blue{font-size:18px;padding:14px 28px}
+  nav{padding:12px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">UNDER<span>RATED</span></div>
+  <a href="#acces" class="nav-cta">Accéder →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>
+    J'ai gagné de l'argent avec <span class="blue">TikTok</span> avec un business que 99% des gens ne comprennent pas
+  </h1>
+  <p class="hero-sub">
+    Regarde la vidéo complète (6min) pour savoir comment
+  </p>
+
+  <!-- VIDEO CARD — remplace media-id par ton ID Wistia -->
+  <div class="tf-card">
+    <div class="live-counter">
+      <span class="live-dot"></span>
+      <span id="viewer-count">247</span> personnes regardent maintenant
+    </div>
+    <div class="video-placeholder-bg">
+      <div class="video-overlay" onclick="loadVideo(this)">
+        <div class="play-btn"></div>
+        <span class="video-label">Regarde cette vidéo avant tout</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<section class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-block">
+      <div class="stat-num"><span class="blue counter" data-target="4200000" data-suffix="M" data-divisor="1000000" data-prefix="+">+4,2M</span></div>
+      <div class="stat-lbl">Vues générées par nos créateurs</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num"><span class="blue counter" data-target="200" data-prefix="+">+200</span></div>
+      <div class="stat-lbl">Créateurs formés</div>
+    </div>
+  </div>
+  <div class="stats-cta">
+    <a href="#acces" class="btn-blue">POSTULE MAINTENANT</a>
+  </div>
+</section>
+
+<!-- QUIZ / SITUATION SELECTOR -->
+<section class="quiz-section" id="quiz">
+  <div class="container">
+    <div class="quiz-grid">
+      <div>
+        <div class="quiz-label">MATHIEU</div>
+        <div class="quiz-question">
+          Aujourd'hui, quelle situation te correspond le plus sur TikTok ?
+        </div>
+        <div class="quiz-options" id="quiz-opts">
+          <div class="quiz-opt" onclick="selectSituation(this, 0)">
+            <span class="quiz-opt-num">1 —</span>
+            <span>Je n'ai jamais créé de contenu, je ne sais pas par où commencer</span>
+          </div>
+          <div class="quiz-opt" onclick="selectSituation(this, 1)">
+            <span class="quiz-opt-num">2 —</span>
+            <span>J'ai quelques vidéos mais je n'ai jamais eu de viral</span>
+          </div>
+          <div class="quiz-opt" onclick="selectSituation(this, 2)">
+            <span class="quiz-opt-num">3 —</span>
+            <span>Je démarre ou je cherche encore ma niche et mon format</span>
+          </div>
+          <div class="quiz-opt" onclick="selectSituation(this, 3)">
+            <span class="quiz-opt-num">4 —</span>
+            <span>J'ai une audience mais je ne sais pas comment la monétiser</span>
+          </div>
+        </div>
+        <div class="quiz-result" id="quiz-result">
+          <div class="quiz-result-title">Tu es <span>au bon endroit.</span></div>
+          <p class="quiz-result-text">
+            Ce système est exactement fait pour ton profil. Accède à la formation et suis le programme étape par étape.
+          </p>
+          <a href="#acces" class="btn-blue">ACCÉDER À LA FORMATION →</a>
+        </div>
+      </div>
+      <div class="quiz-photo">
+        <div class="quiz-photo-placeholder">
+          🎯
+          <p>Ta photo ici<br><span style="font-size:11px;opacity:.5">(photo ou screenshot TikTok)</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF ROW -->
+<section class="proof-row">
+  <div class="container">
+    <div class="proof-label">Résultats de la méthode</div>
+    <div class="proof-grid">
+      <div class="proof-card">
+        <div class="proof-thumb">📱<div class="proof-thumb-play"></div></div>
+        <div class="proof-info">
+          <div class="proof-name">Lucas</div>
+          <div class="proof-amount">800K vues</div>
+        </div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-thumb">🎬<div class="proof-thumb-play"></div></div>
+        <div class="proof-info">
+          <div class="proof-name">Sarah</div>
+          <div class="proof-amount">2,1M vues générés</div>
+        </div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-thumb">💰<div class="proof-thumb-play"></div></div>
+        <div class="proof-info">
+          <div class="proof-name">Thomas</div>
+          <div class="proof-amount">8.000€ deal</div>
+        </div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-thumb">📈<div class="proof-thumb-play"></div></div>
+        <div class="proof-info">
+          <div class="proof-name">Nathan</div>
+          <div class="proof-amount">3.200€/mois</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-divider">
+  <a href="#acces" class="btn-blue">POSTULE MAINTENANT</a>
+</div>
+
+<!-- HOOK -->
+<section class="hook-section">
+  <div class="container-sm">
+    <blockquote>
+      Le contenu IA ne rend pas <em>riche</em> par hasard.<br>
+      Il récompense ceux qui exécutent.
+    </blockquote>
+    <p>
+      <strong>$7,2 milliards générés en 2025 sur TikTok via le creator economy.</strong><br>
+      Pendant que certains doutent, d'autres prennent leur part.
+    </p>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="benefits-section" id="formation">
+  <div class="container">
+    <div class="benefits-grid">
+      <div>
+        <div class="benefits-label">La méthode Underrated</div>
+        <h2 class="benefits-title">
+          C'est quoi exactement ?
+        </h2>
+        <div class="checklist">
+          <div class="check-item">
+            <div class="check-icon"></div>
+            <span>Créer une série IA virale (Skibidi-type) sans montrer ton visage</span>
+          </div>
+          <div class="check-item">
+            <div class="check-icon"></div>
+            <span>Travailler avec des process clairs — 1 épisode/jour en 2-3h</span>
+          </div>
+          <div class="check-item">
+            <div class="check-icon"></div>
+            <span>Un modèle extrêmement scalable — contenu + brand deals + formation</span>
+          </div>
+          <div class="check-item">
+            <div class="check-icon"></div>
+            <span>Aucun besoin d'audience personnelle ni de montrer son visage</span>
+          </div>
+        </div>
+        <a href="#acces" class="btn-blue">POSTULE MAINTENANT</a>
+      </div>
+      <div>
+        <div class="leaderboard-card">
+          <div class="lb-top">MONTHLY LEADERBOARD</div>
+          <div class="lb-title">UNDERRATED CREATORS</div>
+          <div class="lb-badge">France &nbsp;&nbsp; 2025</div>
+          <div class="lb-rank">#2</div>
+          <div class="lb-name">Mathieu.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMBERS -->
+<section class="members-section">
+  <div class="container">
+    <h2 class="members-title">Tous Nos Membres <span>Gagnent.</span></h2>
+    <p class="members-sub">+4M€ générés depuis 2024</p>
+    <div class="members-grid">
+      <div class="member-card">
+        <div class="member-thumb">🙋<div class="member-thumb-play"></div></div>
+        <div class="member-info">
+          <div class="member-label">Première vidéo virale en 2 semaines</div>
+          <div class="member-name">Kilian D.</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-thumb">👩<div class="member-thumb-play"></div></div>
+        <div class="member-info">
+          <div class="member-label">Première vidéo virale en 7 jours</div>
+          <div class="member-name">Emma F.</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-thumb">👦<div class="member-thumb-play"></div></div>
+        <div class="member-info">
+          <div class="member-label">8.000€ en 90 jours</div>
+          <div class="member-name">Thomas B.</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-thumb">🧑<div class="member-thumb-play"></div></div>
+        <div class="member-info">
+          <div class="member-label">3.200€ — Premier Mois</div>
+          <div class="member-name">Nathan V.</div>
+        </div>
+      </div>
+    </div>
+    <a href="#acces" class="btn-blue">POSTULE MAINTENANT</a>
+  </div>
+</section>
+
+<!-- PLAN -->
+<section class="plan-section">
+  <div class="container">
+    <h2 class="plan-title">
+      Ton Plan Pour Atteindre <span>10.000€/mois</span><br>En 90 Jours Avec La Méthode Underrated
+    </h2>
+    <p class="plan-sub">3 piliers. Tout inclus dans la formation.</p>
+    <div class="plan-cards">
+      <div class="plan-card">
+        <div class="plan-card-icon">🔒</div>
+        <div class="plan-card-title">Discussion Privée</div>
+        <p class="plan-card-desc">
+          Mathieu est disponible pour répondre à tes questions et t'aider à <strong>scaler plus vite</strong>. Accès direct, pas de filtre.
+        </p>
+      </div>
+      <div class="plan-card">
+        <div class="plan-card-icon">🎯</div>
+        <div class="plan-card-title">Coachings Live</div>
+        <p class="plan-card-desc">
+          2 sessions de groupe chaque semaine animées par des créateurs qui génèrent <strong>5 chiffres / mois</strong>. Plus tu travailles, plus tu scales.
+        </p>
+      </div>
+      <div class="plan-card">
+        <div class="plan-card-icon">👥</div>
+        <div class="plan-card-title">Communauté</div>
+        <p class="plan-card-desc">
+          Accès 24h/24 à des <strong>centaines de créateurs chaque mois</strong>. Tu exécutes. Tu postes. Tu grandis. Comme les autres avant toi.
+        </p>
+      </div>
+    </div>
+    <a href="#acces" class="btn-blue">POSTULE MAINTENANT</a>
+  </div>
+</section>
+
+<!-- COMMUNITY -->
+<section class="community-section">
+  <div class="container">
+    <div class="community-grid">
+      <div>
+        <div class="community-label">Notre communauté</div>
+        <h2 class="community-title">
+          COMMUNAUTÉ #1<br>CONTENU IA<br>EN FRANCE
+        </h2>
+        <p class="community-text">
+          99% des créateurs font l'erreur de travailler seuls sans se comparer à des gens qui réussissent.
+        </p>
+        <p class="community-text">
+          Chez Underrated, tu rejoins un groupe de créateurs qui génèrent <strong>déjà des millions de vues chaque mois</strong>. Tu vois leurs résultats. Tu vois leurs chiffres. Comme tous ceux qui ont rejoint avant toi.
+        </p>
+        <div class="community-stats">
+          <div class="comm-stat">
+            <div class="comm-stat-num counter" data-target="200" data-prefix="+">+200</div>
+            <div class="comm-stat-lbl">Membres actifs</div>
+          </div>
+          <div class="comm-stat">
+            <div class="comm-stat-num counter" data-target="42" data-suffix=",2M">4,2M</div>
+            <div class="comm-stat-lbl">Vues / mois</div>
+          </div>
+        </div>
+        <a href="#acces" class="btn-blue">POSTULE MAINTENANT</a>
+      </div>
+      <div class="community-visual">
+        <div class="discord-mock">
+          <div class="dm-header"># résultats-membres</div>
+          <div class="dm-item">
+            <div class="dm-avi">🎯</div>
+            <div class="dm-content">
+              <div class="dm-name">Lucas R.</div>
+              <div class="dm-text">800K vues sur mon 3ème épisode 🔥 la méthode hook fonctionne vraiment</div>
+            </div>
+          </div>
+          <div class="dm-item">
+            <div class="dm-avi">💸</div>
+            <div class="dm-content">
+              <div class="dm-name">Thomas B.</div>
+              <div class="dm-text">Brand deal closé — 8K€. Template DM exact comme dans le module 5</div>
+            </div>
+          </div>
+          <div class="dm-item">
+            <div class="dm-avi">📈</div>
+            <div class="dm-content">
+              <div class="dm-name">Sarah M.</div>
+              <div class="dm-text">40K abonnés en 60 jours. Prochaine étape : formation 97€ en bio</div>
+            </div>
+          </div>
+          <div class="dm-item">
+            <div class="dm-avi">🚀</div>
+            <div class="dm-content">
+              <div class="dm-name">Nathan V.</div>
+              <div class="dm-text">3.200€ ce mois — meilleur mois depuis que j'ai commencé</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="story-section">
+  <div class="container-sm">
+    <h2>J'ai démarré au même stade que toi.</h2>
+    <p>
+      Peu d'argent, pas de diplôme qui ne m'a mené nulle part.
+    </p>
+    <p>
+      J'ai tout essayé pour gagner ma liberté financière : crypto, NFT, résell de sneakers, dropshipping.
+    </p>
+    <p>
+      Aucun résultat.
+    </p>
+    <p>
+      J'ai dû enchaîner les boulots mal payés : vendeur chez Décathlon, cuisine centrale...
+    </p>
+    <div class="story-img">📱</div>
+    <h3 style="font-family:'League Spartan',sans-serif;font-size:clamp(22px,3.5vw,38px);font-weight:700;margin-bottom:20px">
+      Jusqu'à ce que je découvre <span style="color:#28AEEA">TikTok IA</span>
+    </h3>
+    <p>
+      8 mois après m'être lancé, je faisais des mois à +20K€.
+    </p>
+    <p>
+      C'est là que j'ai commencé à le documenter, en mai 2023.
+    </p>
+    <p>
+      Aujourd'hui, <strong>je génère plus de 4M vues par mois avec mon agence</strong> et c'est loin d'être fini.
+    </p>
+    <p>
+      Je n'enseigne pas un concept, mais <strong>un système que j'exécute encore aujourd'hui</strong> et que d'autres appliquent avec succès.
+    </p>
+    <p>
+      Ce business ne fonctionne pas sans effort, mais si tu sais t'exécuter et être constant, <strong>le succès des autres peut devenir le tien.</strong>
+    </p>
+    <br>
+    <a href="#acces" class="btn-blue">POSTULE MAINTENANT</a>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <h2 class="faq-title">Questions Fréquentes</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Pour qui est fait ce programme ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Pour les personnes déterminées à changer de vie financière. Si tu es dans une situation où tu veux la liberté financière, que tu cherches la liberté de travailler quand et où tu veux, alors tu es au bon endroit.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Le contenu IA est-il légal ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Oui. Tu crées tes propres personnages et tes propres histoires avec des outils IA. Tu ne copies aucun contenu existant — tu t'inspires d'un genre (comme un auteur de roman s'inspire d'un genre sans plagier). Aucun problème légal enregistré avec nos membres à ce jour.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          J'ai peu de temps libre, vais-je y arriver ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Ce programme est conçu pour ceux qui ont un emploi du temps chargé. 1-2h par jour suffisent pour commencer à obtenir les premiers résultats à leur rythme. Certains membres le font en parallèle d'un job à temps plein.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Y a-t-il un coaching inclus ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Oui. Tu peux poser tes questions 24h/24 à des membres qualifiés (5-6 chiffres/mois avec leur agence). Des coachs spécialisés se rendent également disponibles. 2 coachings live sont tenus chaque semaine.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Et si je n'obtiens pas de résultats ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Si tu appliques toutes les étapes de la formation et que tu participes aux coachings de groupe, <strong>les résultats sont garantis</strong>. En revanche, si tu n'es pas prêt à travailler et à donner ton temps pour monter ton agence, tu ne pourrais pas réussir. On ne fait pas le travail à ta place. On te donne toutes les clés pour réussir, et on t'accompagne jusqu'à ce que tu deviennes un créateur à succès.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Quel est le coût des outils IA ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          ChatGPT Plus : 20€/mois. Midjourney : 10€/mois. ElevenLabs : 5€/mois. CapCut : gratuit. Budget total : 50-80€/mois pour démarrer sérieusement. Rentabilisé dès le premier brand deal ou vente de formation.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Ça marche sur YouTube et Instagram aussi ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Oui. La stratégie principale est TikTok (algo le plus favorable pour démarrer de zéro), mais le même contenu est republié sur YouTube Shorts et Instagram Reels. Ça multiplie la portée sans travail supplémentaire.
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Quand est-ce que j'accède à la formation ?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          Accès immédiat après paiement. Email de confirmation + lien de connexion en moins de 2 minutes. Tu peux commencer le module 1 dans les 5 minutes suivant ton achat.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MORE TESTIMONIALS -->
+<section class="members-section" style="padding:60px 0">
+  <div class="container">
+    <p class="proof-label">Encore Des Résultats</p>
+    <div class="members-grid">
+      <div class="member-card">
+        <div class="member-thumb">🎬<div class="member-thumb-play"></div></div>
+        <div class="member-info">
+          <div class="member-label">389K vues avec 3 modèles</div>
+          <div class="member-name">Kevin M.</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-thumb">📊<div class="member-thumb-play"></div></div>
+        <div class="member-info">
+          <div class="member-label">90K générés avec l'IA</div>
+          <div class="member-name">Jade L.</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-thumb">💬<div class="member-thumb-play"></div></div>
+        <div class="member-info">
+          <div class="member-label">203K en 90 jours</div>
+          <div class="member-name">Hugo — Feedback Général</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-thumb">🌟<div class="member-thumb-play"></div></div>
+        <div class="member-info">
+          <div class="member-label">105K par mois à 18 ans</div>
+          <div class="member-name">Axel R.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta" id="acces">
+  <h2>
+    C'EST MAINTENANT<br>QUE ÇA <span>COMMENCE</span>
+  </h2>
+  <p class="final-cta-sub">
+    La série que tu vas créer cette semaine sera en ligne dans 7 jours. Le premier viral peut arriver n'importe quand. La seule chose qui te sépare de ça, c'est de commencer.
+  </p>
+  <a href="#" class="btn-blue">ACCÉDER À LA FORMATION →</a>
+  <p class="urgency">
+    <span class="dot"></span>297€ · Accès à vie · Places limitées cette semaine
+  </p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">UNDERRATED</div>
+  <p>
+    <strong style="color:rgba(255,255,255,.3)">Mentions légales & Avertissement sur les résultats</strong>
+  </p>
+  <p>
+    Les résultats présentés sont des résultats réels obtenus par Mathieu et des membres de la formation. Ils ne sont pas représentatifs des résultats moyens. Certains membres n'obtiennent aucun résultat, d'autres en obtiennent bien davantage. Les performances dépendent entièrement de l'effort personnel, de la régularité et de la mise en application. Aucune garantie de revenus n'est faite.
+  </p>
+  <p style="margin-top:12px">
+    © 2026 Underrated — Formation TikTok IA · Tous droits réservés
+  </p>
+</footer>
+
+<script>
+// ── QUIZ ──
+function selectSituation(el, idx) {
+  document.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  setTimeout(() => {
+    document.getElementById('quiz-opts').style.display = 'none';
+    document.querySelector('.quiz-question').style.display = 'none';
+    const result = document.getElementById('quiz-result');
+    result.classList.add('show');
+  }, 500);
+}
+
+// ── FAQ ──
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ── VIDEO LOAD (placeholder → iframe Wistia/YouTube) ──
+function loadVideo(overlay) {
+  // Remplace l'URL par ton embed Wistia ou YouTube
+  // Exemple Wistia: https://fast.wistia.net/embed/iframe/TON_MEDIA_ID?autoPlay=true
+  // Exemple YouTube: https://www.youtube.com/embed/TON_VIDEO_ID?autoplay=1
+  const card = overlay.closest('.tf-card');
+  const iframe = document.createElement('iframe');
+  iframe.src = 'REMPLACE_PAR_TON_EMBED_URL?autoplay=1';
+  iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+  iframe.allow = 'autoplay; fullscreen';
+  iframe.allowFullscreen = true;
+  card.innerHTML = '';
+  card.appendChild(iframe);
+}
+
+// ── COUNTER ANIMATION (style keoreveals counterUp) ──
+function animateCounter(el) {
+  const target = parseFloat(el.dataset.target) || 0;
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  const divisor = parseFloat(el.dataset.divisor) || 1;
+  const duration = 1500;
+  const steps = 60;
+  const increment = target / steps;
+  let current = 0;
+  let step = 0;
+  const interval = setInterval(() => {
+    step++;
+    current += increment;
+    if (step >= steps) {
+      current = target;
+      clearInterval(interval);
+    }
+    const display = divisor !== 1
+      ? (current / divisor).toFixed(1).replace('.', ',') + 'M'
+      : Math.round(current);
+    el.textContent = prefix + display + (divisor === 1 ? suffix : '');
+  }, duration / steps);
+}
+
+// Intersection Observer — déclenche quand visible (comme keoreveals)
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !entry.target.dataset.animated) {
+      entry.target.dataset.animated = 'true';
+      animateCounter(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+
+// ── LIVE VIEWER COUNTER (fluctuant, style keoreveals) ──
+const viewerEl = document.getElementById('viewer-count');
+let viewers = 247;
+function fluctuateViewers() {
+  const delta = Math.floor(Math.random() * 7) - 3; // -3 à +3
+  viewers = Math.max(180, Math.min(340, viewers + delta));
+  if (viewerEl) viewerEl.textContent = viewers;
+  setTimeout(fluctuateViewers, Math.random() * 4000 + 2000);
+}
+fluctuateViewers();
+</script>
+</body>
+</html>

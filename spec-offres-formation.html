@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNDERRATED — 2 OFFRES · SPEC BASTIEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700;900&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050508;--bg2:#08090f;--w:#EDF2F4;--dim:rgba(255,255,255,.55);--muted:rgba(255,255,255,.25);
+  --glass:rgba(255,255,255,.03);--border:rgba(255,255,255,.08);
+  /* Offre 1 */
+  --o1:#3A86FF;--o1d:rgba(58,134,255,.12);--o1b:rgba(58,134,255,.2);
+  /* Offre 2 */
+  --o2:#FFD700;--o2d:rgba(255,215,0,.1);--o2b:rgba(255,215,0,.2);
+  /* Accents */
+  --g:#00B140;--pk:#FF0F7B;--pu:#8338EC;--cy:#00D4FF;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--w);font-family:'Manrope',sans-serif;overflow-x:hidden;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9990;opacity:.7}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--o2);border-radius:2px}
+.bb{font-family:'Bebas Neue',sans-serif;letter-spacing:.04em}
+.bc{font-family:'Barlow Condensed',sans-serif}
+.mono{font-family:'JetBrains Mono',monospace;font-size:11px}
+.container{max-width:1100px;margin:0 auto;padding:0 28px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,8,.92);backdrop-filter:blur(28px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.12em}
+.nav-logo b{color:var(--o2)}
+.nav-links{display:flex;gap:20px}
+.nav-links a{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--w)}
+
+/* HERO */
+.hero{min-height:90vh;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:56px;position:relative;z-index:1}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);border-radius:100px;padding:5px 16px;margin-bottom:22px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--o2)}
+.eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--o2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,96px);line-height:.9;letter-spacing:.04em;margin-bottom:18px}
+.hero-sub{font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--dim);max-width:580px;margin:0 auto 36px}
+
+/* SECTION */
+section{padding:64px 0;position:relative;z-index:1}
+.section-label{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
+.section-label::before{content:'';width:18px;height:1px;background:currentColor}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,4vw,54px);line-height:.95;letter-spacing:.04em;margin-bottom:10px}
+.section-desc{font-family:'Barlow Condensed',sans-serif;font-size:16px;color:var(--dim);max-width:560px;margin-bottom:36px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:48px 0}
+
+/* OFFRE CARDS */
+.offre-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+@media(max-width:800px){.offre-grid{grid-template-columns:1fr}}
+.offre{border-radius:20px;overflow:hidden}
+.offre-1{border:1px solid var(--o1b);background:rgba(58,134,255,.03)}
+.offre-2{border:1px solid var(--o2b);background:rgba(255,215,0,.03)}
+.offre-header{padding:24px 28px;border-bottom:1px solid;display:flex;justify-content:space-between;align-items:flex-start}
+.offre-1 .offre-header{border-color:var(--o1b)}
+.offre-2 .offre-header{border-color:var(--o2b)}
+.offre-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
+.offre-1 .offre-label{color:var(--o1)}
+.offre-2 .offre-label{color:var(--o2)}
+.offre-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:.04em;line-height:.95}
+.offre-price{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:.04em;text-align:right}
+.offre-1 .offre-price{color:var(--o1)}
+.offre-2 .offre-price{color:var(--o2)}
+.offre-price small{display:block;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right}
+.offre-body{padding:24px 28px}
+.offre-hook{font-size:14px;color:var(--dim);margin-bottom:20px;line-height:1.6;font-style:italic}
+.offre-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.offre-list li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--dim)}
+.offre-list li .icon{flex-shrink:0;font-size:14px;margin-top:1px}
+.offre-list li strong{color:var(--w)}
+.offre-cta{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;width:100%;cursor:pointer}
+.offre-1 .offre-cta{background:var(--o1d);border:1px solid var(--o1b);color:var(--o1)}
+.offre-2 .offre-cta{background:var(--o2d);border:1px solid var(--o2b);color:var(--o2)}
+
+/* GENERIC CARD */
+.card{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:22px;transition:border-color .3s}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:800px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+/* TAGS */
+.tag{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:2px 9px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.tag.bl{background:rgba(58,134,255,.12);color:var(--o1);border:1px solid rgba(58,134,255,.2)}
+.tag.go{background:rgba(255,215,0,.1);color:var(--o2);border:1px solid rgba(255,215,0,.2)}
+.tag.g{background:rgba(0,177,64,.1);color:var(--g);border:1px solid rgba(0,177,64,.2)}
+.tag.pk{background:rgba(255,15,123,.1);color:var(--pk);border:1px solid rgba(255,15,123,.2)}
+.tag.pu{background:rgba(131,56,236,.1);color:var(--pu);border:1px solid rgba(131,56,236,.2)}
+.tag.wh{background:rgba(255,255,255,.05);color:var(--dim);border:1px solid rgba(255,255,255,.1)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+
+/* MODULE ROW */
+.module-row{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:10px}
+.module-row-header{padding:14px 20px;display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.02)}
+.module-num{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.04em;min-width:32px}
+.module-row-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;letter-spacing:.05em;text-transform:uppercase;flex:1}
+.module-row-sub{font-size:11px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;letter-spacing:.08em;margin-top:2px}
+.module-row-body{padding:14px 20px;border-top:1px solid var(--border)}
+.module-row-body ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.module-row-body ul li{font-size:13px;color:var(--dim);display:flex;align-items:flex-start;gap:8px}
+.module-row-body ul li::before{content:'→';font-weight:700;flex-shrink:0;margin-top:1px}
+
+/* TOOL ITEM */
+.tool-cat{margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;margin-top:18px}
+.tool-cat::after{content:'';flex:1;height:1px;background:var(--border)}
+.tool-row{display:grid;grid-template-columns:140px 1fr auto;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:13px}
+.tool-row:last-child{border-bottom:none}
+.tool-name{font-weight:700;color:var(--w)}
+.tool-use{color:var(--dim)}
+.tool-how{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 9px;border-radius:6px}
+.tool-how.manual{background:rgba(58,134,255,.1);color:var(--o1);border:1px solid rgba(58,134,255,.2)}
+.tool-how.prompt{background:rgba(0,177,64,.1);color:var(--g);border:1px solid rgba(0,177,64,.2)}
+.tool-how.guide{background:rgba(255,215,0,.1);color:var(--o2);border:1px solid rgba(255,215,0,.2)}
+
+/* BOT CARD */
+.bot-card{border-radius:14px;overflow:hidden;margin-bottom:12px;border:1px solid}
+.bot-card.gold{border-color:rgba(255,215,0,.2);background:rgba(255,215,0,.02)}
+.bot-header{padding:16px 22px;border-bottom:1px solid;display:flex;align-items:center;gap:12px}
+.bot-card.gold .bot-header{border-color:rgba(255,215,0,.15);background:rgba(255,215,0,.04)}
+.bot-icon{font-size:22px}
+.bot-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:19px;letter-spacing:.05em;text-transform:uppercase;flex:1}
+.bot-card.gold .bot-name{color:var(--o2)}
+.bot-body{padding:16px 22px}
+.bot-desc{font-size:13px;color:var(--dim);margin-bottom:12px;line-height:1.6}
+.bot-steps{list-style:none;display:flex;flex-direction:column;gap:6px}
+.bot-steps li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--dim)}
+.bot-steps li .n{font-family:'Bebas Neue',sans-serif;font-size:16px;flex-shrink:0;margin-top:1px;color:var(--o2)}
+
+/* COMPARE TABLE */
+.compare{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:20px 0}
+.compare thead tr{background:rgba(255,255,255,.03)}
+.compare th{padding:12px 16px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+.compare th.o1{color:var(--o1)}
+.compare th.o2{color:var(--o2)}
+.compare td{padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;color:var(--dim);vertical-align:middle}
+.compare td:first-child{color:var(--muted);font-weight:600;font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:.04em}
+.compare tr:last-child td{border-bottom:none}
+.check{color:var(--g);font-weight:700;font-size:16px}
+.cross{color:var(--muted)}
+
+/* CALLOUT */
+.callout{border-radius:12px;padding:14px 18px;margin:14px 0;display:flex;gap:12px}
+.callout.warn{background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.15)}
+.callout.info{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.12)}
+.callout.ok{background:rgba(0,177,64,.04);border:1px solid rgba(0,177,64,.15)}
+.callout-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.callout-body{font-size:13px;color:var(--dim);line-height:1.6}
+.callout-body strong{color:var(--w)}
+
+/* FUNNEL */
+.funnel{display:flex;flex-direction:column;align-items:center;gap:0;margin:20px auto;max-width:480px}
+.funnel-step{width:100%;text-align:center;padding:14px 20px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;position:relative}
+.funnel-arrow{font-size:20px;color:var(--muted);padding:2px 0}
+
+footer{border-top:1px solid var(--border);padding:32px 28px;text-align:center;color:var(--muted);font-size:11px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.08em}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">UNDER<b>RATED</b></div>
+  <div class="nav-links">
+    <a href="#offres">2 Offres</a>
+    <a href="#formation">Formation 99€</a>
+    <a href="#accompagnement">Accompagnement 1200€</a>
+    <a href="#tools">Tools</a>
+    <a href="#build">Build</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">Spec Produit — Pour Bastien</div>
+    <h1 class="bb">2 <span style="color:var(--o1)">OFFRES</span><br>2 NIVEAUX<br><span style="color:var(--o2)">DE TOOLS</span></h1>
+    <p class="hero-sub">Formation 99€ = on enseigne la méthode + utilisation manuelle des outils. Accompagnement 1200€ = accès aux bots qui font les scripts automatiquement.</p>
+  </div>
+</section>
+
+<!-- ══════════ LES 2 OFFRES ══════════ -->
+<section id="offres">
+  <div class="container">
+    <div class="section-label" style="color:var(--o2)">Vue d'ensemble</div>
+    <h2 class="section-title bb">LES <span style="color:var(--o2)">2 OFFRES</span></h2>
+    <p class="section-desc">Deux produits distincts. Deux promesses distinctes. Deux stacks d'outils distinctes.</p>
+
+    <div class="offre-grid" id="offre-cards">
+
+      <!-- OFFRE 1 -->
+      <div class="offre offre-1">
+        <div class="offre-header">
+          <div>
+            <div class="offre-label">Offre 1 · Formation</div>
+            <div class="offre-title bb">L'ÉCOLE</div>
+          </div>
+          <div>
+            <div class="offre-price">99€</div>
+            <small class="bc" style="color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:right">accès à vie</small>
+          </div>
+        </div>
+        <div class="offre-body">
+          <p class="offre-hook">"On t'enseigne la méthode — comment créer une histoire virale, construire tes personnages, structurer tes épisodes. Comme une école, mais pour la création de contenu IA."</p>
+          <ul class="offre-list">
+            <li><span class="icon">🎓</span><div><strong>Cours de narration</strong> — comment créer une histoire qui accroche, les 10 leviers de viralité, construction des personnages</div></li>
+            <li><span class="icon">📖</span><div><strong>Méthode Underrated</strong> — structure épisode, gestion des couples, cliffhangers, vocabulaire maison</div></li>
+            <li><span class="icon">📋</span><div><strong>Ressources pédagogiques</strong> — bible de série à remplir, fiche personnages, structure épisode template</div></li>
+            <li><span class="icon">🧠</span><div><strong>L'élève apprend à penser</strong> — pas juste des outils, une vraie compétence en storytelling viral</div></li>
+          </ul>
+          <div class="offre-cta">→ Accès à l'école Underrated</div>
+        </div>
+      </div>
+
+      <!-- OFFRE 2 -->
+      <div class="offre offre-2">
+        <div class="offre-header">
+          <div>
+            <div class="offre-label">Offre 2 · Accompagnement</div>
+            <div class="offre-title bb">LES OUTILS IA</div>
+          </div>
+          <div>
+            <div class="offre-price">1200€</div>
+            <small class="bc" style="color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:right">coaching + outils</small>
+          </div>
+        </div>
+        <div class="offre-body">
+          <p class="offre-hook">"Formation complète + accès aux outils IA Underrated — les bots qui font le travail technique à ta place — + coaching 1-to-1 avec Ilame."</p>
+          <ul class="offre-list">
+            <li><span class="icon">✅</span><div><strong>Tout ce qui est dans la formation 99€</strong> (l'école)</div></li>
+            <li><span class="icon">🤖</span><div><strong>Bot générateur de scripts</strong> — saisit ton contexte, génère ton script en 30 secondes avec la structure Underrated</div></li>
+            <li><span class="icon">💬</span><div><strong>Bot analyse commentaires</strong> — scrape ta vidéo TikTok, classe les demandes de ta communauté, sort les meilleures idées pour ton prochain épisode</div></li>
+            <li><span class="icon">🎯</span><div><strong>Coaching 1-to-1 avec Ilame</strong> — sessions personnalisées, review épisodes, stratégie</div></li>
+            <li><span class="icon">💬</span><div><strong>Discord privé accompagnés</strong> — accès direct à l'équipe Underrated</div></li>
+          </ul>
+          <div class="offre-cta">→ École + Outils IA + Coaching</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE COMPARAISON -->
+    <table class="compare">
+      <thead>
+        <tr>
+          <th>Ce qui est inclus</th>
+          <th class="o1">Formation — 99€</th>
+          <th class="o2">Accompagnement — 1200€</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>4 modules vidéo (méthode complète)</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Hub d'outils + tutoriels</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Templates (bible, épisode, checklist)</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Prompts ChatGPT à copier</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Bot générateur de scripts automatique</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Bot analyse commentaires TikTok</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Coaching 1-to-1 Ilame</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Discord privé accompagnés</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════ OFFRE 1 : FORMATION ══════════ -->
+<section id="formation">
+  <div class="container">
+    <div class="section-label" style="color:var(--o1)">Offre 1 · 99€</div>
+    <h2 class="section-title bb"><span style="color:var(--o1)">FORMATION</span><br>LA MÉTHODE</h2>
+    <p class="section-desc">L'élève apprend COMMENT faire. Il utilise les outils lui-même, guidé par les modules + les templates fournis.</p>
+
+    <!-- MODULES -->
+    <div style="margin-bottom:32px">
+      <div class="module-row" style="border-color:rgba(58,134,255,.2)">
+        <div class="module-row-header">
+          <div class="module-num" style="color:var(--o1)">01</div>
+          <div>
+            <div class="module-row-title">Construire ton histoire virale</div>
+            <div class="module-row-sub">~45 min · Comment créer un univers qui accroche</div>
+          </div>
+          <div class="tags"><span class="tag bl">Concept</span><span class="tag wh">Bible</span></div>
+        </div>
+        <div class="module-row-body">
+          <ul>
+            <li>Les 10 leviers de viralité — pourquoi Skibidi Fruits marche et comment les reproduire</li>
+            <li>Choisir son genre (survie, romance, thriller, action, fantasy) + son univers visuel</li>
+            <li>Créer ses personnages : nom + design + rôle narratif (méthode Fraisita/Cerisa)</li>
+            <li>Construire sa bible de série : 20+ arcs, couples, alliances — le carburant de 60 épisodes</li>
+            <li>Développer son vocabulaire maison — la langue privée qui crée l'appartenance</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module-row" style="border-color:rgba(58,134,255,.2)">
+        <div class="module-row-header">
+          <div class="module-num" style="color:var(--o1)">02</div>
+          <div>
+            <div class="module-row-title">Écrire un épisode qui retient</div>
+            <div class="module-row-sub">~60 min · Structure obligatoire + prompts ChatGPT</div>
+          </div>
+          <div class="tags"><span class="tag bl">Script</span><span class="tag wh">Prompts</span></div>
+        </div>
+        <div class="module-row-body">
+          <ul>
+            <li>La structure 5 temps imposée : accroche → mise en place → montée → retournement → cliffhanger</li>
+            <li>Les prompts ChatGPT/Gemini exacts à copier pour générer un script en 10 min</li>
+            <li>Calibrer la durée : 60-90 secondes = magie algorithmique (comment compter)</li>
+            <li>Piloter le scénario par les commentaires : lire, filtrer, intégrer en 30 min</li>
+            <li>Les mots déclencheurs dans les titres : Révélations, Confrontations, Départ, Votes</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module-row" style="border-color:rgba(58,134,255,.2)">
+        <div class="module-row-header">
+          <div class="module-num" style="color:var(--o1)">03</div>
+          <div>
+            <div class="module-row-title">Produire l'épisode avec les outils IA</div>
+            <div class="module-row-sub">~90 min · Pipeline ElevenLabs → Midjourney → Runway → CapCut</div>
+          </div>
+          <div class="tags"><span class="tag bl">Production</span><span class="tag wh">IA</span></div>
+        </div>
+        <div class="module-row-body">
+          <ul>
+            <li>ElevenLabs : configurer sa voix, importer le script, exporter l'audio</li>
+            <li>Midjourney : prompts de personnages cohérents entre épisodes (seed + style lock)</li>
+            <li>Runway Gen-3 / Kling : transformer les images en clips vidéo 4 secondes</li>
+            <li>CapCut : assemblage, coupes &lt;2s, stickers TikTok, sous-titres, export vertical 9:16</li>
+            <li>Vignette : logo 3D doré + titre visible frame 1 — template fourni</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module-row" style="border-color:rgba(58,134,255,.2)">
+        <div class="module-row-header">
+          <div class="module-num" style="color:var(--o1)">04</div>
+          <div>
+            <div class="module-row-title">Distribuer + Monétiser</div>
+            <div class="module-row-sub">~45 min · Algo TikTok, brand deals, formation</div>
+          </div>
+          <div class="tags"><span class="tag bl">Algo</span><span class="tag wh">Revenue</span></div>
+        </div>
+        <div class="module-row-body">
+          <ul>
+            <li>Cycle publication quotidien : 6h annonce → 18h épisode → 22h relance</li>
+            <li>Gérer le manque intentionnel — comment créer l'attente (levier 3)</li>
+            <li>Brand deals : deck, pricing, comment contacter (modèle Betclic/Free/Oasis)</li>
+            <li>Construire et vendre sa propre formation avec la méthode Underrated</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOOLS HUB OFFRE 1 -->
+    <div class="section-label" style="color:var(--o1)">Formation 99€ · Tools</div>
+    <h3 class="bb" style="font-size:32px;margin-bottom:8px">HUB D'OUTILS<br><span style="color:var(--o1)">FORMATION</span></h3>
+    <p class="section-desc" style="margin-bottom:20px">L'élève utilise ces outils lui-même. La formation lui montre exactement comment. Pas d'automatisation — il apprend.</p>
+
+    <div class="card" style="border-color:var(--o1b)">
+      <!-- Script -->
+      <div class="tool-cat">✍️ Script</div>
+      <div class="tool-row">
+        <div class="tool-name">ChatGPT Pro</div>
+        <div class="tool-use">Script épisodes via prompts fournis dans la formation</div>
+        <div class="tool-how prompt">Prompts inclus</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">Gemini Advanced</div>
+        <div class="tool-use">Bible de série, arcs narratifs, variations de cliffhanger</div>
+        <div class="tool-how prompt">Prompts inclus</div>
+      </div>
+
+      <!-- Voix -->
+      <div class="tool-cat">🎙️ Voix</div>
+      <div class="tool-row">
+        <div class="tool-name">ElevenLabs</div>
+        <div class="tool-use">Génération voix-off — tutoriel setup + choix de voix inclus</div>
+        <div class="tool-how guide">Tuto vidéo</div>
+      </div>
+
+      <!-- Image -->
+      <div class="tool-cat">🎨 Visuels</div>
+      <div class="tool-row">
+        <div class="tool-name">Midjourney</div>
+        <div class="tool-use">Personnages + scènes — prompts template fournis pour cohérence</div>
+        <div class="tool-how prompt">Prompts inclus</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">DALL-E 3</div>
+        <div class="tool-use">Alternative rapide via ChatGPT — itérations concept</div>
+        <div class="tool-how guide">Tuto vidéo</div>
+      </div>
+
+      <!-- Vidéo -->
+      <div class="tool-cat">🎬 Vidéo</div>
+      <div class="tool-row">
+        <div class="tool-name">Runway Gen-3</div>
+        <div class="tool-use">Image → clip vidéo — paramètres conseillés dans le tuto</div>
+        <div class="tool-how guide">Tuto vidéo</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">Kling AI</div>
+        <div class="tool-use">Alternative Runway — qualité cinématique, moins cher</div>
+        <div class="tool-how guide">Tuto vidéo</div>
+      </div>
+
+      <!-- Montage -->
+      <div class="tool-cat">✂️ Montage</div>
+      <div class="tool-row">
+        <div class="tool-name">CapCut</div>
+        <div class="tool-use">Assemblage — template de projet CapCut fourni avec le bon format</div>
+        <div class="tool-how guide">Template inclus</div>
+      </div>
+
+      <!-- Publication -->
+      <div class="tool-cat">📱 Publication</div>
+      <div class="tool-row">
+        <div class="tool-name">TikTok Studio</div>
+        <div class="tool-use">Upload, caption, hashtags — checklist publication incluse</div>
+        <div class="tool-how guide">Checklist incluse</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">YouTube Shorts</div>
+        <div class="tool-use">Cross-posting — tuto repurpose depuis le fichier TikTok</div>
+        <div class="tool-how guide">Tuto vidéo</div>
+      </div>
+    </div>
+
+    <div class="callout info" style="margin-top:14px">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body"><strong>Ce que Bastien doit créer pour la formation :</strong> vidéos tutoriels pour chaque outil + bibliothèque de prompts à copier + templates CapCut + checklist publication + bible de série vierge à remplir. Tout ça s'héberge sur Teachable.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ OFFRE 2 : ACCOMPAGNEMENT ══════════ -->
+<section id="accompagnement">
+  <div class="container">
+    <div class="divider"></div>
+    <div class="section-label" style="color:var(--o2)">Offre 2 · 1200€</div>
+    <h2 class="section-title bb"><span style="color:var(--o2)">ACCOMPAGNEMENT</span><br>LES BOTS</h2>
+    <p class="section-desc">L'élève a accès à des bots qui font le travail technique à sa place. Il se concentre sur la créativité et la stratégie, pas sur la technique.</p>
+
+    <!-- BOT 1 : SCRIPT -->
+    <div class="bot-card gold">
+      <div class="bot-header">
+        <div class="bot-icon">✍️</div>
+        <div class="bot-name">Bot #1 — Générateur de Scripts</div>
+        <div class="tag go">Core</div>
+      </div>
+      <div class="bot-body">
+        <div class="bot-desc">L'élève remplit un formulaire simple (contexte épisode + demandes commentaires). Le bot génère un script structuré complet en 30 secondes, respectant la structure 5 temps Underrated.</div>
+        <ul class="bot-steps">
+          <li><span class="n">1</span> Élève saisit : numéro épisode + ce qui s'est passé avant + demandes commentaires</li>
+          <li><span class="n">2</span> Bot appelle GPT-4o avec le prompt système Underrated (structure imposée, vocabulaire maison, cliffhanger obligatoire)</li>
+          <li><span class="n">3</span> Script livré en 30 secondes — format séquencé [0-3s], [3-8s], [8-25s]...</li>
+          <li><span class="n">4</span> Version voix-off séparée + suggestions de titres avec mots déclencheurs</li>
+          <li><span class="n">5</span> Élève copie la voix-off dans ElevenLabs → continue son workflow</li>
+        </ul>
+        <div class="tags" style="margin-top:14px">
+          <span class="tag go">GPT-4o API</span>
+          <span class="tag wh">Interface web</span>
+          <span class="tag wh">~30 secondes</span>
+          <span class="tag wh">~0.05€/script</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOT 2 : COMMENTAIRES -->
+    <div class="bot-card gold">
+      <div class="bot-header">
+        <div class="bot-icon">💬</div>
+        <div class="bot-name">Bot #2 — Analyse Commentaires TikTok</div>
+        <div class="tag go">Levier 8</div>
+      </div>
+      <div class="bot-body">
+        <div class="bot-desc">L'élève colle l'URL de sa vidéo TikTok. Le bot scrape tous les commentaires, les classe par intention et sort un résumé des demandes narratives les plus populaires à intégrer dans le prochain épisode.</div>
+        <ul class="bot-steps">
+          <li><span class="n">1</span> Élève colle l'URL de sa vidéo TikTok publiée</li>
+          <li><span class="n">2</span> Bot scrape les commentaires (via API TikTok ou scraper)</li>
+          <li><span class="n">3</span> GPT-4 classifie chaque commentaire : demande narrative / vote personnage / hater / marque</li>
+          <li><span class="n">4</span> Résumé livré : top 5 demandes + personnages populaires + score engagement</li>
+          <li><span class="n">5</span> Élève copie les demandes dans le Bot#1 pour générer le prochain script</li>
+        </ul>
+        <div class="tags" style="margin-top:14px">
+          <span class="tag go">TikTok scraper</span>
+          <span class="tag go">GPT-4 classification</span>
+          <span class="tag wh">~2-3 min</span>
+          <span class="tag wh">Pipeline Bot#2 → Bot#1</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body"><strong>Ce que les bots NE font PAS dans l'accompagnement :</strong> génération voix, images, vidéo. L'élève fait ça lui-même avec ElevenLabs/Midjourney/Runway (appris dans la formation). Les bots accélèrent uniquement les étapes les plus chronophages : script et veille commentaires.</div>
+    </div>
+
+    <!-- TOOLS ACCOMPAGNEMENT -->
+    <div class="section-label" style="color:var(--o2);margin-top:36px">Accompagnement 1200€ · Tools</div>
+    <h3 class="bb" style="font-size:32px;margin-bottom:8px">STACK <span style="color:var(--o2)">ACCOMPAGNEMENT</span></h3>
+    <p class="section-desc" style="margin-bottom:20px">Même stack que la formation + les bots Underrated. L'élève garde le contrôle sur voix/images/vidéo car c'est là que la créativité compte.</p>
+
+    <div class="card" style="border-color:var(--o2b)">
+      <!-- Bots -->
+      <div class="tool-cat" style="color:var(--o2)">🤖 Bots Underrated (exclusif accompagnement)</div>
+      <div class="tool-row">
+        <div class="tool-name" style="color:var(--o2)">Bot Script</div>
+        <div class="tool-use">Génère script complet en 30s — contexte → GPT-4o → structure 5 temps</div>
+        <div class="tool-how" style="background:rgba(255,215,0,.1);color:var(--o2);border:1px solid rgba(255,215,0,.2)">Accès direct</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name" style="color:var(--o2)">Bot Commentaires</div>
+        <div class="tool-use">URL TikTok → scrape → classifie → résumé demandes narratives</div>
+        <div class="tool-how" style="background:rgba(255,215,0,.1);color:var(--o2);border:1px solid rgba(255,215,0,.2)">Accès direct</div>
+      </div>
+
+      <!-- Même outils que formation -->
+      <div class="tool-cat">✍️ Script (manuel en complément)</div>
+      <div class="tool-row">
+        <div class="tool-name">ChatGPT Pro</div>
+        <div class="tool-use">Pour les ajustements manuels après génération bot</div>
+        <div class="tool-how manual">Manuel</div>
+      </div>
+      <div class="tool-cat">🎙️ Voix</div>
+      <div class="tool-row">
+        <div class="tool-name">ElevenLabs</div>
+        <div class="tool-use">Génération voix-off depuis script bot — même workflow que formation</div>
+        <div class="tool-how manual">Manuel</div>
+      </div>
+      <div class="tool-cat">🎨 Visuels</div>
+      <div class="tool-row">
+        <div class="tool-name">Midjourney</div>
+        <div class="tool-use">Images personnages + scènes — prompts templates enrichis par l'accompagnement</div>
+        <div class="tool-how manual">Manuel</div>
+      </div>
+      <div class="tool-cat">🎬 Vidéo</div>
+      <div class="tool-row">
+        <div class="tool-name">Runway / Kling</div>
+        <div class="tool-use">Image → clip vidéo — même workflow formation</div>
+        <div class="tool-how manual">Manuel</div>
+      </div>
+      <div class="tool-cat">✂️ Montage + Publication</div>
+      <div class="tool-row">
+        <div class="tool-name">CapCut + TikTok</div>
+        <div class="tool-use">Identique formation — template fourni</div>
+        <div class="tool-how manual">Manuel</div>
+      </div>
+      <div class="tool-cat">💬 Coaching</div>
+      <div class="tool-row">
+        <div class="tool-name">Discord Privé</div>
+        <div class="tool-use">Channel #accompagnés — feedback direct équipe Underrated</div>
+        <div class="tool-how" style="background:rgba(131,56,236,.1);color:var(--pu);border:1px solid rgba(131,56,236,.2)">Exclusif</div>
+      </div>
+      <div class="tool-row">
+        <div class="tool-name">Sessions Ilame</div>
+        <div class="tool-use">Coaching 1-to-1 — review épisodes, stratégie, closing brand deals</div>
+        <div class="tool-how" style="background:rgba(131,56,236,.1);color:var(--pu);border:1px solid rgba(131,56,236,.2)">Exclusif</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CE QUE BASTIEN BUILD ══════════ -->
+<section id="build">
+  <div class="container">
+    <div class="divider"></div>
+    <div class="section-label" style="color:var(--g)">Pour Bastien</div>
+    <h2 class="section-title bb">CE QUE <span style="color:var(--g)">TU DOIS</span><br>CRÉER</h2>
+    <p class="section-desc">2 livrables distincts. Un pour chaque offre.</p>
+
+    <div class="grid-2">
+      <!-- Livrable 1 -->
+      <div class="card" style="border-color:var(--o1b)">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--o1);margin-bottom:14px">Livrable 1 — Formation 99€</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--dim)">
+          <li>📹 <strong style="color:var(--w)">4 modules vidéo</strong> — à tourner/enregistrer (méthode + tutos outils)</li>
+          <li>📋 <strong style="color:var(--w)">Bibliothèque de prompts</strong> — ChatGPT/Gemini/Midjourney, copiables</li>
+          <li>📄 <strong style="color:var(--w)">Templates Notion</strong> — bible de série, fiche personnages, structure épisode</li>
+          <li>📱 <strong style="color:var(--w)">Fichier CapCut template</strong> — projet pré-configuré 9:16 avec les bons réglages</li>
+          <li>✅ <strong style="color:var(--w)">Checklists</strong> — publication TikTok, review épisode avant post</li>
+          <li>🎨 <strong style="color:var(--w)">Guide personnages</strong> — comment créer cohérence visuelle entre épisodes</li>
+        </ul>
+        <div style="margin-top:14px;padding:12px;background:rgba(58,134,255,.06);border-radius:8px;font-size:12px;color:var(--dim)">
+          Tout s'héberge sur <strong style="color:var(--w)">Teachable</strong> (déjà configuré). Pas de code.
+        </div>
+      </div>
+
+      <!-- Livrable 2 -->
+      <div class="card" style="border-color:var(--o2b)">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--o2);margin-bottom:14px">Livrable 2 — Accompagnement 1200€</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--dim)">
+          <li>🤖 <strong style="color:var(--w)">Bot Script (interface web)</strong> — formulaire → GPT-4o → script structuré</li>
+          <li>💬 <strong style="color:var(--w)">Bot Commentaires</strong> — URL TikTok → scrape → résumé demandes</li>
+          <li>🔐 <strong style="color:var(--w)">Auth Firebase</strong> — seuls les 1200€ ont accès aux bots</li>
+          <li>📊 <strong style="color:var(--w)">Dashboard élève</strong> — historique des scripts générés, stats basiques</li>
+          <li>💬 <strong style="color:var(--w)">Discord #accompagnés</strong> — channel privé créé + bot de bienvenue</li>
+          <li>🗓️ <strong style="color:var(--w)">Lien calendly Ilame</strong> — booking sessions coaching automatique</li>
+        </ul>
+        <div style="margin-top:14px;padding:12px;background:rgba(255,215,0,.05);border-radius:8px;font-size:12px;color:var(--dim)">
+          Stack : <strong style="color:var(--w)">Node.js + Firebase + OpenAI API</strong>. Interface simple, pas besoin de complexe.
+        </div>
+      </div>
+    </div>
+
+    <!-- FUNNEL -->
+    <div style="margin-top:36px">
+      <div class="section-label" style="color:var(--pk)">Funnel de vente</div>
+      <h3 class="bb" style="font-size:32px;margin-bottom:20px">COMMENT <span style="color:var(--pk)">ÇA VEND</span></h3>
+      <div class="funnel">
+        <div class="funnel-step" style="background:rgba(58,134,255,.08);border:1px solid rgba(58,134,255,.2);color:var(--o1)">
+          TikTok — épisodes viraux quotidiens
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-step" style="background:rgba(58,134,255,.05);border:1px solid rgba(58,134,255,.15);font-size:13px;color:var(--dim)">
+          Bio TikTok → Landing Page
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-step" style="background:rgba(58,134,255,.1);border:1px solid var(--o1b);color:var(--o1)">
+          Formation 99€ — Teachable
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-step" style="background:rgba(58,134,255,.05);border:1px solid rgba(58,134,255,.1);font-size:13px;color:var(--dim)">
+          Upsell dans la formation + DM Ilame
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-step" style="background:rgba(255,215,0,.1);border:1px solid var(--o2b);color:var(--o2)">
+          Accompagnement 1200€ — Accès bots + coaching
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div style="margin-top:36px">
+      <div class="section-label" style="color:var(--g)">Planning</div>
+      <h3 class="bb" style="font-size:32px;margin-bottom:20px">ORDRE <span style="color:var(--g)">DE BUILD</span></h3>
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Priorité</th>
+            <th>Livrable</th>
+            <th>Délai suggéré</th>
+            <th>Offre</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag pk">P1</span></td>
+            <td style="color:var(--w)">Bot Script (formulaire + GPT-4o + output)</td>
+            <td>Semaine 1</td>
+            <td><span class="tag go">1200€</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag pk">P1</span></td>
+            <td style="color:var(--w)">Bibliothèque de prompts (Google Notion ou PDF)</td>
+            <td>Semaine 1</td>
+            <td><span class="tag bl">99€</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag pk">P1</span></td>
+            <td style="color:var(--w)">Templates (bible série + fiche perso + structure épisode)</td>
+            <td>Semaine 1-2</td>
+            <td><span class="tag bl">99€</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag bl">P2</span></td>
+            <td style="color:var(--w)">Bot Commentaires (scraper + classification GPT-4)</td>
+            <td>Semaine 2</td>
+            <td><span class="tag go">1200€</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag bl">P2</span></td>
+            <td style="color:var(--w)">Auth Firebase — accès différencié 99€ vs 1200€</td>
+            <td>Semaine 2</td>
+            <td><span class="tag wh">Infra</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag bl">P2</span></td>
+            <td style="color:var(--w)">4 modules vidéo enregistrés + montés</td>
+            <td>Semaine 2-3</td>
+            <td><span class="tag bl">99€</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag wh">P3</span></td>
+            <td style="color:var(--w)">Template CapCut + checklist publication</td>
+            <td>Semaine 3</td>
+            <td><span class="tag bl">99€</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag wh">P3</span></td>
+            <td style="color:var(--w)">Dashboard élève (historique scripts, stats)</td>
+            <td>Semaine 4+</td>
+            <td><span class="tag go">1200€</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>UNDERRATED — Spec Produit 2 Offres · Pour Bastien · Mai 2025</p>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNDERRATED — AUDIT FORMATION & TOOLS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700;900&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g:   #00B140;
+  --g2:  #00FF5E;
+  --pk:  #FF0F7B;
+  --gold:#FFD700;
+  --red: #E63946;
+  --blue:#3A86FF;
+  --pur: #8338EC;
+  --bg:  #050508;
+  --bg2: #08090f;
+  --bg3: #0d0f1a;
+  --w:   #EDF2F4;
+  --dim: rgba(255,255,255,0.45);
+  --muted: rgba(255,255,255,0.22);
+  --glass-bg:     rgba(255,255,255,0.028);
+  --glass-border: rgba(255,255,255,0.07);
+  --glow-g:  0 0 18px rgba(0,177,64,.55), 0 0 60px rgba(0,177,64,.18);
+  --glow-pk: 0 0 18px rgba(255,15,123,.55),0 0 60px rgba(255,15,123,.15);
+  --glow-go: 0 0 18px rgba(255,215,0,.55), 0 0 60px rgba(255,215,0,.15);
+  --glow-bl: 0 0 18px rgba(58,134,255,.55), 0 0 60px rgba(58,134,255,.15);
+  --glow-pu: 0 0 18px rgba(131,56,236,.55), 0 0 60px rgba(131,56,236,.15);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--w);
+  font-family:'Manrope',sans-serif;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9990;opacity:.7;
+}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--g);border-radius:2px}
+
+.bb{ font-family:'Bebas Neue',sans-serif;letter-spacing:.04em }
+.bc{ font-family:'Barlow Condensed',sans-serif }
+.upper{ text-transform:uppercase;letter-spacing:.14em;font-size:11px;font-weight:700 }
+.container{max-width:1200px;margin:0 auto;padding:0 28px}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:0 28px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(5,5,8,.85);
+  backdrop-filter:blur(28px);
+  border-bottom:1px solid var(--glass-border);
+}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.12em;color:var(--w);}
+.nav-logo b{color:var(--g);text-shadow:var(--glow-g)}
+.nav-links{display:flex;gap:24px;}
+.nav-links a{
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--w)}
+
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  text-align:center;position:relative;padding-top:60px;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,177,64,.08);border:1px solid rgba(0,177,64,.2);
+  border-radius:100px;padding:6px 16px;margin-bottom:28px;
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--g);
+}
+.hero-eyebrow::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--g);box-shadow:var(--glow-g);animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(56px,9vw,120px);line-height:.9;
+  letter-spacing:.04em;margin-bottom:20px;
+}
+.hero h1 .accent-g{color:var(--g);text-shadow:var(--glow-g)}
+.hero h1 .accent-pk{color:var(--pk);text-shadow:var(--glow-pk)}
+.hero-sub{
+  font-size:16px;color:var(--dim);max-width:640px;margin:0 auto 40px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:400;letter-spacing:.02em;
+}
+.hero-meta{
+  display:flex;gap:32px;justify-content:center;flex-wrap:wrap;
+}
+.hero-meta-item{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.hero-meta-item .num{
+  font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:.04em;
+  color:var(--g);text-shadow:var(--glow-g);
+}
+.hero-meta-item .label{
+  font-size:10px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--muted);
+}
+
+/* SECTION */
+section{padding:80px 0;position:relative;z-index:1;}
+.section-label{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;
+}
+.section-label.g{color:var(--g)}
+.section-label.pk{color:var(--pk)}
+.section-label.go{color:var(--gold)}
+.section-label.bl{color:var(--blue)}
+.section-label.pu{color:var(--pur)}
+.section-label::before{
+  content:'';width:20px;height:1px;background:currentColor;
+}
+.section-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,5vw,64px);line-height:.95;
+  letter-spacing:.04em;margin-bottom:12px;
+}
+.section-desc{font-size:15px;color:var(--dim);max-width:600px;margin-bottom:48px;font-family:'Barlow Condensed',sans-serif;font-size:16px;}
+
+/* GLASS CARD */
+.card{
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  border-radius:16px;padding:28px;
+  position:relative;overflow:hidden;
+  transition:border-color .3s,transform .3s;
+}
+.card:hover{transform:translateY(-2px)}
+.card.g:hover{border-color:rgba(0,177,64,.3)}
+.card.pk:hover{border-color:rgba(255,15,123,.3)}
+.card.go:hover{border-color:rgba(255,215,0,.3)}
+.card.bl:hover{border-color:rgba(58,134,255,.3)}
+.card.pu:hover{border-color:rgba(131,56,236,.3)}
+.card.rd:hover{border-color:rgba(230,57,70,.3)}
+
+.card-num{
+  font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:.04em;
+  opacity:.08;position:absolute;top:16px;right:24px;
+}
+.card-icon{font-size:28px;margin-bottom:12px}
+.card-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:18px;letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:8px;
+}
+.card-title.g{color:var(--g)}
+.card-title.pk{color:var(--pk)}
+.card-title.go{color:var(--gold)}
+.card-title.bl{color:var(--blue)}
+.card-title.pu{color:var(--pur)}
+.card-title.rd{color:var(--red)}
+.card-desc{font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:16px;}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:900px){
+  .grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+}
+
+/* TAG */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  border-radius:6px;padding:3px 10px;
+  font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+}
+.tag.g{background:rgba(0,177,64,.12);color:var(--g);border:1px solid rgba(0,177,64,.2)}
+.tag.pk{background:rgba(255,15,123,.12);color:var(--pk);border:1px solid rgba(255,15,123,.2)}
+.tag.go{background:rgba(255,215,0,.12);color:var(--gold);border:1px solid rgba(255,215,0,.2)}
+.tag.bl{background:rgba(58,134,255,.12);color:var(--blue);border:1px solid rgba(58,134,255,.2)}
+.tag.pu{background:rgba(131,56,236,.12);color:var(--pur);border:1px solid rgba(131,56,236,.2)}
+.tag.rd{background:rgba(230,57,70,.12);color:var(--red);border:1px solid rgba(230,57,70,.2)}
+.tag.wh{background:rgba(255,255,255,.06);color:var(--dim);border:1px solid rgba(255,255,255,.1)}
+
+/* TAGS ROW */
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+
+/* MODULE BLOCK */
+.module{
+  border:1px solid var(--glass-border);border-radius:20px;
+  overflow:hidden;margin-bottom:16px;
+}
+.module-header{
+  display:flex;align-items:center;gap:16px;
+  padding:20px 28px;background:rgba(255,255,255,.02);
+  cursor:pointer;user-select:none;
+  border-bottom:1px solid var(--glass-border);
+}
+.module-num{
+  font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.04em;
+  min-width:40px;
+}
+.module-title-wrap{flex:1}
+.module-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:20px;letter-spacing:.06em;text-transform:uppercase;
+}
+.module-duration{
+  font-size:11px;color:var(--muted);letter-spacing:.1em;font-weight:600;margin-top:2px;
+}
+.module-body{padding:24px 28px;}
+.module-body ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.module-body ul li{
+  display:flex;align-items:flex-start;gap:12px;
+  font-size:14px;color:var(--dim);
+}
+.module-body ul li::before{
+  content:'→';font-weight:700;flex-shrink:0;margin-top:1px;
+}
+.module-body ul li.go::before{color:var(--gold)}
+.module-body ul li.g::before{color:var(--g)}
+.module-body ul li.pk::before{color:var(--pk)}
+.module-body ul li.bl::before{color:var(--blue)}
+.module-body ul li.pu::before{color:var(--pur)}
+.levier-ref{
+  font-size:10px;font-weight:700;letter-spacing:.1em;padding:2px 7px;
+  border-radius:4px;flex-shrink:0;
+}
+
+/* TOOL HUB */
+.tool-hub{
+  border:1px solid var(--glass-border);border-radius:20px;
+  overflow:hidden;
+}
+.hub-header{
+  padding:24px 28px;background:rgba(255,215,0,.04);
+  border-bottom:1px solid rgba(255,215,0,.1);
+  display:flex;align-items:center;gap:16px;
+}
+.hub-title{
+  font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.06em;
+  color:var(--gold);text-shadow:var(--glow-go);
+}
+.hub-desc{font-size:13px;color:var(--dim);margin-top:4px;}
+.hub-category{
+  padding:20px 28px;border-bottom:1px solid var(--glass-border);
+}
+.hub-category:last-child{border-bottom:none}
+.hub-cat-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.hub-cat-title::after{content:'';flex:1;height:1px;background:var(--glass-border)}
+.tool-list{display:flex;flex-wrap:wrap;gap:10px;}
+.tool-item{
+  background:rgba(255,255,255,.04);border:1px solid var(--glass-border);
+  border-radius:10px;padding:10px 14px;
+  display:flex;flex-direction:column;gap:4px;min-width:160px;
+  transition:border-color .2s;
+}
+.tool-item:hover{border-color:rgba(255,255,255,.15)}
+.tool-name{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;
+  letter-spacing:.04em;
+}
+.tool-role{font-size:11px;color:var(--muted);}
+.tool-cost{
+  font-size:10px;font-weight:700;letter-spacing:.08em;margin-top:2px;
+}
+.tool-cost.free{color:var(--g)}
+.tool-cost.paid{color:var(--gold)}
+.tool-cost.key{color:var(--pk)}
+
+/* BOT SPEC */
+.bot-card{
+  border:1px solid var(--glass-border);border-radius:16px;overflow:hidden;
+  margin-bottom:16px;
+}
+.bot-header{
+  padding:20px 24px;background:rgba(255,255,255,.02);
+  border-bottom:1px solid var(--glass-border);
+  display:flex;align-items:center;gap:12px;
+}
+.bot-icon{font-size:24px}
+.bot-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:20px;letter-spacing:.06em;text-transform:uppercase;flex:1;
+}
+.bot-priority{
+  font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:4px 10px;border-radius:6px;
+}
+.bot-priority.p1{background:rgba(255,15,123,.15);color:var(--pk);border:1px solid rgba(255,15,123,.3)}
+.bot-priority.p2{background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.2)}
+.bot-priority.p3{background:rgba(58,134,255,.1);color:var(--blue);border:1px solid rgba(58,134,255,.2)}
+.bot-body{padding:20px 24px;}
+.bot-section{margin-bottom:16px}
+.bot-section-title{
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:8px;
+}
+.bot-section p,.bot-section li{font-size:13px;color:var(--dim);line-height:1.7;}
+.bot-section ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.bot-section ul li::before{content:'• ';color:var(--g);font-weight:700;}
+.spec-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:13px;
+}
+.spec-row:last-child{border-bottom:none}
+.spec-key{color:var(--muted);font-weight:600}
+.spec-val{color:var(--w);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:14px;}
+
+/* FLOW */
+.flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:20px 0;}
+.flow-step{
+  background:rgba(255,255,255,.04);border:1px solid var(--glass-border);
+  border-radius:10px;padding:10px 16px;text-align:center;
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.04em;min-width:100px;
+}
+.flow-arrow{
+  color:var(--muted);font-size:16px;padding:0 8px;flex-shrink:0;
+}
+
+/* DIVIDER */
+.divider{
+  height:1px;background:linear-gradient(90deg,transparent,var(--glass-border),transparent);
+  margin:60px 0;
+}
+
+/* STATUS */
+.status-block{
+  background:rgba(0,177,64,.06);border:1px solid rgba(0,177,64,.15);
+  border-radius:12px;padding:20px 24px;margin-bottom:16px;
+}
+.status-block.warn{
+  background:rgba(255,215,0,.05);border-color:rgba(255,215,0,.15);
+}
+.status-block.info{
+  background:rgba(58,134,255,.05);border-color:rgba(58,134,255,.15);
+}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:0;}
+.timeline-item{
+  display:flex;gap:20px;position:relative;padding-bottom:32px;
+}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-left{
+  display:flex;flex-direction:column;align-items:center;gap:0;flex-shrink:0;width:40px;
+}
+.timeline-dot{
+  width:12px;height:12px;border-radius:50%;border:2px solid;flex-shrink:0;
+  background:var(--bg);position:relative;z-index:1;
+}
+.timeline-line{
+  flex:1;width:1px;background:var(--glass-border);margin-top:4px;
+}
+.timeline-item:last-child .timeline-line{display:none}
+.timeline-content{flex:1;padding-top:0;}
+.timeline-week{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;
+}
+.timeline-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;
+  letter-spacing:.04em;margin-bottom:6px;
+}
+.timeline-desc{font-size:13px;color:var(--dim);}
+
+/* FOOTER */
+footer{
+  border-top:1px solid var(--glass-border);padding:40px 28px;text-align:center;
+  color:var(--muted);font-size:12px;font-family:'Barlow Condensed',sans-serif;
+  letter-spacing:.08em;
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">UNDER<b>RATED</b></div>
+  <div class="nav-links">
+    <a href="#formation">Formation</a>
+    <a href="#hub">Tools Hub</a>
+    <a href="#bots">Bots</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">Audit Technique — Document Interne</div>
+    <h1 class="bb">AUDIT<br><span class="accent-g">FORMATION</span><br><span class="accent-pk">& TOOLS</span></h1>
+    <p class="hero-sub">Structure complète de la formation Underrated, hub d'outils et specs techniques pour les bots à développer.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="num">4</span>
+        <span class="label">Modules</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="num" style="color:var(--gold);text-shadow:var(--glow-go)">10</span>
+        <span class="label">Leviers</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="num" style="color:var(--pk);text-shadow:var(--glow-pk)">6</span>
+        <span class="label">Bots</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="num" style="color:var(--blue);text-shadow:var(--glow-bl)">30+</span>
+        <span class="label">Tools</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION 1 : FORMATION ══════════ -->
+<section id="formation">
+  <div class="container">
+    <div class="section-label g">Structure Formation</div>
+    <h2 class="section-title bb">ARCHITECTURE<br>DE LA <span style="color:var(--g)">FORMATION</span></h2>
+    <p class="section-desc">La méthode Underrated en 4 modules. Chaque module ancre un ou plusieurs leviers de viralité.</p>
+
+    <!-- MODULE 1 -->
+    <div class="module">
+      <div class="module-header">
+        <div class="module-num" style="color:var(--g)">01</div>
+        <div class="module-title-wrap">
+          <div class="module-title">Trouver le concept viral</div>
+          <div class="module-duration">~45 min · Leviers 1, 4, 5</div>
+        </div>
+        <div class="tags">
+          <span class="tag g">CONCEPT</span>
+          <span class="tag wh">Fondations</span>
+        </div>
+      </div>
+      <div class="module-body">
+        <ul>
+          <li class="go">Pourquoi le format Squid Game/Fruit Game marche : analyse des 10 leviers de viralité</li>
+          <li class="g">Choisir son genre (survie, romance, thriller, action, fantasy) et son univers visuel</li>
+          <li class="g">Créer ses personnages : nom + suffixe italianisant + design cohérent (ex: Fraisita, Cerisa)</li>
+          <li class="g">Construire la bible de la série : 20+ arcs narratifs, couples, alliances (→ levier 4)</li>
+          <li class="g">Développer son vocabulaire maison — langue privée qui crée l'appartenance (→ levier 5)</li>
+          <li class="g">Valider son concept avec ChatGPT avant de tourner la moindre seconde</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <div class="module">
+      <div class="module-header">
+        <div class="module-num" style="color:var(--gold)">02</div>
+        <div class="module-title-wrap">
+          <div class="module-title">Pipeline IA : Script → Voix → Vidéo → Montage</div>
+          <div class="module-duration">~90 min · Leviers 2, 3, 6</div>
+        </div>
+        <div class="tags">
+          <span class="tag go">PRODUCTION</span>
+          <span class="tag wh">Core</span>
+        </div>
+      </div>
+      <div class="module-body">
+        <ul>
+          <li class="go">Structure obligatoire de chaque épisode : 5 temps (accroche → mise en place → montée → retournement → cliffhanger)</li>
+          <li class="go">Prompt engineering ChatGPT/Gemini pour générer scripts en 10 min max</li>
+          <li class="go">Génération voix-off : ElevenLabs / clonage vocal — ton, débit, breaks dramatiques</li>
+          <li class="go">Génération images/vidéos personnages : Midjourney + Runway / Kling — cohérence visuelle entre épisodes</li>
+          <li class="go">Montage CapCut : coupes &lt;2s (→ levier 2), stickers TikTok, voix-off 4e mur</li>
+          <li class="go">Vignette : logo 3D doré + titre visible frame 1 — jamais d'ouverture à froid (→ levier 1)</li>
+          <li class="go">Durée cible : 60-90 secondes (→ levier 10 : magie algorithmique)</li>
+          <li class="go">Workflow complet en 7h/épisode, coût : quelques dizaines €</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- MODULE 3 -->
+    <div class="module">
+      <div class="module-header">
+        <div class="module-num" style="color:var(--pk)">03</div>
+        <div class="module-title-wrap">
+          <div class="module-title">Stratégie TikTok + Algorithme</div>
+          <div class="module-duration">~60 min · Leviers 3, 7, 8, 10</div>
+        </div>
+        <div class="tags">
+          <span class="tag pk">ALGO</span>
+          <span class="tag wh">Distribution</span>
+        </div>
+      </div>
+      <div class="module-body">
+        <ul>
+          <li class="pk">Cycle de publication quotidien : 6h annonce → 18h épisode → 22h re-visionnage → matin reposts</li>
+          <li class="pk">Gérer le manque intentionnel : épisode absent = 10k+ commentaires "où est l'épisode ?"</li>
+          <li class="pk">Piloter le scénario par les commentaires en temps réel (→ levier 8) : ChatGPT réécrit en 30 min</li>
+          <li class="pk">Exploiter l'engagement négatif : haters = vendeurs gratuits (→ levier 7)</li>
+          <li class="pk">Construire les 4 couples = 20 combinaisons d'alliances = identité tribale (→ levier 4)</li>
+          <li class="pk">Cross-posting : X / Instagram / YouTube Shorts — amplification hors TikTok</li>
+          <li class="pk">Analytics : ratio partages/vues cible &gt;2% (291k partages épisode 1 = 2.4% = exceptionnel)</li>
+          <li class="pk">Texte déclencheur dans les titres : Révélations, Confrontations, Départ, Votes</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- MODULE 4 -->
+    <div class="module">
+      <div class="module-header">
+        <div class="module-num" style="color:var(--blue)">04</div>
+        <div class="module-title-wrap">
+          <div class="module-title">Monétisation : Brand Deals + Formation</div>
+          <div class="module-duration">~60 min · Levier 9</div>
+        </div>
+        <div class="tags">
+          <span class="tag bl">REVENUE</span>
+          <span class="tag wh">Business</span>
+        </div>
+      </div>
+      <div class="module-body">
+        <ul>
+          <li class="bl">Brand deals : comment contacter, deck de présentation, pricing (30-70k€ deal majeur)</li>
+          <li class="bl">Intégration marque organique dans l'épisode — l'audience doit trouver ça cool (Betclic: 28k likes, Free: 91k likes)</li>
+          <li class="bl">Construire la formation : de la méthode au Teachable en &lt;30 jours</li>
+          <li class="bl">Tunnel de vente : TikTok bio → landing page → Teachable 99€ → accompagnement 1200€</li>
+          <li class="bl">Séquence email Beehiiv : bienvenue → valeur → offre → relance</li>
+          <li class="bl">TikTok Creator Fund : secondaire (0.05-0.10€/1000 vues) — ne pas compter dessus</li>
+          <li class="bl">Scale : de 30 ventes/mois (3k€) à deal Oasis type canettes édition limitée</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- LES 10 LEVIERS RECAP -->
+    <div class="divider"></div>
+    <div class="section-label go">Référentiel</div>
+    <h2 class="section-title bb">LES <span style="color:var(--gold)">10 LEVIERS</span><br>DE VIRALITÉ</h2>
+    <p class="section-desc">Chaque levier est reproductible. La formation enseigne comment les activer tous simultanément.</p>
+
+    <div class="grid-2" style="gap:12px">
+      <div class="card go">
+        <div class="card-num">01</div>
+        <div class="card-icon">🧠</div>
+        <div class="card-title go">Paradoxe Visuel</div>
+        <div class="card-desc">Arrêt du défilement forcé. Fruit + visage humain = paradoxe cognitif. 0.3s suffit pour comptabiliser la vue. Logo 3D doré + titre visible au frame 1.</div>
+        <div class="tags"><span class="tag go">Hook</span><span class="tag wh">Visuel</span></div>
+      </div>
+      <div class="card go">
+        <div class="card-num">02</div>
+        <div class="card-icon">⚡</div>
+        <div class="card-title go">Esthétique Abrutissante</div>
+        <div class="card-desc">Coupes &lt;2s. Stickers TikTok en surincrustation. Voix-off qui casse le 4e mur. Ultra-rapide, absurde, consommation en chaîne = plaisir sans friction.</div>
+        <div class="tags"><span class="tag go">Rétention</span><span class="tag wh">Format</span></div>
+      </div>
+      <div class="card g">
+        <div class="card-num">03</div>
+        <div class="card-icon">📅</div>
+        <div class="card-title g">Publication Quotidienne</div>
+        <div class="card-desc">6h annonce → 18h épisode → 22h re-visionnage → matin reposts. Cycle 24h fermé. Épisode absent = 10k+ commentaires "où est l'épisode ?".</div>
+        <div class="tags"><span class="tag g">Rituel</span><span class="tag wh">Algo</span></div>
+      </div>
+      <div class="card pk">
+        <div class="card-num">04</div>
+        <div class="card-icon">💑</div>
+        <div class="card-title pk">Culture des Couples</div>
+        <div class="card-desc">4 couples = ~20 combinaisons d'alliances. Chaque spectateur a SA préférence. "Fraisio et Cerisa j'ai tellement la vision" — 27 100 likes. Identité tribale.</div>
+        <div class="tags"><span class="tag pk">Identité</span><span class="tag wh">Engagement</span></div>
+      </div>
+      <div class="card pu">
+        <div class="card-num">05</div>
+        <div class="card-icon">🗣️</div>
+        <div class="card-title pu">Vocabulaire Maison</div>
+        <div class="card-desc">Fraisita, Fraisio, Cerisa, Bananello = langue privée. Dire "Fraisio" = appartenir au club. Propagation dans les cours de récré. Viralité passive hors app.</div>
+        <div class="tags"><span class="tag pu">Langue</span><span class="tag wh">Appartenance</span></div>
+      </div>
+      <div class="card go">
+        <div class="card-num">06</div>
+        <div class="card-icon">🎭</div>
+        <div class="card-title go">Coup de Théâtre Calibré</div>
+        <div class="card-desc">Structure 5 temps. Mots déclencheurs : Révélations, Confrontations, Départ, Votes. Sans cliffhanger = pas de rétention ep-ep. Avec = 70%+ rétention.</div>
+        <div class="tags"><span class="tag go">Dopamine</span><span class="tag wh">Structure</span></div>
+      </div>
+      <div class="card rd">
+        <div class="card-num">07</div>
+        <div class="card-icon">🔥</div>
+        <div class="card-title rd">Visionnage par Opposition</div>
+        <div class="card-desc">L'algo ne distingue pas engagement positif/négatif. Vidéos de moquerie sur X/YouTube renvoient du trafic. Les haters sont les meilleurs vendeurs.</div>
+        <div class="tags"><span class="tag rd">Carburant</span><span class="tag wh">Gratuit</span></div>
+      </div>
+      <div class="card bl">
+        <div class="card-num">08</div>
+        <div class="card-icon">✍️</div>
+        <div class="card-title bl">Scénario par Commentaires</div>
+        <div class="card-desc">"Renvoie Prunello", "ramène Cocotier". ChatGPT réécrit en 30 min. Coût marginal nul. Le spectateur se sent co-auteur. Pétition "2 épisodes/jour" — 83 réponses.</div>
+        <div class="tags"><span class="tag bl">Co-auteur</span><span class="tag wh">Fidélité</span></div>
+      </div>
+      <div class="card g">
+        <div class="card-num">09</div>
+        <div class="card-icon">💰</div>
+        <div class="card-title g">Intégration Marques</div>
+        <div class="card-desc">Betclic: 28.7k likes. Free France: 91.4k likes. Pom'Potes: 3.8k likes. Contrat Oasis = canettes édition limitée. Estimé 30-70k€. Espace validé par les faits.</div>
+        <div class="tags"><span class="tag g">Revenue</span><span class="tag wh">Proof</span></div>
+      </div>
+      <div class="card pk">
+        <div class="card-num">10</div>
+        <div class="card-icon">⏱️</div>
+        <div class="card-title pk">Format 60-90 Secondes</div>
+        <div class="card-desc">60 sec = durée magique page "Pour toi". Au-delà de 90s = pourcentage visionnage chute = algo pénalise. 291k partages épisode 1. Ratio 2.4% partages/vues = exceptionnel.</div>
+        <div class="tags"><span class="tag pk">Algo</span><span class="tag wh">Magie</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION 2 : TOOLS HUB ══════════ -->
+<section id="hub">
+  <div class="container">
+    <div class="section-label go">Infrastructure</div>
+    <h2 class="section-title bb">TOOLS <span style="color:var(--gold)">HUB</span></h2>
+    <p class="section-desc">Tous les outils nécessaires, organisés par catégorie. Le hub est le cerveau opérationnel de la méthode.</p>
+
+    <div class="tool-hub">
+      <div class="hub-header">
+        <div style="font-size:28px">🛠️</div>
+        <div>
+          <div class="hub-title">UNDERRATED TOOLS HUB</div>
+          <div class="hub-desc">Vue complète — production série + vente formation + automatisation</div>
+        </div>
+      </div>
+
+      <!-- SCRIPTWRITING -->
+      <div class="hub-category">
+        <div class="hub-cat-title">✍️ Scriptwriting & Narration</div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">ChatGPT</div>
+            <div class="tool-role">Script épisodes, reformulation commentaires, variation cliffhangers</div>
+            <div class="tool-cost paid">~20$/mois (GPT-4)</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Gemini Advanced</div>
+            <div class="tool-role">Script long format, analyse concurrence, bible de série</div>
+            <div class="tool-cost paid">~20$/mois</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Claude</div>
+            <div class="tool-role">Prompts complexes, cohérence narrative longue durée, audit</div>
+            <div class="tool-cost paid">~20$/mois</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Prompt Library</div>
+            <div class="tool-role">Bibliothèque prompts Underrated (interne, à construire)</div>
+            <div class="tool-cost key">Interne</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VOIX -->
+      <div class="hub-category">
+        <div class="hub-cat-title">🎙️ Génération Voix</div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">ElevenLabs</div>
+            <div class="tool-role">Clone vocal, voix personnages, émotions calibrées</div>
+            <div class="tool-cost paid">~22$/mois (Creator)</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Murf AI</div>
+            <div class="tool-role">Alternative voix-off, accents FR précis</div>
+            <div class="tool-cost paid">~29$/mois</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Descript</div>
+            <div class="tool-role">Clone vocal + correction audio + transcription</div>
+            <div class="tool-cost paid">~24$/mois</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMAGE GEN -->
+      <div class="hub-category">
+        <div class="hub-cat-title">🎨 Génération Images Personnages</div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">Midjourney</div>
+            <div class="tool-role">Personnages fruités 3D, cohérence visuelle, vignettes</div>
+            <div class="tool-cost paid">~30$/mois (Pro)</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">DALL-E 3</div>
+            <div class="tool-role">Variations rapides via ChatGPT, itérations concept</div>
+            <div class="tool-cost paid">Inclus GPT-4</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Stable Diffusion</div>
+            <div class="tool-role">Local si fine-tuning personnages pour cohérence max</div>
+            <div class="tool-cost free">Gratuit (local)</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Leonardo.ai</div>
+            <div class="tool-role">Modèles fine-tunés, style cohérent série</div>
+            <div class="tool-cost paid">~24$/mois</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIDEO GEN -->
+      <div class="hub-category">
+        <div class="hub-cat-title">🎬 Génération Vidéo</div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">Runway Gen-3</div>
+            <div class="tool-role">Scènes d'action, transitions fluides, cohérence motion</div>
+            <div class="tool-cost paid">~35$/mois</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Kling AI</div>
+            <div class="tool-role">Vidéo longue durée, qualité cinématique</div>
+            <div class="tool-cost paid">~10$/mois</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Pika Labs</div>
+            <div class="tool-role">Animations rapides, effets spéciaux</div>
+            <div class="tool-cost free">Freemium</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Haiper</div>
+            <div class="tool-role">Animations personnages, lip sync</div>
+            <div class="tool-cost free">Freemium</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MONTAGE -->
+      <div class="hub-category">
+        <div class="hub-cat-title">✂️ Montage & Post-Production</div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">CapCut</div>
+            <div class="tool-role">Montage TikTok natif, stickers, sous-titres auto, templates</div>
+            <div class="tool-cost free">Gratuit (base)</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">DaVinci Resolve</div>
+            <div class="tool-role">Étalonnage, effets complexes, export qualité max</div>
+            <div class="tool-cost free">Gratuit</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Premiere Pro</div>
+            <div class="tool-role">Workflow professionnel si scaling équipe</div>
+            <div class="tool-cost paid">~55€/mois</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PUBLICATION -->
+      <div class="hub-category">
+        <div class="hub-cat-title">📱 Publication & Distribution</div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">TikTok Studio</div>
+            <div class="tool-role">Publication native, analytics, planification</div>
+            <div class="tool-cost free">Gratuit</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">YouTube Studio</div>
+            <div class="tool-role">Shorts cross-posting, analytics, subtitles</div>
+            <div class="tool-cost free">Gratuit</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Buffer / Later</div>
+            <div class="tool-role">Planification multi-plateforme, auto-post X/IG</div>
+            <div class="tool-cost paid">~15-18$/mois</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Metricool</div>
+            <div class="tool-role">Analytics cross-platform, meilleur horaire de post</div>
+            <div class="tool-cost free">Freemium</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="hub-category">
+        <div class="hub-cat-title">📊 Analytics & Veille</div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">TikTok Analytics</div>
+            <div class="tool-role">Ratio partages/vues, rétention, trafic source</div>
+            <div class="tool-cost free">Natif</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Social Blade</div>
+            <div class="tool-role">Benchmark concurrents, growth tracking</div>
+            <div class="tool-cost free">Freemium</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Notion Dashboard</div>
+            <div class="tool-role">Dashboard vues/revenus/épisodes centralisé</div>
+            <div class="tool-cost free">Inclus</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Underrated App</div>
+            <div class="tool-role">War room équipe — notes collab, tasks, suivi (index.html)</div>
+            <div class="tool-cost key">Interne</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VENTE -->
+      <div class="hub-category">
+        <div class="hub-cat-title">💳 Vente Formation</div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">Teachable</div>
+            <div class="tool-role">Hébergement formation, paiement, accès 99€ + 1200€</div>
+            <div class="tool-cost paid">~39$/mois</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Stripe</div>
+            <div class="tool-role">Paiement via Teachable, facturation auto</div>
+            <div class="tool-cost paid">2.9%+0.30€/tx</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Beehiiv</div>
+            <div class="tool-role">Newsletter + séquences email de vente</div>
+            <div class="tool-cost free">Gratuit jusqu'à 2.5k</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Landing Page</div>
+            <div class="tool-role">Page de vente formation (HTML/GitHub Pages)</div>
+            <div class="tool-cost key">Interne</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMUNITY -->
+      <div class="hub-category">
+        <div class="hub-cat-title">🏠 Community & CRM</div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">Discord</div>
+            <div class="tool-role">Communauté acheteurs, annonces épisodes, feedback live</div>
+            <div class="tool-cost free">Gratuit</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Notion CRM</div>
+            <div class="tool-role">Pipeline brand deals, suivi prospects, contacts</div>
+            <div class="tool-cost free">Gratuit</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">TikTok DM</div>
+            <div class="tool-role">Closing 1200€ coaching (Ilame)</div>
+            <div class="tool-cost free">Natif</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FIREBASE / INFRA -->
+      <div class="hub-category">
+        <div class="hub-cat-title">🔧 Infrastructure Technique</div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">Firebase</div>
+            <div class="tool-role">Auth + Firestore DB pour app war room équipe</div>
+            <div class="tool-cost free">Gratuit (Spark)</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">GitHub Pages</div>
+            <div class="tool-role">Hébergement app + landing page, auto-deploy CI/CD</div>
+            <div class="tool-cost free">Gratuit</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">GitHub Actions</div>
+            <div class="tool-role">CI/CD deploy auto, versioning, changelog</div>
+            <div class="tool-cost free">Gratuit</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">n8n / Make</div>
+            <div class="tool-role">Automatisation workflows entre outils (→ bots)</div>
+            <div class="tool-cost paid">~20$/mois</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION 3 : BOTS ══════════ -->
+<section id="bots">
+  <div class="container">
+    <div class="section-label pk">Automatisation</div>
+    <h2 class="section-title bb">SPECS <span style="color:var(--pk)">BOTS</span></h2>
+    <p class="section-desc">6 bots à développer. Chaque bot automatise un levier de viralité. Specs techniques pour l'expert.</p>
+
+    <!-- BOT 1 : COMMENT SCRAPER -->
+    <div class="bot-card">
+      <div class="bot-header">
+        <div class="bot-icon">💬</div>
+        <div class="bot-title" style="color:var(--pk)">Bot #1 — Comment Scraper & Analyzer</div>
+        <div class="bot-priority p1">P1 CRITIQUE</div>
+      </div>
+      <div class="bot-body">
+        <div class="bot-section">
+          <div class="bot-section-title">Objectif</div>
+          <p>Scraper les commentaires TikTok en temps réel, les classifier par intention (demande narrative, vote personnage, critique, hater) et sortir un résumé actionnable pour piloter le script du prochain épisode. Active le levier 8.</p>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Specs techniques</div>
+          <div class="spec-row"><span class="spec-key">Source</span><span class="spec-val">TikTok API unofficial (scraper) ou TikTok Research API</span></div>
+          <div class="spec-row"><span class="spec-key">Trigger</span><span class="spec-val">Cron toutes les 15 min après publication</span></div>
+          <div class="spec-row"><span class="spec-key">Classification</span><span class="spec-val">GPT-4 API — catégoriser + scorer chaque commentaire</span></div>
+          <div class="spec-row"><span class="spec-key">Output</span><span class="spec-val">Dashboard web + notification Discord + résumé JSON</span></div>
+          <div class="spec-row"><span class="spec-key">Stack</span><span class="spec-val">Python + Playwright/Requests + OpenAI API + SQLite</span></div>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Features</div>
+          <ul>
+            <li>Top 10 demandes narratives les plus likées</li>
+            <li>Vote popularity par personnage (Fraisita vs Cerisa vs...)</li>
+            <li>Détection commentaires de marques (signal brand deal organique)</li>
+            <li>Score "hater ratio" — signal que la vidéo buzze pour les bonnes raisons</li>
+            <li>Alerte si commentaire dépasse 5k likes → génère suggestion de scénario</li>
+          </ul>
+        </div>
+        <div class="tags" style="margin-top:12px">
+          <span class="tag pk">Levier 8</span>
+          <span class="tag wh">Python</span>
+          <span class="tag wh">GPT-4</span>
+          <span class="tag wh">TikTok</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOT 2 : SCRIPT GENERATOR -->
+    <div class="bot-card">
+      <div class="bot-header">
+        <div class="bot-icon">✍️</div>
+        <div class="bot-title" style="color:var(--gold)">Bot #2 — Script Generator</div>
+        <div class="bot-priority p1">P1 CRITIQUE</div>
+      </div>
+      <div class="bot-body">
+        <div class="bot-section">
+          <div class="bot-section-title">Objectif</div>
+          <p>Générer automatiquement le script du prochain épisode en fonction des commentaires scrappés + de la bible de série. Produit script en 5 minutes, structuré en 5 temps obligatoires avec cliffhanger. Active les leviers 6 et 8.</p>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Specs techniques</div>
+          <div class="spec-row"><span class="spec-key">Input</span><span class="spec-val">JSON commentaires Bot#1 + bible série + dernier épisode</span></div>
+          <div class="spec-row"><span class="spec-key">Modèle</span><span class="spec-val">GPT-4o avec prompt système fixe (structure 5 temps)</span></div>
+          <div class="spec-row"><span class="spec-key">Output</span><span class="spec-val">Script TXT + version voix-off séparée + tags CapCut</span></div>
+          <div class="spec-row"><span class="spec-key">Durée cible</span><span class="spec-val">60-90 sec (validé par comptage mots — 130-180 mots/min)</span></div>
+          <div class="spec-row"><span class="spec-key">Stack</span><span class="spec-val">Python + OpenAI API + interface web simple</span></div>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Prompt système (template)</div>
+          <ul>
+            <li>Structure imposée : accroche → mise en place → montée → retournement → cliffhanger</li>
+            <li>Vocabulaire maison obligatoire (noms des personnages, expressions série)</li>
+            <li>Intégration de minimum 1 demande narrative du top commentaires</li>
+            <li>Fin = question ouverte OU révélation incomplète — jamais de résolution totale</li>
+            <li>Ton : voix-off qui casse le 4e mur, adresse l'audience directement</li>
+          </ul>
+        </div>
+        <div class="tags" style="margin-top:12px">
+          <span class="tag go">Levier 6</span>
+          <span class="tag pk">Levier 8</span>
+          <span class="tag wh">GPT-4o</span>
+          <span class="tag wh">Python</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOT 3 : AUTO PUBLISHER -->
+    <div class="bot-card">
+      <div class="bot-header">
+        <div class="bot-icon">📅</div>
+        <div class="bot-title" style="color:var(--g)">Bot #3 — Auto Publisher</div>
+        <div class="bot-priority p1">P1 CRITIQUE</div>
+      </div>
+      <div class="bot-body">
+        <div class="bot-section">
+          <div class="bot-section-title">Objectif</div>
+          <p>Publier automatiquement l'épisode à 18h chaque jour sur TikTok + YouTube Shorts + Instagram Reels + X. Maintient le rituel de publication quotidienne sans intervention manuelle. Active le levier 3.</p>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Specs techniques</div>
+          <div class="spec-row"><span class="spec-key">Trigger</span><span class="spec-val">Cron 18h00 — si fichier vidéo présent dans dossier /queue</span></div>
+          <div class="spec-row"><span class="spec-key">Plateformes</span><span class="spec-val">TikTok API + YouTube Data API + Meta Graph API + X API</span></div>
+          <div class="spec-row"><span class="spec-key">Caption</span><span class="spec-val">Auto-générée par Bot#2 — hashtags + appel à l'action</span></div>
+          <div class="spec-row"><span class="spec-key">Fallback</span><span class="spec-val">Alerte Discord si publication échoue (file manquante, API down)</span></div>
+          <div class="spec-row"><span class="spec-key">Stack</span><span class="spec-val">Python + APIs officielles + n8n pour orchestration</span></div>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Workflow</div>
+          <ul>
+            <li>6h : bot post annonce "Episode X aujourd'hui à 18h" sur TikTok (levier 3)</li>
+            <li>18h : bot upload vidéo + caption générée automatiquement</li>
+            <li>18h05 : bot notifie Discord #publication avec lien + stats initiales</li>
+            <li>22h : bot re-poste teaser épisode suivant si vues &gt; seuil (ex: 10k)</li>
+          </ul>
+        </div>
+        <div class="tags" style="margin-top:12px">
+          <span class="tag g">Levier 3</span>
+          <span class="tag wh">TikTok API</span>
+          <span class="tag wh">n8n</span>
+          <span class="tag wh">Cron</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOT 4 : ANALYTICS TRACKER -->
+    <div class="bot-card">
+      <div class="bot-header">
+        <div class="bot-icon">📊</div>
+        <div class="bot-title" style="color:var(--blue)">Bot #4 — Analytics Tracker</div>
+        <div class="bot-priority p2">P2 IMPORTANT</div>
+      </div>
+      <div class="bot-body">
+        <div class="bot-section">
+          <div class="bot-section-title">Objectif</div>
+          <p>Tracker les métriques clés de chaque épisode en temps réel. Calculer automatiquement le ratio partages/vues (cible: &gt;2%), détecter les signaux de viralité et alerter l'équipe. Dashboard accessible depuis l'app Underrated.</p>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Specs techniques</div>
+          <div class="spec-row"><span class="spec-key">Sources</span><span class="spec-val">TikTok API + YouTube API + Instagram API + X API</span></div>
+          <div class="spec-row"><span class="spec-key">Métriques</span><span class="spec-val">Vues, likes, shares, comments, saves, rétention, reach</span></div>
+          <div class="spec-row"><span class="spec-key">KPI clé</span><span class="spec-val">Ratio partages/vues — alerte si &gt;2% (signal viral)</span></div>
+          <div class="spec-row"><span class="spec-key">Stockage</span><span class="spec-val">Firebase Firestore — accessible dans app war room</span></div>
+          <div class="spec-row"><span class="spec-key">Fréquence</span><span class="spec-val">Toutes les heures H+1 à H+24 après publication</span></div>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Alertes automatiques</div>
+          <ul>
+            <li>🟢 Viral signal : ratio partages &gt;2% dans les 3 premières heures</li>
+            <li>🟡 Watch signal : rétention &lt;70% — flag pour ajuster format</li>
+            <li>🔴 Drop alert : vues plateau après 6h — envisager annonce épisode suivant</li>
+            <li>💰 Brand signal : commentaire de compte marque vérifié détecté</li>
+          </ul>
+        </div>
+        <div class="tags" style="margin-top:12px">
+          <span class="tag bl">Analytics</span>
+          <span class="tag wh">Firebase</span>
+          <span class="tag wh">Multi-API</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOT 5 : BRAND DEAL RADAR -->
+    <div class="bot-card">
+      <div class="bot-header">
+        <div class="bot-icon">💼</div>
+        <div class="bot-title" style="color:var(--gold)">Bot #5 — Brand Deal Radar</div>
+        <div class="bot-priority p2">P2 IMPORTANT</div>
+      </div>
+      <div class="bot-body">
+        <div class="bot-section">
+          <div class="bot-section-title">Objectif</div>
+          <p>Détecter automatiquement les marques qui commentent/likent les vidéos (signal intérêt organique), scorer leur potentiel deal, générer un email d'outreach personnalisé et l'envoyer pour review à Mathieu.</p>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Specs techniques</div>
+          <div class="spec-row"><span class="spec-key">Source</span><span class="spec-val">Bot#1 (commentaires) + follower scan (comptes vérifiés)</span></div>
+          <div class="spec-row"><span class="spec-key">Scoring</span><span class="spec-val">GPT-4 — audience fit, budget estimé, historique deals IA</span></div>
+          <div class="spec-row"><span class="spec-key">Output</span><span class="spec-val">Draft email outreach + fiche marque + canal contact</span></div>
+          <div class="spec-row"><span class="spec-key">Approval</span><span class="spec-val">Discord DM Mathieu — "Approve/Edit/Skip" avant envoi</span></div>
+          <div class="spec-row"><span class="spec-key">CRM</span><span class="spec-val">Log dans Notion CRM automatiquement</span></div>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Email outreach template (généré par IA)</div>
+          <ul>
+            <li>Stats clés série (vues total, audience demo, engagement rate)</li>
+            <li>Preuve sociale : mentions de la marque dans les commentaires (si applicable)</li>
+            <li>Proposition d'intégration native dans un épisode (pas pub classique)</li>
+            <li>Pricing suggéré par IA basé sur benchmarks (Betclic/Free type)</li>
+          </ul>
+        </div>
+        <div class="tags" style="margin-top:12px">
+          <span class="tag go">Levier 9</span>
+          <span class="tag wh">GPT-4</span>
+          <span class="tag wh">Notion</span>
+          <span class="tag wh">Discord</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOT 6 : FORMATION FUNNEL BOT -->
+    <div class="bot-card">
+      <div class="bot-header">
+        <div class="bot-icon">🎓</div>
+        <div class="bot-title" style="color:var(--pur)">Bot #6 — Formation Funnel Bot</div>
+        <div class="bot-priority p3">P3 SCALE</div>
+      </div>
+      <div class="bot-body">
+        <div class="bot-section">
+          <div class="bot-section-title">Objectif</div>
+          <p>Automatiser le funnel de vente formation. Qualifier les leads entrants (DM TikTok, email Beehiiv), segmenter 99€ vs 1200€, déclencher la séquence email adaptée, notifier Ilame pour closing 1200€.</p>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Specs techniques</div>
+          <div class="spec-row"><span class="spec-key">Entrées</span><span class="spec-val">Beehiiv webhook + TikTok DM scraper (si API dispo)</span></div>
+          <div class="spec-row"><span class="spec-key">Qualification</span><span class="spec-val">Questionnaire 3 questions → scoring → segmentation auto</span></div>
+          <div class="spec-row"><span class="spec-key">Séquences</span><span class="spec-val">Beehiiv API — 5 emails J0/J1/J3/J5/J7 selon segment</span></div>
+          <div class="spec-row"><span class="spec-key">Closing signal</span><span class="spec-val">Discord alerte Ilame si lead 1200€ clique lien mais n'achète pas</span></div>
+          <div class="spec-row"><span class="spec-key">Stack</span><span class="spec-val">n8n + Beehiiv API + Stripe webhooks + Firebase</span></div>
+        </div>
+        <div class="bot-section">
+          <div class="bot-section-title">Séquence email 5 jours (schéma)</div>
+          <ul>
+            <li>J0 : Bienvenue + accès ressource gratuite (extrait méthode)</li>
+            <li>J1 : Histoire Underrated + preuve sociale (vues/revenus)</li>
+            <li>J3 : Le pipeline IA en détail — valeur pure avant vente</li>
+            <li>J5 : Offre 99€ — urgence douce (places limitées coaching)</li>
+            <li>J7 : Dernière chance + témoignage + lien direct Teachable</li>
+          </ul>
+        </div>
+        <div class="tags" style="margin-top:12px">
+          <span class="tag pu">Funnel</span>
+          <span class="tag wh">n8n</span>
+          <span class="tag wh">Beehiiv</span>
+          <span class="tag wh">Stripe</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════ SECTION 4 : ARCHITECTURE BOTS ══════════ -->
+<section>
+  <div class="container">
+    <div class="section-label bl">Architecture</div>
+    <h2 class="section-title bb">COMMENT LES <span style="color:var(--blue)">BOTS</span><br>SE CONNECTENT</h2>
+    <p class="section-desc">Les 6 bots forment un pipeline automatisé. Output d'un bot = input du suivant.</p>
+
+    <div class="card">
+      <div class="card-title bl">Pipeline automatisé quotidien</div>
+      <div style="margin-top:20px">
+        <div class="flow">
+          <div class="flow-step" style="border-color:rgba(255,15,123,.3)">💬 Bot#1<br><small style="color:var(--muted)">Scrape commentaires</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step" style="border-color:rgba(255,215,0,.3)">✍️ Bot#2<br><small style="color:var(--muted)">Génère script</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">🎬 Production<br><small style="color:var(--muted)">Voix + Vidéo + Montage</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step" style="border-color:rgba(0,177,64,.3)">📅 Bot#3<br><small style="color:var(--muted)">Publie à 18h</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step" style="border-color:rgba(58,134,255,.3)">📊 Bot#4<br><small style="color:var(--muted)">Track métriques</small></div>
+        </div>
+        <div style="margin-top:12px;font-size:13px;color:var(--muted)">En parallèle : Bot#5 surveille les marques en continu · Bot#6 gère le funnel formation</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px" class="grid-2">
+      <div class="status-block">
+        <div class="card-title g" style="margin-bottom:8px">Stack recommandée</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--dim)">
+          <li>🐍 <strong>Python</strong> — scraping, bots, API calls</li>
+          <li>⚙️ <strong>n8n</strong> — orchestration no-code entre bots</li>
+          <li>🔥 <strong>Firebase Firestore</strong> — stockage données centralisé</li>
+          <li>🤖 <strong>OpenAI API</strong> — intelligence des bots</li>
+          <li>📨 <strong>Discord Webhooks</strong> — notifications équipe</li>
+          <li>☁️ <strong>VPS (Railway / Render)</strong> — hébergement bots 24/7</li>
+        </ul>
+      </div>
+      <div class="status-block info">
+        <div class="card-title bl" style="margin-bottom:8px">Ordre de dev recommandé</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--dim)">
+          <li>🔴 <strong>Semaine 1</strong> — Bot#1 Comment Scraper (base de tout)</li>
+          <li>🔴 <strong>Semaine 2</strong> — Bot#2 Script Generator (ROI immédiat)</li>
+          <li>🔴 <strong>Semaine 3</strong> — Bot#3 Auto Publisher (rituel automatisé)</li>
+          <li>🟡 <strong>Semaine 4</strong> — Bot#4 Analytics (pilotage intelligent)</li>
+          <li>🟡 <strong>Semaine 5</strong> — Bot#5 Brand Deal Radar (revenue)</li>
+          <li>🔵 <strong>Semaine 6+</strong> — Bot#6 Funnel (après 30 ventes validées)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION 5 : ROADMAP ══════════ -->
+<section id="roadmap">
+  <div class="container">
+    <div class="section-label go">Roadmap</div>
+    <h2 class="section-title bb">PLAN <span style="color:var(--gold)">6 SEMAINES</span></h2>
+    <p class="section-desc">De zéro à pipeline entièrement automatisé + formation en vente.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-dot" style="border-color:var(--pk)"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-week">Semaine 1</div>
+          <div class="timeline-title" style="color:var(--pk)">Fondations + Bot#1</div>
+          <div class="timeline-desc">Bible série complète (20+ arcs). Personnages finalisés. Bot Comment Scraper opérationnel. Premier épisode publié manuellement pour tester.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-dot" style="border-color:var(--gold)"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-week">Semaine 2</div>
+          <div class="timeline-title" style="color:var(--gold)">Pipeline IA + Bot#2</div>
+          <div class="timeline-desc">Bot Script Generator connecté au Bot#1. Prompt système affiné. Workflow production complet testé en conditions réelles. 7 épisodes produits.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-dot" style="border-color:var(--g)"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-week">Semaine 3</div>
+          <div class="timeline-title" style="color:var(--g)">Publication auto + Bot#3</div>
+          <div class="timeline-desc">Auto Publisher opérationnel sur TikTok + YouTube Shorts. Rituel 6h/18h/22h automatisé. Publication quotidienne sans intervention manuelle.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-dot" style="border-color:var(--blue)"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-week">Semaine 4</div>
+          <div class="timeline-title" style="color:var(--blue)">Analytics + Bot#4</div>
+          <div class="timeline-desc">Dashboard métriques live dans l'app war room. Alertes viral signal opérationnelles. Premiers KPIs analysés : ratio partages/vues, rétention, reach.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-dot" style="border-color:var(--gold)"></div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-week">Semaine 5</div>
+          <div class="timeline-title" style="color:var(--gold)">Brand deals + Formation lancée</div>
+          <div class="timeline-desc">Bot#5 Brand Deal Radar live. Premiers outreach marques envoyés. Landing page formation déployée. Teachable configuré. Premiers emails Beehiiv.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-left">
+          <div class="timeline-dot" style="border-color:var(--pur)"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-week">Semaine 6+</div>
+          <div class="timeline-title" style="color:var(--pur)">Funnel automatisé + Scale</div>
+          <div class="timeline-desc">Bot#6 Funnel Formation opérationnel. 30 ventes validées = preuve du concept. Réinvestissement dans production + closing coaching 1200€ par Ilame.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>UNDERRATED — Document interne confidentiel · Audit Formation & Tools · Mai 2025</p>
+    <p style="margin-top:8px;font-size:10px">Mathieu (CEO/COO) · Bastien (Content/Product) · Théo (Infra) · Ilame (Sales/Community)</p>
+  </div>
+</footer>
+
+</body>
+</html>
