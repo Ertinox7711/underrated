@@ -1,5 +1,8 @@
 # Changelog
 
+## 09/05/2026 07:40 — `4ec433e`
+fix(dashboard): wire dur-card selection + dynamic cost for img2vid
+
 ## 06/05/2026 18:23 — `e43cb3d`
 fix(workspace): remove duplicate today const declaration in wsRenderGantt
 
